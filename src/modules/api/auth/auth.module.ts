@@ -6,47 +6,51 @@ import { applyRateLimiter } from '../../../common/decorators/rate-limiter.decora
 
 const router: Router = Router()
 
-router.use(applyRateLimiter()).post(
+router.post(
   '/confirm-email',
-
+  applyRateLimiter(),
   validate(validators.confirmEmailSchema),
   AuthController.confirmEmail,
 )
 
 router.post(
   '/register',
+  applyRateLimiter(),
   validate(validators.registerSchema),
   AuthController.register,
 )
 
-router
-  .use(applyRateLimiter())
-  .post('/login', validate(validators.loginSchema), AuthController.login)
+router.post(
+  '/login',
+  applyRateLimiter(),
+  validate(validators.loginSchema),
+  AuthController.login,
+)
 
-router
-  .use(applyRateLimiter())
-  .post(
-    '/forgot-password',
-    validate(validators.forgotPasswordSchema),
-    AuthController.forgotPassword,
-  )
+router.post(
+  '/forgot-password',
+  applyRateLimiter(),
+  validate(validators.forgotPasswordSchema),
+  AuthController.forgotPassword,
+)
 
 router.patch(
   '/reset-password',
+  applyRateLimiter(),
   validate(validators.resetPasswordSchema),
   AuthController.resetPassword,
 )
 
-router
-  .use(applyRateLimiter())
-  .delete(
-    '/delete-account',
-    validate(validators.deleteAccountSchema),
-    AuthController.deleteAccount,
-  )
+router.delete(
+  '/delete-account',
+  applyRateLimiter(),
+  validate(validators.deleteAccountSchema),
+  AuthController.deleteAccount,
+)
 
 router.delete(
   '/confirm-deleting',
+  applyRateLimiter(),
   validate(validators.confirmDeleteSchema),
   AuthController.confirmDeleting,
 )
