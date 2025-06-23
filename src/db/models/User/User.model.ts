@@ -1,4 +1,4 @@
 import { model, models } from 'mongoose'
-import { userSchema } from './User.schema'
+import { UserSchema } from './User.schema'
 
-export const UserModel = models.User ?? model('User', userSchema)
+export const UserModel = models.User ?? model('User', UserSchema)

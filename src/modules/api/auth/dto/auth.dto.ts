@@ -4,7 +4,7 @@ export interface IConfirmEmailDto extends Pick<IUserInputs, 'email'> {}
 
 export interface IRegisterDto extends IUserInputs {}
 
-export interface ILoginDto extends Pick<IUserInputs, 'email' | 'password'> {}
+export interface ILoginDto extends Pick<IUserInputs, 'username' | 'password'> {}
 
 export interface IForgotPasswordDto extends Pick<IUserInputs, 'email'> {}
 

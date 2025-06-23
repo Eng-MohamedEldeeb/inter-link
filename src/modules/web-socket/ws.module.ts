@@ -1,11 +1,11 @@
-import { Server } from 'node:http'
-import { Server as SocketServer } from 'socket.io'
-import { onConnection } from './ws-connection'
+import { Server as HttpServer } from 'node:http'
+import { Server } from 'socket.io'
+import { mainController } from './ws.controller'
 
-export const wsBootStrap = (server: Server) => {
-  const io: SocketServer = new SocketServer(server, {
+export const wsBootStrap = (server: HttpServer) => {
+  const io: Server = new Server(server, {
     cors: { origin: process.env.ORIGIN },
   })
 
-  io.on('connection', onConnection(io))
+  io.on('connection', mainController)
 }

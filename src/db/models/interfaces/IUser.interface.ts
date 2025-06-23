@@ -2,6 +2,8 @@ import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
 
 export interface IUserInputs {
+  avatar: Object
+
   fullName: string
   username: string
 
@@ -26,9 +28,16 @@ export interface IUser
   oldPasswords: string[]
 
   posts: Types.ObjectId[]
+  postsCount: number
+
+  savedPosts: Types.ObjectId[]
+  likedPosts: Types.ObjectId[]
 
   following: Types.ObjectId[]
+  followingCount: number
+
   followers: Types.ObjectId[]
+  followersCount: number
 
   groups: Types.ObjectId[]
 

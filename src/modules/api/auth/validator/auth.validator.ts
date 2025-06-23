@@ -27,6 +27,7 @@ export const registerSchema = {
     .object<IRegisterDto>()
     .keys({
       fullName: generalFields.fullName.required(),
+      username: generalFields.username.required(),
       email: generalFields.email.required(),
       password: generalFields.password.required(),
       confirmPassword: generalFields.password
@@ -34,6 +35,9 @@ export const registerSchema = {
         .required(),
 
       birthDate: generalFields.birthDate.required(),
+      bio: generalFields.bio,
+
+      isPrivateProfile: joi.boolean().default(false),
       otpCode: generalFields.otpCode.required(),
     })
     .required()
@@ -46,7 +50,7 @@ export const loginSchema = {
   body: joi
     .object<ILoginDto>()
     .keys({
-      email: generalFields.email.required(),
+      username: generalFields.username.required(),
       password: generalFields.password.required(),
     })
     .required()

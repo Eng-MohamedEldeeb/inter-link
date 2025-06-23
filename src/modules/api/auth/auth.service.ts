@@ -73,16 +73,16 @@ class AuthService {
   }
 
   readonly login = async (loginDto: ILoginDto) => {
-    const { email, password } = loginDto
+    const { username, password } = loginDto
 
     const userExists = await this.userRepository.findOne({
-      filter: { email },
-      projection: { _id: 1, email: 1, password: 1 },
+      filter: { username },
+      projection: { _id: 1, username: 1, password: 1 },
       options: { lean: true },
     })
 
     if (!userExists)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: 'in-valid username or password', status: 400 })
 
     const isMatchedPasswords = compareValues({
       value: password,
@@ -90,7 +90,7 @@ class AuthService {
     })
 
     if (!isMatchedPasswords)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: 'in-valid username or password', status: 400 })
 
     const accessToken = signToken({
       payload: {

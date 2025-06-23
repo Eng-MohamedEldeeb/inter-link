@@ -13,24 +13,3 @@ export const isValidMongoId: CustomValidator = (
 export const optionalMongoId: CustomValidator = (v: string, helpers) => {
   return v ? isValidMongoId(v, helpers) : true
 }
-
-export const isValidToken: CustomValidator = function (
-  authorization,
-  helpers,
-): true | ErrorReport {
-  if (!authorization)
-    return helpers.error(
-      'any.required',
-      { key: 'authorization' },
-      { path: ['authorization'] },
-    )
-
-  if (authorization.split(' ')[0] != 'Bearer')
-    return helpers.error(
-      'string.hex',
-      { key: 'authorization' },
-      { path: ['authorization'] },
-    )
-
-  return true
-}

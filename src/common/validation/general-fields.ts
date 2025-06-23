@@ -1,5 +1,5 @@
 import joi from 'joi'
-import { isValidMongoId, isValidToken, optionalMongoId } from './is-valid'
+import { isValidMongoId, optionalMongoId } from './is-valid'
 
 const file = joi.object<Express.Multer.File>().keys({
   fieldname: joi.string(),
@@ -16,15 +16,6 @@ export const generalFields = {
   mongoId: joi.string().custom(isValidMongoId),
   optionalMongoId: joi.string().custom(optionalMongoId),
 
-  headers: joi
-    .object()
-    .keys({
-      authorization: joi.string().custom(isValidToken).messages({
-        'string.hex': 'Bearer token is required',
-      }),
-    })
-    .unknown(true),
-
   file,
 
   files: joi.array().items(file).min(1).max(10),
@@ -32,6 +23,8 @@ export const generalFields = {
   fullName: joi.string().trim().messages({
     'string.empty': "fullName can't be empty",
   }),
+  bio: joi.string().trim().max(700),
+  username: joi.string().trim().min(2).max(16),
   email: joi.string().email().trim().lowercase().messages({
     'string.empty': "email can't be empty",
     'string.email': 'in-valid email',
