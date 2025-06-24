@@ -10,7 +10,7 @@ export interface ICommentInputs {
 
 export interface IComment extends IMongoDoc, ICommentInputs {
   likedBy: Types.ObjectId[]
-  likesCount: number
+  totalLikes: number
   replies: Types.ObjectId[]
   repliesCount: number
 }

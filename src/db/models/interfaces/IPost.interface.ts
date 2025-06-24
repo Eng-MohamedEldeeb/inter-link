@@ -1,20 +1,21 @@
 import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
+import { ICloudFiles } from '../../../http/common/services/upload/interface/cloud-response.interface'
 
 export interface IPostInputs {
   title: string
   content: string
-  attachments: Object[]
+  attachments: ICloudFiles[]
   // tags: Types.ObjectId[]
   createdBy: Types.ObjectId
   onGroup: Types.ObjectId
 }
 
 export interface IPost extends IMongoDoc, IPostInputs {
-  likesCount: number
+  totalLikes: number
   likedBy: Types.ObjectId[]
   comments: Types.ObjectId[]
-  commentsCount: number
+  totalComments: number
   saves: number
   shares: number
 }

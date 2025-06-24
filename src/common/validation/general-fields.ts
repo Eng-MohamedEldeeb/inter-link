@@ -32,6 +32,7 @@ export const generalFields = {
   password: joi.string().trim().messages({
     'string.empty': "password can't be empty",
   }),
+  phone: joi.string().max(11),
   birthDate: joi.date().less('now').messages({
     'string.empty': "birthDate can't be empty",
     'date.base': 'enter a valid birthDate',

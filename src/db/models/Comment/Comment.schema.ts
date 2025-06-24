@@ -34,7 +34,7 @@ CommentSchema.virtual('replies', {
   foreignField: 'replyingTo',
 })
 
-CommentSchema.virtual('likesCount').get(function () {
+CommentSchema.virtual('totalLikes').get(function () {
   return this.likedBy.length
 })
 

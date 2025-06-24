@@ -1,8 +1,9 @@
 import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
+import { ICloud } from '../../../http/common/services/upload/interface/cloud-response.interface'
 
 export interface IUserInputs {
-  avatar: Object
+  avatar: ICloud
 
   fullName: string
   username: string
@@ -12,6 +13,7 @@ export interface IUserInputs {
   confirmPassword: string
 
   birthDate: Date
+  phone: string
 
   otpCode: string
 
@@ -34,12 +36,14 @@ export interface IUser
   likedPosts: Types.ObjectId[]
 
   following: Types.ObjectId[]
-  followingCount: number
+  totalFollowing: number
 
   followers: Types.ObjectId[]
-  followersCount: number
+  totalFollowers: number
 
-  groups: Types.ObjectId[]
+  joinedGroups: Types.ObjectId[]
 
   blockList: Types.ObjectId[]
+
+  deactivatedAt: Date
 }

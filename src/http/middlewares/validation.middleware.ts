@@ -1,0 +1,42 @@
+import { ArraySchema, ObjectSchema } from 'joi'
+import { asyncHandler } from '../common/decorators/async-handler.decorator'
+import { NextFunction, Request, Response } from 'express'
+import { throwHttpError } from '../../common/utils/handlers/error-message.handler'
+import { IRequest } from '../common/interface/IRequest.interface'
+
+export const validate = (
+  schema: Record<string, ObjectSchema | ArraySchema>,
+) => {
+  return asyncHandler(
+    async (req: IRequest, _: Response, next: NextFunction) => {
+      const errors = []
+
+      for (const key of Object.keys(schema)) {
+        const { error } = schema[key].validate(req[key as keyof Request], {
+          abortEarly: false,
+          allowUnknown: false,
+        })
+
+        if (error) {
+          errors.push({
+            key,
+            detail: error.details.map(e => ({
+              message: e.message,
+              path: e.path,
+              type: e.type,
+            })),
+          })
+        }
+      }
+
+      if (errors.length)
+        return throwHttpError({
+          msg: 'validation error',
+          details: errors,
+          status: 400,
+        })
+
+      return next()
+    },
+  )
+}

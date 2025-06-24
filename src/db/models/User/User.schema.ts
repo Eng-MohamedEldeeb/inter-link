@@ -1,14 +1,19 @@
 import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
 import { IUser } from '../interfaces/IUser.interface'
-import { hashValue } from '../../../utils/security/bcrypt/bcrypt.service'
+import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
 import otpRepository from '../../../common/repositories/otp.repository'
 import { OtpType } from '../enums/otp.enum'
+import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'
 
 export const UserSchema = new Schema<IUser>(
   {
-    // avatar: {type: {
-
-    // }},
+    avatar: {
+      type: {
+        secure_url: String,
+        public_id: String,
+        folderId: String,
+      },
+    },
 
     fullName: {
       type: String,
@@ -37,6 +42,12 @@ export const UserSchema = new Schema<IUser>(
       lowercase: true,
     },
 
+    phone: {
+      type: String,
+      required: [true, 'phone number is required'],
+      trim: true,
+    },
+
     password: {
       type: String,
       required: [true, 'password is required'],
@@ -59,7 +70,7 @@ export const UserSchema = new Schema<IUser>(
 
     likedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
 
-    // groups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
+    joinedGroups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
 
     age: {
       type: Number,
@@ -68,8 +79,14 @@ export const UserSchema = new Schema<IUser>(
     },
 
     isPrivateProfile: { type: Boolean, default: false },
+
+    deactivatedAt: { type: Date },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 )
 
 UserSchema.virtual('posts', {
@@ -78,36 +95,25 @@ UserSchema.virtual('posts', {
   foreignField: 'createdBy',
 })
 
-UserSchema.virtual('birthDate')
-  .get(function (v) {
-    return new Date().getFullYear() - new Date(v).getFullYear()
-  })
-  .set(function (v) {
-    return this.set('age', new Date().getFullYear() - new Date(v).getFullYear())
-  })
-
 UserSchema.virtual('postsCount').get(function () {
-  return this.posts.length
+  return this.posts?.length
 })
 
-UserSchema.virtual('followingCount').get(function () {
-  return this.following.length
+UserSchema.virtual('totalFollowing').get(function () {
+  return this.following?.length
 })
 
-UserSchema.virtual('followersCount').get(function () {
-  return this.followers.length
+UserSchema.virtual('totalFollowers').get(function () {
+  return this.followers?.length
 })
 
-UserSchema.virtual('birthDate')
-  .get(function (v) {
-    return new Date().getFullYear() - new Date(v).getFullYear()
-  })
-  .set(function (v) {
-    return this.set('age', new Date().getFullYear() - new Date(v).getFullYear())
-  })
+UserSchema.virtual('birthDate').set(function (v) {
+  return this.set('age', new Date().getFullYear() - new Date(v).getFullYear())
+})
 
 UserSchema.pre('save', function (next) {
   if (this.isModified('password')) this.password = hashValue(this.password)
+  if (this.isModified('phone')) this.phone = encryptValue(this.phone)
 
   return next()
 })

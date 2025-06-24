@@ -40,11 +40,11 @@ PostSchema.virtual('comments', {
   foreignField: 'onPost',
 })
 
-PostSchema.virtual('likesCount').get(function () {
+PostSchema.virtual('totalLikes').get(function () {
   return this.likedBy.length
 })
 
-PostSchema.virtual('commentsCount').get(function () {
+PostSchema.virtual('totalComments').get(function () {
   return this.comments.length
 })
 
