@@ -1,7 +1,7 @@
 import { ArraySchema, ObjectSchema } from 'joi'
 import { asyncHandler } from '../common/decorators/async-handler.decorator'
 import { NextFunction, Request, Response } from 'express'
-import { throwHttpError } from '../../common/utils/handlers/error-message.handler'
+import { throwHttpError } from '../common/utils/handlers/error-message.handler'
 import { IRequest } from '../common/interface/IRequest.interface'
 
 export const validate = (

@@ -1,18 +1,16 @@
 import joi from 'joi'
 import {
-  IConfirmDeleteDto,
-  IConfirmEmailDto,
-  IDeleteAccountDto,
-  IForgotPasswordDto,
-  ILoginDto,
-  IResetPasswordDto,
-  IRegisterDto,
-} from '../dto/auth.dto'
+  IConfirmEmailDTO,
+  IForgotPasswordDTO,
+  ILoginDTO,
+  IResetPasswordDTO,
+  IRegisterDTO,
+} from '../dto/auth.DTO'
 import { generalFields } from '../../../../common/validation/general-fields'
 
 export const confirmEmailSchema = {
   body: joi
-    .object<IConfirmEmailDto>()
+    .object<IConfirmEmailDTO>()
     .keys({
       email: generalFields.email.required(),
     })
@@ -24,7 +22,7 @@ export const confirmEmailSchema = {
 
 export const registerSchema = {
   body: joi
-    .object<IRegisterDto>()
+    .object<IRegisterDTO>()
     .keys({
       fullName: generalFields.fullName.required(),
       username: generalFields.username.required(),
@@ -48,7 +46,7 @@ export const registerSchema = {
 
 export const loginSchema = {
   body: joi
-    .object<ILoginDto>()
+    .object<ILoginDTO>()
     .keys({
       username: generalFields.username.required(),
       password: generalFields.password.required(),
@@ -61,7 +59,7 @@ export const loginSchema = {
 
 export const forgotPasswordSchema = {
   body: joi
-    .object<IForgotPasswordDto>()
+    .object<IForgotPasswordDTO>()
     .keys({
       email: generalFields.email.required(),
     })
@@ -73,7 +71,7 @@ export const forgotPasswordSchema = {
 
 export const resetPasswordSchema = {
   body: joi
-    .object<IResetPasswordDto>()
+    .object<IResetPasswordDTO>()
     .keys({
       email: generalFields.email.required(),
       newPassword: generalFields.password.required(),
@@ -85,31 +83,5 @@ export const resetPasswordSchema = {
     .required()
     .messages({
       'any.required': 'resetPassword body is required',
-    }),
-}
-
-export const deleteAccountSchema = {
-  body: joi
-    .object<IDeleteAccountDto>()
-    .keys({
-      email: generalFields.email.required(),
-      password: generalFields.password.required(),
-    })
-    .required()
-    .messages({
-      'any.required': 'deleteAccount body is required',
-    }),
-}
-
-export const confirmDeleteSchema = {
-  body: joi
-    .object<IConfirmDeleteDto>()
-    .keys({
-      email: generalFields.email.required(),
-      otpCode: generalFields.otpCode.required(),
-    })
-    .required()
-    .messages({
-      'any.required': 'confirmDelete body is required',
     }),
 }

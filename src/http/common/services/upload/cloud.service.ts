@@ -7,10 +7,14 @@ export class CloudUploader {
   static readonly upload = async ({
     path,
     folderName,
+    public_id,
   }: {
     path: string
-    folderName: string
+    folderName?: string
+    public_id?: string
   }): Promise<UploadApiResponse> => {
+    if (public_id) return await this.cloud.uploader.upload(path, { public_id })
+
     return await this.cloud.uploader.upload(path, { folder: folderName })
   }
 

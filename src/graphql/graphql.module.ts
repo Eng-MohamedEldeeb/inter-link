@@ -1,27 +1,20 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
-import { createHandler, HandlerOptions } from 'graphql-http/lib/use/express'
-import { authMutationFields } from './modules/auth/auth.module'
-import { userQueryFields } from './modules/user/user.module'
+import { createHandler } from 'graphql-http/lib/use/express'
+import { profileQueryFields } from './modules/profile/profile.module'
 import { RequestParams } from 'graphql-http'
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'mainRootQuery',
     fields: {
-      ...userQueryFields(),
-    },
-  }),
-  mutation: new GraphQLObjectType({
-    name: 'mainRootMutation',
-    fields: {
-      ...authMutationFields(),
+      ...profileQueryFields(),
     },
   }),
 })
 
 const graphqlModule = createHandler({
   schema,
-  context: function (req, params: RequestParams) {
+  context: function (req, _: RequestParams) {
     const { authorization } = req.raw.headers
 
     return { authorization }

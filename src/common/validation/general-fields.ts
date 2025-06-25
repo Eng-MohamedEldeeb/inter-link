@@ -1,7 +1,7 @@
 import joi from 'joi'
 import { isValidMongoId, optionalMongoId } from './is-valid'
 
-const file = joi.object<Express.Multer.File>().keys({
+const file = {
   fieldname: joi.string(),
   originalname: joi.string(),
   encoding: joi.string(),
@@ -10,7 +10,7 @@ const file = joi.object<Express.Multer.File>().keys({
   filename: joi.string(),
   path: joi.string(),
   size: joi.number(),
-})
+}
 
 export const generalFields = {
   mongoId: joi.string().custom(isValidMongoId),

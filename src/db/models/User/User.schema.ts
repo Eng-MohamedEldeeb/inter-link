@@ -4,14 +4,18 @@ import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
 import otpRepository from '../../../common/repositories/otp.repository'
 import { OtpType } from '../enums/otp.enum'
 import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'
+import postRepository from '../../../common/repositories/post.repository'
+import groupRepository from '../../../common/repositories/group.repository'
 
 export const UserSchema = new Schema<IUser>(
   {
     avatar: {
       type: {
-        secure_url: String,
+        secure_url: {
+          type: String,
+          default: process.env.DEFAULT_PROFILE_AVATAR_PIC,
+        },
         public_id: String,
-        folderId: String,
       },
     },
 
@@ -54,6 +58,10 @@ export const UserSchema = new Schema<IUser>(
       trim: true,
     },
 
+    tempEmail: {
+      type: String,
+    },
+
     changedCredentialsAt: {
       type: Date,
     },
@@ -71,6 +79,18 @@ export const UserSchema = new Schema<IUser>(
     likedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
 
     joinedGroups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
+
+    profileVisits: {
+      type: [
+        {
+          visitor: {
+            type: SchemaTypes.ObjectId,
+            ref: 'User',
+          },
+          totalVisits: Number,
+        },
+      ],
+    },
 
     age: {
       type: Number,
@@ -95,7 +115,7 @@ UserSchema.virtual('posts', {
   foreignField: 'createdBy',
 })
 
-UserSchema.virtual('postsCount').get(function () {
+UserSchema.virtual('totalPosts').get(function () {
   return this.posts?.length
 })
 
@@ -111,7 +131,7 @@ UserSchema.virtual('birthDate').set(function (v) {
   return this.set('age', new Date().getFullYear() - new Date(v).getFullYear())
 })
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', async function (next) {
   if (this.isModified('password')) this.password = hashValue(this.password)
   if (this.isModified('phone')) this.phone = encryptValue(this.phone)
 
@@ -128,25 +148,39 @@ UserSchema.post('save', async function (res) {
   })
 })
 
-UserSchema.pre('findOneAndUpdate', function (next) {
+UserSchema.pre('findOneAndUpdate', async function (next) {
   const updatedData: UpdateQuery<IUser> | null = this.getUpdate()
   const keys = Object.keys(updatedData ?? {}) as (keyof IUser)[]
 
-  if (updatedData && keys.includes('password'))
-    this.setUpdate({
-      password: hashValue(updatedData.password),
-      $set: {
-        changedCredentialsAt: Date.now(),
-      },
-    })
+  if (updatedData) {
+    if (keys.includes('password'))
+      this.setUpdate({
+        password: hashValue(updatedData.password),
+        $set: {
+          changedCredentialsAt: Date.now(),
+        },
+      })
+
+    if (keys.includes('tempEmail')) {
+      await otpRepository.create({
+        email: updatedData.email,
+        type: OtpType.confirm,
+      })
+    }
+
+    if (keys.includes('phone'))
+      this.setUpdate({
+        phone: encryptValue(updatedData.phone),
+      })
+  }
 
   return next()
 })
 
-// UserSchema.post('findOneAndDelete', async function (res: IUser, next) {
-//   Promise.allSettled([
-//     posteRepository.deleteMany({ createdBy: res._id }),
+UserSchema.post('findOneAndDelete', async function (res: IUser, next) {
+  Promise.allSettled([
+    postRepository.deleteMany({ createdBy: res._id }),
 
-//     groupRepository.deleteMany({ createdBy: res._id }),
-//   ])
-// })
+    groupRepository.deleteMany({ createdBy: res._id }),
+  ])
+})

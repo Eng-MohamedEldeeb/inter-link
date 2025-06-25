@@ -1,5 +1,5 @@
 import { verifyToken } from '../../../common/utils/security/token/token.service'
-import { throwHttpError } from '../../../common/utils/handlers/error-message.handler'
+import { throwHttpError } from '../utils/handlers/error-message.handler'
 import { IRequest } from '../interface/IRequest.interface'
 import { GuardActivator } from './can-activate.guard'
 

@@ -1,8 +1,4 @@
-import {
-  GraphQLFieldConfigArgumentMap,
-  GraphQLOutputType,
-  GraphQLScalarType,
-} from 'graphql'
+import { GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
 import { GuardActivator } from '../guards/can-activate.guard'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 import { IPayload } from '../../../common/utils/security/token/interface/token.interface'
@@ -46,5 +42,6 @@ export interface ISuccessResponse {
 export interface IContext {
   authorization: string
   user: IUser
+  profile: IUser
   tokenPayload: IPayload
 }

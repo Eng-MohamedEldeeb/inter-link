@@ -9,8 +9,8 @@ import { helmetOptions } from './common/utils/security/helmet/helmet-config'
 import httpModule from './http/http.module'
 import graphqlModule from './graphql/graphql.module'
 
-import { unknownURL } from './common/utils/handlers/unknown-url.handler'
-import { globalError } from './common/utils/handlers/global-error.handler'
+import { unknownURL } from './http/common/utils/handlers/unknown-url.handler'
+import { globalError } from './http/common/utils/handlers/global-error.handler'
 
 export const bootstrap = async (app: Express): Promise<void> => {
   await dbConnection()

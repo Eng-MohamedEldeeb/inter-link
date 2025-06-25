@@ -1,5 +1,6 @@
-import { GraphQLError, GraphQLResolveInfo } from 'graphql'
+import { GraphQLResolveInfo } from 'graphql'
 import { IResolveArgs } from '../interface/IGraphQL.types'
+import { throwGraphError } from '../handler/error.handler'
 
 export const applyResolver = <A = any, C = any>({
   resolver,
@@ -22,7 +23,7 @@ export const applyResolver = <A = any, C = any>({
     } catch (error) {
       console.log({ error })
 
-      if (error instanceof Error) throw new GraphQLError(error.message)
+      if (error instanceof Error) return throwGraphError(error.message)
     }
   }
 }

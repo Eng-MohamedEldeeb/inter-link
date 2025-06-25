@@ -1,7 +1,7 @@
-import { throwHttpError } from '../../../common/utils/handlers/error-message.handler'
 import userRepository from '../../../common/repositories/user.repository'
 import { GuardActivator } from './can-activate.guard'
 import { IContext } from '../interface/IGraphQL.types'
+import { throwGraphError } from '../handler/error.handler'
 
 class IsAuthorizedGuard implements GuardActivator<any, IContext> {
   private readonly userRepository = userRepository
@@ -9,22 +9,24 @@ class IsAuthorizedGuard implements GuardActivator<any, IContext> {
   async canActivate(_: any, context: IContext) {
     const { _id, iat } = context.tokenPayload
 
-    const userExists = await this.userRepository.findById({
-      _id,
-      projection: { _id: 1, changedCredentialsAt: 1 },
+    const isExistedUser = await this.userRepository.findOne({
+      filter: {
+        _id,
+        deactivatedAt: { $exists: false },
+      },
+      projection: { password: 0, oldPasswords: 0 },
       options: { lean: true },
     })
 
-    if (!userExists)
-      return throwHttpError({ msg: 'un-authenticated user', status: 403 })
+    if (!isExistedUser) return throwGraphError('un-authenticated user')
 
     if (
       iat &&
-      iat < Math.ceil(userExists.changedCredentialsAt?.getTime() / 1000)
+      iat < Math.ceil(isExistedUser.changedCredentialsAt?.getTime() / 1000)
     )
-      return throwHttpError({ msg: 're-login is required', status: 403 })
+      return throwGraphError('re-login is required')
 
-    context.user = userExists
+    context.profile = isExistedUser
 
     return context
   }

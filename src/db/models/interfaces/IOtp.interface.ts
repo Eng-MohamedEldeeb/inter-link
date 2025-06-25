@@ -1,5 +1,5 @@
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
-import * as emailSchemas from './../../../common/utils/email/schemas/email-schema'
+import * as emailSchemas from '../../../http/common/services/email/schemas/email-schema'
 
 export interface IOtpInputs {
   email: string

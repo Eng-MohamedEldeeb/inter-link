@@ -1,5 +1,4 @@
 import { ArraySchema, ObjectSchema } from 'joi'
-import { throwHttpError } from '../../common/utils/handlers/error-message.handler'
 
 export const validate = <A = any, C = any>(
   schema: Record<string, ObjectSchema | ArraySchema>,

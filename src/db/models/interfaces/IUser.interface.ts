@@ -26,11 +26,12 @@ export interface IUser
     Omit<IUserInputs, 'confirmPassword' | 'otpCode'> {
   age: number
 
+  tempEmail: string
   changedCredentialsAt: Date
   oldPasswords: string[]
 
   posts: Types.ObjectId[]
-  postsCount: number
+  totalPosts: number
 
   savedPosts: Types.ObjectId[]
   likedPosts: Types.ObjectId[]
@@ -40,6 +41,11 @@ export interface IUser
 
   followers: Types.ObjectId[]
   totalFollowers: number
+
+  profileVisits: {
+    visitor: Types.ObjectId
+    totalVisits: number
+  }[]
 
   joinedGroups: Types.ObjectId[]
 
