@@ -12,8 +12,9 @@ export class UserController {
   static readonly getUserProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
       const user = req.user
+      console.log({ user })
       return successResponse(res, {
-        msg: 'profile Picture been updated successfully',
+        msg: 'done',
         status: 200,
         data: await this.UserService.getUserProfile(user),
       })

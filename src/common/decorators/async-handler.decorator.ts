@@ -9,12 +9,12 @@ export const asyncHandler = (fn: Function) => {
   return async (...params: any[any]) => {
     const contextType = ContextDetector.detect(params)
     try {
-      if (contextType == ContextType.httpContext) {
+      if (contextType === ContextType.httpContext) {
         const { req, res, next } = ContextDetector.switchToHTTP(params)
         return await fn(req, res, next)
       }
 
-      if (contextType == ContextType.graphContext) {
+      if (contextType === ContextType.graphContext) {
         const { source, args, context, info } =
           ContextDetector.switchToGraphQL(params)
         return await fn(source, args, context, info)
@@ -22,7 +22,7 @@ export const asyncHandler = (fn: Function) => {
     } catch (error) {
       const { req, next } = ContextDetector.switchToHTTP(params)
 
-      if (contextType == ContextType.httpContext) {
+      if (contextType === ContextType.httpContext) {
         const fileRequest = req as IRequest
 
         if (fileRequest.cloudFiles && fileRequest.cloudFiles.paths.length) {
@@ -36,27 +36,27 @@ export const asyncHandler = (fn: Function) => {
       }
 
       if (error instanceof TokenExpiredError)
-        return contextType == ContextType.httpContext
+        return contextType === ContextType.httpContext
           ? next({ msg: 'Token is expired', status: 400 })
-          : contextType == ContextType.graphContext
+          : contextType === ContextType.graphContext
             ? throwGraphError(error.message)
             : console.log({ error })
 
       if (error instanceof JsonWebTokenError)
-        return contextType == ContextType.httpContext
+        return contextType === ContextType.httpContext
           ? next({ msg: 'in-valid token', status: 400 })
-          : contextType == ContextType.graphContext
+          : contextType === ContextType.graphContext
             ? throwGraphError(error.message)
             : console.log({ error })
 
       if (error instanceof Error)
-        return contextType == ContextType.httpContext
+        return contextType === ContextType.httpContext
           ? next(error)
-          : contextType == ContextType.graphContext
+          : contextType === ContextType.graphContext
             ? throwGraphError(error.message)
             : console.log({ error })
 
-      return contextType == ContextType.httpContext
+      return contextType === ContextType.httpContext
         ? next(error)
         : console.log({ error })
     }

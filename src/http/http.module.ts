@@ -5,7 +5,7 @@ import isAuthenticatedGuard from '../common/guards/is-authenticated.guard'
 import isAuthorizedGuard from '../common/guards/is-authorized.guard'
 
 import authModule from './modules/auth/auth.module'
-import userModule from './modules/profile/profile.module'
+import userModule from './modules/user/user.module'
 import profileModule from './modules/profile/profile.module'
 
 const router: Router = Router()

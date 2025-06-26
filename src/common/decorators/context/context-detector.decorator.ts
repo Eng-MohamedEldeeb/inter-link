@@ -5,17 +5,13 @@ import { IContext } from '../../interface/graphql/IGraphQL.types'
 import { GraphQLResolveInfo } from 'graphql'
 
 export class ContextDetector {
-  static readonly detect = (params: any[]): ContextType => {
-    console.log({ params: params[3] })
-
+  static readonly detect = (params: any[any]): ContextType => {
     const paramsLength = params.length
-
-    console.log({ params: 'fieldName' in params[paramsLength - 1] })
 
     const httpParams =
       paramsLength == 3 &&
       'url' in params[0] &&
-      params[paramsLength] instanceof Function
+      params[paramsLength - 1] instanceof Function
 
     const graphParams = paramsLength === 4 && 'fieldName' in params[3]
 
@@ -36,13 +32,9 @@ export class ContextDetector {
 
   static readonly switchToGraphQL = <A = any, C = IContext>(
     params: any[any],
-  ): { source: any; args: A; context: IContext; info: GraphQLResolveInfo } => {
-    const [source, args, context, info]: [
-      any,
-      A,
-      IContext,
-      GraphQLResolveInfo,
-    ] = params
+  ): { source: any; args: A; context: C; info: GraphQLResolveInfo } => {
+    const [source, args, context, info]: [any, A, C, GraphQLResolveInfo] =
+      params
 
     return { source, args, context, info }
   }

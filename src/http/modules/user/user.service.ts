@@ -8,7 +8,7 @@ export class UserService {
 
   static readonly getUserProfile = async (
     user: Omit<IUser, 'password' | 'oldPasswords'>,
-  ): Promise<Partial<IUser>> => {
+  ): Promise<Partial<Omit<IUser, 'password' | 'oldPasswords'>>> => {
     const { isPrivateProfile, ...rest } = user
 
     if (isPrivateProfile)

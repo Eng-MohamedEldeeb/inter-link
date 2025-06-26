@@ -14,17 +14,15 @@ export const applyGuardsActivator = (...activators: GuardActivator[]) => {
     const contextType = ContextDetector.detect(params)
 
     if (contextType === ContextType.httpContext) {
-      const { req, next } = ContextDetector.switchToHTTP(params)
+      const { req, res, next } = ContextDetector.switchToHTTP(params)
       for (const activator of activators) {
-        const result = await activator.canActivate(req)
+        const result = await activator.canActivate(req, res, next)
         if (!result)
           return throwHttpError({ msg: 'forbidden request', status: 403 })
       }
       return next()
     }
     if (contextType === ContextType.graphContext) {
-      console.log('entered graph')
-
       const { source, args, context, info } =
         ContextDetector.switchToGraphQL(params)
       let updatedContext = context

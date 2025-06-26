@@ -42,7 +42,7 @@ export interface IUser
   followers: Types.ObjectId[]
   totalFollowers: number
 
-  profileVisits: {
+  viewers: {
     visitor: Types.ObjectId
     totalVisits: number
   }[]

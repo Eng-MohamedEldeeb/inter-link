@@ -1,9 +1,9 @@
 import { Server } from 'node:http'
-import express, { Express } from 'express'
+import express from 'express'
 import { bootstrap } from './app.module'
 import { wsBootStrap } from './web-socket/ws.module'
 
-const app: Express = express()
+const app: express.Express = express()
 const port: number = Number(process.env.PORT) ?? 3001
 
 bootstrap(app).then(() => {

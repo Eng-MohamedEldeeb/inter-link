@@ -10,7 +10,7 @@ class IsAuthenticatedGuard implements GuardActivator {
     const contextType = ContextDetector.detect(params)
 
     if (contextType === ContextType.httpContext) {
-      const { req, next } = ContextDetector.switchToHTTP(params)
+      const { req } = ContextDetector.switchToHTTP(params)
 
       const { authorization } = req.headers
 

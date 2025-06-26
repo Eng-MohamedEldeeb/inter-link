@@ -4,7 +4,6 @@ import { ContextDetector } from '../decorators/context/context-detector.decorato
 import { ContextType } from '../decorators/types/async-handler.types'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 import { IRequest } from '../interface/http/IRequest.interface'
-import { NextFunction, Response } from 'express'
 
 export const validate = <PA = any, QC = any>(
   schema: Record<string, ObjectSchema | ArraySchema>,

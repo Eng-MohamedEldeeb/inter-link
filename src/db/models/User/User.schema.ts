@@ -80,7 +80,7 @@ export const UserSchema = new Schema<IUser>(
 
     joinedGroups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
 
-    profileVisits: {
+    viewers: {
       type: [
         {
           visitor: {

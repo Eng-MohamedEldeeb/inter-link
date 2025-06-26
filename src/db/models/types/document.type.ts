@@ -4,10 +4,13 @@ import { IOtp } from '../interfaces/IOtp.interface'
 import { IGroup } from '../interfaces/IGroup.interface'
 import { IPost } from '../interfaces/IPost.interface'
 import { IComment } from '../interfaces/IComment.interface'
+import { IStory } from '../interfaces/IStory.interface'
 
 export type TOtp = HydratedDocument<IOtp> & Document
 
 export type TUser = HydratedDocument<IUser> & Document
+
+export type TStory = HydratedDocument<IStory> & Document
 
 export type TPost = HydratedDocument<IPost> & Document
 

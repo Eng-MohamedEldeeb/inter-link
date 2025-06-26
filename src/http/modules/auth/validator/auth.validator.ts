@@ -31,7 +31,7 @@ export const registerSchema = {
       confirmPassword: generalFields.password
         .valid(joi.ref('password'))
         .required(),
-
+      phone: generalFields.phone.required(),
       birthDate: generalFields.birthDate.required(),
       bio: generalFields.bio,
 

@@ -5,7 +5,7 @@ import { ICloudFiles } from '../../../common/services/upload/interface/cloud-res
 export interface IPostInputs {
   title: string
   content: string
-  attachments: ICloudFiles[]
+  attachments: ICloudFiles
   // tags: Types.ObjectId[]
   createdBy: Types.ObjectId
   onGroup: Types.ObjectId

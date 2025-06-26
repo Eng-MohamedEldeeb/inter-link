@@ -15,15 +15,6 @@ import { IRequest } from '../../../common/interface/http/IRequest.interface'
 export class ProfileController {
   private static readonly ProfileService: typeof ProfileService = ProfileService
 
-  static readonly test = asyncHandler(async (req: IRequest, res: Response) => {
-    const { _id } = req.tokenPayload
-    return successResponse(res, {
-      msg: 'test went successfully',
-      status: 200,
-      data: _id,
-    })
-  })
-
   static readonly updateProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload

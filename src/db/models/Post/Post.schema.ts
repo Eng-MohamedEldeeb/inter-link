@@ -1,9 +1,17 @@
 import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
 import { IPost } from '../interfaces/IPost.interface'
+import commentRepository from '../../../common/repositories/comment.repository'
 
 export const PostSchema = new Schema<IPost>(
   {
-    // attachments: {type: [{String}]}
+    attachments: {
+      type: {
+        folderId: String,
+        paths: {
+          type: [{ secure_url: String, public_id: String }],
+        },
+      },
+    },
 
     title: {
       type: String,
@@ -48,10 +56,6 @@ PostSchema.virtual('totalComments').get(function () {
   return this.comments.length
 })
 
-// PostSchema.post('findOneAndDelete', async function (res: IPost, next) {
-//   Promise.allSettled([
-//     posteRepository.deleteMany({ createdBy: res._id }),
-
-//     PostRepository.deleteMany({ createdBy: res._id }),
-//   ])
-// })
+PostSchema.post('findOneAndDelete', async function (res: IPost, next) {
+  Promise.allSettled([commentRepository.deleteMany({ onPost: res._id })])
+})

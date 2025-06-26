@@ -6,8 +6,6 @@ import { fileReader } from '../../../common/utils/multer/file-reader'
 
 const router: Router = Router()
 
-router.post('/test', ProfileController.test)
-
 router.patch(
   '/',
   validate(validators.updateProfileSchema),

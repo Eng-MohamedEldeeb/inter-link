@@ -44,8 +44,14 @@ export class AuthService {
     })
   }
 
-  static readonly register = async (registerDTO: IRegisterDTO) => {
-    const { fullName, email, password, birthDate, otpCode } = registerDTO
+  static readonly register = async (
+    registerDTO: Omit<
+      IRegisterDTO,
+      'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
+    >,
+  ) => {
+    const { fullName, username, email, password, phone, birthDate, otpCode } =
+      registerDTO
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email, type: OtpType.confirm },
@@ -65,8 +71,10 @@ export class AuthService {
 
     await this.userRepository.create({
       fullName,
+      username,
       email,
       password,
+      phone,
       birthDate,
     })
   }
