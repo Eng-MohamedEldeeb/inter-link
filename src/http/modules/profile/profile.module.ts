@@ -1,10 +1,12 @@
 import { Router } from 'express'
-import { validate } from '../../middlewares/validation.middleware'
+import { validate } from '../../../common/middlewares/validation.middleware'
 import * as validators from './validator/profile.validator'
 import { ProfileController } from './profile.controller'
-import { fileReader } from '../../common/utils/multer/file-reader'
+import { fileReader } from '../../../common/utils/multer/file-reader'
 
 const router: Router = Router()
+
+router.post('/test', ProfileController.test)
 
 router.patch(
   '/',

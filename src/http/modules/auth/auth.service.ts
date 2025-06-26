@@ -1,6 +1,6 @@
 import otpRepository from '../../../common/repositories/otp.repository'
 import userRepository from '../../../common/repositories/user.repository'
-import { throwHttpError } from '../../common/utils/handlers/error-message.handler'
+import { throwHttpError } from '../../../common/handlers/http/error-message.handler'
 import { compareValues } from '../../../common/utils/security/bcrypt/bcrypt.service'
 import { signToken } from '../../../common/utils/security/token/token.service'
 import {
@@ -9,7 +9,7 @@ import {
   ILoginDTO,
   IResetPasswordDTO,
   IRegisterDTO,
-} from './dto/auth.DTO'
+} from './dto/auth.dto'
 import { OtpType } from '../../../db/models/enums/otp.enum'
 
 export class AuthService {

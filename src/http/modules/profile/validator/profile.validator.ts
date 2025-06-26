@@ -5,7 +5,7 @@ import {
   IConfirmNewEmailDTO,
   IDeleteAccountDTO,
   IUpdateProfileDTO,
-} from '../dto/profile.DTO'
+} from '../dto/profile.dto'
 import { generalFields } from '../../../../common/validation/general-fields'
 
 export const updateProfileSchema = {

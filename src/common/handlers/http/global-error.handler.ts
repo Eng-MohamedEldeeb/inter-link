@@ -12,6 +12,8 @@ export const globalError = (
   res: Response,
   __: NextFunction,
 ) => {
+  console.log({ glbE: error })
+
   res.status(error.status || 500).json({
     success: false,
     error: {

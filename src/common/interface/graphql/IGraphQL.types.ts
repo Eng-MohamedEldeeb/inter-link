@@ -1,24 +1,26 @@
-import { GraphQLFieldConfigArgumentMap, GraphQLOutputType } from 'graphql'
-import { GuardActivator } from '../guards/can-activate.guard'
+import {
+  GraphQLFieldConfigArgumentMap,
+  GraphQLOutputType,
+  GraphQLResolveInfo,
+} from 'graphql'
+import { GuardActivator } from '../../guards/can-activate.guard'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
-import { IPayload } from '../../../common/utils/security/token/interface/token.interface'
+import { IPayload } from '../../utils/security/token/interface/token.interface'
 
 export type Resolver<A = any, C = any> = (
   args: A,
   context: C,
 ) => Promise<any> | any
 
-export type MiddlewareResolver<A = any, C = any> = ({
-  args,
-  context,
-}: {
-  args: A
-  context: C
-}) => Promise<any> | any
+export type MiddlewareResolver<A = any, C = any> = (
+  s: any,
+  args: A,
+  context: C,
+  info: GraphQLResolveInfo,
+) => Promise<any> | any
 
 export interface IResolveArgs<A, C> {
   resolver: Resolver<A, C>
-  applyGuards?: GuardActivator[]
   applyMiddlewares?: MiddlewareResolver<A, C>[]
 }
 

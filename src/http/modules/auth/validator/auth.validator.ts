@@ -5,7 +5,7 @@ import {
   ILoginDTO,
   IResetPasswordDTO,
   IRegisterDTO,
-} from '../dto/auth.DTO'
+} from '../dto/auth.dto'
 import { generalFields } from '../../../../common/validation/general-fields'
 
 export const confirmEmailSchema = {

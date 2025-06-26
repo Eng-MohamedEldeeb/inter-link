@@ -2,7 +2,7 @@ import { ProfileService } from './profile.service'
 import {
   IContext,
   ISuccessResponse,
-} from '../../common/interface/IGraphQL.types'
+} from '../../../common/interface/graphql/IGraphQL.types'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 
 export class ProfileResolver {

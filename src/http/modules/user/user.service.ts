@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import userRepository from '../../../common/repositories/user.repository'
-import { throwHttpError } from '../../common/utils/handlers/error-message.handler'
+import { throwHttpError } from '../../../common/handlers/http/error-message.handler'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 
 export class UserService {

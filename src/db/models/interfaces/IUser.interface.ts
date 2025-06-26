@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
-import { ICloud } from '../../../http/common/services/upload/interface/cloud-response.interface'
+import { ICloud } from '../../../common/services/upload/interface/cloud-response.interface'
 
 export interface IUserInputs {
   avatar: ICloud

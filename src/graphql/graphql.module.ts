@@ -1,7 +1,6 @@
 import { GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { createHandler } from 'graphql-http/lib/use/express'
 import { profileQueryFields } from './modules/profile/profile.module'
-import { RequestParams } from 'graphql-http'
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -14,7 +13,7 @@ export const schema = new GraphQLSchema({
 
 const graphqlModule = createHandler({
   schema,
-  context: function (req, _: RequestParams) {
+  context: function (req, _) {
     const { authorization } = req.raw.headers
 
     return { authorization }

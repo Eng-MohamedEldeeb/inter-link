@@ -6,7 +6,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql'
-import { oneFileResponse } from '../../../common/types/graphQL.types'
+import { oneFileResponse } from '../../../types/graphQL.types'
 
 export const oneProfileResponse = new GraphQLObjectType({
   name: 'oneUserResponse',

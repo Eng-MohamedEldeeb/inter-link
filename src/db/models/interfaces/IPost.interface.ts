@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
-import { ICloudFiles } from '../../../http/common/services/upload/interface/cloud-response.interface'
+import { ICloudFiles } from '../../../common/services/upload/interface/cloud-response.interface'
 
 export interface IPostInputs {
   title: string

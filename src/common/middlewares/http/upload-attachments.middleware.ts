@@ -1,8 +1,7 @@
 import { NextFunction, Response } from 'express'
-import { asyncHandler } from '../common/decorators/async-handler.decorator'
-import { IRequest } from '../common/interface/IRequest.interface'
-import { CloudUploader } from '../common/services/upload/cloud.service'
-import { generateCode } from '../common/utils/randomstring/generate-code.function'
+import { IRequest } from '../../interface/http/IRequest.interface'
+import { CloudUploader } from '../../services/upload/cloud.service'
+import { asyncHandler } from '../../decorators/async-handler.decorator'
 
 export const uploadAttachments = (folder: string) => {
   return asyncHandler(

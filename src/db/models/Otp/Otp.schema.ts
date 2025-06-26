@@ -1,11 +1,11 @@
 import { Schema } from 'mongoose'
 import { IOtp } from '../interfaces/IOtp.interface'
 import { OtpType } from '../enums/otp.enum'
-import { generateCode } from '../../../http/common/utils/randomstring/generate-code.function'
+import { generateCode } from '../../../common/utils/randomstring/generate-code.function'
 import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
-import { EmailService } from '../../../http/common/services/email/email.service'
-import * as emailSchemas from '../../../http/common/services/email/schemas/email-schema'
-import { EmailSchemas } from '../../../http/common/services/email/event/interface/send-args.interface'
+import { EmailService } from '../../../common/services/email/email.service'
+import * as emailSchemas from '../../../common/services/email/schemas/email-schema'
+import { EmailSchemas } from '../../../common/services/email/event/interface/send-args.interface'
 
 export const otpSchema = new Schema<IOtp>(
   {

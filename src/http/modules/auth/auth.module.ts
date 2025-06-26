@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { AuthController } from './auth.controller'
-import { validate } from '../../middlewares/validation.middleware'
+import { validate } from '../../../common/middlewares/validation.middleware'
 import * as validators from './validator/auth.validator'
 
 const router: Router = Router()
