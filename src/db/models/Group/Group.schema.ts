@@ -1,4 +1,4 @@
-import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
+import { Schema, SchemaTypes } from 'mongoose'
 import { IGroup } from '../interfaces/IGroup.interface'
 
 export const GroupSchema = new Schema<IGroup>(

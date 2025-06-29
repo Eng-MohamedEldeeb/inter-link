@@ -8,14 +8,45 @@ class IsExistedUserGuard extends GuardActivator {
   private readonly userRepository = userRepository
 
   async canActivate(...params: any[any]) {
-    const { req } = ContextDetector.switchToHTTP<IGetUserProfileDTO>(params)
-    const { id } = req.params
+    const { req } = ContextDetector.switchToHTTP<
+      Pick<IGetUserProfileDTO, 'id'>,
+      IGetUserProfileDTO
+    >(params)
 
-    const { _id } = req.profile
+    const { search, id: userId } = { ...req.query, ...req.params }
+
+    const { _id: profileId } = req.profile
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
-        $and: [{ _id: id }, { deactivatedAt: { $exists: false } }],
+        $or: [
+          {
+            $and: [
+              { username: { $regex: search } },
+
+              {
+                deactivatedAt: { $exists: false },
+              },
+            ],
+          },
+          {
+            $and: [
+              { fullName: { $regex: search } },
+
+              {
+                deactivatedAt: { $exists: false },
+              },
+            ],
+          },
+          {
+            $and: [
+              {
+                $and: [{ _id: userId }],
+              },
+              { deactivatedAt: { $exists: false } },
+            ],
+          },
+        ],
       },
       projection: {
         password: 0,
@@ -27,22 +58,30 @@ class IsExistedUserGuard extends GuardActivator {
 
     if (!isExistedUser)
       return throwHttpError({
-        msg: "user doesn't exists or in-valid id",
+        msg: "user doesn't exists",
         status: 400,
       })
 
-    const checkViewers = isExistedUser.viewers.some(({ visitor }) =>
-      visitor.equals(_id),
+    if (isExistedUser._id.equals(profileId)) {
+      req.user = isExistedUser
+      return true
+    }
+
+    const checkViewers = isExistedUser.viewers?.some(({ visitor }) =>
+      visitor.equals(profileId),
     )
 
     if (checkViewers) {
       const updatedViews = await this.userRepository.findOneAndUpdate({
         filter: {
-          _id: id,
-          'viewers.visitor': _id,
+          $and: [
+            { _id: isExistedUser._id },
+            { 'viewers.visitor': profileId },
+            { deactivatedAt: { $exists: false } },
+          ],
         },
         data: {
-          $in: { 'viewers.$.totalVisits': 1 },
+          $inc: { 'viewers.$.totalVisits': 1 },
         },
 
         options: {
@@ -55,6 +94,7 @@ class IsExistedUserGuard extends GuardActivator {
           lean: true,
         },
       })
+
       req.user = updatedViews!
 
       return true
@@ -62,12 +102,15 @@ class IsExistedUserGuard extends GuardActivator {
 
     const updatedViews = await this.userRepository.findOneAndUpdate({
       filter: {
-        _id: id,
+        $and: [
+          { _id: isExistedUser._id },
+          { deactivatedAt: { $exists: false } },
+        ],
       },
       data: {
         $push: {
           viewers: {
-            visitor: _id,
+            visitor: profileId,
             totalVisits: 1,
           },
         },

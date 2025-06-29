@@ -8,7 +8,7 @@ import isExistedUserGuard from '../../../common/guards/is-existed-user.guard'
 const router: Router = Router()
 
 router.get(
-  '/:id',
+  '/',
   validate(validators.getUserProfileSchema),
   applyGuardsActivator(isExistedUserGuard),
   UserController.getUserProfile,

@@ -11,18 +11,31 @@ import {
 import { ProfileService } from './profile.service'
 import { Response } from 'express'
 import { IRequest } from '../../../common/interface/http/IRequest.interface'
+import { IUser } from '../../../db/models/interfaces/IUser.interface'
 
 export class ProfileController {
   private static readonly ProfileService: typeof ProfileService = ProfileService
 
+  static readonly get = asyncHandler(async (req: IRequest, res: Response) => {
+    const profile: IUser = req.profile
+    return successResponse(res, {
+      msg: 'profile Picture been updated successfully',
+      status: 200,
+      data: this.ProfileService.get(profile),
+    })
+  })
+
   static readonly updateProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
-      const path = req.file?.path!
+      // const path = req.file?.path!
+
+      console.log({ file: req.file })
+
       return successResponse(res, {
         msg: 'profile Picture been updated successfully',
         status: 200,
-        data: await this.ProfileService.updateProfilePic(_id, path),
+        // data: await this.ProfileService.updateProfilePic(_id, path),
       })
     },
   )

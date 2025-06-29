@@ -20,13 +20,13 @@ export const updateProfileSchema = {
     })
     .required()
     .messages({
-      'any.required': 'avatar file is required',
+      'any.required': 'updateProfile body is required',
     }),
 }
 
 export const updateProfilePicSchema = {
   file: joi.object().keys(generalFields.file).required().messages({
-    'any.required': 'changeEmail body is required',
+    'any.required': 'avatar file is required',
   }),
 }
 

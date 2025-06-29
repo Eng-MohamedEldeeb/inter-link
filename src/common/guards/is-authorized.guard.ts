@@ -1,12 +1,8 @@
-import { IRequest } from '../interface/http/IRequest.interface'
 import userRepository from '../repositories/user.repository'
 import { GuardActivator } from './can-activate.guard'
-import { IContext } from '../interface/graphql/IGraphQL.types'
 import { throwGraphError } from '../handlers/graphql/error.handler'
 import { ContextType } from '../decorators/types/async-handler.types'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
-import { GraphQLResolveInfo } from 'graphql'
-import { NextFunction, Response } from 'express'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 
 class IsAuthorizedGuard implements GuardActivator {
@@ -46,8 +42,14 @@ class IsAuthorizedGuard implements GuardActivator {
 
       const isExistedUser = await this.userRepository.findOne({
         filter: {
-          _id,
-          deactivatedAt: { $exists: false },
+          $and: [
+            {
+              _id,
+            },
+            {
+              deactivatedAt: { $exists: false },
+            },
+          ],
         },
         projection: { password: 0, oldPasswords: 0 },
         options: { lean: true },

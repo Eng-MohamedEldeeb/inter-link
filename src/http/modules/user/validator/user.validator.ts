@@ -10,11 +10,12 @@ export const getUserProfileSchema = {
   params: joi
     .object<IGetUserProfileDTO>()
     .keys({
-      id: generalFields.mongoId.required(),
+      id: generalFields.mongoId,
+      search: joi.string().min(3),
     })
     .required()
     .messages({
-      'any.required': 'getUserProfile body is required',
+      'any.required': 'getUserProfile query is required',
     }),
 }
 

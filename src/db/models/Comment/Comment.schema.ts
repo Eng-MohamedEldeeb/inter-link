@@ -1,4 +1,4 @@
-import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
+import { Schema, SchemaTypes } from 'mongoose'
 import { IComment } from '../interfaces/IComment.interface'
 
 export const CommentSchema = new Schema<IComment>(

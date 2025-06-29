@@ -1,7 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql'
 import { IResolveArgs } from '../../interface/graphql/IGraphQL.types'
 import { asyncHandler } from '../async-handler.decorator'
-import { applyGuardsActivator } from '../apply-activators.decorator'
 
 export const applyResolver = <A = any, C = any>({
   resolver,

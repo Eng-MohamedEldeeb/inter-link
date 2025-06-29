@@ -1,4 +1,4 @@
-import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
+import { Schema, SchemaTypes } from 'mongoose'
 import { IPost } from '../interfaces/IPost.interface'
 import commentRepository from '../../../common/repositories/comment.repository'
 

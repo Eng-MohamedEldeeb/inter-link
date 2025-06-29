@@ -3,7 +3,6 @@ import {
   GraphQLOutputType,
   GraphQLResolveInfo,
 } from 'graphql'
-import { GuardActivator } from '../../guards/can-activate.guard'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 import { IPayload } from '../../utils/security/token/interface/token.interface'
 

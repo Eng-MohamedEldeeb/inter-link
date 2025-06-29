@@ -12,11 +12,23 @@ import {
   IUpdateProfileDTO,
 } from './dto/profile.dto'
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
+import { IUser } from '../../../db/models/interfaces/IUser.interface'
+import { decryptValue } from '../../../common/utils/security/crypto/crypto.service'
 
 export class ProfileService {
   private static readonly userRepository = userRepository
   private static readonly otpRepository = otpRepository
   private static readonly CloudUploader = CloudUploader
+
+  static readonly get = (profile: IUser) => {
+    return {
+      ...profile,
+      totalFollowers: profile.followers?.length ?? 0,
+      totalFollowing: profile.following?.length ?? 0,
+      totalPosts: profile.posts?.length ?? 0,
+      phone: decryptValue({ encryptedValue: profile.phone }),
+    }
+  }
 
   static readonly updateProfilePic = async (
     userId: Types.ObjectId,
