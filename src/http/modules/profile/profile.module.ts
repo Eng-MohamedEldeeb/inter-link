@@ -3,11 +3,14 @@ import { validate } from '../../../common/middlewares/validation.middleware'
 import * as validators from './validator/profile.validator'
 import { ProfileController } from './profile.controller'
 import { fileReader } from '../../../common/utils/multer/file-reader'
-import { uploadAttachments } from '../../../common/middlewares/http/upload-attachments.middleware'
 
 const router: Router = Router()
 
-router.get('/', ProfileController.get)
+router.get('/', ProfileController.getProfile)
+
+router.get('/followers', ProfileController.getFollowers)
+
+router.get('/following', ProfileController.getFollowing)
 
 router.patch(
   '/',
@@ -20,20 +23,19 @@ router.patch('/visibility', ProfileController.changeVisibility)
 router.patch(
   '/avatar',
   fileReader('image/jpeg', 'image/jpeg', 'image/png').single('avatar'),
-  // validate(validators.updateProfilePicSchema),
-  // uploadAttachments('avatar'),
+  validate(validators.updateProfilePicSchema),
   ProfileController.updateProfilePic,
 )
 
 router.delete('/avatar', ProfileController.deleteProfilePic)
 
-router.patch(
+router.post(
   '/change-email',
   validate(validators.changeEmailSchema),
   ProfileController.changeEmail,
 )
 
-router.post(
+router.patch(
   '/confirm-new-email',
   validate(validators.confirmNewEmailSchema),
   ProfileController.confirmNewEmail,
@@ -52,7 +54,7 @@ router.delete(
 )
 
 router.delete(
-  '/confirm-deleting',
+  '/confirm-deletion',
   validate(validators.confirmDeletionSchema),
   ProfileController.confirmDeleting,
 )

@@ -14,9 +14,11 @@ export const uploadAttachments = (folder: string) => {
 
       const folderName = `${process.env.APP_NAME}/${folderId}/${folder}`
 
-      if (req.files?.length) {
-        req.cloudFiles = { paths: [] }
+      req.cloudFiles = { paths: [] }
 
+      req.cloudFile = { path: { secure_url: '', public_id: '' } }
+
+      if (req.files?.length) {
         for (const file of req.files as Express.Multer.File[]) {
           const paths = await CloudUploader.upload({
             path: file.path,
@@ -33,8 +35,8 @@ export const uploadAttachments = (folder: string) => {
           folderName,
         })
 
-        req.cloudFile.folderId = folderId
         req.cloudFile.path = { secure_url, public_id }
+        req.cloudFile.folderId = folderId
       }
 
       return next()

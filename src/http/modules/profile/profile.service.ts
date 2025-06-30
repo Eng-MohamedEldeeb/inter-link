@@ -20,13 +20,23 @@ export class ProfileService {
   private static readonly otpRepository = otpRepository
   private static readonly CloudUploader = CloudUploader
 
-  static readonly get = (profile: IUser) => {
+  static readonly getProfile = (profile: IUser) => {
     return {
       ...profile,
       totalFollowers: profile.followers?.length ?? 0,
       totalFollowing: profile.following?.length ?? 0,
       totalPosts: profile.posts?.length ?? 0,
       phone: decryptValue({ encryptedValue: profile.phone }),
+    }
+  }
+  static readonly getFollowers = (profile: IUser) => {
+    return {
+      followers: profile.followers,
+    }
+  }
+  static readonly getFollowing = (profile: IUser) => {
+    return {
+      following: profile.following,
     }
   }
 
@@ -36,16 +46,17 @@ export class ProfileService {
   ) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
-      projection: { _id: 1 },
+      projection: { _id: 1, avatar: 1 },
       options: { lean: true },
     })
 
     if (!isExistedUser)
       return throwHttpError({ msg: "user doesn't exist", status: 404 })
 
-    if (
-      isExistedUser.avatar.secure_url != process.env.DEFAULT_PROFILE_AVATAR_PIC
-    ) {
+    const hasDefaultAvatar =
+      isExistedUser.avatar.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
+
+    if (!hasDefaultAvatar) {
       const { secure_url, public_id } = await this.CloudUploader.upload({
         path,
         public_id: isExistedUser.avatar.public_id,
@@ -59,6 +70,7 @@ export class ProfileService {
         options: { new: true, lean: true, projection: { avatar: 1 } },
       })
     }
+
     const { secure_url, public_id } = await this.CloudUploader.upload({
       path,
       folderName: `${process.env.APP_NAME}/${userId.toString()}/avatar`,
@@ -69,26 +81,47 @@ export class ProfileService {
       data: {
         avatar: { secure_url, public_id },
       },
-      options: { new: true, lean: true, projection: { avatar: 1 } },
+      options: {
+        new: true,
+        lean: true,
+        projection: { 'avatar.secure_url': 1 },
+      },
     })
   }
 
   static readonly deleteProfilePic = async (userId: Types.ObjectId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
-      projection: { _id: 1 },
+      projection: { _id: 1, avatar: 1 },
       options: { lean: true },
     })
 
     if (!isExistedUser)
       return throwHttpError({ msg: "user doesn't exist", status: 404 })
 
+    const hasDefaultAvatar =
+      isExistedUser.avatar.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
+
+    if (hasDefaultAvatar)
+      return throwHttpError({
+        msg: "user already doesn't have a profile avatar",
+        status: 400,
+      })
+
+    await this.CloudUploader.delete(isExistedUser.avatar.public_id)
+
     return await this.userRepository.findByIdAndUpdate({
       _id: userId,
       data: {
-        $unset: { avatar: 1 },
+        $set: {
+          avatar: { secure_url: process.env.DEFAULT_PROFILE_AVATAR_PIC },
+        },
       },
-      options: { new: true, lean: true },
+      options: {
+        new: true,
+        lean: true,
+        projection: { 'avatar.secure_url': 1 },
+      },
     })
   }
 
@@ -96,6 +129,7 @@ export class ProfileService {
     userId: Types.ObjectId,
     updateProfileDTO: IUpdateProfileDTO,
   ) => {
+    const { username } = updateProfileDTO
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         _id: userId,
@@ -107,6 +141,16 @@ export class ProfileService {
 
     if (!isExistedUser)
       return throwHttpError({ msg: "user doesn't exist", status: 404 })
+
+    const isConflictedUsername =
+      username &&
+      (await this.userRepository.findOne({
+        filter: { username },
+        projection: { _id: 1 },
+      }))
+
+    if (isConflictedUsername)
+      return throwHttpError({ msg: 'username is taken', status: 409 })
 
     return await this.userRepository.findByIdAndUpdate({
       _id: userId,
@@ -125,34 +169,35 @@ export class ProfileService {
         _id: userId,
         deactivatedAt: { $exists: false },
       },
-      projection: { _id: 1 },
-      options: { lean: true },
+      projection: { _id: 1, isPrivateProfile: 1 },
     })
 
     if (!isExistedUser)
       return throwHttpError({ msg: "user doesn't exist", status: 404 })
 
-    return await this.userRepository.findByIdAndUpdate({
-      _id: userId,
-      data: { isPrivateProfile: !Boolean(isExistedUser.isPrivateProfile) },
-      options: {
+    await isExistedUser.updateOne(
+      { isPrivateProfile: !Boolean(isExistedUser.isPrivateProfile) },
+      {
         lean: true,
         new: true,
         projection: { isPrivateProfile: 1 },
       },
-    })
+    )
   }
 
   static readonly changeEmail = async (
     userId: Types.ObjectId,
     changeEmailDTO: IChangeEmailDTO,
   ) => {
-    const { newEmail, password } = changeEmailDTO
+    const { originalEmail, newEmail, password } = changeEmailDTO
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
-        _id: userId,
-        deactivatedAt: { $exists: false },
+        $and: [
+          { _id: userId },
+          { email: originalEmail },
+          { deactivatedAt: { $exists: false } },
+        ],
       },
       projection: { password: 1 },
     })
@@ -178,30 +223,33 @@ export class ProfileService {
     if (conflictedEmail)
       return throwHttpError({ msg: 'e-mail already exists', status: 409 })
 
-    await this.userRepository.findByIdAndUpdate({
-      _id: isExistedUser._id,
-      data: { tempEmail: newEmail },
-    })
+    Promise.allSettled([
+      otpRepository.create({
+        email: originalEmail,
+        type: OtpType.confirmNewEmail,
+      }),
+      isExistedUser.updateOne({ tempEmail: newEmail }),
+    ])
   }
 
   static readonly confirmNewEmail = async (
     confirmEmailDTO: IConfirmNewEmailDTO,
   ) => {
-    const { email, otpCode } = confirmEmailDTO
+    const { originalEmail, otpCode } = confirmEmailDTO
 
     const isExistedUser = await this.userRepository.findOne({
-      filter: { email },
-      projection: { email: 1 },
-      options: { lean: true },
+      filter: {
+        $and: [{ email: originalEmail }, { deactivatedAt: { $exists: false } }],
+      },
+      projection: { email: 1, tempEmail: 1 },
     })
 
     if (!isExistedUser)
       return throwHttpError({ msg: "user doesn't exist", status: 409 })
 
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email },
-      projection: { _id: 1 },
-      options: { lean: true },
+      filter: { email: originalEmail },
+      projection: { _id: 1, otpCode: 1 },
     })
 
     if (!isExistedOtp)
@@ -221,11 +269,13 @@ export class ProfileService {
         status: 400,
       })
 
-    await this.userRepository.findOneAndUpdate({
-      filter: { email, deactivatedAt: { $exists: false } },
-      data: { email: isExistedUser.tempEmail, $unset: { tempEmail: 1 } },
-      options: { lean: true, new: true, projection: 'email' },
-    })
+    Promise.allSettled([
+      isExistedUser.updateOne({
+        email: isExistedUser.tempEmail,
+        $unset: { tempEmail: 1 },
+      }),
+      isExistedOtp.deleteOne(),
+    ])
   }
 
   static readonly deactivateAccount = async (
@@ -233,7 +283,7 @@ export class ProfileService {
   ) => {
     const { email, password } = deleteAccountDTO
     const isExistedUser = await this.userRepository.findOne({
-      filter: { email, deactivatedAt: { $exists: false } },
+      filter: { $and: [{ email }, { deactivatedAt: { $exists: false } }] },
       projection: { email: 1, password: 1 },
       options: { lean: true },
     })
@@ -334,16 +384,19 @@ export class ProfileService {
 
     if (isExistedOtp.type == OtpType.verifyDeactivation) {
       await this.userRepository.findOneAndUpdate({
-        filter: { email, deactivatedAt: { $exists: false } },
+        filter: { $and: [{ email }, { deactivatedAt: { $exists: false } }] },
         data: { deactivatedAt: Date.now() },
-        options: { lean: true, new: true },
       })
       return OtpType.verifyDeactivation
     }
 
-    await this.userRepository.findOneAndDelete({
-      filter: { email },
-    })
+    Promise.allSettled([
+      this.userRepository.findOneAndDelete({
+        filter: { email },
+      }),
+
+      isExistedOtp.deleteOne(),
+    ])
 
     return OtpType.verifyDeletion
   }

@@ -40,7 +40,7 @@ export class AuthService {
 
     await this.otpRepository.create({
       email: confirmEmailDTO.email,
-      type: OtpType.confirm,
+      type: OtpType.confirmRegistration,
     })
   }
 
@@ -53,14 +53,26 @@ export class AuthService {
     const { fullName, username, email, password, phone, birthDate, otpCode } =
       registerDTO
 
+    const isConflicted = await this.userRepository.findOne({
+      filter: {
+        $or: [{ email }, { username }],
+      },
+    })
+
+    if (isConflicted)
+      return throwHttpError({
+        msg: 'e-mail and username must be unique',
+        status: 400,
+      })
+
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email, type: OtpType.confirm },
+      filter: { email, type: OtpType.confirmRegistration },
       projection: { _id: 1, otpCode: 1 },
       options: { lean: true },
     })
 
     if (!isExistedOtp)
-      return throwHttpError({ msg: 'code is expired', status: 400 })
+      return throwHttpError({ msg: 'in-valid code', status: 400 })
 
     const validOtp = compareValues({
       value: otpCode,
@@ -84,7 +96,7 @@ export class AuthService {
 
     const isExistedUser = await this.userRepository.findOne({
       filter: { username },
-      projection: { _id: 1, username: 1, password: 1 },
+      projection: { _id: 1, username: 1, password: 1, deactivatedAt: 1 },
       options: { lean: true },
     })
 
@@ -103,6 +115,14 @@ export class AuthService {
       return throwHttpError({
         msg: 'in-valid username or password',
         status: 400,
+      })
+
+    if (isExistedUser.deactivatedAt)
+      await this.userRepository.findOneAndUpdate({
+        filter: { $and: [{ username }, { deactivatedAt: { $exists: true } }] },
+        data: {
+          $unset: { deactivatedAt: 1 },
+        },
       })
 
     const accessToken = signToken({
@@ -129,7 +149,7 @@ export class AuthService {
     if (!isExistedUser) throw { msg: 'in-valid email', status: 400 }
 
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email: forgotPasswordDTO.email, type: OtpType.forgot },
+      filter: { email: forgotPasswordDTO.email, type: OtpType.forgotPassword },
       projection: { _id: 1 },
       options: { lean: true },
     })
@@ -142,7 +162,7 @@ export class AuthService {
 
     await this.otpRepository.create({
       email: forgotPasswordDTO.email,
-      type: OtpType.forgot,
+      type: OtpType.forgotPassword,
     })
   }
 
@@ -160,7 +180,7 @@ export class AuthService {
     if (!isExistedUser) throw { msg: 'in-valid email', status: 400 }
 
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email, type: OtpType.forgot },
+      filter: { email, type: OtpType.forgotPassword },
       projection: { _id: 1, otpCode: 1 },
       options: { lean: true },
     })

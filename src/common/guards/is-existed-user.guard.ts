@@ -13,52 +13,50 @@ class IsExistedUserGuard extends GuardActivator {
       IGetUserProfileDTO
     >(params)
 
-    const { search, id: userId } = { ...req.query, ...req.params }
-
+    const { user, id: userId } = { ...req.query, ...req.params }
     const { _id: profileId } = req.profile
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
-        $or: [
-          {
-            $and: [
-              { username: { $regex: search } },
+        ...(user
+          ? {
+              $or: [
+                {
+                  $and: [
+                    { username: { $regex: user } },
 
-              {
-                deactivatedAt: { $exists: false },
-              },
-            ],
-          },
-          {
-            $and: [
-              { fullName: { $regex: search } },
+                    {
+                      deactivatedAt: { $exists: false },
+                    },
+                  ],
+                },
+                {
+                  $and: [
+                    { fullName: { $regex: user } },
 
-              {
-                deactivatedAt: { $exists: false },
-              },
-            ],
-          },
-          {
-            $and: [
-              {
-                $and: [{ _id: userId }],
-              },
-              { deactivatedAt: { $exists: false } },
-            ],
-          },
-        ],
+                    {
+                      deactivatedAt: { $exists: false },
+                    },
+                  ],
+                },
+              ],
+            }
+          : {
+              $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
+            }),
       },
       projection: {
         password: 0,
         oldPasswords: 0,
         phone: 0,
+        'avatar.public_id': 0,
       },
       options: { lean: true },
     })
 
     if (!isExistedUser)
       return throwHttpError({
-        msg: "user doesn't exists",
+        msg: "user doesn't exist",
         status: 400,
       })
 
@@ -90,6 +88,7 @@ class IsExistedUserGuard extends GuardActivator {
             password: 0,
             oldPasswords: 0,
             phone: 0,
+            'avatar.public_id': 0,
           },
           lean: true,
         },
@@ -121,6 +120,7 @@ class IsExistedUserGuard extends GuardActivator {
           password: 0,
           oldPasswords: 0,
           phone: 0,
+          'avatar.public_id': 0,
         },
         lean: true,
       },

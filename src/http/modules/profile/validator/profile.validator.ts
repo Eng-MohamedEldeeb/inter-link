@@ -9,7 +9,7 @@ import {
 import { generalFields } from '../../../../common/validation/general-fields'
 
 export const updateProfileSchema = {
-  file: joi
+  body: joi
     .object<IUpdateProfileDTO>()
     .keys({
       fullName: generalFields.fullName,
@@ -34,6 +34,7 @@ export const changeEmailSchema = {
   body: joi
     .object<IChangeEmailDTO>()
     .keys({
+      originalEmail: generalFields.email.required(),
       newEmail: generalFields.email.required(),
       password: generalFields.password.required(),
     })
@@ -47,7 +48,7 @@ export const confirmNewEmailSchema = {
   body: joi
     .object<IConfirmNewEmailDTO>()
     .keys({
-      email: generalFields.email.required(),
+      originalEmail: generalFields.email.required(),
       otpCode: generalFields.otpCode.required(),
     })
     .required()
@@ -60,8 +61,12 @@ export const deleteAccountSchema = {
   body: joi
     .object<IDeleteAccountDTO>()
     .keys({
-      email: generalFields.email.required(),
-      password: generalFields.password.required(),
+      email: generalFields.email.required().messages({
+        'any.required': 'email is required',
+      }),
+      password: generalFields.password.required().messages({
+        'any.required': 'password is required',
+      }),
     })
     .required()
     .messages({
@@ -73,8 +78,12 @@ export const confirmDeletionSchema = {
   body: joi
     .object<IConfirmDeleteDTO>()
     .keys({
-      email: generalFields.email.required(),
-      otpCode: generalFields.otpCode.required(),
+      email: generalFields.email.required().messages({
+        'any.required': 'email is required',
+      }),
+      otpCode: generalFields.otpCode.required().messages({
+        'any.required': 'otpCode is required',
+      }),
     })
     .required()
     .messages({

@@ -7,11 +7,11 @@ import {
 } from '../dto/user.dto'
 
 export const getUserProfileSchema = {
-  params: joi
+  query: joi
     .object<IGetUserProfileDTO>()
     .keys({
       id: generalFields.mongoId,
-      search: joi.string().min(3),
+      user: joi.string().min(3),
     })
     .required()
     .messages({

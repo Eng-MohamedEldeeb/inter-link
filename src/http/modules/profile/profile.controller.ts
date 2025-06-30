@@ -16,26 +16,46 @@ import { IUser } from '../../../db/models/interfaces/IUser.interface'
 export class ProfileController {
   private static readonly ProfileService: typeof ProfileService = ProfileService
 
-  static readonly get = asyncHandler(async (req: IRequest, res: Response) => {
-    const profile: IUser = req.profile
-    return successResponse(res, {
-      msg: 'profile Picture been updated successfully',
-      status: 200,
-      data: this.ProfileService.get(profile),
-    })
-  })
+  static readonly getProfile = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const profile: IUser = req.profile
+      return successResponse(res, {
+        msg: 'Done',
+        status: 200,
+        data: this.ProfileService.getProfile(profile),
+      })
+    },
+  )
+
+  static readonly getFollowers = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const profile: IUser = req.profile
+      return successResponse(res, {
+        msg: 'Done',
+        status: 200,
+        data: this.ProfileService.getFollowers(profile),
+      })
+    },
+  )
+  static readonly getFollowing = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const profile: IUser = req.profile
+      return successResponse(res, {
+        msg: 'Done',
+        status: 200,
+        data: this.ProfileService.getFollowing(profile),
+      })
+    },
+  )
 
   static readonly updateProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
-      // const path = req.file?.path!
-
-      console.log({ file: req.file })
-
+      const path = req.file?.path!
       return successResponse(res, {
-        msg: 'profile Picture been updated successfully',
+        msg: 'profile Picture has been updated successfully',
         status: 200,
-        // data: await this.ProfileService.updateProfilePic(_id, path),
+        data: await this.ProfileService.updateProfilePic(_id, path),
       })
     },
   )
@@ -43,10 +63,10 @@ export class ProfileController {
   static readonly deleteProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
-      await this.ProfileService.deleteProfilePic(_id)
       return successResponse(res, {
-        msg: 'profile Picture been deleted successfully',
+        msg: 'profile Picture has been deleted successfully',
         status: 200,
+        data: await this.ProfileService.deleteProfilePic(_id),
       })
     },
   )
@@ -56,7 +76,7 @@ export class ProfileController {
       const updateProfileDTO: IUpdateProfileDTO = req.body
       const { _id } = req.tokenPayload
       return successResponse(res, {
-        msg: 'profile has been updated successfully',
+        msg: 'profile has has been updated successfully',
         status: 200,
         data: await this.ProfileService.updateProfile(_id, updateProfileDTO),
       })
@@ -66,10 +86,10 @@ export class ProfileController {
   static readonly changeVisibility = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
+      await this.ProfileService.changeVisibility(_id)
       return successResponse(res, {
-        msg: 'profile has been updated successfully',
+        msg: 'profile has has been updated successfully',
         status: 200,
-        data: await this.ProfileService.changeVisibility(_id),
       })
     },
   )
@@ -91,7 +111,7 @@ export class ProfileController {
       const confirmNewEmailDTO: IConfirmNewEmailDTO = req.body
       await this.ProfileService.confirmNewEmail(confirmNewEmailDTO)
       return successResponse(res, {
-        msg: 'your new e-mail has been verified successfully',
+        msg: 'your new e-mail has has been verified successfully',
         status: 200,
       })
     },
@@ -124,7 +144,7 @@ export class ProfileController {
       const confirmDeleteDTO: IConfirmDeleteDTO = req.body
       const type = await this.ProfileService.confirmDeletion(confirmDeleteDTO)
       return successResponse(res, {
-        msg: `Account has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
+        msg: `Account has has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
         status: 200,
       })
     },

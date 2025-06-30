@@ -22,10 +22,39 @@ export class UserController {
     },
   )
 
+  static readonly getUseFollowers = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const user = req.user
+      const profile = req.profile
+      if (user._id.equals(profile._id))
+        return res.redirect('/api/v1/profile/followers')
+      return successResponse(res, {
+        msg: 'done',
+        status: 200,
+        data: await this.UserService.getUseFollowers(user),
+      })
+    },
+  )
+
+  static readonly getUseFollowing = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const user = req.user
+      const profile = req.profile
+      if (user._id.equals(profile._id))
+        return res.redirect('/api/v1/profile/following')
+      return successResponse(res, {
+        msg: 'done',
+        status: 200,
+        data: await this.UserService.getUseFollowing(user),
+      })
+    },
+  )
+
   static readonly blockUser = asyncHandler(
     async (req: IRequest<IBlockUserDTO>, res: Response) => {
       const { id } = req.params
-      await this.UserService.blockUser(id)
+      const { _id: profileId } = req.profile
+      await this.UserService.blockUser(profileId, id)
       return successResponse(res, {
         msg: 'user has been blocked successfully',
         status: 200,
@@ -36,7 +65,8 @@ export class UserController {
   static readonly unblockUser = asyncHandler(
     async (req: IRequest<IUnBlockUserDTO>, res: Response) => {
       const { id } = req.params
-      await this.UserService.unblockUser(id)
+      const { _id: profileId, blockList } = req.profile
+      await this.UserService.unblockUser(profileId, id, blockList)
       return successResponse(res, {
         msg: 'user has been un-blocked successfully',
         status: 200,

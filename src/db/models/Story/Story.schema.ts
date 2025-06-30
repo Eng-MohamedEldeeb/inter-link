@@ -14,7 +14,7 @@ export const StorySchema = new Schema<IStory>(
         },
       },
     },
-    viewers: { type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] },
+    viewers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
   },
   {
     timestamps: true,
@@ -31,5 +31,5 @@ StorySchema.index(
 )
 
 StorySchema.virtual('totalViewers').get(function () {
-  return this.viewers.length
+  return this.viewers?.length
 })

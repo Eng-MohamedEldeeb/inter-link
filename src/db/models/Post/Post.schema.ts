@@ -5,11 +5,9 @@ import commentRepository from '../../../common/repositories/comment.repository'
 export const PostSchema = new Schema<IPost>(
   {
     attachments: {
-      type: {
-        folderId: String,
-        paths: {
-          type: [{ secure_url: String, public_id: String }],
-        },
+      folderId: String,
+      paths: {
+        type: [{ secure_url: String, public_id: String }],
       },
     },
 

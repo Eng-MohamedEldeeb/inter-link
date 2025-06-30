@@ -19,7 +19,7 @@ export const otpSchema = new Schema<IOtp>(
     type: {
       type: String,
       enum: Object.keys(emailSchemas),
-      default: OtpType.confirm,
+      default: OtpType.confirmRegistration,
     },
   },
   { timestamps: true },

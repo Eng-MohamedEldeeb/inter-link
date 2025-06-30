@@ -10,13 +10,14 @@ class IsAuthorizedGuard implements GuardActivator {
 
   async canActivate(...params: any[any]) {
     const contextType = ContextDetector.detect(params)
+
     if (contextType === ContextType.httpContext) {
       const { req } = ContextDetector.switchToHTTP(params)
 
       const { _id, iat } = req.tokenPayload
 
-      const isExistedUser = await this.userRepository.findById({
-        _id,
+      const isExistedUser = await this.userRepository.findOne({
+        filter: { $and: [{ _id }, { deactivatedAt: { $exists: false } }] },
         projection: { password: 0, oldPasswords: 0 },
         options: { lean: true },
       })
@@ -41,16 +42,7 @@ class IsAuthorizedGuard implements GuardActivator {
       const { _id, iat } = context.tokenPayload
 
       const isExistedUser = await this.userRepository.findOne({
-        filter: {
-          $and: [
-            {
-              _id,
-            },
-            {
-              deactivatedAt: { $exists: false },
-            },
-          ],
-        },
+        filter: { $and: [{ _id }, { deactivatedAt: { $exists: false } }] },
         projection: { password: 0, oldPasswords: 0 },
         options: { lean: true },
       })

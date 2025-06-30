@@ -6,17 +6,17 @@ import { OtpType } from '../enums/otp.enum'
 import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'
 import postRepository from '../../../common/repositories/post.repository'
 import groupRepository from '../../../common/repositories/group.repository'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const UserSchema = new Schema<IUser>(
   {
     avatar: {
-      type: {
-        secure_url: {
-          type: String,
-          default: process.env.DEFAULT_PROFILE_AVATAR_PIC,
-        },
-        public_id: String,
+      secure_url: {
+        type: String,
+        default:
+          'https://res.cloudinary.com/djjqzi02l/image/upload/v1750848008/blank-profile-picture_d3zmwj.png',
       },
+      public_id: String,
     },
 
     fullName: {
@@ -80,17 +80,15 @@ export const UserSchema = new Schema<IUser>(
 
     joinedGroups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
 
-    viewers: {
-      type: [
-        {
-          visitor: {
-            type: SchemaTypes.ObjectId,
-            ref: 'User',
-          },
-          totalVisits: Number,
+    viewers: [
+      {
+        visitor: {
+          type: SchemaTypes.ObjectId,
+          ref: 'User',
         },
-      ],
-    },
+        totalVisits: Number,
+      },
+    ],
 
     age: {
       type: Number,
@@ -100,7 +98,7 @@ export const UserSchema = new Schema<IUser>(
 
     isPrivateProfile: { type: Boolean, default: false },
 
-    deactivatedAt: { type: Date },
+    deactivatedAt: { type: Date, expires: '30d' },
   },
   {
     timestamps: true,
@@ -143,7 +141,7 @@ UserSchema.post('save', async function (res) {
   await otpRepository.findOneAndDelete({
     filter: {
       email: userDoc.email,
-      type: OtpType.confirm,
+      type: OtpType.confirmRegistration,
     },
   })
 })
@@ -161,13 +159,6 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
         },
       })
 
-    if (keys.includes('tempEmail')) {
-      await otpRepository.create({
-        email: updatedData.email,
-        type: OtpType.confirm,
-      })
-    }
-
     if (keys.includes('phone'))
       this.setUpdate({
         phone: encryptValue(updatedData.phone),
@@ -177,10 +168,13 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
   return next()
 })
 
-UserSchema.post('findOneAndDelete', async function (res: IUser, next) {
+UserSchema.post('findOneAndDelete', async function (res: IUser) {
   Promise.allSettled([
+    res.avatar.secure_url != process.env.DEFAULT_PROFILE_AVATAR_PIC &&
+      (await CloudUploader.delete(res.avatar.public_id).then(async () => {
+        await CloudUploader.deleteFolder(`${process.env.APP_NAME}/${res._id}`)
+      })),
     postRepository.deleteMany({ createdBy: res._id }),
-
     groupRepository.deleteMany({ createdBy: res._id }),
   ])
 })

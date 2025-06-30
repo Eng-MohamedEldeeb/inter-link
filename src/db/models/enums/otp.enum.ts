@@ -1,6 +1,7 @@
 export enum OtpType {
-  confirm = 'confirm',
-  forgot = 'forgot',
+  confirmRegistration = 'confirmRegistration',
+  confirmNewEmail = 'confirmNewEmail',
+  forgotPassword = 'forgotPassword',
   verifyDeletion = 'verifyDeletion',
   verifyDeactivation = 'verifyDeactivation',
 }

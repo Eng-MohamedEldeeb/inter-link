@@ -3,7 +3,6 @@ import { ContextType } from './types/async-handler.types'
 import { CloudUploader } from '../services/upload/cloud.service'
 import { ContextDetector } from './context/context-detector.decorator'
 import { throwGraphError } from '../handlers/graphql/error.handler'
-import { IRequest } from '../interface/http/IRequest.interface'
 
 export const asyncHandler = (fn: Function) => {
   return async (...params: any[any]) => {
@@ -23,14 +22,19 @@ export const asyncHandler = (fn: Function) => {
       const { req, next } = ContextDetector.switchToHTTP(params)
 
       if (contextType === ContextType.httpContext) {
-        const fileRequest = req as IRequest
+        if (req.cloudFile) {
+          await CloudUploader.delete(req.cloudFile.path.public_id)
+          await CloudUploader.deleteFolder(
+            `${process.env.APP_NAME}/${req.cloudFile.folderId}`,
+          )
+        }
 
-        if (fileRequest.cloudFiles && fileRequest.cloudFiles.paths.length) {
-          for (const file of fileRequest.cloudFiles.paths) {
+        if (req.cloudFiles && req.cloudFiles.paths.length) {
+          for (const file of req.cloudFiles.paths) {
             await CloudUploader.delete(file.public_id)
           }
           await CloudUploader.deleteFolder(
-            `${process.env.APP_NAME}/${fileRequest.cloudFiles.folderId}`,
+            `${process.env.APP_NAME}/${req.cloudFiles.folderId}`,
           )
         }
       }
