@@ -7,7 +7,7 @@ import { UserService } from './user.service'
 import { asyncHandler } from '../../../common/decorators/async-handler.decorator'
 
 export class UserController {
-  private static readonly UserService: typeof UserService = UserService
+  private static readonly UserService = UserService
 
   static readonly getUserProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -15,8 +15,6 @@ export class UserController {
       const profile = req.profile
       if (user._id.equals(profile._id)) return res.redirect('/api/v1/profile')
       return successResponse(res, {
-        msg: 'done',
-        status: 200,
         data: await this.UserService.getUserProfile(user),
       })
     },
@@ -29,8 +27,6 @@ export class UserController {
       if (user._id.equals(profile._id))
         return res.redirect('/api/v1/profile/followers')
       return successResponse(res, {
-        msg: 'done',
-        status: 200,
         data: await this.UserService.getUseFollowers(user),
       })
     },
@@ -43,8 +39,6 @@ export class UserController {
       if (user._id.equals(profile._id))
         return res.redirect('/api/v1/profile/following')
       return successResponse(res, {
-        msg: 'done',
-        status: 200,
         data: await this.UserService.getUseFollowing(user),
       })
     },
@@ -57,7 +51,6 @@ export class UserController {
       await this.UserService.blockUser(profileId, id)
       return successResponse(res, {
         msg: 'user has been blocked successfully',
-        status: 200,
       })
     },
   )
@@ -65,11 +58,10 @@ export class UserController {
   static readonly unblockUser = asyncHandler(
     async (req: IRequest<IUnBlockUserDTO>, res: Response) => {
       const { id } = req.params
-      const { _id: profileId, blockList } = req.profile
-      await this.UserService.unblockUser(profileId, id, blockList)
+      const { _id: profileId, blockedUsers } = req.profile
+      await this.UserService.unblockUser(profileId, id, blockedUsers)
       return successResponse(res, {
         msg: 'user has been un-blocked successfully',
-        status: 200,
       })
     },
   )

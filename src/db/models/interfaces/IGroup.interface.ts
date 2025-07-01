@@ -1,14 +1,14 @@
-import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export interface IGroupInputs {
   name: string
   cover: Object
-  createdBy: Types.ObjectId
+  createdBy: MongoObjId
 }
 
 export interface IGroup extends IMongoDoc, IGroupInputs {
-  posts: Types.ObjectId[]
-  followers: Types.ObjectId[]
-  admins: Types.ObjectId[]
+  posts: MongoObjId[]
+  followers: MongoObjId[]
+  admins: MongoObjId[]
 }

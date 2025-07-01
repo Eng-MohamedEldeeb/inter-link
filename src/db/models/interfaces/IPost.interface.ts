@@ -1,21 +1,22 @@
-import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
-import { ICloudFiles } from '../../../common/services/upload/interface/cloud-response.interface'
+import { ICloud } from '../../../common/services/upload/interface/cloud-response.interface'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export interface IPostInputs {
+  attachments: ICloud[]
   title: string
   content: string
-  attachments: ICloudFiles
-  // tags: Types.ObjectId[]
-  createdBy: Types.ObjectId
-  onGroup: Types.ObjectId
+  // tags: MongoObjId[]
+  onGroup: MongoObjId
 }
 
 export interface IPost extends IMongoDoc, IPostInputs {
+  createdBy: MongoObjId
+  likedBy: MongoObjId[]
   totalLikes: number
-  likedBy: Types.ObjectId[]
-  comments: Types.ObjectId[]
+  comments: MongoObjId[]
   totalComments: number
   saves: number
   shares: number
+  archivedAt: Date
 }

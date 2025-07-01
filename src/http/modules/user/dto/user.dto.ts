@@ -1,7 +1,7 @@
-import { Types } from 'mongoose'
+import { MongoObjId } from '../../../../common/types/mongo.types'
 
 export interface IGetUserProfileDTO {
-  id: Types.ObjectId
+  id: MongoObjId
   user: string
 }
 

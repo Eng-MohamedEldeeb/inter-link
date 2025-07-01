@@ -2,6 +2,7 @@ import { Types } from 'mongoose'
 import userRepository from '../../../common/repositories/user.repository'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 import { throwHttpError } from '../../../common/handlers/http/error-message.handler'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export class UserService {
   private static readonly userRepository = userRepository
@@ -16,9 +17,9 @@ export class UserService {
         _id: user._id,
         avatar: user.avatar,
         fullName: user.fullName,
-        totalPosts: user.totalPosts ?? 0,
-        totalFollowers: user.totalFollowers ?? 0,
-        totalFollowing: user.totalFollowing ?? 0,
+        totalPosts: user.posts.length ?? 0,
+        totalFollowers: user.followers.length ?? 0,
+        totalFollowing: user.following.length ?? 0,
         isPrivateProfile,
         __v: user.__v,
       }
@@ -58,8 +59,8 @@ export class UserService {
     }
   }
   static readonly blockUser = async (
-    profileId: Types.ObjectId,
-    userId: Types.ObjectId,
+    profileId: MongoObjId,
+    userId: MongoObjId,
   ) => {
     await this.userRepository.findOneAndUpdate({
       filter: {
@@ -67,7 +68,7 @@ export class UserService {
       },
       data: {
         $addToSet: {
-          blockList: userId,
+          blockedUsers: userId,
         },
       },
       options: { lean: true, new: true },
@@ -75,11 +76,11 @@ export class UserService {
   }
 
   static readonly unblockUser = async (
-    profileId: Types.ObjectId,
-    userId: Types.ObjectId,
-    profileBlockList: Types.ObjectId[],
+    profileId: MongoObjId,
+    userId: MongoObjId,
+    blockedUsers: MongoObjId[],
   ) => {
-    const isBlocked = profileBlockList.some(id => id.equals(userId))
+    const isBlocked = blockedUsers.some(id => id.equals(userId))
 
     if (!isBlocked)
       return throwHttpError({ msg: 'user is already un-blocked', status: 400 })
@@ -90,7 +91,7 @@ export class UserService {
       },
       data: {
         $pull: {
-          blockList: userId,
+          blockedUsers: userId,
         },
       },
       options: { lean: true, new: true },

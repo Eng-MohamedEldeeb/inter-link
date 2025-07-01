@@ -12,7 +12,7 @@ import {
 } from './dto/auth.dto'
 
 export class AuthController {
-  private static readonly AuthService: typeof AuthService = AuthService
+  private static readonly AuthService = AuthService
 
   static readonly confirmEmail = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -20,7 +20,6 @@ export class AuthController {
       await this.AuthService.confirmEmail(confirmEmailDTO)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
-        status: 200,
       })
     },
   )
@@ -30,6 +29,7 @@ export class AuthController {
       const registerDTO: IRegisterDTO = req.body
       return successResponse(res, {
         msg: 'user created successfully',
+        status: 201,
         data: await this.AuthService.register(registerDTO),
       })
     },
@@ -39,7 +39,6 @@ export class AuthController {
     const loginDTO: ILoginDTO = req.body
     return successResponse(res, {
       msg: 'logged in successfully',
-      status: 200,
       data: {
         accessToken: await this.AuthService.login(loginDTO),
       },
@@ -52,7 +51,6 @@ export class AuthController {
       await this.AuthService.forgotPassword(forgotPasswordDTO)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
-        status: 200,
       })
     },
   )
@@ -63,7 +61,6 @@ export class AuthController {
       await this.AuthService.resetPassword(resetPasswordDTO)
       return successResponse(res, {
         msg: 'password has been reset successfully',
-        status: 200,
       })
     },
   )

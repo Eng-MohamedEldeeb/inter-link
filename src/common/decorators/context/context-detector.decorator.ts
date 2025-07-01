@@ -1,40 +1,64 @@
 import { NextFunction, Response } from 'express'
 import { IRequest } from '../../interface/http/IRequest.interface'
-import { ContextType } from '../types/async-handler.types'
+import { ContextType } from '../enums/async-handler.types'
 import { IContext } from '../../interface/graphql/IGraphQL.types'
 import { GraphQLResolveInfo } from 'graphql'
 
 export class ContextDetector {
-  static readonly detect = (params: any[any]): ContextType => {
-    const paramsLength = params.length
+  static type: ContextType
+  protected static params: any[any]
 
-    const httpParams =
-      paramsLength == 3 &&
+  private static readonly isHttpParams = (params: any[]): boolean => {
+    return (
+      params.length === 3 &&
       'url' in params[0] &&
-      params[paramsLength - 1] instanceof Function
+      params[params.length - 1] instanceof Function
+    )
+  }
 
-    const graphParams = paramsLength === 4 && 'fieldName' in params[3]
+  private static readonly isGraphQLParams = (params: any[]): boolean => {
+    return params.length === 4 && 'fieldName' in params[3]
+  }
 
-    if (httpParams) return ContextType.httpContext
+  static readonly detect = (params: any[any]) => {
+    this.params = params
 
-    if (graphParams) return ContextType.graphContext
+    const isHttpParams = this.isHttpParams(params)
+
+    const isGraphQLParams = this.isGraphQLParams(params)
+
+    if (isHttpParams) {
+      this.type = ContextType.httpContext
+      return this
+    }
+
+    if (isGraphQLParams) {
+      this.type = ContextType.graphContext
+      return this
+    }
 
     throw new Error('Un-known Context')
   }
 
-  static readonly switchToHTTP = <P = any, Q = any>(
-    params: any[any],
-  ): { req: IRequest<P, Q>; res: Response; next: NextFunction } => {
-    const [req, res, next]: [IRequest<P, Q>, Response, NextFunction] = params
+  static readonly switchToHTTP = <P = any, Q = any>(): {
+    req: IRequest<P, Q>
+    res: Response
+    next: NextFunction
+  } => {
+    const [req, res, next]: [IRequest<P, Q>, Response, NextFunction] =
+      this.params
 
     return { req, res, next }
   }
 
-  static readonly switchToGraphQL = <A = any, C = IContext>(
-    params: any[any],
-  ): { source: any; args: A; context: C; info: GraphQLResolveInfo } => {
+  static readonly switchToGraphQL = <A = any, C = IContext>(): {
+    source: any
+    args: A
+    context: C
+    info: GraphQLResolveInfo
+  } => {
     const [source, args, context, info]: [any, A, C, GraphQLResolveInfo] =
-      params
+      this.params
 
     return { source, args, context, info }
   }

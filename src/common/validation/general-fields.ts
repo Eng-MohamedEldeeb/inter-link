@@ -41,7 +41,7 @@ export const generalFields = {
     'string.empty': "otpCode can't be empty",
   }),
 
-  title: joi.string().trim().messages({
+  content: joi.string().trim().messages({
     'string.empty': "title can't be empty",
   }),
   body: joi.string().trim().messages({

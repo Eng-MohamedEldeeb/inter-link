@@ -24,8 +24,14 @@ export abstract class DataBaseService<Inputs, TDocument> {
     projection = {},
     options = {},
     populate = [],
+    limit = 0,
+    skip = 0,
   }: IFind<Inputs> = {}): Promise<TDocument[] | []> => {
-    return await this.model.find(filter, projection, options).populate(populate)
+    return await this.model
+      .find(filter, projection, options)
+      .populate(populate)
+      .limit(limit)
+      .skip(skip)
   }
   readonly findOne = async ({
     filter = {},

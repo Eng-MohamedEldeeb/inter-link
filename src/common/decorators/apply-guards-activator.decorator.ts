@@ -1,16 +1,16 @@
 import { asyncHandler } from './async-handler.decorator'
 import { ContextDetector } from './context/context-detector.decorator'
-import { ContextType } from './types/async-handler.types'
+import { ContextType } from './enums/async-handler.types'
 import { GuardActivator } from '../guards/can-activate.guard'
 import { throwGraphError } from '../handlers/graphql/error.handler'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 
 export const applyGuardsActivator = (...activators: GuardActivator[]) => {
   return asyncHandler(async (...params: any[any]) => {
-    const contextType = ContextDetector.detect(params)
+    const ctx = ContextDetector.detect(params)
 
-    if (contextType === ContextType.httpContext) {
-      const { req, res, next } = ContextDetector.switchToHTTP(params)
+    if (ctx.type === ContextType.httpContext) {
+      const { req, res, next } = ctx.switchToHTTP()
       for (const activator of activators) {
         const result = await activator.canActivate(req, res, next)
         if (!result)
@@ -18,9 +18,8 @@ export const applyGuardsActivator = (...activators: GuardActivator[]) => {
       }
       return next()
     }
-    if (contextType === ContextType.graphContext) {
-      const { source, args, context, info } =
-        ContextDetector.switchToGraphQL(params)
+    if (ctx.type === ContextType.graphContext) {
+      const { source, args, context, info } = ctx.switchToGraphQL()
       let updatedContext = context
 
       for (const activator of activators) {

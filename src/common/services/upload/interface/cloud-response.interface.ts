@@ -4,10 +4,10 @@ export interface ICloud {
 }
 
 export interface ICloudFile {
-  folderId?: string
+  folderId: string
   path: ICloud
 }
 export interface ICloudFiles {
-  folderId?: string
+  folderId: string
   paths: ICloud[]
 }

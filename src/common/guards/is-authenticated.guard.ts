@@ -1,16 +1,16 @@
 import { verifyToken } from '../utils/security/token/token.service'
 import { GuardActivator } from './can-activate.guard'
 import { throwGraphError } from '../handlers/graphql/error.handler'
-import { ContextType } from '../decorators/types/async-handler.types'
+import { ContextType } from '../decorators/enums/async-handler.types'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 
 class IsAuthenticatedGuard implements GuardActivator {
   async canActivate(...params: any[any]) {
-    const contextType = ContextDetector.detect(params)
+    const ctx = ContextDetector.detect(params)
 
-    if (contextType === ContextType.httpContext) {
-      const { req } = ContextDetector.switchToHTTP(params)
+    if (ctx.type === ContextType.httpContext) {
+      const { req } = ctx.switchToHTTP()
 
       const { authorization } = req.headers
 
@@ -29,8 +29,8 @@ class IsAuthenticatedGuard implements GuardActivator {
       return true
     }
 
-    if (contextType === ContextType.graphContext) {
-      const { context } = ContextDetector.switchToGraphQL(params)
+    if (ctx.type === ContextType.graphContext) {
+      const { context } = ctx.switchToGraphQL()
 
       const { authorization } = context
 

@@ -1,15 +1,11 @@
 import { Schema, SchemaTypes } from 'mongoose'
 import { IPost } from '../interfaces/IPost.interface'
 import commentRepository from '../../../common/repositories/comment.repository'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const PostSchema = new Schema<IPost>(
   {
-    attachments: {
-      folderId: String,
-      paths: {
-        type: [{ secure_url: String, public_id: String }],
-      },
-    },
+    attachments: [{ secure_url: String, public_id: String }],
 
     title: {
       type: String,
@@ -36,9 +32,13 @@ export const PostSchema = new Schema<IPost>(
       ref: 'User',
       required: [true, 'createdBy is required'],
     },
+
+    archivedAt: { type: Date },
   },
   { timestamps: true },
 )
+
+PostSchema.index({ archivedAt: 1 }, { expires: '15d' })
 
 PostSchema.virtual('comments', {
   ref: 'Comment',
@@ -47,13 +47,21 @@ PostSchema.virtual('comments', {
 })
 
 PostSchema.virtual('totalLikes').get(function () {
-  return this.likedBy.length
+  return this.likedBy.length ?? 0
 })
 
 PostSchema.virtual('totalComments').get(function () {
-  return this.comments.length
+  return this.comments.length ?? 0
 })
 
 PostSchema.post('findOneAndDelete', async function (res: IPost, next) {
-  Promise.allSettled([commentRepository.deleteMany({ onPost: res._id })])
+  await commentRepository.deleteMany({ onPost: res._id })
+
+  const files = res.attachments
+
+  if (files.length) {
+    for (const file of files) {
+      await CloudUploader.delete(file.public_id)
+    }
+  }
 })

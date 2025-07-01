@@ -28,6 +28,6 @@ export const oneProfileResponse = new GraphQLObjectType({
     following: { type: new GraphQLList(GraphQLID) },
     followers: { type: new GraphQLList(GraphQLID) },
     joinedGroups: { type: new GraphQLList(GraphQLID) },
-    blockList: { type: new GraphQLList(GraphQLID) },
+    blockedUsers: { type: new GraphQLList(GraphQLID) },
   },
 })

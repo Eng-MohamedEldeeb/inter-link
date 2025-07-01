@@ -1,7 +1,8 @@
 import { Types } from 'mongoose'
+import { MongoObjId } from '../../common/types/mongo.types'
 
 export interface IMongoDoc {
-  _id: Types.ObjectId
+  _id: MongoObjId
   createdAt: Date
   updatedAt: Date
   __v: number

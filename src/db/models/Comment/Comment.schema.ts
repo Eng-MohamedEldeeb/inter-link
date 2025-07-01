@@ -35,11 +35,11 @@ CommentSchema.virtual('replies', {
 })
 
 CommentSchema.virtual('totalLikes').get(function () {
-  return this.likedBy.length
+  return this.likedBy.length ?? 0
 })
 
 CommentSchema.virtual('repliesCount').get(function () {
-  return this.replies.length
+  return this.replies.length ?? 0
 })
 // CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
 //   Promise.allSettled([

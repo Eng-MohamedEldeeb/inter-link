@@ -14,6 +14,7 @@ import {
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 import { decryptValue } from '../../../common/utils/security/crypto/crypto.service'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export class ProfileService {
   private static readonly userRepository = userRepository
@@ -21,12 +22,17 @@ export class ProfileService {
   private static readonly CloudUploader = CloudUploader
 
   static readonly getProfile = (profile: IUser) => {
+    console.log(profile)
+    console.log({ len: profile.followers.length })
+
     return {
       ...profile,
-      totalFollowers: profile.followers?.length ?? 0,
-      totalFollowing: profile.following?.length ?? 0,
+      totalFollowers: profile.followers.length ?? 0,
+      totalFollowing: profile.following.length ?? 0,
       totalPosts: profile.posts?.length ?? 0,
-      phone: decryptValue({ encryptedValue: profile.phone }),
+      ...(profile.phone && {
+        phone: decryptValue({ encryptedValue: profile.phone }),
+      }),
     }
   }
   static readonly getFollowers = (profile: IUser) => {
@@ -41,7 +47,7 @@ export class ProfileService {
   }
 
   static readonly updateProfilePic = async (
-    userId: Types.ObjectId,
+    userId: MongoObjId,
     path: string,
   ) => {
     const isExistedUser = await this.userRepository.findOne({
@@ -89,7 +95,7 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteProfilePic = async (userId: Types.ObjectId) => {
+  static readonly deleteProfilePic = async (userId: MongoObjId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
       projection: { _id: 1, avatar: 1 },
@@ -126,7 +132,7 @@ export class ProfileService {
   }
 
   static readonly updateProfile = async (
-    userId: Types.ObjectId,
+    userId: MongoObjId,
     updateProfileDTO: IUpdateProfileDTO,
   ) => {
     const { username } = updateProfileDTO
@@ -163,7 +169,7 @@ export class ProfileService {
     })
   }
 
-  static readonly changeVisibility = async (userId: Types.ObjectId) => {
+  static readonly changeVisibility = async (userId: MongoObjId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         _id: userId,
@@ -186,7 +192,7 @@ export class ProfileService {
   }
 
   static readonly changeEmail = async (
-    userId: Types.ObjectId,
+    userId: MongoObjId,
     changeEmailDTO: IChangeEmailDTO,
   ) => {
     const { originalEmail, newEmail, password } = changeEmailDTO

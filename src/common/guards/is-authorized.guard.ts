@@ -1,7 +1,7 @@
 import userRepository from '../repositories/user.repository'
 import { GuardActivator } from './can-activate.guard'
 import { throwGraphError } from '../handlers/graphql/error.handler'
-import { ContextType } from '../decorators/types/async-handler.types'
+import { ContextType } from '../decorators/enums/async-handler.types'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 
@@ -9,10 +9,10 @@ class IsAuthorizedGuard implements GuardActivator {
   private readonly userRepository = userRepository
 
   async canActivate(...params: any[any]) {
-    const contextType = ContextDetector.detect(params)
+    const ctx = ContextDetector.detect(params)
 
-    if (contextType === ContextType.httpContext) {
-      const { req } = ContextDetector.switchToHTTP(params)
+    if (ctx.type === ContextType.httpContext) {
+      const { req } = ctx.switchToHTTP()
 
       const { _id, iat } = req.tokenPayload
 
@@ -25,10 +25,12 @@ class IsAuthorizedGuard implements GuardActivator {
       if (!isExistedUser)
         return throwHttpError({ msg: 'un-authenticated user', status: 403 })
 
-      if (
+      const isPassedTokenInitiationStamp =
         iat &&
-        iat < Math.ceil(isExistedUser.changedCredentialsAt?.getTime() / 1000)
-      )
+        isExistedUser.changedCredentialsAt &&
+        iat < Math.ceil(isExistedUser.changedCredentialsAt.getTime() / 1000)
+
+      if (isPassedTokenInitiationStamp)
         return throwHttpError({ msg: 're-login is required', status: 403 })
 
       req.profile = isExistedUser
@@ -36,8 +38,8 @@ class IsAuthorizedGuard implements GuardActivator {
       return true
     }
 
-    if (contextType === ContextType.graphContext) {
-      const { context } = ContextDetector.switchToGraphQL(params)
+    if (ctx.type === ContextType.graphContext) {
+      const { context } = ctx.switchToGraphQL()
 
       const { _id, iat } = context.tokenPayload
 
@@ -49,10 +51,12 @@ class IsAuthorizedGuard implements GuardActivator {
 
       if (!isExistedUser) return throwGraphError('un-authenticated user')
 
-      if (
+      const isPassedTokenInitiationStamp =
         iat &&
-        iat < Math.ceil(isExistedUser.changedCredentialsAt?.getTime() / 1000)
-      )
+        isExistedUser.changedCredentialsAt &&
+        iat < Math.ceil(isExistedUser.changedCredentialsAt.getTime() / 1000)
+
+      if (isPassedTokenInitiationStamp)
         return throwGraphError('re-login is required')
 
       context.profile = isExistedUser

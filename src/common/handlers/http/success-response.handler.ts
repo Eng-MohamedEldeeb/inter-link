@@ -8,7 +8,7 @@ export const successResponse = (
     data,
   }: { msg?: string; status?: number; data?: object | null },
 ) => {
-  res.status(status ?? 201).json({
+  res.status(status ?? 200).json({
     success: true,
     msg: msg ?? 'done',
     ...(data && { data }),

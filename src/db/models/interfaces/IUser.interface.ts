@@ -1,6 +1,6 @@
-import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
 import { ICloud } from '../../../common/services/upload/interface/cloud-response.interface'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export interface IUserInputs {
   avatar: ICloud
@@ -12,13 +12,13 @@ export interface IUserInputs {
   password: string
   confirmPassword: string
 
-  birthDate: Date
-  phone: string
+  birthDate?: Date
+  phone?: string
 
   otpCode: string
 
-  bio: string
-  isPrivateProfile: boolean
+  bio?: string
+  isPrivateProfile?: boolean
 }
 
 export interface IUser
@@ -26,30 +26,30 @@ export interface IUser
     Omit<IUserInputs, 'confirmPassword' | 'otpCode'> {
   age: number
 
-  tempEmail: string
-  changedCredentialsAt: Date
+  tempEmail?: string
+  changedCredentialsAt?: Date
   oldPasswords: string[]
 
-  posts: Types.ObjectId[]
+  posts: MongoObjId[]
   totalPosts: number
 
-  savedPosts: Types.ObjectId[]
-  likedPosts: Types.ObjectId[]
+  savedPosts: MongoObjId[]
+  likedPosts: MongoObjId[]
 
-  following: Types.ObjectId[]
+  following: MongoObjId[]
   totalFollowing: number
 
-  followers: Types.ObjectId[]
+  followers: MongoObjId[]
   totalFollowers: number
 
   viewers: {
-    visitor: Types.ObjectId
+    visitor: MongoObjId
     totalVisits: number
   }[]
 
-  joinedGroups: Types.ObjectId[]
+  joinedGroups: MongoObjId[]
 
-  blockList: Types.ObjectId[]
+  blockedUsers: MongoObjId[]
 
-  deactivatedAt: Date
+  deactivatedAt?: Date
 }

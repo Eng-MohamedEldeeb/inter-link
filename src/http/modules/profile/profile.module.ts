@@ -29,7 +29,7 @@ router.patch(
 
 router.delete('/avatar', ProfileController.deleteProfilePic)
 
-router.post(
+router.patch(
   '/change-email',
   validate(validators.changeEmailSchema),
   ProfileController.changeEmail,

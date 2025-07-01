@@ -6,12 +6,15 @@ import {
   QueryOptions,
   Types,
 } from 'mongoose'
+import { MongoObjId } from '../../common/types/mongo.types'
 
 export interface IFind<T> {
   filter?: RootFilterQuery<T>
   projection?: ProjectionType<T>
   options?: QueryOptions<T>
   populate?: PopulateOptions[]
+  limit?: number
+  skip?: number
 }
 
 export interface IFilterQuery<T> {
@@ -31,7 +34,7 @@ export interface IFindOneAndUpdate<T> extends IFilterQuery<T> {
 export interface IFindOneAndDelete<T> extends IFilterQuery<T> {}
 
 export interface IFilterById<T> {
-  _id: Types.ObjectId
+  _id: MongoObjId
   options?: QueryOptions<T>
 }
 export interface IFindById<T> extends IFilterById<T> {

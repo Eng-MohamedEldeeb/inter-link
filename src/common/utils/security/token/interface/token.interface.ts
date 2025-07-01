@@ -1,13 +1,13 @@
 import { JwtPayload, SignOptions } from 'jsonwebtoken'
-import { Types } from 'mongoose'
+import { MongoObjId } from '../../../../types/mongo.types'
 
 export interface IPayload extends JwtPayload {
-  _id: Types.ObjectId
+  _id: MongoObjId
 }
 
 export interface IJwtArgs {
   payload: {
-    _id: Types.ObjectId
+    _id: MongoObjId
   }
   secretKey?: string
   options?: SignOptions

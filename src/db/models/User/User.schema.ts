@@ -72,7 +72,7 @@ export const UserSchema = new Schema<IUser>(
 
     followers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
-    blockList: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    blockedUsers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
     savedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
 
@@ -114,15 +114,15 @@ UserSchema.virtual('posts', {
 })
 
 UserSchema.virtual('totalPosts').get(function () {
-  return this.posts?.length
+  return this.posts.length ?? 0
 })
 
 UserSchema.virtual('totalFollowing').get(function () {
-  return this.following?.length
+  return this.following.length ?? 0
 })
 
 UserSchema.virtual('totalFollowers').get(function () {
-  return this.followers?.length
+  return this.followers.length ?? 0
 })
 
 UserSchema.virtual('birthDate').set(function (v) {
@@ -131,7 +131,7 @@ UserSchema.virtual('birthDate').set(function (v) {
 
 UserSchema.pre('save', async function (next) {
   if (this.isModified('password')) this.password = hashValue(this.password)
-  if (this.isModified('phone')) this.phone = encryptValue(this.phone)
+  if (this.isModified('phone')) this.phone = encryptValue(this.phone!)
 
   return next()
 })

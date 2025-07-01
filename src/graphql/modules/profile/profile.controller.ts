@@ -3,7 +3,7 @@ import { applyResolver } from '../../../common/decorators/graphql/apply-resolver
 import { IQueryController } from '../../../common/interface/graphql/IGraphQL.types'
 import { responseType } from '../../../common/handlers/graphql/response-type.handler'
 import { oneProfileResponse } from './types/profile-response.types'
-import { applyGuardsActivator } from '../../../common/decorators/apply-activators.decorator'
+import { applyGuardsActivator } from '../../../common/decorators/apply-guards-activator.decorator'
 import isAuthenticatedGuard from '../../../common/guards/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/is-authorized.guard'
 

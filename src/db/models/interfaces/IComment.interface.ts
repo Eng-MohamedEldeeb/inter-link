@@ -1,16 +1,16 @@
-import { Types } from 'mongoose'
 import { IMongoDoc } from '../../interface/mongo-doc.interface'
+import { MongoObjId } from '../../../common/types/mongo.types'
 
 export interface ICommentInputs {
-  onPost: Types.ObjectId
+  onPost: MongoObjId
   content: string
-  createdBy: Types.ObjectId
-  replyingTo: Types.ObjectId
+  createdBy: MongoObjId
+  replyingTo: MongoObjId
 }
 
 export interface IComment extends IMongoDoc, ICommentInputs {
-  likedBy: Types.ObjectId[]
+  likedBy: MongoObjId[]
   totalLikes: number
-  replies: Types.ObjectId[]
+  replies: MongoObjId[]
   repliesCount: number
 }

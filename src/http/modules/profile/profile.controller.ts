@@ -14,14 +14,12 @@ import { IRequest } from '../../../common/interface/http/IRequest.interface'
 import { IUser } from '../../../db/models/interfaces/IUser.interface'
 
 export class ProfileController {
-  private static readonly ProfileService: typeof ProfileService = ProfileService
+  private static readonly ProfileService = ProfileService
 
   static readonly getProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
       const profile: IUser = req.profile
       return successResponse(res, {
-        msg: 'Done',
-        status: 200,
         data: this.ProfileService.getProfile(profile),
       })
     },
@@ -31,18 +29,15 @@ export class ProfileController {
     async (req: IRequest, res: Response) => {
       const profile: IUser = req.profile
       return successResponse(res, {
-        msg: 'Done',
-        status: 200,
         data: this.ProfileService.getFollowers(profile),
       })
     },
   )
+
   static readonly getFollowing = asyncHandler(
     async (req: IRequest, res: Response) => {
       const profile: IUser = req.profile
       return successResponse(res, {
-        msg: 'Done',
-        status: 200,
         data: this.ProfileService.getFollowing(profile),
       })
     },
@@ -54,7 +49,6 @@ export class ProfileController {
       const path = req.file?.path!
       return successResponse(res, {
         msg: 'profile Picture has been updated successfully',
-        status: 200,
         data: await this.ProfileService.updateProfilePic(_id, path),
       })
     },
@@ -65,7 +59,6 @@ export class ProfileController {
       const { _id } = req.tokenPayload
       return successResponse(res, {
         msg: 'profile Picture has been deleted successfully',
-        status: 200,
         data: await this.ProfileService.deleteProfilePic(_id),
       })
     },
@@ -77,7 +70,6 @@ export class ProfileController {
       const { _id } = req.tokenPayload
       return successResponse(res, {
         msg: 'profile has has been updated successfully',
-        status: 200,
         data: await this.ProfileService.updateProfile(_id, updateProfileDTO),
       })
     },
@@ -89,7 +81,6 @@ export class ProfileController {
       await this.ProfileService.changeVisibility(_id)
       return successResponse(res, {
         msg: 'profile has has been updated successfully',
-        status: 200,
       })
     },
   )
@@ -101,7 +92,6 @@ export class ProfileController {
       await this.ProfileService.changeEmail(_id, changeEmailDTO)
       return successResponse(res, {
         msg: 'check your e-mail for verification',
-        status: 200,
       })
     },
   )
@@ -112,7 +102,6 @@ export class ProfileController {
       await this.ProfileService.confirmNewEmail(confirmNewEmailDTO)
       return successResponse(res, {
         msg: 'your new e-mail has has been verified successfully',
-        status: 200,
       })
     },
   )
@@ -123,7 +112,6 @@ export class ProfileController {
       await this.ProfileService.deactivateAccount(deleteAccountDTO)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
-        status: 200,
       })
     },
   )
@@ -134,7 +122,6 @@ export class ProfileController {
       await this.ProfileService.deleteAccount(deleteAccountDTO)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
-        status: 200,
       })
     },
   )
@@ -145,7 +132,6 @@ export class ProfileController {
       const type = await this.ProfileService.confirmDeletion(confirmDeleteDTO)
       return successResponse(res, {
         msg: `Account has has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
-        status: 200,
       })
     },
   )
