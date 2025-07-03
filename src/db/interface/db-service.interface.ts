@@ -6,7 +6,7 @@ import {
   QueryOptions,
   Types,
 } from 'mongoose'
-import { MongoObjId } from '../../common/types/mongo.types'
+import { MongoObjId } from '../../common/types/db/mongo.types'
 
 export interface IFind<T> {
   filter?: RootFilterQuery<T>

@@ -6,8 +6,8 @@ import cors from 'cors'
 import helmet from 'helmet'
 import { helmetOptions } from './common/utils/security/helmet/helmet-config'
 
-import httpModule from './http/http.module'
-import graphqlModule from './graphql/graphql.module'
+import httpModule from './modules/http.module'
+import graphqlModule from './modules/graphql.module'
 
 import { unknownURL } from './common/handlers/http/unknown-url.handler'
 import { globalError } from './common/handlers/http/global-error.handler'

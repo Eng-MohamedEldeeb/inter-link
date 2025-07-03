@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express'
 import { IRequest } from '../../interface/http/IRequest.interface'
 import { ContextType } from '../enums/async-handler.types'
-import { IContext } from '../../interface/graphql/IGraphQL.types'
+import { IContext } from '../../interface/graphql/IGraphQL.interface'
 import { GraphQLResolveInfo } from 'graphql'
 
 export class ContextDetector {

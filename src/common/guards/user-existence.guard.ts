@@ -1,4 +1,4 @@
-import { IGetUserProfileDTO } from '../../http/modules/user/dto/user.dto'
+import { IGetUserProfileDTO } from '../../modules/user/dto/user.dto'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { ContextType } from '../decorators/enums/async-handler.types'
 import { throwHttpError } from '../handlers/http/error-message.handler'
@@ -69,16 +69,16 @@ class UserExistenceGuard extends GuardActivator {
         return true
       }
 
-      const checkViewers = isExistedUser.viewers?.some(({ visitor }) =>
-        visitor.equals(profileId),
+      const checkviewers = isExistedUser.viewers?.some(({ viewer }) =>
+        viewer.equals(profileId),
       )
 
-      if (checkViewers) {
+      if (checkviewers) {
         const updatedViews = await this.userRepository.findOneAndUpdate({
           filter: {
             $and: [
               { _id: isExistedUser._id },
-              { 'viewers.visitor': profileId },
+              { 'viewers.viewer': profileId },
               { deactivatedAt: { $exists: false } },
             ],
           },
@@ -113,7 +113,7 @@ class UserExistenceGuard extends GuardActivator {
         data: {
           $push: {
             viewers: {
-              visitor: profileId,
+              viewer: profileId,
               totalVisits: 1,
             },
           },

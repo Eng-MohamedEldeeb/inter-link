@@ -1,5 +1,5 @@
 import { Schema, SchemaTypes } from 'mongoose'
-import { IGroup } from '../interfaces/IGroup.interface'
+import { IGroup } from '../../interface/IGroup.interface'
 
 export const GroupSchema = new Schema<IGroup>(
   {

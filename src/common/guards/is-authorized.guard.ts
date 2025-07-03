@@ -46,6 +46,7 @@ class IsAuthorizedGuard implements GuardActivator {
       const isExistedUser = await this.userRepository.findOne({
         filter: { $and: [{ _id }, { deactivatedAt: { $exists: false } }] },
         projection: { password: 0, oldPasswords: 0 },
+        populate: [{ path: 'posts' }],
         options: { lean: true },
       })
 

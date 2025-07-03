@@ -1,5 +1,5 @@
 import { Schema, SchemaTypes } from 'mongoose'
-import { IStory } from '../interfaces/IStory.interface'
+import { IStory } from '../../interface/IStory.interface'
 
 export const StorySchema = new Schema<IStory>(
   {
@@ -30,6 +30,6 @@ StorySchema.index(
   },
 )
 
-StorySchema.virtual('totalViewers').get(function () {
+StorySchema.virtual('totalviewers').get(function () {
   return this.viewers.length ?? 0
 })

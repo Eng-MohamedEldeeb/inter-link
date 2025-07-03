@@ -1,7 +1,7 @@
-import { IPost } from '../../db/models/interfaces/IPost.interface'
+import { IPost } from '../../db/interface/IPost.interface'
 import { Model } from 'mongoose'
 import { DataBaseService } from './db-service.repository'
-import { TPost } from '../../db/models/types/document.type'
+import { TPost } from '../../db/types/document.type'
 import { PostModel } from '../../db/models/Post/Post.model'
 
 class PostRepository extends DataBaseService<IPost, TPost> {

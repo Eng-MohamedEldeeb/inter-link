@@ -1,4 +1,4 @@
-import { IGetSinglePostDTO } from '../../http/modules/post/dto/post.dto'
+import { IGetSinglePostDTO } from '../../modules/post/dto/post.dto'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { ContextType } from '../decorators/enums/async-handler.types'
 import { throwHttpError } from '../handlers/http/error-message.handler'

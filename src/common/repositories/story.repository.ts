@@ -1,7 +1,7 @@
-import { IStory } from '../../db/models/interfaces/IStory.interface'
+import { IStory } from '../../db/interface/IStory.interface'
 import { Model } from 'mongoose'
 import { DataBaseService } from './db-service.repository'
-import { TStory } from '../../db/models/types/document.type'
+import { TStory } from '../../db/types/document.type'
 import { StoryModel } from '../../db/models/Story/Story.model'
 
 class StoryRepository extends DataBaseService<IStory, TStory> {

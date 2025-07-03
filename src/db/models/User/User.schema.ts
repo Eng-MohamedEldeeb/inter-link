@@ -1,5 +1,5 @@
 import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
-import { IUser } from '../interfaces/IUser.interface'
+import { IUser } from '../../interface/IUser.interface'
 import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
 import otpRepository from '../../../common/repositories/otp.repository'
 import { OtpType } from '../enums/otp.enum'
@@ -82,7 +82,7 @@ export const UserSchema = new Schema<IUser>(
 
     viewers: [
       {
-        visitor: {
+        viewer: {
           type: SchemaTypes.ObjectId,
           ref: 'User',
         },
@@ -114,15 +114,15 @@ UserSchema.virtual('posts', {
 })
 
 UserSchema.virtual('totalPosts').get(function () {
-  return this.posts.length ?? 0
+  return this.posts?.length ?? 0
 })
 
 UserSchema.virtual('totalFollowing').get(function () {
-  return this.following.length ?? 0
+  return this.following?.length ?? 0
 })
 
 UserSchema.virtual('totalFollowers').get(function () {
-  return this.followers.length ?? 0
+  return this.followers?.length ?? 0
 })
 
 UserSchema.virtual('birthDate').set(function (v) {

@@ -1,5 +1,5 @@
 import { JwtPayload, SignOptions } from 'jsonwebtoken'
-import { MongoObjId } from '../../../../types/mongo.types'
+import { MongoObjId } from '../../../../types/db/mongo.types'
 
 export interface IPayload extends JwtPayload {
   _id: MongoObjId

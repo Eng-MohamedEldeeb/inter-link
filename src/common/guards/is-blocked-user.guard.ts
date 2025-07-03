@@ -1,10 +1,10 @@
 import { Types } from 'mongoose'
-import { IGetUserProfileDTO } from '../../http/modules/user/dto/user.dto'
+import { IGetUserProfileDTO } from '../../modules/user/dto/user.dto'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { throwHttpError } from '../handlers/http/error-message.handler'
 import { GuardActivator } from './can-activate.guard'
 import { ContextType } from '../decorators/enums/async-handler.types'
-import { MongoObjId } from '../types/mongo.types'
+import { MongoObjId } from '../types/db/mongo.types'
 
 class IsBlockedUserGuard extends GuardActivator {
   canActivate(...params: any[any]) {
