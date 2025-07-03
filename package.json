@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "chalk": "^5.4.1",
     "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",

@@ -113,3 +113,5 @@ export const profileFields: ObjFields<
 
   isPrivateProfile: { type: userFields.isPrivateProfile },
 }
+
+export const userProfileFields = profileFields

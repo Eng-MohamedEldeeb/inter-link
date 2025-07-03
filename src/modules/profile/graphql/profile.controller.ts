@@ -1,4 +1,7 @@
-import { ProfileResolver } from './profile.resolver'
+import {
+  ProfileQueryResolver,
+  ProfileMutationResolver,
+} from './profile.resolver'
 import { applyResolver } from '../../../common/decorators/graphql/apply-resolver.decorator'
 
 import {
@@ -18,7 +21,8 @@ import { validate } from '../../../common/middlewares/validation.middleware'
 import * as validators from '../validator/profile.validator'
 
 export class ProfileController {
-  private static readonly ProfileResolver = ProfileResolver
+  private static readonly ProfileQueryResolver = ProfileQueryResolver
+  private static readonly ProfileMutationResolver = ProfileMutationResolver
   // Queries:
   static readonly getProfile = (): IQueryController => {
     return {
@@ -28,7 +32,7 @@ export class ProfileController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileResolver.getProfile,
+        resolver: this.ProfileQueryResolver.getProfile,
       }),
     }
   }
@@ -41,7 +45,7 @@ export class ProfileController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileResolver.getFollowers,
+        resolver: this.ProfileQueryResolver.getFollowers,
       }),
     }
   }
@@ -54,7 +58,7 @@ export class ProfileController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileResolver.getFollowing,
+        resolver: this.ProfileQueryResolver.getFollowing,
       }),
     }
   }
@@ -70,7 +74,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.updateProfileSchema)],
-        resolver: this.ProfileResolver.updateProfile,
+        resolver: this.ProfileMutationResolver.updateProfile,
       }),
     }
   }
@@ -82,7 +86,7 @@ export class ProfileController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileResolver.changeVisibility,
+        resolver: this.ProfileMutationResolver.changeVisibility,
       }),
     }
   }
@@ -96,7 +100,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.changeEmailSchema)],
-        resolver: this.ProfileResolver.changeEmail,
+        resolver: this.ProfileMutationResolver.changeEmail,
       }),
     }
   }
@@ -110,7 +114,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.confirmNewEmailSchema)],
-        resolver: this.ProfileResolver.confirmNewEmail,
+        resolver: this.ProfileMutationResolver.confirmNewEmail,
       }),
     }
   }
@@ -122,7 +126,7 @@ export class ProfileController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileResolver.deleteProfilePic,
+        resolver: this.ProfileMutationResolver.deleteProfilePic,
       }),
     }
   }
@@ -136,7 +140,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.deleteAccountSchema)],
-        resolver: this.ProfileResolver.deactivateAccount,
+        resolver: this.ProfileMutationResolver.deactivateAccount,
       }),
     }
   }
@@ -150,7 +154,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.deleteAccountSchema)],
-        resolver: this.ProfileResolver.deleteAccount,
+        resolver: this.ProfileMutationResolver.deleteAccount,
       }),
     }
   }
@@ -164,7 +168,7 @@ export class ProfileController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.confirmDeletionSchema)],
-        resolver: this.ProfileResolver.confirmDeletion,
+        resolver: this.ProfileMutationResolver.confirmDeletion,
       }),
     }
   }

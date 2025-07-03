@@ -1,10 +1,13 @@
 import { Router } from 'express'
-import { validate } from '../../common/middlewares/validation.middleware'
-import * as validators from './validator/user.validator'
+
+import { validate } from '../../../common/middlewares/validation.middleware'
+import * as validators from '../validator/user.validator'
+
 import { UserController } from './user.controller'
-import { applyGuards } from '../../common/decorators/apply-guards-activator.decorator'
-import UserExistenceGuard from '../../common/guards/user-existence.guard'
-import isBlockedUserGuard from '../../common/guards/is-blocked-user.guard'
+
+import { applyGuards } from '../../../common/decorators/apply-guards-activator.decorator'
+import UserExistenceGuard from '../../../common/guards/user-existence.guard'
+import isBlockedUserGuard from '../../../common/guards/is-blocked-user.guard'
 
 const router: Router = Router({ mergeParams: true })
 

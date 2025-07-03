@@ -31,7 +31,9 @@ export interface IResolver {
   resolve: (s: any, args: any, context: any, info: any) => any
 }
 
-export interface IQueryController extends IResolver {}
+export interface IQueryController extends IResolver {
+  args?: GraphQLFieldConfigArgumentMap
+}
 
 export interface IMutationController extends IResolver {
   args: GraphQLFieldConfigArgumentMap

@@ -5,6 +5,6 @@ export interface IGetUserProfileDTO {
   user: string
 }
 
-export interface IBlockUserDTO extends IGetUserProfileDTO {}
+export interface IBlockUserDTO extends Pick<IGetUserProfileDTO, 'id'> {}
 
 export interface IUnBlockUserDTO extends IGetUserProfileDTO {}

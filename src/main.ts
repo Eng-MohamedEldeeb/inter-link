@@ -2,13 +2,14 @@ import { Server } from 'node:http'
 import express from 'express'
 import { bootstrap } from './app.module'
 import { wsBootStrap } from './web-socket/ws.module'
+import chalk from 'chalk'
 
 const app: express.Express = express()
 const port: number = Number(process.env.PORT) ?? 3001
 
 bootstrap(app).then(() => {
   const server: Server = app.listen(port, () =>
-    console.log('app is running on port =>', port),
+    console.log(chalk.blue('app is running on port =>', chalk.yellow(port))),
   )
 
   wsBootStrap(server)

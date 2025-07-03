@@ -3,7 +3,6 @@ import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/graphql/IGraphQL.interface'
-import { IUser } from '../../../db/interface/IUser.interface'
 import {
   IChangeEmailDTO,
   IConfirmDeleteDTO,
@@ -13,14 +12,14 @@ import {
 } from '../dto/profile.dto'
 import { OtpType } from '../../../db/models/enums/otp.enum'
 
-export class ProfileResolver {
+export class ProfileQueryResolver {
   protected static readonly ProfileService = ProfileService
 
   static readonly getProfile = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
-    const profile: IUser = context.profile
+    const profile = context.profile
     return {
       msg: 'done',
       status: 200,
@@ -32,7 +31,7 @@ export class ProfileResolver {
     _: any,
     context: IContext,
   ): ISuccessResponse => {
-    const profile: IUser = context.profile
+    const profile = context.profile
     return {
       msg: 'done',
       status: 200,
@@ -44,19 +43,23 @@ export class ProfileResolver {
     _: any,
     context: IContext,
   ): ISuccessResponse => {
-    const profile: IUser = context.profile
+    const profile = context.profile
     return {
       msg: 'done',
       status: 200,
       data: this.ProfileService.getFollowing(profile),
     }
   }
+}
+
+export class ProfileMutationResolver {
+  protected static readonly ProfileService = ProfileService
 
   static readonly updateProfile = async (
     args: IUpdateProfileDTO,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id }: IUser = context.profile
+    const { _id } = context.profile
     const updateProfileDTO = args
     return {
       msg: 'Profile has has been updated successfully',

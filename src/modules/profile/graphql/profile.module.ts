@@ -1,9 +1,9 @@
-import { GraphQLObjectType } from 'graphql'
 import { ProfileController } from './profile.controller'
+import { returnedType } from '../../../common/decorators/graphql/returned-type.decorator'
 
 export const queryModule = (() => {
   return {
-    type: new GraphQLObjectType({
+    type: returnedType({
       name: 'profileQuery',
       fields: {
         getProfile: ProfileController.getProfile(),
@@ -17,7 +17,7 @@ export const queryModule = (() => {
 
 export const mutationModule = (() => {
   return {
-    type: new GraphQLObjectType({
+    type: returnedType({
       name: 'profileMutation',
       fields: {
         updateProfile: ProfileController.updateProfile(),

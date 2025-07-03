@@ -39,28 +39,20 @@ export const asyncHandler = (fn: Function) => {
         }
       }
 
-      if (error instanceof TokenExpiredError) {
-        console.log(error)
+      if (error instanceof TokenExpiredError)
         return ctx.type === ContextType.httpContext
           ? next({ msg: 'Token is expired', status: 400 })
           : throwGraphError(error.message)
-      }
       if (error instanceof JsonWebTokenError) {
-        console.log(error)
         return ctx.type === ContextType.httpContext
           ? next({ msg: 'in-valid token', status: 400 })
           : throwGraphError(error.message)
       }
 
-      if (error instanceof Error) {
-        console.log(error)
-
+      if (error instanceof Error)
         return ctx.type === ContextType.httpContext
           ? next(error)
           : throwGraphError(error.message)
-      }
-
-      console.log(error)
 
       return next(error)
     }
