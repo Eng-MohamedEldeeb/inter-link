@@ -1,14 +1,14 @@
 import { Response } from 'express'
-import { asyncHandler } from '../../common/decorators/async-handler.decorator'
-import { IRequest } from '../../common/interface/http/IRequest.interface'
-import { PostService } from './post.service'
-import { successResponse } from '../../common/handlers/http/success-response.handler'
+import { asyncHandler } from '../../../common/decorators/async-handler.decorator'
+import { IRequest } from '../../../common/interface/http/IRequest.interface'
+import { PostService } from './../post.service'
+import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import {
   ICreatePostDTO,
   IEditPostDTO,
   IGetAllDTO,
   IGetSinglePostDTO,
-} from './dto/post.dto'
+} from './../dto/post.dto'
 
 export class PostController {
   private static readonly PostService = PostService

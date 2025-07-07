@@ -1,15 +1,15 @@
 import { Router } from 'express'
 
-import { validate } from '../../common/middlewares/validation.middleware'
-import * as validators from './validators/post.validators'
+import { validate } from './../../../common/middlewares/validation.middleware'
+import * as validators from './../validators/post.validators'
 
 import { PostController } from './post.controller'
-import { fileReader } from '../../common/utils/multer/file-reader'
-import { uploadAttachments } from '../../common/middlewares/http/upload-attachments.middleware'
+import { fileReader } from './../../../common/utils/multer/file-reader'
+import { uploadAttachments } from './../../../common/middlewares/http/upload-attachments.middleware'
 
-import { applyGuards } from '../../common/decorators/apply-guards-activator.decorator'
-import PostExistenceGuard from '../../common/guards/post-existence.guard'
-import postAuthorizationGuard from '../../common/guards/post-authorization.guard'
+import { applyGuards } from './../../../common/decorators/apply-guards-activator.decorator'
+import PostExistenceGuard from './../../../common/guards/post-existence.guard'
+import postAuthorizationGuard from './../../../common/guards/post-authorization.guard'
 
 const router: Router = Router()
 
