@@ -21,6 +21,7 @@ export const mutationModule = (() => {
       fields: {
         edit: PostController.edit(),
         save: PostController.save(),
+        shared: PostController.shared(),
         archive: PostController.archive(),
         restore: PostController.restore(),
         deletePost: PostController.deletePost(),

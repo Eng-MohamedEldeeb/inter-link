@@ -20,11 +20,12 @@ class PostExistenceGuard extends GuardActivator {
       const { id } = { ...req.params, ...req.query }
       const isExistedPost = await this.postRepository.findOne({
         filter: { _id: id },
+        projection: { saves: 0 },
       })
 
       if (!isExistedPost)
         return throwError({
-          msg: 'In-Existent Post or In-valid Id',
+          msg: 'Un-Existed Post or In-valid Id',
           status: 404,
         })
 
@@ -41,7 +42,7 @@ class PostExistenceGuard extends GuardActivator {
 
       if (!isExistedPost)
         return throwError({
-          msg: 'In-Existent Post or In-valid Id',
+          msg: 'Un-Existed Post or In-valid Id',
           status: 404,
         })
 

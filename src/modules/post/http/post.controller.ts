@@ -35,6 +35,7 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const { paths } = req.cloudFiles
+
       const createPostDTO: ICreatePostDTO = req.body
       return successResponse(res, {
         status: 201,
@@ -65,6 +66,24 @@ export class PostController {
       msg: 'Post has been Saved successfully',
     })
   })
+
+  static readonly shared = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { _id: profileId } = req.profile
+      const { _id: postId, createdBy } = req.post
+
+      if (createdBy.equals(profileId))
+        return successResponse(res, {
+          msg: 'Done',
+        })
+
+      await this.PostService.shared(postId)
+
+      return successResponse(res, {
+        msg: "Post's shares count been updated successfully",
+      })
+    },
+  )
 
   static readonly archive = asyncHandler(
     async (req: IRequest, res: Response) => {

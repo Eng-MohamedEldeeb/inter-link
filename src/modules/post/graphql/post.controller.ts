@@ -15,6 +15,7 @@ import { PostMutationResolver, PostQueryResolver } from './post.resolver'
 import { PostResponse } from './types/post-response.type'
 
 import * as args from './types/post-args.type'
+import postAuthorizationGuard from '../../../common/guards/post-authorization.guard'
 
 export class PostController {
   private static readonly PostQueryResolver = PostQueryResolver
@@ -58,7 +59,12 @@ export class PostController {
       }),
       args: args.edit,
       resolve: applyResolver({
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          postExistenceGuard,
+          postAuthorizationGuard,
+        ],
         resolver: this.PostMutationResolver.edit,
       }),
     }
@@ -73,6 +79,24 @@ export class PostController {
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.PostMutationResolver.save,
+      }),
+    }
+  }
+
+  static readonly shared = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'sharedMutation',
+      }),
+      args: args.shared,
+      resolve: applyResolver({
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          postExistenceGuard,
+          postAuthorizationGuard,
+        ],
+        resolver: this.PostMutationResolver.shared,
       }),
     }
   }

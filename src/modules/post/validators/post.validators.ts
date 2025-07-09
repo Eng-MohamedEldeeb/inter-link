@@ -132,7 +132,7 @@ export const saveValidator = {
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'savePost id query param is required',
+        'any.required': '[id] query param is required',
         '"object.unknown"': 'only [id] query param is allowed',
       }),
     }
@@ -142,6 +142,32 @@ export const saveValidator = {
     return {
       args: this.schema.required().messages({
         'any.required': 'savePost id arg is required',
+      }),
+    }
+  },
+}
+
+export const sharedValidator = {
+  schema: joi
+    .object<IGetSinglePostDTO>()
+    .keys({
+      id: generalFields.mongoId.required(),
+    })
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] query param is required',
+        '"object.unknown"': 'only [id] query param is allowed',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
       }),
     }
   },

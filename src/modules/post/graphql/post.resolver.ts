@@ -39,6 +39,7 @@ export class PostMutationResolver {
       data: this.PostService.edit({ postId, editPostDTO: args }),
     }
   }
+
   static readonly save = async (_: any, context: IContext) => {
     const { _id: profileId } = context.profile
     const { _id: postId } = context.post
@@ -49,6 +50,17 @@ export class PostMutationResolver {
       data: this.PostService.save({ postId, profileId }),
     }
   }
+
+  static readonly shared = async (_: any, context: IContext) => {
+    const { _id: postId } = context.post
+
+    return {
+      msg: "Post's shares count been updated successfully",
+      status: 200,
+      data: this.PostService.shared(postId),
+    }
+  }
+
   static readonly archive = async (_: any, context: IContext) => {
     const { _id: postId } = context.post
 

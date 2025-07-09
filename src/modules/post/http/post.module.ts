@@ -43,9 +43,16 @@ router.patch(
 
 router.post(
   '/save',
-  validate(validators.archiveValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  validate(validators.saveValidator.http()),
+  applyGuards(PostExistenceGuard),
   PostController.save,
+)
+
+router.post(
+  '/shared',
+  validate(validators.sharedValidator.http()),
+  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  PostController.shared,
 )
 
 router.patch(

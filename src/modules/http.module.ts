@@ -31,7 +31,7 @@ router.use(
 
 router.use(
   '/post',
-  applyRateLimiter({ skipSuccessfulRequests: true }),
+  applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   postModule,
 )

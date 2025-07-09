@@ -18,7 +18,7 @@ export class PostService {
 
     const posts = await this.postRepository.find({
       filter: { archivedAt: { $exists: false } },
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { createdAt: -1 }, projection: { saves: 0 } },
       skip,
       limit: limitQuery,
     })
@@ -47,7 +47,7 @@ export class PostService {
       filter: {
         $and: [{ archivedAt: { $exists: false } }, { saves: profileId }],
       },
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { createdAt: -1 }, projection: { saves: 0 } },
       skip,
       limit: limitQuery,
     })
@@ -101,22 +101,24 @@ export class PostService {
   }) => {
     await this.postRepository.findOneAndUpdate({
       filter: {
-        $and: [{ _id: postId }, { deactivatedAt: { $exists: false } }],
+        $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: {
         $push: { saves: profileId },
         $inc: { totalSaves: 1 },
       },
     })
+  }
 
-    // await this.userRepository.findOneAndUpdate({
-    //   filter: {
-    //     $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
-    //   },
-    //   data: {
-    //     $addToSet: { savedPosts: postId },
-    //   },
-    // })
+  static readonly shared = async (postId: MongoId) => {
+    await this.postRepository.findOneAndUpdate({
+      filter: {
+        $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
+      },
+      data: {
+        $inc: { shares: 1 },
+      },
+    })
   }
 
   static readonly archive = async (postId: MongoId) => {
@@ -143,7 +145,7 @@ export class PostService {
     return isRestored
       ? isRestored
       : throwError({
-          msg: 'In-Existent Post or In-valid Id',
+          msg: 'Un-Existed Post or In-valid Id',
           status: 404,
         })
   }
