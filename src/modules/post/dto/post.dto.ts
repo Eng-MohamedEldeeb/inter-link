@@ -1,4 +1,4 @@
-import { MongoObjId } from '../../../common/types/db/mongo.types'
+import { MongoId } from '../../../common/types/db/db.types'
 import { IPostInputs } from '../../../db/interface/IPost.interface'
 
 export interface IGetAllDTO {
@@ -7,7 +7,7 @@ export interface IGetAllDTO {
 }
 
 export interface IGetSinglePostDTO {
-  id: MongoObjId
+  id: MongoId
 }
 
 export interface ICreatePostDTO extends IPostInputs {}

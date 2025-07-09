@@ -1,4 +1,4 @@
-import { GraphQLNonNull, GraphQLString } from 'graphql'
+import { GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
 import { argsType } from '../../../../common/decorators/graphql/returned-type.decorator'
 import { userFields } from '../../../../common/types/graphql/graphql-fields.types'
 import {
@@ -8,6 +8,12 @@ import {
   IDeleteAccountDTO,
   IUpdateProfileDTO,
 } from '../../dto/profile.dto'
+import { IGetAllDTO } from '../../../post/dto/post.dto'
+
+export const getAllSavedPosts = argsType<IGetAllDTO>({
+  page: { type: GraphQLInt },
+  limit: { type: GraphQLInt },
+})
 
 export const updateProfile = argsType<IUpdateProfileDTO>({
   username: { type: userFields.username },

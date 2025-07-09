@@ -64,6 +64,20 @@ export class ProfileController {
     }
   }
 
+  static readonly getAllSavedPosts = (): IQueryController => {
+    return {
+      type: returnedResponseType({
+        name: 'getAllSavedPostsQuery',
+        data: ProfileResponse.getAllSavedPosts(),
+      }),
+      args: args.getAllSavedPosts,
+      resolve: applyResolver({
+        guards: [isAuthenticatedGuard, isAuthorizedGuard],
+        resolver: this.ProfileQueryResolver.getAllSavedPosts,
+      }),
+    }
+  }
+
   // Mutations:
   static readonly updateProfile = (): IMutationController => {
     return {

@@ -41,7 +41,7 @@ class IsAuthorizedGuard implements GuardActivator {
         ],
       },
       projection: { password: 0, oldPasswords: 0 },
-      options: { lean: true },
+      populate: [{ path: 'posts' }],
     })
 
     if (!isExistedUser)

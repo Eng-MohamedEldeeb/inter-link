@@ -26,7 +26,8 @@ export const postFields: ObjFields<Omit<IPost, '__v'>> = {
   comments: { type: new GraphQLList(GraphQLID) },
   archivedAt: { type: DateType },
   onGroup: { type: GraphQLID },
-  saves: { type: GraphQLInt },
+  saves: { type: new GraphQLList(GraphQLID) },
+  totalSaves: { type: GraphQLInt },
   shares: { type: GraphQLInt },
 }
 

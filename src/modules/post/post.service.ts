@@ -1,12 +1,13 @@
+import { MongoId } from './../../common/types/db/db.types'
 import postRepository from '../../common/repositories/post.repository'
+import userRepository from '../../common/repositories/user.repository'
 import { ICreatePostDTO, IEditPostDTO, IGetAllDTO } from './dto/post.dto'
 import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
-import { MongoObjId } from '../../common/types/db/mongo.types'
 import { throwError } from '../../common/handlers/error-message.handler'
-import { IPost } from '../../db/interface/IPost.interface'
 
 export class PostService {
   private static readonly postRepository = postRepository
+  private static readonly userRepository = userRepository
 
   static readonly getAll = async (query: IGetAllDTO) => {
     const { page, limit } = query
@@ -29,26 +30,59 @@ export class PostService {
     }
   }
 
-  static readonly getSingle = (post: IPost) => {
-    return post
+  static readonly getAllSavedPosts = async ({
+    profileId,
+    query,
+  }: {
+    profileId: MongoId
+    query: IGetAllDTO
+  }) => {
+    const { page, limit } = query
+
+    const skip = (page ?? 1 - 1) * limit
+
+    const limitQuery = limit ?? 10
+
+    const posts = await this.postRepository.find({
+      filter: {
+        $and: [{ archivedAt: { $exists: false } }, { saves: profileId }],
+      },
+      options: { sort: { createdAt: -1 } },
+      skip,
+      limit: limitQuery,
+    })
+
+    return {
+      posts,
+      count: posts.length,
+      page: Math.ceil(posts.length / limitQuery),
+    }
   }
 
-  static readonly create = async (
-    createdBy: MongoObjId,
-    createPostDTO: ICreatePostDTO,
-    attachments: ICloud[],
-  ) => {
+  static readonly create = async ({
+    createdBy,
+    createPostDTO,
+  }: {
+    createdBy: MongoId
+    createPostDTO: {
+      data: ICreatePostDTO
+      attachments: ICloud[]
+    }
+  }) => {
     return await this.postRepository.create({
-      ...createPostDTO,
+      ...createPostDTO.data,
+      attachments: createPostDTO.attachments,
       createdBy,
-      attachments,
     })
   }
 
-  static readonly edit = async (
-    postId: MongoObjId,
-    editPostDTO: IEditPostDTO,
-  ) => {
+  static readonly edit = async ({
+    postId,
+    editPostDTO,
+  }: {
+    postId: MongoId
+    editPostDTO: IEditPostDTO
+  }) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -58,7 +92,34 @@ export class PostService {
     })
   }
 
-  static readonly archive = async (postId: MongoObjId) => {
+  static readonly save = async ({
+    profileId,
+    postId,
+  }: {
+    profileId: MongoId
+    postId: MongoId
+  }) => {
+    await this.postRepository.findOneAndUpdate({
+      filter: {
+        $and: [{ _id: postId }, { deactivatedAt: { $exists: false } }],
+      },
+      data: {
+        $push: { saves: profileId },
+        $inc: { totalSaves: 1 },
+      },
+    })
+
+    // await this.userRepository.findOneAndUpdate({
+    //   filter: {
+    //     $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
+    //   },
+    //   data: {
+    //     $addToSet: { savedPosts: postId },
+    //   },
+    // })
+  }
+
+  static readonly archive = async (postId: MongoId) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -68,7 +129,7 @@ export class PostService {
     })
   }
 
-  static readonly restore = async (postId: MongoObjId) => {
+  static readonly restore = async (postId: MongoId) => {
     const isRestored = await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: true } }],
@@ -87,17 +148,24 @@ export class PostService {
         })
   }
 
-  static readonly delete = async (postId: MongoObjId) => {
-    const isDeleted = await this.postRepository.findOneAndDelete({
+  static readonly delete = async ({
+    profileId,
+    postId,
+  }: {
+    profileId: MongoId
+    postId: MongoId
+  }) => {
+    await this.userRepository.findOneAndUpdate({
+      filter: {
+        _id: profileId,
+      },
+      data: { $pull: { savedPosts: postId } },
+    })
+
+    await this.postRepository.findOneAndDelete({
       filter: {
         $and: [{ _id: postId }],
       },
     })
-    return isDeleted
-      ? isDeleted
-      : throwError({
-          msg: 'In-Existent Post or In-valid Id',
-          status: 404,
-        })
   }
 }

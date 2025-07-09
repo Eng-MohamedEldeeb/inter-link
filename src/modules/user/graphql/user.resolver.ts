@@ -12,11 +12,12 @@ export class UserQueryResolver {
     _: any,
     context: IContext,
   ): ISuccessResponse => {
-    const userProfile = context.user
+    const { _id: profileId } = context.profile
+    const user = context.user
     return {
       msg: 'done',
       status: 200,
-      data: this.UserService.getUserProfile(userProfile),
+      data: this.UserService.getUserProfile({ profileId, user }),
     }
   }
 

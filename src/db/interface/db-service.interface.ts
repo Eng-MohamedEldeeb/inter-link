@@ -6,7 +6,7 @@ import {
   QueryOptions,
   Types,
 } from 'mongoose'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface IFind<T> {
   filter?: RootFilterQuery<T>
@@ -34,7 +34,7 @@ export interface IFindOneAndUpdate<T> extends IFilterQuery<T> {
 export interface IFindOneAndDelete<T> extends IFilterQuery<T> {}
 
 export interface IFilterById<T> {
-  _id: MongoObjId
+  _id: MongoId
   options?: QueryOptions<T>
 }
 export interface IFindById<T> extends IFilterById<T> {

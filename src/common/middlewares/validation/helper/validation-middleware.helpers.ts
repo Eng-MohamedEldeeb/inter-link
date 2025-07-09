@@ -14,7 +14,7 @@ export const validateHttpInputs = async (
   for (const key of Object.keys(schema)) {
     const { error } = schema[key].validate(req[key as keyof IRequest], {
       abortEarly: false,
-      allowUnknown: false,
+      // allowUnknown: false,
     })
 
     if (error) {

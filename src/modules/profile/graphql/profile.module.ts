@@ -9,6 +9,7 @@ export const queryModule = (() => {
         getProfile: ProfileController.getProfile(),
         getFollowers: ProfileController.getFollowers(),
         getFollowing: ProfileController.getFollowing(),
+        getAllSavedPosts: ProfileController.getAllSavedPosts(),
       },
     }),
     resolve: () => true,

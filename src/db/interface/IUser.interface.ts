@@ -1,6 +1,6 @@
 import { IMongoDoc } from './IMongo-doc.interface'
 import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface IUserInputs {
   fullName: string
@@ -30,26 +30,26 @@ export interface IUser
   changedCredentialsAt?: Date
   oldPasswords: string[]
 
-  posts: MongoObjId[]
+  posts: MongoId[]
   totalPosts: number
 
-  savedPosts: MongoObjId[]
-  likedPosts: MongoObjId[]
+  savedPosts: MongoId[]
+  likedPosts: MongoId[]
 
-  following: MongoObjId[]
+  following: MongoId[]
   totalFollowing: number
 
-  followers: MongoObjId[]
+  followers: MongoId[]
   totalFollowers: number
 
   viewers: {
-    viewer: MongoObjId
+    viewer: MongoId
     totalVisits: number
   }[]
 
-  joinedGroups: MongoObjId[]
+  joinedGroups: MongoId[]
 
-  blockedUsers: MongoObjId[]
+  blockedUsers: MongoId[]
 
   deactivatedAt?: Date
 }

@@ -11,10 +11,12 @@ import {
   IUpdateProfileDTO,
 } from '../dto/profile.dto'
 import { OtpType } from '../../../db/models/enums/otp.enum'
-import { throwError } from '../../../common/handlers/error-message.handler'
+import { IGetAllDTO } from '../../post/dto/post.dto'
+import { PostService } from '../../post/post.service'
 
 export class ProfileQueryResolver {
   protected static readonly ProfileService = ProfileService
+  protected static readonly PostService = PostService
 
   static readonly getProfile = (
     _: any,
@@ -51,6 +53,18 @@ export class ProfileQueryResolver {
       data: this.ProfileService.getFollowing(profile),
     }
   }
+
+  static readonly getAllSavedPosts = async (
+    args: IGetAllDTO,
+    context: IContext,
+  ): Promise<ISuccessResponse> => {
+    const { _id: profileId } = context.profile
+    return {
+      msg: 'done',
+      status: 200,
+      data: await this.PostService.getAllSavedPosts({ profileId, query: args }),
+    }
+  }
 }
 
 export class ProfileMutationResolver {
@@ -65,7 +79,10 @@ export class ProfileMutationResolver {
     return {
       msg: 'Profile has has been updated successfully',
       status: 200,
-      data: await this.ProfileService.updateProfile(_id, updateProfileDTO),
+      data: await this.ProfileService.updateProfile({
+        profileId: _id,
+        updateProfileDTO,
+      }),
     }
   }
 
@@ -96,7 +113,7 @@ export class ProfileMutationResolver {
   ) => {
     const changeEmailDTO = args
     const { _id } = context.tokenPayload
-    await this.ProfileService.changeEmail(_id, changeEmailDTO)
+    await this.ProfileService.changeEmail({ profileId: _id, changeEmailDTO })
     return {
       msg: 'check your e-mail for verification',
       status: 200,

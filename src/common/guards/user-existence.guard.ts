@@ -11,8 +11,6 @@ import { GuardActivator } from './can-activate.guard'
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository
-  protected profileId: string = ''
-  protected userId: string = ''
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -25,9 +23,6 @@ class UserExistenceGuard extends GuardActivator {
 
       const { user, id: userId } = { ...req.query, ...req.params }
       const { _id: profileId } = req.profile
-
-      this.profileId = profileId.toString()
-      this.userId = userId.toString()
 
       const isExistedUser = await this.userRepository.findOne({
         filter: {
@@ -78,17 +73,7 @@ class UserExistenceGuard extends GuardActivator {
         return true
       }
 
-      const checkViewers = isExistedUser.viewers?.some(({ viewer }) =>
-        viewer.equals(profileId),
-      )
-
-      if (checkViewers) {
-        req.user = await this.incUserProfileViewer()
-
-        return true
-      }
-
-      req.user = await this.addViewerToProfile()
+      req.user = isExistedUser
 
       return true
     }
@@ -98,9 +83,6 @@ class UserExistenceGuard extends GuardActivator {
 
       const { user, id: userId } = args
       const { _id: profileId } = context.profile
-
-      this.profileId = profileId.toString()
-      this.userId = userId.toString()
 
       const isExistedUser = await this.userRepository.findOne({
         filter: {
@@ -151,88 +133,10 @@ class UserExistenceGuard extends GuardActivator {
         return true
       }
 
-      const checkViewers = isExistedUser.viewers?.some(({ viewer }) =>
-        viewer.equals(profileId),
-      )
-
-      if (checkViewers) {
-        context.user = await this.incUserProfileViewer()
-
-        return true
-      }
-
-      context.user = await this.addViewerToProfile()
+      context.user = isExistedUser
 
       return true
     }
-  }
-
-  protected readonly incUserProfileViewer = async () => {
-    const updatedViews = await this.userRepository.findOneAndUpdate({
-      filter: {
-        $and: [
-          { _id: this.userId },
-          { 'viewers.viewer': this.profileId },
-          { deactivatedAt: { $exists: false } },
-        ],
-      },
-      data: {
-        $inc: { 'viewers.$.totalVisits': 1 },
-      },
-
-      options: {
-        new: true,
-        projection: {
-          password: 0,
-          oldPasswords: 0,
-          phone: 0,
-          'avatar.public_id': 0,
-        },
-        lean: true,
-      },
-    })
-
-    return (
-      updatedViews ??
-      throwError({
-        msg: "user doesn't exist",
-        status: 400,
-      })
-    )
-  }
-
-  protected readonly addViewerToProfile = async () => {
-    const updatedViews = await this.userRepository.findOneAndUpdate({
-      filter: {
-        $and: [{ _id: this.userId }, { deactivatedAt: { $exists: false } }],
-      },
-      data: {
-        $push: {
-          viewers: {
-            viewer: this.profileId,
-            totalVisits: 1,
-          },
-        },
-      },
-      options: {
-        new: true,
-        projection: {
-          password: 0,
-          oldPasswords: 0,
-          phone: 0,
-          'avatar.public_id': 0,
-        },
-        lean: true,
-      },
-    })
-
-    return (
-      updatedViews ??
-      throwError({
-        msg: "user doesn't exist",
-        status: 400,
-      })
-    )
   }
 }
 

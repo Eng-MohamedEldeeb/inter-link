@@ -20,6 +20,7 @@ export const mutationModule = (() => {
       name: 'postMutation',
       fields: {
         edit: PostController.edit(),
+        save: PostController.save(),
         archive: PostController.archive(),
         restore: PostController.restore(),
         deletePost: PostController.deletePost(),

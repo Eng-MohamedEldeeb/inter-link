@@ -24,7 +24,7 @@ export class PostQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: this.PostService.getSingle(post),
+      data: post,
     }
   }
 }
@@ -36,7 +36,17 @@ export class PostMutationResolver {
     return {
       msg: 'Post has been modified successfully',
       status: 200,
-      data: this.PostService.edit(postId, args),
+      data: this.PostService.edit({ postId, editPostDTO: args }),
+    }
+  }
+  static readonly save = async (_: any, context: IContext) => {
+    const { _id: profileId } = context.profile
+    const { _id: postId } = context.post
+
+    return {
+      msg: 'Post has been saved successfully',
+      status: 200,
+      data: this.PostService.save({ postId, profileId }),
     }
   }
   static readonly archive = async (_: any, context: IContext) => {
@@ -59,12 +69,13 @@ export class PostMutationResolver {
   }
 
   static readonly deletePost = async (_: any, context: IContext) => {
+    const { _id: profileId } = context.profile
     const { _id: postId } = context.post
 
     return {
       msg: 'Post has been deleted successfully',
       status: 200,
-      data: this.PostService.delete(postId),
+      data: this.PostService.delete({ profileId, postId }),
     }
   }
 }

@@ -1,7 +1,7 @@
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface IMongoDoc {
-  _id: MongoObjId
+  _id: MongoId
   createdAt: Date
   updatedAt: Date
   __v: number

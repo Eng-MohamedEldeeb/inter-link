@@ -17,7 +17,7 @@ export const confirmEmailSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'confirmEmail body is required',
       }),
     }
@@ -25,7 +25,7 @@ export const confirmEmailSchema = {
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'confirmEmail args is required',
       }),
     }
@@ -51,14 +51,14 @@ export const registerSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'sign-up body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'sign-up args is required',
       }),
     }
@@ -75,14 +75,14 @@ export const loginSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'login args is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'login body is required',
       }),
     }
@@ -98,14 +98,14 @@ export const forgotPasswordSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'forgotPassword body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'forgotPassword args is required',
       }),
     }
@@ -127,7 +127,7 @@ export const resetPasswordSchema = {
 
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'resetPassword body is required',
       }),
     }
@@ -135,7 +135,7 @@ export const resetPasswordSchema = {
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'resetPassword args is required',
       }),
     }

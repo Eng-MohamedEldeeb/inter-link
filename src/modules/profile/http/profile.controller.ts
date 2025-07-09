@@ -9,12 +9,15 @@ import {
   IUpdateProfileDTO,
 } from '../dto/profile.dto'
 import { ProfileService } from '../profile.service'
+import { PostService } from '../../post/post.service'
 import { Response } from 'express'
 import { IRequest } from '../../../common/interface/http/IRequest.interface'
 import { IUser } from '../../../db/interface/IUser.interface'
+import { IGetAllDTO } from '../../post/dto/post.dto'
 
 export class ProfileController {
   private static readonly ProfileService = ProfileService
+  private static readonly PostService = PostService
 
   static readonly getProfile = asyncHandler((req: IRequest, res: Response) => {
     const profile: IUser = req.profile
@@ -41,13 +44,26 @@ export class ProfileController {
     },
   )
 
+  static readonly getAllSavedPosts = asyncHandler(
+    async (req: IRequest<null, IGetAllDTO>, res: Response) => {
+      const { _id: profileId } = req.profile
+      const query = req.query
+      return successResponse(res, {
+        data: await this.PostService.getAllSavedPosts({ profileId, query }),
+      })
+    },
+  )
+
   static readonly updateProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
       const path = req.file?.path!
       return successResponse(res, {
         msg: 'profile Picture has been updated successfully',
-        data: await this.ProfileService.updateProfilePic(_id, path),
+        data: await this.ProfileService.updateProfilePic({
+          profileId: _id,
+          path,
+        }),
       })
     },
   )
@@ -68,7 +84,10 @@ export class ProfileController {
       const { _id } = req.tokenPayload
       return successResponse(res, {
         msg: 'profile has has been updated successfully',
-        data: await this.ProfileService.updateProfile(_id, updateProfileDTO),
+        data: await this.ProfileService.updateProfile({
+          profileId: _id,
+          updateProfileDTO,
+        }),
       })
     },
   )
@@ -87,7 +106,7 @@ export class ProfileController {
     async (req: IRequest, res: Response) => {
       const changeEmailDTO: IChangeEmailDTO = req.body
       const { _id } = req.tokenPayload
-      await this.ProfileService.changeEmail(_id, changeEmailDTO)
+      await this.ProfileService.changeEmail({ profileId: _id, changeEmailDTO })
       return successResponse(res, {
         msg: 'check your e-mail for verification',
       })

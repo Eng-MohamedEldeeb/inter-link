@@ -41,6 +41,13 @@ router.patch(
   PostController.edit,
 )
 
+router.post(
+  '/save',
+  validate(validators.archiveValidator.http()),
+  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  PostController.save,
+)
+
 router.patch(
   '/archive',
   validate(validators.archiveValidator.http()),

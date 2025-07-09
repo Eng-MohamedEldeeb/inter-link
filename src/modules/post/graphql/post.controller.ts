@@ -48,6 +48,7 @@ export class PostController {
       }),
     }
   }
+
   // Mutations:
 
   static readonly edit = (): IMutationController => {
@@ -62,6 +63,20 @@ export class PostController {
       }),
     }
   }
+
+  static readonly save = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'saveMutation',
+      }),
+      args: args.save,
+      resolve: applyResolver({
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
+        resolver: this.PostMutationResolver.save,
+      }),
+    }
+  }
+
   static readonly archive = (): IMutationController => {
     return {
       type: returnedResponseType({
@@ -74,6 +89,7 @@ export class PostController {
       }),
     }
   }
+
   static readonly restore = (): IMutationController => {
     return {
       type: returnedResponseType({
@@ -86,6 +102,7 @@ export class PostController {
       }),
     }
   }
+
   static readonly deletePost = (): IMutationController => {
     return {
       type: returnedResponseType({

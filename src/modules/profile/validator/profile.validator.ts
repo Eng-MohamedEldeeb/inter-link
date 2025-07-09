@@ -7,6 +7,9 @@ import {
   IUpdateProfileDTO,
 } from '../dto/profile.dto'
 import { generalFields } from '../../../common/validation/general-fields'
+import { getAllValidator } from '../../post/validators/post.validators'
+
+export const getAllSavedPostsValidator = getAllValidator
 
 export const updateProfileSchema = {
   schema: joi
@@ -21,14 +24,14 @@ export const updateProfileSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'updateProfile body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'updateProfile args is required',
       }),
     }
@@ -55,14 +58,14 @@ export const changeEmailSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'changeEmail body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'changeEmail args is required',
       }),
     }
@@ -79,14 +82,14 @@ export const confirmNewEmailSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'confirmNewEmail body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'confirmNewEmail args is required',
       }),
     }
@@ -107,14 +110,14 @@ export const deleteAccountSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'deleteAccount body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'deleteAccount args is required',
       }),
     }
@@ -135,14 +138,14 @@ export const confirmDeletionSchema = {
     .required(),
   http() {
     return {
-      body: this.schema.messages({
+      body: this.schema.required().messages({
         'any.required': 'confirmDeletion body is required',
       }),
     }
   },
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'confirmDeletion args is required',
       }),
     }

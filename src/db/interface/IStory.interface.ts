@@ -1,12 +1,12 @@
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { IMongoDoc } from './IMongo-doc.interface'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface IStoryInputs {
   content: string
   attachment: ICloudFile
 }
 export interface IStory extends IStoryInputs, IMongoDoc {
-  viewers: MongoObjId[]
+  viewers: MongoId[]
   totalviewers: number
 }

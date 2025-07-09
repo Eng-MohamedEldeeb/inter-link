@@ -41,7 +41,7 @@ export const getSingleValidator = {
 
   http() {
     return {
-      params: this.schema.messages({
+      params: this.schema.required().messages({
         'any.required': 'editPost id param is required',
       }),
     }
@@ -49,7 +49,7 @@ export const getSingleValidator = {
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'editPost id arg is required',
       }),
     }
@@ -121,6 +121,32 @@ export const editValidator = {
   },
 }
 
+export const saveValidator = {
+  schema: joi
+    .object<IGetSinglePostDTO>()
+    .keys({
+      id: generalFields.mongoId.required(),
+    })
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': 'savePost id query param is required',
+        '"object.unknown"': 'only [id] query param is allowed',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': 'savePost id arg is required',
+      }),
+    }
+  },
+}
+
 export const archiveValidator = {
   schema: joi
     .object<IGetSinglePostDTO>()
@@ -131,15 +157,16 @@ export const archiveValidator = {
 
   http() {
     return {
-      query: this.schema.messages({
+      query: this.schema.required().messages({
         'any.required': 'archivePost id query param is required',
+        '"object.unknown"': 'only [id] query param are allowed',
       }),
     }
   },
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'archivePost id arg is required',
       }),
     }
@@ -156,15 +183,16 @@ export const restoreValidator = {
 
   http() {
     return {
-      query: this.schema.messages({
+      query: this.schema.required().messages({
         'any.required': 'restorePost id query param is required',
+        '"object.unknown"': 'only [id] query param are allowed',
       }),
     }
   },
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'restorePost id arg is required',
       }),
     }
@@ -180,7 +208,7 @@ export const deleteValidator = {
     .required(),
   http() {
     return {
-      params: this.schema.messages({
+      params: this.schema.required().messages({
         'any.required': 'deletePost id param is required',
       }),
     }
@@ -188,7 +216,7 @@ export const deleteValidator = {
 
   graphQL() {
     return {
-      args: this.schema.messages({
+      args: this.schema.required().messages({
         'any.required': 'deletePost id arg is required',
       }),
     }

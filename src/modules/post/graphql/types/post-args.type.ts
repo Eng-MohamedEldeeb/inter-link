@@ -17,6 +17,10 @@ export const edit = argsType<IGetSinglePostDTO & IEditPostDTO>({
   content: { type: GraphQLString },
 })
 
+export const save = argsType<IGetSinglePostDTO>({
+  id: { type: new GraphQLNonNull(GraphQLID) },
+})
+
 export const archive = argsType<IGetSinglePostDTO>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })

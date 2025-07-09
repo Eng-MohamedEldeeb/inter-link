@@ -34,11 +34,15 @@ export class PostController {
   static readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
-      const createPostDTO: ICreatePostDTO = req.body
       const { paths } = req.cloudFiles
+      const createPostDTO: ICreatePostDTO = req.body
       return successResponse(res, {
         status: 201,
-        data: await this.PostService.create(_id, createPostDTO, paths),
+        msg: 'Post Uploaded Successfully',
+        data: await this.PostService.create({
+          createdBy: _id,
+          createPostDTO: { data: createPostDTO, attachments: paths },
+        }),
       })
     },
   )
@@ -49,12 +53,21 @@ export class PostController {
 
     return successResponse(res, {
       msg: 'Post has been modified successfully',
-      data: await this.PostService.edit(postId, editPostDTO),
+      data: await this.PostService.edit({ postId, editPostDTO }),
+    })
+  })
+
+  static readonly save = asyncHandler(async (req: IRequest, res: Response) => {
+    const { _id: profileId } = req.profile
+    const { _id: postId } = req.post
+    await this.PostService.save({ postId, profileId })
+    return successResponse(res, {
+      msg: 'Post has been Saved successfully',
     })
   })
 
   static readonly archive = asyncHandler(
-    async (req: IRequest<any>, res: Response) => {
+    async (req: IRequest, res: Response) => {
       const { _id: postId } = req.post
       return successResponse(res, {
         msg: 'Post has been archived successfully',
@@ -64,7 +77,7 @@ export class PostController {
   )
 
   static readonly restore = asyncHandler(
-    async (req: IRequest<any>, res: Response) => {
+    async (req: IRequest, res: Response) => {
       const { _id: postId } = req.post
       await this.PostService.restore(postId)
       return successResponse(res, {
@@ -74,9 +87,10 @@ export class PostController {
   )
 
   static readonly delete = asyncHandler(
-    async (req: IRequest<any>, res: Response) => {
+    async (req: IRequest, res: Response) => {
+      const { _id: profileId } = req.profile
       const { _id: postId } = req.post
-      await this.PostService.delete(postId)
+      await this.PostService.delete({ profileId, postId })
       return successResponse(res, {
         msg: 'Post has been deleted successfully',
       })

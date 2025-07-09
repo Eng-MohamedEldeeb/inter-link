@@ -14,6 +14,12 @@ router.get('/followers', ProfileController.getFollowers)
 
 router.get('/following', ProfileController.getFollowing)
 
+router.get(
+  '/save',
+  validate(validators.getAllSavedPostsValidator.http()),
+  ProfileController.getAllSavedPosts,
+)
+
 router.patch(
   '/',
   validate(validators.updateProfileSchema.http()),

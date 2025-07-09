@@ -1,5 +1,6 @@
 import otpRepository from '../../common/repositories/otp.repository'
 import userRepository from '../../common/repositories/user.repository'
+import postRepository from '../../common/repositories/post.repository'
 import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
 import { OtpType } from '../../db/models/enums/otp.enum'
@@ -13,23 +14,20 @@ import {
 import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { IUser } from '../../db/interface/IUser.interface'
 import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
+import { IGetAllDTO } from '../post/dto/post.dto'
 
 export class ProfileService {
   private static readonly userRepository = userRepository
+  private static readonly postRepository = postRepository
   private static readonly otpRepository = otpRepository
   private static readonly CloudUploader = CloudUploader
 
   static readonly getProfile = (profile: IUser) => {
-    return {
-      ...profile,
-      totalFollowers: profile.followers.length ?? 0,
-      totalFollowing: profile.following.length ?? 0,
-      totalPosts: profile.posts?.length ?? 0,
-      ...(profile.phone && {
-        phone: decryptValue({ encryptedValue: profile.phone }),
-      }),
-    }
+    if (profile.phone)
+      profile.phone = decryptValue({ encryptedValue: profile.phone })
+
+    return profile
   }
 
   static readonly getFollowers = (profile: IUser) => {
@@ -44,12 +42,44 @@ export class ProfileService {
     }
   }
 
-  static readonly updateProfilePic = async (
-    userId: MongoObjId,
-    path: string,
-  ) => {
+  static readonly getAllSavedPosts = async ({
+    profileId,
+    query,
+  }: {
+    profileId: MongoId
+    query: IGetAllDTO
+  }) => {
+    const { page, limit } = query
+
+    const skip = (page ?? 1 - 1) * limit
+
+    const limitQuery = limit ?? 10
+
+    const posts = await this.postRepository.find({
+      filter: {
+        $and: [{ archivedAt: { $exists: false } }, { saves: profileId }],
+      },
+      options: { sort: { createdAt: -1 } },
+      skip,
+      limit: limitQuery,
+    })
+
+    return {
+      posts,
+      count: posts.length,
+      page: Math.ceil(posts.length / limitQuery),
+    }
+  }
+
+  static readonly updateProfilePic = async ({
+    profileId,
+    path,
+  }: {
+    profileId: MongoId
+    path: string
+  }) => {
     const isExistedUser = await this.userRepository.findOne({
-      filter: { _id: userId, deactivatedAt: { $exists: false } },
+      filter: { _id: profileId, deactivatedAt: { $exists: false } },
       projection: { _id: 1, avatar: 1 },
       options: { lean: true },
     })
@@ -67,7 +97,7 @@ export class ProfileService {
       })
 
       return await this.userRepository.findByIdAndUpdate({
-        _id: userId,
+        _id: profileId,
         data: {
           avatar: { secure_url, public_id },
         },
@@ -77,11 +107,11 @@ export class ProfileService {
 
     const { secure_url, public_id } = await this.CloudUploader.upload({
       path,
-      folderName: `${process.env.APP_NAME}/${userId.toString()}/avatar`,
+      folderName: `${process.env.APP_NAME}/${profileId.toString()}/avatar`,
     })
 
     return await this.userRepository.findByIdAndUpdate({
-      _id: userId,
+      _id: profileId,
       data: {
         avatar: { secure_url, public_id },
       },
@@ -93,7 +123,7 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteProfilePic = async (userId: MongoObjId) => {
+  static readonly deleteProfilePic = async (userId: MongoId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
       projection: { _id: 1, avatar: 1 },
@@ -129,14 +159,17 @@ export class ProfileService {
     })
   }
 
-  static readonly updateProfile = async (
-    userId: MongoObjId,
-    updateProfileDTO: IUpdateProfileDTO,
-  ) => {
+  static readonly updateProfile = async ({
+    profileId,
+    updateProfileDTO,
+  }: {
+    profileId: MongoId
+    updateProfileDTO: IUpdateProfileDTO
+  }) => {
     const { username } = updateProfileDTO
     const isExistedUser = await this.userRepository.findOne({
       filter: {
-        _id: userId,
+        _id: profileId,
         deactivatedAt: { $exists: false },
       },
       projection: { _id: 1 },
@@ -157,7 +190,7 @@ export class ProfileService {
       return throwError({ msg: 'username is taken', status: 409 })
 
     return await this.userRepository.findByIdAndUpdate({
-      _id: userId,
+      _id: profileId,
       data: updateProfileDTO,
       options: {
         lean: true,
@@ -167,7 +200,7 @@ export class ProfileService {
     })
   }
 
-  static readonly changeVisibility = async (userId: MongoObjId) => {
+  static readonly changeVisibility = async (userId: MongoId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         _id: userId,
@@ -188,16 +221,19 @@ export class ProfileService {
     )
   }
 
-  static readonly changeEmail = async (
-    userId: MongoObjId,
-    changeEmailDTO: IChangeEmailDTO,
-  ) => {
+  static readonly changeEmail = async ({
+    profileId,
+    changeEmailDTO,
+  }: {
+    profileId: MongoId
+    changeEmailDTO: IChangeEmailDTO
+  }) => {
     const { originalEmail, newEmail, password } = changeEmailDTO
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         $and: [
-          { _id: userId },
+          { _id: profileId },
           { email: originalEmail },
           { deactivatedAt: { $exists: false } },
         ],

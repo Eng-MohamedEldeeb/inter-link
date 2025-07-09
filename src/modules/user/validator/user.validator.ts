@@ -11,22 +11,28 @@ export const getUserProfileSchema = {
     .object<IGetUserProfileDTO>()
     .keys({
       id: generalFields.mongoId,
-      user: joi.string().min(3),
+      user: joi.string().min(3).when(joi.ref('id'), {
+        is: joi.exist(),
+        then: joi.optional(),
+        otherwise: joi.required(),
+      }),
     })
     .required(),
 
   http() {
     return {
-      query: this.schema.messages({
-        'any.required': 'getUserProfile query is required',
+      query: this.schema.required().messages({
+        'any.required': 'one of [ id , user ] query params is required',
+        '"object.unknown"': 'only  [ id , user ]  query params are allowed',
       }),
     }
   },
 
   graphQL() {
     return {
-      args: this.schema.messages({
-        'any.required': 'getUserProfile args is required',
+      args: this.schema.required().messages({
+        'any.required': 'one of [ id , user ] args is required',
+        '"object.unknown"': 'only  [ id , user ]  args are allowed',
       }),
     }
   },
@@ -45,16 +51,16 @@ export const blockUserSchema = {
 
   http() {
     return {
-      params: this.schema.messages({
-        'any.required': 'blockUser params is required',
+      params: this.schema.required().messages({
+        'any.required': '[id] param is required',
       }),
     }
   },
 
   graphQL() {
     return {
-      args: this.schema.messages({
-        'any.required': 'blockUser args is required',
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
       }),
     }
   },
@@ -70,16 +76,16 @@ export const unblockUserSchema = {
 
   http() {
     return {
-      params: this.schema.messages({
-        'any.required': 'unblockUser params is required',
+      params: this.schema.required().messages({
+        'any.required': '[id] param is required',
       }),
     }
   },
 
   graphQL() {
     return {
-      args: this.schema.messages({
-        'any.required': 'unblockUser args is required',
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
       }),
     }
   },

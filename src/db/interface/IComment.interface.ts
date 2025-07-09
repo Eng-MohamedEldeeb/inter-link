@@ -1,16 +1,16 @@
 import { IMongoDoc } from './IMongo-doc.interface'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface ICommentInputs {
-  onPost: MongoObjId
+  onPost: MongoId
   content: string
-  createdBy: MongoObjId
-  replyingTo: MongoObjId
+  createdBy: MongoId
+  replyingTo: MongoId
 }
 
 export interface IComment extends IMongoDoc, ICommentInputs {
-  likedBy: MongoObjId[]
+  likedBy: MongoId[]
   totalLikes: number
-  replies: MongoObjId[]
+  replies: MongoId[]
   repliesCount: number
 }

@@ -1,10 +1,13 @@
+import { GraphQLInt, GraphQLList } from 'graphql'
 import { returnedType } from '../../../../common/decorators/graphql/returned-type.decorator'
 import {
   profileFields,
   userFields,
 } from '../../../../common/types/graphql/graphql-fields.types'
+import { IPost } from '../../../../db/interface/IPost.interface'
 import { IUser } from '../../../../db/interface/IUser.interface'
 import { IUpdateProfileDTO } from '../../dto/profile.dto'
+import { singlePost } from '../../../post/graphql/types/post-response.type'
 
 export class ProfileResponse {
   // Query:
@@ -34,6 +37,19 @@ export class ProfileResponse {
       name: 'profileFollowing',
       fields: {
         following: profileFields.following,
+      },
+    })
+  }
+
+  static readonly getAllSavedPosts = () => {
+    return returnedType<{ posts: IPost[]; count: number; page: number }>({
+      name: 'getAllSavedPostsResponse',
+      fields: {
+        posts: {
+          type: new GraphQLList(singlePost),
+        },
+        page: { type: GraphQLInt },
+        count: { type: GraphQLInt },
       },
     })
   }

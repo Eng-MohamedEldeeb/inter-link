@@ -12,10 +12,12 @@ export class UserController {
   static readonly getUserProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
       const user = req.user
-      const profile = req.profile
-      if (user._id.equals(profile._id)) return res.redirect('/api/v1/profile')
+      const { _id: profileId } = req.profile
+
+      if (user._id.equals(profileId)) return res.redirect('/api/v1/profile')
+
       return successResponse(res, {
-        data: await this.UserService.getUserProfile(user),
+        data: await this.UserService.getUserProfile({ user, profileId }),
       })
     },
   )

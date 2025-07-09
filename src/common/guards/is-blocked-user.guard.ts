@@ -1,7 +1,7 @@
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
 import { throwError } from '../handlers/error-message.handler'
 import { GuardActivator } from './can-activate.guard'
-import { MongoObjId } from '../types/db/mongo.types'
+import { MongoId } from '../types/db/db.types'
 import {
   GraphQLParams,
   HttpParams,
@@ -52,7 +52,7 @@ class IsBlockedUserGuard extends GuardActivator {
     blockedUsers: Types.ObjectId[],
   ): boolean => {
     if (blockedUsers.length) {
-      const isBlockedUser = blockedUsers.some((blockedUserId: MongoObjId) =>
+      const isBlockedUser = blockedUsers.some((blockedUserId: MongoId) =>
         blockedUserId.equals(this.userId),
       )
       return isBlockedUser

@@ -1,14 +1,14 @@
 import { IMongoDoc } from './IMongo-doc.interface'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
 
 export interface IGroupInputs {
   name: string
   cover: Object
-  createdBy: MongoObjId
+  createdBy: MongoId
 }
 
 export interface IGroup extends IMongoDoc, IGroupInputs {
-  posts: MongoObjId[]
-  followers: MongoObjId[]
-  admins: MongoObjId[]
+  posts: MongoId[]
+  followers: MongoId[]
+  admins: MongoId[]
 }

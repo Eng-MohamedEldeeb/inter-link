@@ -1,17 +1,21 @@
 import userRepository from '../../common/repositories/user.repository'
 import { IUser } from '../../db/interface/IUser.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoObjId } from '../../common/types/db/mongo.types'
+import { MongoId } from '../../common/types/db/db.types'
+import { UserViewersStrategy } from './helpers/user-viewers.strategy'
 
 export class UserService {
   private static readonly userRepository = userRepository
+  private static readonly UserViewersStrategy = UserViewersStrategy
 
-  static readonly getUserProfile = async (
-    user: Omit<IUser, 'password' | 'oldPasswords'>,
-  ) => {
-    const { isPrivateProfile, ...rest } = user
-
-    if (isPrivateProfile)
+  static readonly getUserProfile = async ({
+    profileId,
+    user,
+  }: {
+    profileId: MongoId
+    user: Omit<IUser, 'password' | 'oldPasswords'>
+  }) => {
+    if (user.isPrivateProfile)
       return {
         _id: user._id,
         avatar: user.avatar,
@@ -19,10 +23,23 @@ export class UserService {
         totalPosts: user.posts.length ?? 0,
         totalFollowers: user.followers.length ?? 0,
         totalFollowing: user.following.length ?? 0,
-        isPrivateProfile,
+        isPrivateProfile: user.isPrivateProfile,
       }
 
-    return { ...rest, isPrivateProfile }
+    const isInViewersList = user.viewers.some(({ viewer }) =>
+      viewer.equals(profileId),
+    )
+
+    if (isInViewersList)
+      return await this.UserViewersStrategy.incUserProfileViewersCount({
+        userId: user._id,
+        profileId,
+      })
+
+    return await this.UserViewersStrategy.addViewerToProfile({
+      userId: user._id,
+      profileId,
+    })
   }
 
   static readonly getUseFollowers = async (
@@ -56,10 +73,7 @@ export class UserService {
       following,
     }
   }
-  static readonly blockUser = async (
-    profileId: MongoObjId,
-    userId: MongoObjId,
-  ) => {
+  static readonly blockUser = async (profileId: MongoId, userId: MongoId) => {
     await this.userRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
@@ -74,9 +88,9 @@ export class UserService {
   }
 
   static readonly unblockUser = async (
-    profileId: MongoObjId,
-    userId: MongoObjId,
-    blockedUsers: MongoObjId[],
+    profileId: MongoId,
+    userId: MongoId,
+    blockedUsers: MongoId[],
   ) => {
     const isBlocked = blockedUsers.some(id => id.equals(userId))
 
