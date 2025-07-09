@@ -1,6 +1,6 @@
 import otpRepository from '../../common/repositories/otp.repository'
 import userRepository from '../../common/repositories/user.repository'
-import { throwHttpError } from '../../common/handlers/http/error-message.handler'
+import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
 import { signToken } from '../../common/utils/security/token/token.service'
 import {
@@ -24,7 +24,7 @@ export class AuthService {
     })
 
     if (isExistedUser)
-      return throwHttpError({ msg: 'user already exists', status: 409 })
+      return throwError({ msg: 'user already exists', status: 409 })
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email: confirmEmailDTO.email },
@@ -33,7 +33,7 @@ export class AuthService {
     })
 
     if (isExistedOtp)
-      return throwHttpError({
+      return throwError({
         msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
         status: 409,
       })
@@ -60,7 +60,7 @@ export class AuthService {
     })
 
     if (isConflicted)
-      return throwHttpError({
+      return throwError({
         msg: 'e-mail and username must be unique',
         status: 400,
       })
@@ -71,15 +71,14 @@ export class AuthService {
       options: { lean: true },
     })
 
-    if (!isExistedOtp)
-      return throwHttpError({ msg: 'in-valid code', status: 400 })
+    if (!isExistedOtp) return throwError({ msg: 'in-valid code', status: 400 })
 
     const validOtp = compareValues({
       value: otpCode,
       hashedValue: isExistedOtp.otpCode,
     })
 
-    if (!validOtp) return throwHttpError({ msg: 'in-valid code', status: 400 })
+    if (!validOtp) return throwError({ msg: 'in-valid code', status: 400 })
 
     await this.userRepository.create({
       fullName,
@@ -101,7 +100,7 @@ export class AuthService {
     })
 
     if (!isExistedUser)
-      return throwHttpError({
+      return throwError({
         msg: 'in-valid username or password',
         status: 400,
       })
@@ -112,7 +111,7 @@ export class AuthService {
     })
 
     if (!isMatchedPasswords)
-      return throwHttpError({
+      return throwError({
         msg: 'in-valid username or password',
         status: 400,
       })
@@ -155,7 +154,7 @@ export class AuthService {
     })
 
     if (isExistedOtp)
-      return throwHttpError({
+      return throwError({
         msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
         status: 409,
       })
@@ -186,7 +185,7 @@ export class AuthService {
     })
 
     if (!isExistedOtp)
-      return throwHttpError({ msg: 'code is expired', status: 400 })
+      return throwError({ msg: 'code is expired', status: 400 })
 
     const isMatchedOtp = compareValues({
       value: otpCode,
@@ -194,7 +193,7 @@ export class AuthService {
     })
 
     if (!isMatchedOtp)
-      return throwHttpError({ msg: 'code is in-valid', status: 400 })
+      return throwError({ msg: 'code is in-valid', status: 400 })
 
     await this.userRepository.findByIdAndUpdate({
       _id: isExistedUser._id,

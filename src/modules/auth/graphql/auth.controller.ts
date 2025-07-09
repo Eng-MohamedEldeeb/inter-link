@@ -1,10 +1,11 @@
-import { IMutationController } from '../../../common/interface/graphql/IGraphQL.interface'
+import { IMutationController } from '../../../common/decorators/graphql/types/IGraphQL.interface'
 import { applyResolver } from '../../../common/decorators/graphql/apply-resolver.decorator'
+
 import { returnedResponseType } from '../../../common/decorators/graphql/returned-type.decorator'
 
-import * as args from './types/auth-args.types'
+import * as args from './types/auth-args.type'
 
-import { validate } from '../../../common/middlewares/validation.middleware'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from './../validator/auth.validator'
 
 import { AuthResolver } from './auth.resolver'
@@ -19,7 +20,7 @@ export class AuthController {
       }),
       args: args.confirmEmail,
       resolve: applyResolver({
-        middlewares: [validate(validators.confirmEmailSchema)],
+        middlewares: [validate(validators.confirmEmailSchema.graphQL())],
         resolver: this.AuthResolver.confirmEmail,
       }),
     }
@@ -32,7 +33,7 @@ export class AuthController {
       }),
       args: args.register,
       resolve: applyResolver({
-        middlewares: [validate(validators.registerSchema)],
+        middlewares: [validate(validators.registerSchema.graphQL())],
         resolver: this.AuthResolver.register,
       }),
     }
@@ -45,7 +46,7 @@ export class AuthController {
       }),
       args: args.login,
       resolve: applyResolver({
-        middlewares: [validate(validators.loginSchema)],
+        middlewares: [validate(validators.loginSchema.graphQL())],
         resolver: this.AuthResolver.login,
       }),
     }
@@ -58,7 +59,7 @@ export class AuthController {
       }),
       args: args.forgotPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.forgotPasswordSchema)],
+        middlewares: [validate(validators.forgotPasswordSchema.graphQL())],
         resolver: this.AuthResolver.forgotPassword,
       }),
     }
@@ -71,7 +72,7 @@ export class AuthController {
       }),
       args: args.resetPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.resetPasswordSchema)],
+        middlewares: [validate(validators.resetPasswordSchema.graphQL())],
         resolver: this.AuthResolver.resetPassword,
       }),
     }

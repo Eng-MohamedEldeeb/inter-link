@@ -9,9 +9,7 @@ import { isValidNumericString } from '../../../common/validation/is-valid'
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const getAllValidator = {
-  body: joi.object().keys({}),
-
-  query: joi.object<IGetAllDTO>().keys({
+  schema: joi.object<IGetAllDTO>().keys({
     page: joi.string().custom(isValidNumericString('page')).messages({
       'string.base': 'enter a valid page number',
     }),
@@ -19,93 +17,180 @@ export const getAllValidator = {
       'string.base': 'enter a valid limit number',
     }),
   }),
+
+  http() {
+    return {
+      query: this.schema,
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema,
+    }
+  },
 }
 
 export const getSingleValidator = {
-  params: joi
+  schema: joi
     .object<IGetSinglePostDTO>()
     .keys({
       id: generalFields.mongoId.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'editPost id param is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      params: this.schema.messages({
+        'any.required': 'editPost id param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'editPost id arg is required',
+      }),
+    }
+  },
 }
 
 export const createValidator = {
   body: joi
     .object<ICreatePostDTO>()
     .keys({
-      title: generalFields.content.min(1).required(),
+      title: generalFields.content.min(1).max(50).required(),
       content: generalFields.content.max(500),
       onGroup: generalFields.mongoId,
     })
     .required()
     .messages({
-      'any.required': 'confirmEmail body is required',
+      'any.required': 'createPost body is required',
     }),
 }
 
 export const editValidator = {
-  body: joi
-    .object<IEditPostDTO>()
-    .keys({
+  schema: {
+    body: {
       title: generalFields.content.min(1).when(joi.ref('content'), {
         is: joi.exist(),
         then: joi.optional(),
         otherwise: joi.required(),
       }),
       content: generalFields.content.max(500),
-    })
-    .required()
-    .messages({
-      'any.required': 'editPost body is required',
-    }),
+    },
 
-  query: joi
-    .object<IGetSinglePostDTO>()
-    .keys({
+    query: {
       id: generalFields.mongoId.required(),
-    })
-    .required()
-    .messages({
-      'any.required': 'editPost id param is required',
-    }),
+    },
+  },
+
+  http() {
+    return {
+      body: joi
+        .object<IEditPostDTO>()
+        .keys(this.schema.body)
+        .required()
+        .messages({
+          'any.required': 'editPost body is required',
+        }),
+
+      query: joi
+        .object<IGetSinglePostDTO>()
+        .keys({
+          id: this.schema.query,
+        })
+        .required()
+        .messages({
+          'any.required': 'editPost id query param is required',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<IEditPostDTO>()
+        .keys({ ...this.schema.query, ...this.schema.body })
+        .required()
+        .messages({
+          'any.required': 'editPost body is required',
+        }),
+    }
+  },
 }
 
 export const archiveValidator = {
-  query: joi
+  schema: joi
     .object<IGetSinglePostDTO>()
     .keys({
       id: generalFields.mongoId.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'archivePost id query param is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.messages({
+        'any.required': 'archivePost id query param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'archivePost id arg is required',
+      }),
+    }
+  },
 }
 
 export const restoreValidator = {
-  query: joi
+  schema: joi
     .object<IGetSinglePostDTO>()
     .keys({
       id: generalFields.mongoId.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'restorePost id query param is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.messages({
+        'any.required': 'restorePost id query param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'restorePost id arg is required',
+      }),
+    }
+  },
 }
 
 export const deleteValidator = {
-  params: joi
+  schema: joi
     .object<IGetSinglePostDTO>()
     .keys({
       id: generalFields.mongoId.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'deletePost id param is required',
-    }),
+    .required(),
+  http() {
+    return {
+      params: this.schema.messages({
+        'any.required': 'deletePost id param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'deletePost id arg is required',
+      }),
+    }
+  },
 }

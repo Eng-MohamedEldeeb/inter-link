@@ -4,18 +4,18 @@ import { applyResolver } from '../../../common/decorators/graphql/apply-resolver
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/graphql/IGraphQL.interface'
+} from '../../../common/decorators/graphql/types/IGraphQL.interface'
 
 import { returnedResponseType } from '../../../common/decorators/graphql/returned-type.decorator'
 import { UserResponse } from './types/user-response.type'
 
-import * as args from './types/user.args'
+import * as args from './types/user-args.type'
 
 import isAuthenticatedGuard from '../../../common/guards/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/is-authorized.guard'
 import userExistenceGuard from '../../../common/guards/user-existence.guard'
 
-import { validate } from '../../../common/middlewares/validation.middleware'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from '../validator/user.validator'
 
 export class UserQueryController {
@@ -28,6 +28,7 @@ export class UserQueryController {
       }),
       args: args.getUserProfile,
       resolve: applyResolver({
+        middlewares: [validate(validators.getUserProfileSchema.graphQL())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
         resolver: this.UserQueryResolver.getUserProfile,
       }),
@@ -74,7 +75,7 @@ export class UserMutationController {
       args: args.blockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema)],
+        middlewares: [validate(validators.blockUserSchema.graphQL())],
         resolver: this.UserMutationResolver.blockUser,
       }),
     }
@@ -88,7 +89,7 @@ export class UserMutationController {
       args: args.unblockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema)],
+        middlewares: [validate(validators.blockUserSchema.graphQL())],
         resolver: this.UserMutationResolver.unblockUser,
       }),
     }

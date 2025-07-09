@@ -7,20 +7,33 @@ import {
 } from '../dto/user.dto'
 
 export const getUserProfileSchema = {
-  query: joi
+  schema: joi
     .object<IGetUserProfileDTO>()
     .keys({
       id: generalFields.mongoId,
       user: joi.string().min(3),
     })
-    .required()
-    .messages({
-      'any.required': 'getUserProfile query is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.messages({
+        'any.required': 'getUserProfile query is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'getUserProfile args is required',
+      }),
+    }
+  },
 }
 
 export const blockUserSchema = {
-  params: joi
+  schema: joi
     .object<IBlockUserDTO>()
     .keys({
       id: generalFields.mongoId.required(),
@@ -29,16 +42,45 @@ export const blockUserSchema = {
     .messages({
       'any.required': 'blockUser body is required',
     }),
+
+  http() {
+    return {
+      params: this.schema.messages({
+        'any.required': 'blockUser params is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'blockUser args is required',
+      }),
+    }
+  },
 }
 
 export const unblockUserSchema = {
-  params: joi
+  schema: joi
     .object<IUnBlockUserDTO>()
     .keys({
       id: generalFields.mongoId.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'unblockUser body is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      params: this.schema.messages({
+        'any.required': 'unblockUser params is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'unblockUser args is required',
+      }),
+    }
+  },
 }

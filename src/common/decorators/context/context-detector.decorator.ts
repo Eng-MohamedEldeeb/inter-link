@@ -1,8 +1,10 @@
-import { NextFunction, Response } from 'express'
-import { IRequest } from '../../interface/http/IRequest.interface'
-import { ContextType } from '../enums/async-handler.types'
-import { IContext } from '../../interface/graphql/IGraphQL.interface'
-import { GraphQLResolveInfo } from 'graphql'
+import { ContextType } from './types/enum/context-type.enum'
+import {
+  GraphQLContext,
+  GraphQLParams,
+  HttpContext,
+  HttpParams,
+} from './types/context-detector.types'
 
 export class ContextDetector {
   static type: ContextType
@@ -20,7 +22,7 @@ export class ContextDetector {
     return params.length === 4 && 'fieldName' in params[3]
   }
 
-  static readonly detect = (params: any[any]) => {
+  static readonly detect = (params: any[]) => {
     this.params = params
 
     const isHttpParams = this.isHttpParams(params)
@@ -40,25 +42,14 @@ export class ContextDetector {
     throw new Error('Un-known Context')
   }
 
-  static readonly switchToHTTP = <P = any, Q = any>(): {
-    req: IRequest<P, Q>
-    res: Response
-    next: NextFunction
-  } => {
-    const [req, res, next]: [IRequest<P, Q>, Response, NextFunction] =
-      this.params
+  static readonly switchToHTTP = <P = any, Q = any>(): HttpContext<P, Q> => {
+    const [req, res, next]: HttpParams<P, Q> = this.params
 
     return { req, res, next }
   }
 
-  static readonly switchToGraphQL = <A = any, C = IContext>(): {
-    source: any
-    args: A
-    context: C
-    info: GraphQLResolveInfo
-  } => {
-    const [source, args, context, info]: [any, A, C, GraphQLResolveInfo] =
-      this.params
+  static readonly switchToGraphQL = <Args = any>(): GraphQLContext<Args> => {
+    const [source, args, context, info]: GraphQLParams<Args> = this.params
 
     return { source, args, context, info }
   }

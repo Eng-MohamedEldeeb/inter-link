@@ -2,7 +2,7 @@ import { UserService } from '../user.service'
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/graphql/IGraphQL.interface'
+} from '../../../common/decorators/graphql/types/IGraphQL.interface'
 import { IUser } from '../../../db/interface/IUser.interface'
 
 export class UserQueryResolver {

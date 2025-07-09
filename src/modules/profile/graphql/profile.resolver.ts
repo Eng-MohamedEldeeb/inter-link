@@ -2,7 +2,7 @@ import { ProfileService } from '../profile.service'
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/graphql/IGraphQL.interface'
+} from '../../../common/decorators/graphql/types/IGraphQL.interface'
 import {
   IChangeEmailDTO,
   IConfirmDeleteDTO,
@@ -11,6 +11,7 @@ import {
   IUpdateProfileDTO,
 } from '../dto/profile.dto'
 import { OtpType } from '../../../db/models/enums/otp.enum'
+import { throwError } from '../../../common/handlers/error-message.handler'
 
 export class ProfileQueryResolver {
   protected static readonly ProfileService = ProfileService

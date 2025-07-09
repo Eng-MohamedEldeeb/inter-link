@@ -1,4 +1,4 @@
-import { asyncHandler } from '../../../common/decorators/async-handler.decorator'
+import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { IRequest } from '../../../common/interface/http/IRequest.interface'
 import { Response } from 'express'
 import { AuthService } from '../auth.service'

@@ -1,14 +1,12 @@
 import { NextFunction, Response } from 'express'
 import { IRequest } from '../../interface/http/IRequest.interface'
 import { CloudUploader } from '../../services/upload/cloud.service'
-import { asyncHandler } from '../../decorators/async-handler.decorator'
+import { asyncHandler } from '../../decorators/async-handler/async-handler.decorator'
 
 export const uploadAttachments = (folder: string) => {
   return asyncHandler(
     async (req: IRequest, _: Response, next: NextFunction) => {
-      const folderId = req.tokenPayload._id.toString()
-
-      const folderName = `${process.env.APP_NAME}/${folderId}/${folder}`
+      const folderName = `${process.env.APP_NAME}/${req.tokenPayload._id.toString()}/${folder}`
 
       req.cloudFile = {
         folderId: '',
@@ -23,7 +21,7 @@ export const uploadAttachments = (folder: string) => {
             path: file.path,
             folderName,
           })
-          req.cloudFiles.folderId = folderId
+          req.cloudFiles.folderId = folderName
           req.cloudFiles.paths.push(paths)
         }
       }
@@ -35,7 +33,7 @@ export const uploadAttachments = (folder: string) => {
         })
 
         req.cloudFile.path = { secure_url, public_id }
-        req.cloudFile.folderId = folderId
+        req.cloudFile.folderId = folderName
       }
 
       return next()

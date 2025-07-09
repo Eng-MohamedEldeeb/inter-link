@@ -9,19 +9,31 @@ import {
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const confirmEmailSchema = {
-  body: joi
+  schema: joi
     .object<IConfirmEmailDTO>()
     .keys({
       email: generalFields.email.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'confirmEmail body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'confirmEmail body is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'confirmEmail args is required',
+      }),
+    }
+  },
 }
 
 export const registerSchema = {
-  body: joi
+  schema: joi
     .object<IRegisterDTO>()
     .keys({
       fullName: generalFields.fullName.required(),
@@ -36,39 +48,72 @@ export const registerSchema = {
       bio: generalFields.bio,
       otpCode: generalFields.otpCode.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'sign-up body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'sign-up body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'sign-up args is required',
+      }),
+    }
+  },
 }
 
 export const loginSchema = {
-  body: joi
+  schema: joi
     .object<ILoginDTO>()
     .keys({
       username: generalFields.username.required(),
       password: generalFields.password.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'login body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'login args is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'login body is required',
+      }),
+    }
+  },
 }
 
 export const forgotPasswordSchema = {
-  body: joi
+  schema: joi
     .object<IForgotPasswordDTO>()
     .keys({
       email: generalFields.email.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'forgotPassword body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'forgotPassword body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'forgotPassword args is required',
+      }),
+    }
+  },
 }
 
 export const resetPasswordSchema = {
-  body: joi
+  schema: joi
     .object<IResetPasswordDTO>()
     .keys({
       email: generalFields.email.required(),
@@ -78,8 +123,21 @@ export const resetPasswordSchema = {
         .required(),
       otpCode: generalFields.otpCode.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'resetPassword body is required',
-    }),
+    .required(),
+
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'resetPassword body is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'resetPassword args is required',
+      }),
+    }
+  },
 }

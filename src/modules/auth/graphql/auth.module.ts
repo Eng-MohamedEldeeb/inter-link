@@ -13,5 +13,6 @@ export const mutationModule = (() => {
         resetPassword: AuthController.resetPassword(),
       },
     }),
+    resolve: () => true,
   }
 })()

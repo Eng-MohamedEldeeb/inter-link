@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { asyncHandler } from '../../../common/decorators/async-handler.decorator'
+import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { IRequest } from '../../../common/interface/http/IRequest.interface'
 import { PostService } from './../post.service'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
@@ -35,41 +35,38 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const createPostDTO: ICreatePostDTO = req.body
-      const attachments = req.cloudFiles.paths
+      const { paths } = req.cloudFiles
       return successResponse(res, {
         status: 201,
-        data: await this.PostService.create(_id, createPostDTO, attachments),
+        data: await this.PostService.create(_id, createPostDTO, paths),
       })
     },
   )
 
   static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
-    const { _id } = req.profile
     const { _id: postId } = req.post
     const editPostDTO: IEditPostDTO = req.body
 
     return successResponse(res, {
       msg: 'Post has been modified successfully',
-      data: await this.PostService.edit(_id, postId, editPostDTO),
+      data: await this.PostService.edit(postId, editPostDTO),
     })
   })
 
   static readonly archive = asyncHandler(
     async (req: IRequest<any>, res: Response) => {
-      const { _id } = req.profile
       const { _id: postId } = req.post
       return successResponse(res, {
         msg: 'Post has been archived successfully',
-        data: await this.PostService.archive(_id, postId),
+        data: await this.PostService.archive(postId),
       })
     },
   )
 
   static readonly restore = asyncHandler(
     async (req: IRequest<any>, res: Response) => {
-      const { _id } = req.profile
       const { _id: postId } = req.post
-      await this.PostService.restore(_id, postId)
+      await this.PostService.restore(postId)
       return successResponse(res, {
         msg: 'Post has been restored successfully',
       })
@@ -78,9 +75,8 @@ export class PostController {
 
   static readonly delete = asyncHandler(
     async (req: IRequest<any>, res: Response) => {
-      const { _id } = req.profile
       const { _id: postId } = req.post
-      await this.PostService.delete(_id, postId)
+      await this.PostService.delete(postId)
       return successResponse(res, {
         msg: 'Post has been deleted successfully',
       })

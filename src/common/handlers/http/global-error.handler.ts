@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 
-interface IError extends Pick<Error, 'stack' | 'message'> {
+export interface IError extends Pick<Partial<Error>, 'stack' | 'message'> {
   msg: string
   details?: Object
-  status: number
+  status?: number
 }
 
 export const globalError = (
@@ -12,8 +12,6 @@ export const globalError = (
   res: Response,
   __: NextFunction,
 ) => {
-  console.log({ error })
-
   res.status(error.status || 500).json({
     success: false,
     error: {

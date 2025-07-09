@@ -7,22 +7,23 @@ import { applyResolver } from '../../../common/decorators/graphql/apply-resolver
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/graphql/IGraphQL.interface'
+} from '../../../common/decorators/graphql/types/IGraphQL.interface'
 
 import { returnedResponseType } from '../../../common/decorators/graphql/returned-type.decorator'
 import { ProfileResponse } from './types/profile-response.type'
 
-import * as args from './types/profile.args'
+import * as args from './types/profile-args.type'
 
 import isAuthenticatedGuard from '../../../common/guards/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/is-authorized.guard'
 
-import { validate } from '../../../common/middlewares/validation.middleware'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from '../validator/profile.validator'
 
 export class ProfileController {
   private static readonly ProfileQueryResolver = ProfileQueryResolver
   private static readonly ProfileMutationResolver = ProfileMutationResolver
+
   // Queries:
   static readonly getProfile = (): IQueryController => {
     return {
@@ -73,7 +74,7 @@ export class ProfileController {
       args: args.updateProfile,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.updateProfileSchema)],
+        middlewares: [validate(validators.updateProfileSchema.graphQL())],
         resolver: this.ProfileMutationResolver.updateProfile,
       }),
     }
@@ -99,7 +100,7 @@ export class ProfileController {
       args: args.changeEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.changeEmailSchema)],
+        middlewares: [validate(validators.changeEmailSchema.graphQL())],
         resolver: this.ProfileMutationResolver.changeEmail,
       }),
     }
@@ -113,7 +114,7 @@ export class ProfileController {
       args: args.confirmNewEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmNewEmailSchema)],
+        middlewares: [validate(validators.confirmNewEmailSchema.graphQL())],
         resolver: this.ProfileMutationResolver.confirmNewEmail,
       }),
     }
@@ -139,7 +140,7 @@ export class ProfileController {
       args: args.deactivateAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema)],
+        middlewares: [validate(validators.deleteAccountSchema.graphQL())],
         resolver: this.ProfileMutationResolver.deactivateAccount,
       }),
     }
@@ -153,7 +154,7 @@ export class ProfileController {
       args: args.deleteAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema)],
+        middlewares: [validate(validators.deleteAccountSchema.graphQL())],
         resolver: this.ProfileMutationResolver.deleteAccount,
       }),
     }
@@ -167,7 +168,7 @@ export class ProfileController {
       args: args.confirmDeletion,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmDeletionSchema)],
+        middlewares: [validate(validators.confirmDeletionSchema.graphQL())],
         resolver: this.ProfileMutationResolver.confirmDeletion,
       }),
     }

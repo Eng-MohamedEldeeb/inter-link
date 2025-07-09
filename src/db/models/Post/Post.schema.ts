@@ -10,7 +10,7 @@ export const PostSchema = new Schema<IPost>(
     title: {
       type: String,
       minlength: [2, "post title can't be less than 2 characters at least"],
-      maxlength: [25, "post title can't be more than 25 characters"],
+      maxlength: [50, "post title can't be more than 50 characters"],
       required: [true, "post's title is required"],
     },
 
@@ -47,11 +47,11 @@ PostSchema.virtual('comments', {
 })
 
 PostSchema.virtual('totalLikes').get(function () {
-  return this.likedBy.length ?? 0
+  return this.likedBy?.length ?? 0
 })
 
 PostSchema.virtual('totalComments').get(function () {
-  return this.comments.length ?? 0
+  return this.comments?.length ?? 0
 })
 
 PostSchema.post('findOneAndDelete', async function (res: IPost, next) {

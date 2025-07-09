@@ -1,6 +1,10 @@
 import { GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql'
 import { ObjFields } from '../../types/graphql/graphql.types'
 
+export const argsType = <Interface>(fields: ObjFields<Interface>) => {
+  return fields
+}
+
 export const returnedType = <Interface>({
   name,
   fields,
@@ -29,8 +33,4 @@ export const returnedResponseType = ({
       ...(data && { data: { type: data } }),
     },
   })
-}
-
-export const argsType = <Interface>(fields: ObjFields<Interface>) => {
-  return fields
 }

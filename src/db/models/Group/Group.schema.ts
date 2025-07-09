@@ -6,7 +6,7 @@ export const GroupSchema = new Schema<IGroup>(
     name: {
       type: String,
       minlength: [2, "group's name can't be less than 2 characters at least"],
-      maxlength: [25, "group's name can't be more than 25 characters"],
+      maxlength: [50, "group's name can't be more than 50 characters"],
       required: [true, "Group's name is required"],
     },
 

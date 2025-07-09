@@ -10,7 +10,7 @@ export const CommentSchema = new Schema<IComment>(
         2,
         "comment's content can't be less than 2 characters at least",
       ],
-      maxlength: [25, "comment's content can't be more than 25 characters"],
+      maxlength: [500, "comment's content can't be more than 500 characters"],
       required: [true, "Comment's content is required"],
     },
     onPost: { type: SchemaTypes.ObjectId, ref: 'Post' },
@@ -35,11 +35,11 @@ CommentSchema.virtual('replies', {
 })
 
 CommentSchema.virtual('totalLikes').get(function () {
-  return this.likedBy.length ?? 0
+  return this.likedBy?.length ?? 0
 })
 
 CommentSchema.virtual('repliesCount').get(function () {
-  return this.replies.length ?? 0
+  return this.replies?.length ?? 0
 })
 // CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
 //   Promise.allSettled([

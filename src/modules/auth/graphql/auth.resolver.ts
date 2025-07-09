@@ -1,4 +1,4 @@
-import { ISuccessResponse } from '../../../common/interface/graphql/IGraphQL.interface'
+import { ISuccessResponse } from '../../../common/decorators/graphql/types/IGraphQL.interface'
 import { AuthService } from '../auth.service'
 import {
   IConfirmEmailDTO,

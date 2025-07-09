@@ -1,16 +1,10 @@
-import { GraphQLString } from 'graphql'
 import { returnedType } from '../../../../common/decorators/graphql/returned-type.decorator'
 import {
   profileFields,
   userFields,
 } from '../../../../common/types/graphql/graphql-fields.types'
 import { IUser } from '../../../../db/interface/IUser.interface'
-import {
-  IChangeEmailDTO,
-  IConfirmNewEmailDTO,
-  IDeleteAccountDTO,
-  IUpdateProfileDTO,
-} from '../../dto/profile.dto'
+import { IUpdateProfileDTO } from '../../dto/profile.dto'
 
 export class ProfileResponse {
   // Query:

@@ -7,7 +7,7 @@ export const isValidMongoId: CustomValidator = (
 ): true | ErrorReport => {
   return Types.ObjectId.isValid(v)
     ? true
-    : helpers.error('string.hex', { key: 'id' }, { path: ['id'] })
+    : helpers.error('string.base', { key: 'id' }, { path: ['id'] })
 }
 
 export const optionalMongoId: CustomValidator = (

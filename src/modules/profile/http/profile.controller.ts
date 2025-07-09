@@ -1,6 +1,6 @@
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { OtpType } from '../../../db/models/enums/otp.enum'
-import { asyncHandler } from '../../../common/decorators/async-handler.decorator'
+import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import {
   IChangeEmailDTO,
   IConfirmDeleteDTO,

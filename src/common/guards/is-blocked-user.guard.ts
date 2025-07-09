@@ -1,33 +1,63 @@
-import { Types } from 'mongoose'
-import { IGetUserProfileDTO } from '../../modules/user/dto/user.dto'
 import { ContextDetector } from '../decorators/context/context-detector.decorator'
-import { throwHttpError } from '../handlers/http/error-message.handler'
+import { throwError } from '../handlers/error-message.handler'
 import { GuardActivator } from './can-activate.guard'
-import { ContextType } from '../decorators/enums/async-handler.types'
 import { MongoObjId } from '../types/db/mongo.types'
+import {
+  GraphQLParams,
+  HttpParams,
+} from '../decorators/context/types/context-detector.types'
+import { ContextType } from '../decorators/context/types/enum/context-type.enum'
+import { Types } from 'mongoose'
 
 class IsBlockedUserGuard extends GuardActivator {
-  canActivate(...params: any[any]) {
-    const ctx = ContextDetector.detect(params)
+  protected userId: string = ''
 
-    if (ctx.type === ContextType.httpContext) {
-      const { req } = ctx.switchToHTTP<
-        Pick<IGetUserProfileDTO, 'id'>,
-        IGetUserProfileDTO
-      >()
+  canActivate(...params: HttpParams | GraphQLParams) {
+    const Ctx = ContextDetector.detect(params)
+
+    if (Ctx.type === ContextType.httpContext) {
+      const { req } = Ctx.switchToHTTP()
 
       const { blockedUsers } = req.profile
       const { _id: userId } = req.user
 
-      const isBlockedUser =
-        blockedUsers.length &&
-        blockedUsers.some((id: MongoObjId) => id.equals(userId))
+      this.userId = userId.toString()
+
+      const isBlockedUser = this.checkIfBlocked(blockedUsers)
 
       if (isBlockedUser)
-        return throwHttpError({ msg: 'user not found', status: 404 })
+        return throwError({ msg: 'user not found', status: 404 })
 
       return true
     }
+
+    if (Ctx.type === ContextType.graphContext) {
+      const { context } = Ctx.switchToGraphQL()
+
+      const { blockedUsers } = context.profile
+      const { _id: userId } = context.user
+
+      this.userId = userId.toString()
+
+      const isBlockedUser = this.checkIfBlocked(blockedUsers)
+
+      if (isBlockedUser)
+        return throwError({ msg: 'user not found', status: 404 })
+
+      return context
+    }
+  }
+
+  protected readonly checkIfBlocked = (
+    blockedUsers: Types.ObjectId[],
+  ): boolean => {
+    if (blockedUsers.length) {
+      const isBlockedUser = blockedUsers.some((blockedUserId: MongoObjId) =>
+        blockedUserId.equals(this.userId),
+      )
+      return isBlockedUser
+    }
+    return false
   }
 }
 

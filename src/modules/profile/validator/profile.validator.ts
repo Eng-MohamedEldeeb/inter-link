@@ -9,7 +9,7 @@ import {
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const updateProfileSchema = {
-  body: joi
+  schema: joi
     .object<IUpdateProfileDTO>()
     .keys({
       fullName: generalFields.fullName,
@@ -18,47 +18,83 @@ export const updateProfileSchema = {
       phone: generalFields.phone,
       bio: generalFields.bio,
     })
-    .required()
-    .messages({
-      'any.required': 'updateProfile body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'updateProfile body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'updateProfile args is required',
+      }),
+    }
+  },
 }
 
 export const updateProfilePicSchema = {
-  file: joi.object().keys(generalFields.file).required().messages({
+  schema: joi.object().keys(generalFields.file).required().messages({
     'any.required': 'avatar file is required',
   }),
+  http() {
+    return { file: this.schema }
+  },
 }
 
 export const changeEmailSchema = {
-  body: joi
+  schema: joi
     .object<IChangeEmailDTO>()
     .keys({
       originalEmail: generalFields.email.required(),
       newEmail: generalFields.email.required(),
       password: generalFields.password.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'changeEmail body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'changeEmail body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'changeEmail args is required',
+      }),
+    }
+  },
 }
 
 export const confirmNewEmailSchema = {
-  body: joi
+  schema: joi
     .object<IConfirmNewEmailDTO>()
     .keys({
       originalEmail: generalFields.email.required(),
       otpCode: generalFields.otpCode.required(),
     })
-    .required()
-    .messages({
-      'any.required': 'confirmNewEmail body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'confirmNewEmail body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'confirmNewEmail args is required',
+      }),
+    }
+  },
 }
 
 export const deleteAccountSchema = {
-  body: joi
+  schema: joi
     .object<IDeleteAccountDTO>()
     .keys({
       email: generalFields.email.required().messages({
@@ -68,14 +104,25 @@ export const deleteAccountSchema = {
         'any.required': 'password is required',
       }),
     })
-    .required()
-    .messages({
-      'any.required': 'deleteAccount body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'deleteAccount body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'deleteAccount args is required',
+      }),
+    }
+  },
 }
 
 export const confirmDeletionSchema = {
-  body: joi
+  schema: joi
     .object<IConfirmDeleteDTO>()
     .keys({
       email: generalFields.email.required().messages({
@@ -85,8 +132,19 @@ export const confirmDeletionSchema = {
         'any.required': 'otpCode is required',
       }),
     })
-    .required()
-    .messages({
-      'any.required': 'confirmDeletion body is required',
-    }),
+    .required(),
+  http() {
+    return {
+      body: this.schema.messages({
+        'any.required': 'confirmDeletion body is required',
+      }),
+    }
+  },
+  graphQL() {
+    return {
+      args: this.schema.messages({
+        'any.required': 'confirmDeletion args is required',
+      }),
+    }
+  },
 }

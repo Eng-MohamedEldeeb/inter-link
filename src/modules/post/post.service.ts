@@ -2,7 +2,8 @@ import postRepository from '../../common/repositories/post.repository'
 import { ICreatePostDTO, IEditPostDTO, IGetAllDTO } from './dto/post.dto'
 import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoObjId } from '../../common/types/db/mongo.types'
-import { throwHttpError } from '../../common/handlers/http/error-message.handler'
+import { throwError } from '../../common/handlers/error-message.handler'
+import { IPost } from '../../db/interface/IPost.interface'
 
 export class PostService {
   private static readonly postRepository = postRepository
@@ -28,6 +29,10 @@ export class PostService {
     }
   }
 
+  static readonly getSingle = (post: IPost) => {
+    return post
+  }
+
   static readonly create = async (
     createdBy: MongoObjId,
     createPostDTO: ICreatePostDTO,
@@ -41,51 +46,32 @@ export class PostService {
   }
 
   static readonly edit = async (
-    createdBy: MongoObjId,
     postId: MongoObjId,
     editPostDTO: IEditPostDTO,
   ) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
-        $and: [
-          { _id: postId },
-          { createdBy },
-          { archivedAt: { $exists: false } },
-        ],
+        $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: editPostDTO,
       options: { new: true, projection: Object.keys(editPostDTO).join(' ') },
     })
   }
 
-  static readonly archive = async (
-    createdBy: MongoObjId,
-    postId: MongoObjId,
-  ) => {
+  static readonly archive = async (postId: MongoObjId) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
-        $and: [
-          { _id: postId },
-          { createdBy },
-          { archivedAt: { $exists: false } },
-        ],
+        $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: { archivedAt: Date.now() },
       options: { new: true, projection: 'archivedAt' },
     })
   }
 
-  static readonly restore = async (
-    createdBy: MongoObjId,
-    postId: MongoObjId,
-  ) => {
+  static readonly restore = async (postId: MongoObjId) => {
     const isRestored = await this.postRepository.findOneAndUpdate({
       filter: {
-        $and: [
-          { _id: postId },
-          { createdBy },
-          { archivedAt: { $exists: true } },
-        ],
+        $and: [{ _id: postId }, { archivedAt: { $exists: true } }],
       },
       data: {
         $unset: {
@@ -95,24 +81,21 @@ export class PostService {
     })
     return isRestored
       ? isRestored
-      : throwHttpError({
+      : throwError({
           msg: 'In-Existent Post or In-valid Id',
           status: 404,
         })
   }
 
-  static readonly delete = async (
-    createdBy: MongoObjId,
-    postId: MongoObjId,
-  ) => {
+  static readonly delete = async (postId: MongoObjId) => {
     const isDeleted = await this.postRepository.findOneAndDelete({
       filter: {
-        $and: [{ _id: postId }, { createdBy }],
+        $and: [{ _id: postId }],
       },
     })
     return isDeleted
       ? isDeleted
-      : throwHttpError({
+      : throwError({
           msg: 'In-Existent Post or In-valid Id',
           status: 404,
         })

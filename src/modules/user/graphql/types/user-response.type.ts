@@ -5,12 +5,7 @@ import { IUser } from '../../../../db/interface/IUser.interface'
 export class UserResponse {
   // Query:
   static readonly getUserProfile = () => {
-    return returnedType<
-      Omit<
-        IUser,
-        'deactivatedAt' | 'tempEmail' | '__v' | 'password' | 'oldPasswords'
-      >
-    >({
+    return returnedType({
       name: 'fullUserProfile',
       fields: userProfileFields,
     })

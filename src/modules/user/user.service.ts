@@ -1,6 +1,6 @@
 import userRepository from '../../common/repositories/user.repository'
 import { IUser } from '../../db/interface/IUser.interface'
-import { throwHttpError } from '../../common/handlers/http/error-message.handler'
+import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoObjId } from '../../common/types/db/mongo.types'
 
 export class UserService {
@@ -31,7 +31,7 @@ export class UserService {
     const { isPrivateProfile, followers } = user
 
     if (isPrivateProfile)
-      return throwHttpError({
+      return throwError({
         msg: "only user's followings can see his own followers",
         status: 403,
       })
@@ -47,7 +47,7 @@ export class UserService {
     const { isPrivateProfile, following } = user
 
     if (isPrivateProfile)
-      return throwHttpError({
+      return throwError({
         msg: "only user's followings can see his own following",
         status: 403,
       })
@@ -81,7 +81,7 @@ export class UserService {
     const isBlocked = blockedUsers.some(id => id.equals(userId))
 
     if (!isBlocked)
-      return throwHttpError({ msg: 'user is already un-blocked', status: 400 })
+      return throwError({ msg: 'user is already un-blocked', status: 400 })
 
     await this.userRepository.findOneAndUpdate({
       filter: {

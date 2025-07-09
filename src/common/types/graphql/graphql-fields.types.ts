@@ -3,20 +3,13 @@ import {
   GraphQLID,
   GraphQLInt,
   GraphQLList,
-  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql'
 import { IUser } from '../../../db/interface/IUser.interface'
 import { singleFileResponse } from '../../services/upload/interface/cloud-response.interface'
 import { DateType, ObjFields } from './graphql.types'
-import { IMongoDoc } from '../../../db/interface/IMongo-doc.interface'
-
-const mongoDoc: ObjFields<Omit<IMongoDoc, '__v'>> = {
-  _id: { type: GraphQLID },
-  createdAt: { type: DateType },
-  updatedAt: { type: DateType },
-}
+import { onePost } from '../../../modules/post/graphql/types/post-fields.type'
 
 const viewer = new GraphQLObjectType({
   name: 'viewerType',
@@ -27,7 +20,9 @@ const viewer = new GraphQLObjectType({
 })
 
 export const userFields = {
-  ...mongoDoc,
+  _id: { type: GraphQLID },
+  createdAt: { type: DateType },
+  updatedAt: { type: DateType },
   avatar: singleFileResponse,
   fullName: GraphQLString,
   username: GraphQLString,
@@ -41,7 +36,7 @@ export const userFields = {
   totalPosts: GraphQLInt,
   totalFollowers: GraphQLInt,
   totalFollowing: GraphQLInt,
-  posts: new GraphQLList(GraphQLID),
+  posts: new GraphQLList(onePost),
   savedPosts: new GraphQLList(GraphQLID),
   likedPosts: new GraphQLList(GraphQLID),
   following: new GraphQLList(GraphQLID),
@@ -52,15 +47,20 @@ export const userFields = {
   changedCredentialsAt: DateType,
 }
 
-export const profileFields: ObjFields<
+export const userProfileFields: ObjFields<
   Omit<
     IUser,
-    'deactivatedAt' | 'tempEmail' | '__v' | 'password' | 'oldPasswords'
+    | 'deactivatedAt'
+    | 'tempEmail'
+    | '__v'
+    | 'password'
+    | 'oldPasswords'
+    | 'viewers'
   >
 > = {
-  ...mongoDoc,
-
-  viewers: { type: new GraphQLList(viewer) },
+  _id: { type: GraphQLID },
+  createdAt: { type: DateType },
+  updatedAt: { type: DateType },
 
   fullName: {
     type: userFields.fullName,
@@ -114,4 +114,12 @@ export const profileFields: ObjFields<
   isPrivateProfile: { type: userFields.isPrivateProfile },
 }
 
-export const userProfileFields = profileFields
+export const profileFields: ObjFields<
+  Omit<
+    IUser,
+    'deactivatedAt' | 'tempEmail' | '__v' | 'password' | 'oldPasswords'
+  >
+> = { ...userProfileFields, viewers: { type: new GraphQLList(viewer) } }
+
+export const userProfile = userProfileFields
+export const profile = profileFields

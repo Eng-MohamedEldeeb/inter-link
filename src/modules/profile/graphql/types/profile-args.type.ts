@@ -10,11 +10,11 @@ import {
 } from '../../dto/profile.dto'
 
 export const updateProfile = argsType<IUpdateProfileDTO>({
-  username: { type: new GraphQLNonNull(userFields.username) },
-  fullName: { type: new GraphQLNonNull(userFields.fullName) },
-  bio: { type: new GraphQLNonNull(userFields.bio) },
-  birthDate: { type: new GraphQLNonNull(userFields.birthDate) },
-  phone: { type: new GraphQLNonNull(userFields.phone) },
+  username: { type: userFields.username },
+  fullName: { type: userFields.fullName },
+  bio: { type: userFields.bio },
+  birthDate: { type: userFields.birthDate },
+  phone: { type: userFields.phone },
 })
 
 export const changeEmail = argsType<IChangeEmailDTO>({

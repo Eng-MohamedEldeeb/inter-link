@@ -1,15 +1,15 @@
 import { GraphQLResolveInfo } from 'graphql'
-import { IResolveArgs } from '../../interface/graphql/IGraphQL.interface'
-import { asyncHandler } from '../async-handler.decorator'
-import { applyGuards } from '../apply-guards-activator.decorator'
+import { IContext, IResolveArgs } from './types/IGraphQL.interface'
+import { asyncHandler } from '../async-handler/async-handler.decorator'
+import { applyGuards } from '../guard/apply-guards.decorator'
 
-export const applyResolver = <A = any, C = any>({
+export const applyResolver = ({
   resolver,
   guards,
   middlewares,
-}: IResolveArgs<A, C>) => {
+}: IResolveArgs) => {
   return asyncHandler(
-    async (_: any, args: A, context: C, __: GraphQLResolveInfo) => {
+    async (_: any, args: any, context: IContext, __: GraphQLResolveInfo) => {
       if (guards?.length)
         await applyGuards(...guards).apply(this, [_, args, context, __])
 

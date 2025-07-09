@@ -30,7 +30,6 @@ export const mutationModule = (() => {
         confirmDeletion: ProfileController.confirmDeletion(),
       },
     }),
-
     resolve: () => true,
   }
 })()

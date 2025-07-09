@@ -1,9 +1,10 @@
-import { GraphQLObjectType, GraphQLSchema, GraphQLString } from 'graphql'
+import { GraphQLError, GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { createHandler } from 'graphql-http/lib/use/express'
 
-import * as auth from './auth/graphql/auh.module'
+import * as auth from './auth/graphql/auth.module'
 import * as profile from './profile/graphql/profile.module'
 import * as user from './user/graphql/user.module'
+import * as post from './post/graphql/post.module'
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -11,6 +12,7 @@ export const schema = new GraphQLSchema({
     fields: {
       profile: profile.queryModule,
       user: user.queryModule,
+      post: post.queryModule,
     },
   }),
 
@@ -20,6 +22,7 @@ export const schema = new GraphQLSchema({
       auth: auth.mutationModule,
       profile: profile.mutationModule,
       user: user.mutationModule,
+      post: post.mutationModule,
     },
   }),
 })
@@ -30,6 +33,9 @@ const graphqlModule = createHandler({
     const { authorization } = req.raw.headers
 
     return { authorization }
+  },
+  formatError(err) {
+    return new GraphQLError(err.message, { originalError: err })
   },
 })
 

@@ -31,5 +31,5 @@ StorySchema.index(
 )
 
 StorySchema.virtual('totalviewers').get(function () {
-  return this.viewers.length ?? 0
+  return this.viewers?.length ?? 0
 })
