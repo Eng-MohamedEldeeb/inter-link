@@ -28,6 +28,7 @@ class PostAuthorizationGuard extends GuardActivator {
     if (postOwner.isPrivateProfile && !postOwner._id.equals(this.profileId))
       return throwError({
         msg: 'Only Private Profiles can share their own posts ',
+        status: 403,
       })
 
     return true
