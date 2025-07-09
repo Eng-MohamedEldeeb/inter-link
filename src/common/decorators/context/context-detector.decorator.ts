@@ -10,7 +10,7 @@ export class ContextDetector {
   static type: ContextType
   protected static params: any[any]
 
-  private static readonly isHttpParams = (params: any[]): boolean => {
+  private static readonly hasHttpParams = (params: any[]): boolean => {
     return (
       params.length === 3 &&
       'url' in params[0] &&
@@ -18,23 +18,23 @@ export class ContextDetector {
     )
   }
 
-  private static readonly isGraphQLParams = (params: any[]): boolean => {
+  private static readonly hasGraphQLParams = (params: any[]): boolean => {
     return params.length === 4 && 'fieldName' in params[3]
   }
 
   static readonly detect = (params: any[]) => {
     this.params = params
 
-    const isHttpParams = this.isHttpParams(params)
+    const hasHttpParams = this.hasHttpParams(params)
 
-    const isGraphQLParams = this.isGraphQLParams(params)
+    const hasGraphQLParams = this.hasGraphQLParams(params)
 
-    if (isHttpParams) {
+    if (hasHttpParams) {
       this.type = ContextType.httpContext
       return this
     }
 
-    if (isGraphQLParams) {
+    if (hasGraphQLParams) {
       this.type = ContextType.graphContext
       return this
     }
