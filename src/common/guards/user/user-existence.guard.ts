@@ -1,13 +1,13 @@
-import { IGetUserProfileDTO } from '../../modules/user/dto/user.dto'
-import { ContextDetector } from '../decorators/context/context-detector.decorator'
+import { IGetUserProfileDTO } from '../../../modules/user/dto/user.dto'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
   HttpParams,
-} from '../decorators/context/types/context-detector.types'
-import { ContextType } from '../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../handlers/error-message.handler'
-import userRepository from '../repositories/user.repository'
-import { GuardActivator } from './can-activate.guard'
+} from '../../decorators/context/types/context-detector.types'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+import userRepository from '../../repositories/user.repository'
+import { GuardActivator } from '../can-activate.guard'
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository

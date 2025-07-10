@@ -1,4 +1,4 @@
-import { returnedType } from '../../../../common/decorators/graphql/returned-type.decorator'
+import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { userProfileFields } from '../../../../common/types/graphql/graphql-fields.types'
 import { IUser } from '../../../../db/interface/IUser.interface'
 

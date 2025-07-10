@@ -1,20 +1,20 @@
-import { IGetSinglePostDTO } from '../../modules/post/dto/post.dto'
-import { ContextDetector } from '../decorators/context/context-detector.decorator'
+import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
   HttpParams,
-} from '../decorators/context/types/context-detector.types'
-import { ContextType } from '../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../handlers/error-message.handler'
-import userRepository from '../repositories/user.repository'
-import { MongoId } from '../types/db/db.types'
-import { GuardActivator } from './can-activate.guard'
+} from '../../decorators/context/types/context-detector.types'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+import userRepository from '../../repositories/user.repository'
+import { MongoId } from '../../types/db/db.types'
+import { GuardActivator } from '../can-activate.guard'
 
 class PostAuthorizationGuard extends GuardActivator {
   private readonly userRepository = userRepository
   protected profileId: MongoId | null = null
 
-  protected readonly checkIfAllowedToBeShared = async (createdBy: MongoId) => {
+  protected readonly isAuthorized = async (createdBy: MongoId) => {
     const postOwner = await this.userRepository.findOne({
       filter: {
         $and: [{ _id: createdBy }, { deactivatedAt: { $exists: false } }],
@@ -23,13 +23,7 @@ class PostAuthorizationGuard extends GuardActivator {
     })
     if (!postOwner) return throwError({ msg: 'In-valid Post Id' })
 
-    // if (postOwner._id.equals(this.profileId))
-
-    if (postOwner.isPrivateProfile && !postOwner._id.equals(this.profileId))
-      return throwError({
-        msg: 'Only Private Profiles can share their own posts ',
-        status: 403,
-      })
+    if (!postOwner._id.equals(this.profileId)) return false
 
     return true
   }
@@ -45,10 +39,7 @@ class PostAuthorizationGuard extends GuardActivator {
 
       this.profileId = profileId
 
-      if (req.url.includes('/shared'))
-        return await this.checkIfAllowedToBeShared(createdBy)
-
-      return true
+      return await this.isAuthorized(createdBy)
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -58,12 +49,8 @@ class PostAuthorizationGuard extends GuardActivator {
       const { createdBy } = context.post
 
       this.profileId = profileId
-      console.log({ info })
 
-      if (info.fieldName === 'shared')
-        return await this.checkIfAllowedToBeShared(createdBy)
-
-      return true
+      return await this.isAuthorized(createdBy)
     }
   }
 }

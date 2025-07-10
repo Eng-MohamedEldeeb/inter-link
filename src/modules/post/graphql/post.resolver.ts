@@ -1,7 +1,7 @@
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/decorators/graphql/types/IGraphQL.interface'
+} from '../../../common/decorators/resolver/types/IGraphQL.interface'
 import { IEditPostDTO, IGetAllDTO, IGetSinglePostDTO } from '../dto/post.dto'
 import { PostService } from '../post.service'
 

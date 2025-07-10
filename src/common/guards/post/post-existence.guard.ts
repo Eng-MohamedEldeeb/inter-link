@@ -1,13 +1,14 @@
-import { IGetSinglePostDTO } from '../../modules/post/dto/post.dto'
-import { ContextDetector } from '../decorators/context/context-detector.decorator'
+import { IGetPostCommentsDTO } from '../../../modules/comment/dto/comment.dto'
+import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
   HttpParams,
-} from '../decorators/context/types/context-detector.types'
-import { ContextType } from '../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../handlers/error-message.handler'
-import postRepository from '../repositories/post.repository'
-import { GuardActivator } from './can-activate.guard'
+} from '../../decorators/context/types/context-detector.types'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+import postRepository from '../../repositories/post.repository'
+import { GuardActivator } from '../can-activate.guard'
 
 class PostExistenceGuard extends GuardActivator {
   private readonly postRepository = postRepository
@@ -16,11 +17,15 @@ class PostExistenceGuard extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSinglePostDTO, IGetSinglePostDTO>()
-      const { id } = { ...req.params, ...req.query }
+      const { req } = Ctx.switchToHTTP<
+        IGetSinglePostDTO & IGetPostCommentsDTO,
+        IGetSinglePostDTO
+      >()
+      const { id, postId } = { ...req.params, ...req.query }
+
       const isExistedPost = await this.postRepository.findOne({
-        filter: { _id: id },
-        projection: { saves: 0 },
+        filter: { $or: [{ _id: id }, { _id: postId }] },
+        projection: { savedBy: 0 },
       })
 
       if (!isExistedPost)

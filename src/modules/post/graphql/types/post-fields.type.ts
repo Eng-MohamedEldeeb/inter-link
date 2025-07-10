@@ -10,13 +10,13 @@ import {
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
 import { IPost } from '../../../../db/interface/IPost.interface'
-import { singleFileResponse } from '../../../../common/services/upload/interface/cloud-response.interface'
+import { singleFile } from '../../../../common/services/upload/interface/cloud-response.interface'
 
 export const postFields: ObjFields<Omit<IPost, '__v'>> = {
   _id: { type: GraphQLID },
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
-  attachments: { type: new GraphQLList(singleFileResponse) },
+  attachments: { type: new GraphQLList(singleFile) },
   title: { type: GraphQLString },
   content: { type: GraphQLString },
   createdBy: { type: GraphQLString },
@@ -26,7 +26,7 @@ export const postFields: ObjFields<Omit<IPost, '__v'>> = {
   comments: { type: new GraphQLList(GraphQLID) },
   archivedAt: { type: DateType },
   onGroup: { type: GraphQLID },
-  saves: { type: new GraphQLList(GraphQLID) },
+  savedBy: { type: new GraphQLList(GraphQLID) },
   totalSaves: { type: GraphQLInt },
   shares: { type: GraphQLInt },
 }

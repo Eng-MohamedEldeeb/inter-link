@@ -6,8 +6,8 @@ import * as validators from '../validator/user.validator'
 import { UserController } from './user.controller'
 
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import UserExistenceGuard from '../../../common/guards/user-existence.guard'
-import isBlockedUserGuard from '../../../common/guards/is-blocked-user.guard'
+import UserExistenceGuard from '../../../common/guards/user/user-existence.guard'
+import isBlockedUserGuard from '../../../common/guards/user/is-blocked-user.guard'
 
 const router: Router = Router({ mergeParams: true })
 

@@ -21,7 +21,8 @@ export const asyncHandler = (fn: Function) => {
     } catch (error) {
       if (Ctx.type === ContextType.httpContext) {
         const { req, next } = Ctx.switchToHTTP()
-        await deleteFilesAfterError(req, next)
+        await deleteFilesAfterError(req)
+        return next(error)
       }
 
       throwErrorDependingOnInstanceType(error, Ctx)

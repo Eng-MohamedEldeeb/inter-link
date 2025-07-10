@@ -1,12 +1,12 @@
-import { ContextDetector } from '../decorators/context/context-detector.decorator'
-import { throwError } from '../handlers/error-message.handler'
-import { GuardActivator } from './can-activate.guard'
-import { MongoId } from '../types/db/db.types'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from '../can-activate.guard'
+import { MongoId } from '../../types/db/db.types'
 import {
   GraphQLParams,
   HttpParams,
-} from '../decorators/context/types/context-detector.types'
-import { ContextType } from '../decorators/context/types/enum/context-type.enum'
+} from '../../decorators/context/types/context-detector.types'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 import { Types } from 'mongoose'
 
 class IsBlockedUserGuard extends GuardActivator {

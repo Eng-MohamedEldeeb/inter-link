@@ -1,9 +1,8 @@
 import { IMongoDoc } from './IMongo-doc.interface'
-import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
+import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../common/types/db/db.types'
 
 export interface IPostInputs {
-  attachments: ICloud[]
   title: string
   content: string
   // tags: MongoId[]
@@ -11,12 +10,13 @@ export interface IPostInputs {
 }
 
 export interface IPost extends IMongoDoc, IPostInputs {
+  attachments: ICloudFiles
   createdBy: MongoId
   likedBy: MongoId[]
   totalLikes: number
   comments: MongoId[]
   totalComments: number
-  saves: MongoId[]
+  savedBy: MongoId[]
   totalSaves: number
   shares: number
   archivedAt: Date

@@ -98,9 +98,7 @@ export const editValidator = {
 
       query: joi
         .object<IGetSinglePostDTO>()
-        .keys({
-          id: this.schema.query,
-        })
+        .keys(this.schema.query)
         .required()
         .messages({
           'any.required': 'editPost id query param is required',

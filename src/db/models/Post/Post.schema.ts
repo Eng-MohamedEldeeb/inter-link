@@ -5,7 +5,11 @@ import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const PostSchema = new Schema<IPost>(
   {
-    attachments: [{ secure_url: String, public_id: String }],
+    attachments: {
+      fullPath: String,
+      folderId: String,
+      paths: [{ secure_url: String, public_id: String }],
+    },
 
     title: {
       type: String,
@@ -21,7 +25,7 @@ export const PostSchema = new Schema<IPost>(
 
     likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
-    saves: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    savedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
     totalSaves: { type: Number },
 
@@ -59,11 +63,12 @@ PostSchema.virtual('totalComments').get(function () {
 PostSchema.post('findOneAndDelete', async function (res: IPost, next) {
   await commentRepository.deleteMany({ onPost: res._id })
 
-  const files = res.attachments
+  const attachments = res.attachments
 
-  if (files.length) {
-    for (const file of files) {
-      await CloudUploader.delete(file.public_id)
+  if (attachments.paths.length) {
+    for (const path of attachments.paths) {
+      await CloudUploader.delete(path.public_id)
     }
+    await CloudUploader.deleteFolder(attachments.fullPath)
   }
 })

@@ -1,15 +1,15 @@
-import userRepository from '../repositories/user.repository'
-import { GuardActivator } from './can-activate.guard'
-import { throwError } from '../handlers/error-message.handler'
-import { ContextDetector } from '../decorators/context/context-detector.decorator'
-import { ContextType } from '../decorators/context/types/enum/context-type.enum'
-import { IContext } from '../decorators/graphql/types/IGraphQL.interface'
-import { IRequest } from '../interface/http/IRequest.interface'
+import userRepository from '../../repositories/user.repository'
+import { GuardActivator } from '../can-activate.guard'
+import { throwError } from '../../handlers/error-message.handler'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { IContext } from '../../decorators/resolver/types/IGraphQL.interface'
+import { IRequest } from '../../interface/http/IRequest.interface'
 import {
   GraphQLParams,
   HttpParams,
-} from '../decorators/context/types/context-detector.types'
-import { IPayload } from '../utils/security/token/interface/token.interface'
+} from '../../decorators/context/types/context-detector.types'
+import { IPayload } from '../../utils/security/token/interface/token.interface'
 
 class IsAuthorizedGuard implements GuardActivator {
   private readonly userRepository = userRepository

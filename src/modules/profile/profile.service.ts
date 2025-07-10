@@ -57,9 +57,9 @@ export class ProfileService {
 
     const posts = await this.postRepository.find({
       filter: {
-        $and: [{ archivedAt: { $exists: false } }, { saves: profileId }],
+        $and: [{ archivedAt: { $exists: false } }, { savedBy: profileId }],
       },
-      options: { sort: { createdAt: -1 } },
+      options: { sort: { createdAt: -1 }, projection: { saves: 0 } },
       skip,
       limit: limitQuery,
     })
@@ -70,7 +70,6 @@ export class ProfileService {
       page: Math.ceil(posts.length / limitQuery),
     }
   }
-
   static readonly updateProfilePic = async ({
     profileId,
     path,
@@ -88,12 +87,13 @@ export class ProfileService {
       return throwError({ msg: "user doesn't exist", status: 404 })
 
     const hasDefaultAvatar =
-      isExistedUser.avatar.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
+      isExistedUser.avatar.path.secure_url ==
+      process.env.DEFAULT_PROFILE_AVATAR_PIC
 
     if (!hasDefaultAvatar) {
       const { secure_url, public_id } = await this.CloudUploader.upload({
         path,
-        public_id: isExistedUser.avatar.public_id,
+        public_id: isExistedUser.avatar.path.public_id,
       })
 
       return await this.userRepository.findByIdAndUpdate({
@@ -134,7 +134,8 @@ export class ProfileService {
       return throwError({ msg: "user doesn't exist", status: 404 })
 
     const hasDefaultAvatar =
-      isExistedUser.avatar.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
+      isExistedUser.avatar.path.secure_url ==
+      process.env.DEFAULT_PROFILE_AVATAR_PIC
 
     if (hasDefaultAvatar)
       return throwError({
@@ -142,7 +143,7 @@ export class ProfileService {
         status: 400,
       })
 
-    await this.CloudUploader.delete(isExistedUser.avatar.public_id)
+    await this.CloudUploader.delete(isExistedUser.avatar.path.public_id)
 
     return await this.userRepository.findByIdAndUpdate({
       _id: userId,

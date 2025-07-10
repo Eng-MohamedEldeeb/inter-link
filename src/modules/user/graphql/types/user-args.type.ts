@@ -1,5 +1,5 @@
 import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
-import { argsType } from '../../../../common/decorators/graphql/returned-type.decorator'
+import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IBlockUserDTO } from '../../dto/user.dto'
 
 export const getUserProfile = argsType<IBlockUserDTO>({

@@ -1,4 +1,4 @@
-import { returnedType } from '../../../common/decorators/graphql/returned-type.decorator'
+import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { PostController } from './post.controller'
 
 export const queryModule = (() => {

@@ -1,8 +1,15 @@
 import { Schema, SchemaTypes } from 'mongoose'
 import { IComment } from '../../interface/IComment.interface'
+import commentRepository from '../../../common/repositories/comment.repository'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const CommentSchema = new Schema<IComment>(
   {
+    attachment: {
+      fullPath: String,
+      folderId: String,
+      path: { type: { secure_url: String, public_id: String } },
+    },
     content: {
       type: String,
       trim: true,
@@ -41,10 +48,12 @@ CommentSchema.virtual('totalLikes').get(function () {
 CommentSchema.virtual('repliesCount').get(function () {
   return this.replies?.length ?? 0
 })
-// CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
-//   Promise.allSettled([
-//     posteRepository.deleteMany({ createdBy: res._id }),
 
-//     CommentRepository.deleteMany({ createdBy: res._id }),
-//   ])
-// })
+CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
+  if (res.attachment.path.public_id) {
+    await CloudUploader.delete(res.attachment.path.public_id)
+    await CloudUploader.deleteFolder(res.attachment.fullPath)
+  }
+
+  await commentRepository.deleteMany({ replyingTo: res._id })
+})

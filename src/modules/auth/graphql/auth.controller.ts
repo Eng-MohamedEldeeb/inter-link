@@ -1,7 +1,7 @@
-import { IMutationController } from '../../../common/decorators/graphql/types/IGraphQL.interface'
-import { applyResolver } from '../../../common/decorators/graphql/apply-resolver.decorator'
+import { IMutationController } from '../../../common/decorators/resolver/types/IGraphQL.interface'
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 
-import { returnedResponseType } from '../../../common/decorators/graphql/returned-type.decorator'
+import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 
 import * as args from './types/auth-args.type'
 

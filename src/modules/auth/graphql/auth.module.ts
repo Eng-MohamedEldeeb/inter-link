@@ -1,4 +1,4 @@
-import { returnedType } from '../../../common/decorators/graphql/returned-type.decorator'
+import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { AuthController } from './auth.controller'
 
 export const mutationModule = (() => {

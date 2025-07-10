@@ -1,5 +1,5 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
-import { argsType } from '../../../../common/decorators/graphql/returned-type.decorator'
+import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IEditPostDTO, IGetAllDTO, IGetSinglePostDTO } from '../../dto/post.dto'
 
 export const getAll = argsType<IGetAllDTO>({

@@ -7,6 +7,7 @@ import { IUser } from '../../../../db/interface/IUser.interface'
 import { IPayload } from '../../../utils/security/token/interface/token.interface'
 import { IPost } from '../../../../db/interface/IPost.interface'
 import { GuardActivator } from '../../../guards/can-activate.guard'
+import { IComment } from '../../../../db/interface/IComment.interface'
 
 export type ControllerParams = (
   args: any,
@@ -56,4 +57,5 @@ export interface IContext {
   profile: IUser
   user: IUser
   post: IPost
+  comment: IComment
 }

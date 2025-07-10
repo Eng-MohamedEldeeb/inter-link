@@ -5,11 +5,12 @@ import * as validators from './../validators/post.validators'
 
 import { PostController } from './post.controller'
 import { fileReader } from './../../../common/utils/multer/file-reader'
-import { uploadAttachments } from './../../../common/middlewares/http/upload-attachments.middleware'
+import { postAttachmentUploader } from '../../../common/middlewares/http/post-attachments-uploader.middleware'
 
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import PostExistenceGuard from './../../../common/guards/post-existence.guard'
-import postAuthorizationGuard from './../../../common/guards/post-authorization.guard'
+import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
+import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
+import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
 
 const router: Router = Router()
 
@@ -22,14 +23,14 @@ router.get(
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  applyGuards(PostExistenceGuard),
+  applyGuards(postExistenceGuard),
   PostController.getSingle,
 )
 
 router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
-  uploadAttachments('posts'),
+  postAttachmentUploader,
   validate(validators.createValidator),
   PostController.create,
 )
@@ -37,42 +38,42 @@ router.post(
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  applyGuards(postExistenceGuard, postAuthorizationGuard),
   PostController.edit,
 )
 
 router.post(
   '/save',
   validate(validators.saveValidator.http()),
-  applyGuards(PostExistenceGuard),
+  applyGuards(postExistenceGuard),
   PostController.save,
 )
 
 router.post(
   '/shared',
   validate(validators.sharedValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  applyGuards(postExistenceGuard, postSharePermissionGuard),
   PostController.shared,
 )
 
 router.patch(
   '/archive',
   validate(validators.archiveValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  applyGuards(postExistenceGuard, postAuthorizationGuard),
   PostController.archive,
 )
 
 router.patch(
   '/restore',
   validate(validators.restoreValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  applyGuards(postExistenceGuard, postAuthorizationGuard),
   PostController.restore,
 )
 
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),
-  applyGuards(PostExistenceGuard, postAuthorizationGuard),
+  applyGuards(postExistenceGuard, postAuthorizationGuard),
   PostController.delete,
 )
 

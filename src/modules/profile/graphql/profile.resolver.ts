@@ -2,7 +2,7 @@ import { ProfileService } from '../profile.service'
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/decorators/graphql/types/IGraphQL.interface'
+} from '../../../common/decorators/resolver/types/IGraphQL.interface'
 import {
   IChangeEmailDTO,
   IConfirmDeleteDTO,
@@ -62,7 +62,10 @@ export class ProfileQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: await this.PostService.getAllSavedPosts({ profileId, query: args }),
+      data: await this.ProfileService.getAllSavedPosts({
+        profileId,
+        query: args,
+      }),
     }
   }
 }

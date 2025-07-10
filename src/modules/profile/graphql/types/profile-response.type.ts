@@ -1,5 +1,5 @@
 import { GraphQLInt, GraphQLList } from 'graphql'
-import { returnedType } from '../../../../common/decorators/graphql/returned-type.decorator'
+import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import {
   profileFields,
   userFields,

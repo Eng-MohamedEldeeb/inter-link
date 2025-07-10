@@ -35,7 +35,6 @@ export const validateHttpInputs = async (
       details: errors,
       status: 400,
     })
-
   return next()
 }
 

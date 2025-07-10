@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLObjectType, GraphQLString } from 'graphql'
+import { GraphQLObjectType, GraphQLString } from 'graphql'
 
 export interface ICloud {
   public_id: string
@@ -6,16 +6,18 @@ export interface ICloud {
 }
 
 export interface ICloudFile {
+  fullPath: string
   folderId: string
   path: ICloud
 }
 export interface ICloudFiles {
+  fullPath: string
   folderId: string
   paths: ICloud[]
 }
 
-export const singleFileResponse = new GraphQLObjectType({
-  name: 'singleFileResponse',
+export const singleFile = new GraphQLObjectType({
+  name: 'singleFile',
   fields: {
     secure_url: { type: GraphQLString },
   },

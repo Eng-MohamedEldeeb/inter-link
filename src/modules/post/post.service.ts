@@ -2,7 +2,7 @@ import { MongoId } from './../../common/types/db/db.types'
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
 import { ICreatePostDTO, IEditPostDTO, IGetAllDTO } from './dto/post.dto'
-import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
+import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 
 export class PostService {
@@ -30,35 +30,6 @@ export class PostService {
     }
   }
 
-  static readonly getAllSavedPosts = async ({
-    profileId,
-    query,
-  }: {
-    profileId: MongoId
-    query: IGetAllDTO
-  }) => {
-    const { page, limit } = query
-
-    const skip = (page ?? 1 - 1) * limit
-
-    const limitQuery = limit ?? 10
-
-    const posts = await this.postRepository.find({
-      filter: {
-        $and: [{ archivedAt: { $exists: false } }, { saves: profileId }],
-      },
-      options: { sort: { createdAt: -1 }, projection: { saves: 0 } },
-      skip,
-      limit: limitQuery,
-    })
-
-    return {
-      posts,
-      count: posts.length,
-      page: Math.ceil(posts.length / limitQuery),
-    }
-  }
-
   static readonly create = async ({
     createdBy,
     createPostDTO,
@@ -66,7 +37,7 @@ export class PostService {
     createdBy: MongoId
     createPostDTO: {
       data: ICreatePostDTO
-      attachments: ICloud[]
+      attachments: ICloudFiles
     }
   }) => {
     return await this.postRepository.create({
@@ -101,10 +72,14 @@ export class PostService {
   }) => {
     await this.postRepository.findOneAndUpdate({
       filter: {
-        $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
+        $and: [
+          { _id: postId },
+          { archivedAt: { $exists: false } },
+          { savedBy: { $ne: profileId } },
+        ],
       },
       data: {
-        $push: { saves: profileId },
+        $addToSet: { savedBy: profileId },
         $inc: { totalSaves: 1 },
       },
     })

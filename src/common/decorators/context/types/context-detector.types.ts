@@ -1,7 +1,7 @@
 import { IRequest } from '../../../interface/http/IRequest.interface'
 import { NextFunction, Response } from 'express'
 import { GraphQLResolveInfo } from 'graphql'
-import { IContext } from '../../graphql/types/IGraphQL.interface'
+import { IContext } from '../../resolver/types/IGraphQL.interface'
 
 export type HttpParams<P = any, Q = any> = [
   IRequest<P, Q>,

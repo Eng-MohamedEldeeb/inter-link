@@ -34,7 +34,7 @@ export class PostController {
   static readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
-      const { paths } = req.cloudFiles
+      const attachments = req.cloudFiles
 
       const createPostDTO: ICreatePostDTO = req.body
       return successResponse(res, {
@@ -42,7 +42,7 @@ export class PostController {
         msg: 'Post Uploaded Successfully',
         data: await this.PostService.create({
           createdBy: _id,
-          createPostDTO: { data: createPostDTO, attachments: paths },
+          createPostDTO: { data: createPostDTO, attachments },
         }),
       })
     },

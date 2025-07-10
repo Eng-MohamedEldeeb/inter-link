@@ -7,10 +7,13 @@ import { encryptValue } from '../../../common/utils/security/crypto/crypto.servi
 import postRepository from '../../../common/repositories/post.repository'
 import groupRepository from '../../../common/repositories/group.repository'
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
+import commentRepository from '../../../common/repositories/comment.repository'
 
 export const UserSchema = new Schema<IUser>(
   {
     avatar: {
+      fullPath: String,
+      folderId: String,
       secure_url: {
         type: String,
         default:
@@ -170,11 +173,12 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
 
 UserSchema.post('findOneAndDelete', async function (res: IUser) {
   Promise.allSettled([
-    res.avatar.secure_url != process.env.DEFAULT_PROFILE_AVATAR_PIC &&
-      (await CloudUploader.delete(res.avatar.public_id).then(async () => {
-        await CloudUploader.deleteFolder(`${process.env.APP_NAME}/${res._id}`)
-      })),
     postRepository.deleteMany({ createdBy: res._id }),
+    commentRepository.deleteMany({ createdBy: res._id }),
     groupRepository.deleteMany({ createdBy: res._id }),
+    res.avatar.path.secure_url != process.env.DEFAULT_PROFILE_AVATAR_PIC &&
+      (await CloudUploader.delete(res.avatar.path.public_id).then(async () => {
+        await CloudUploader.deleteFolder(res.avatar.fullPath)
+      })),
   ])
 })

@@ -1,5 +1,5 @@
 import { GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
-import { argsType } from '../../../../common/decorators/graphql/returned-type.decorator'
+import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { userFields } from '../../../../common/types/graphql/graphql-fields.types'
 import {
   IChangeEmailDTO,

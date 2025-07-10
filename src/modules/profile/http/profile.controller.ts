@@ -49,7 +49,7 @@ export class ProfileController {
       const { _id: profileId } = req.profile
       const query = req.query
       return successResponse(res, {
-        data: await this.PostService.getAllSavedPosts({ profileId, query }),
+        data: await this.ProfileService.getAllSavedPosts({ profileId, query }),
       })
     },
   )

@@ -1,19 +1,19 @@
 import { UserQueryResolver, UserMutationResolver } from './user.resolver'
-import { applyResolver } from '../../../common/decorators/graphql/apply-resolver.decorator'
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/decorators/graphql/types/IGraphQL.interface'
+} from '../../../common/decorators/resolver/types/IGraphQL.interface'
 
-import { returnedResponseType } from '../../../common/decorators/graphql/returned-type.decorator'
+import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { UserResponse } from './types/user-response.type'
 
 import * as args from './types/user-args.type'
 
-import isAuthenticatedGuard from '../../../common/guards/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/is-authorized.guard'
-import userExistenceGuard from '../../../common/guards/user-existence.guard'
+import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
+import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from '../validator/user.validator'

@@ -7,7 +7,7 @@ import {
   GraphQLString,
 } from 'graphql'
 import { IUser } from '../../../db/interface/IUser.interface'
-import { singleFileResponse } from '../../services/upload/interface/cloud-response.interface'
+import { singleFile } from '../../services/upload/interface/cloud-response.interface'
 import { DateType, ObjFields } from './graphql.types'
 import { onePost } from '../../../modules/post/graphql/types/post-fields.type'
 
@@ -23,7 +23,7 @@ export const userFields = {
   _id: { type: GraphQLID },
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
-  avatar: singleFileResponse,
+  avatar: singleFile,
   fullName: GraphQLString,
   username: GraphQLString,
   email: GraphQLString,
