@@ -7,8 +7,8 @@ import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { IContext } from '../../decorators/resolver/types/IGraphQL.interface'
-import { IRequest } from '../../interface/http/IRequest.interface'
+import { IContext } from '../../interface/IGraphQL.interface'
+import { IRequest } from '../../interface/IRequest.interface'
 
 class IsAuthenticatedGuard implements GuardActivator {
   async canActivate(...params: HttpParams | GraphQLParams) {

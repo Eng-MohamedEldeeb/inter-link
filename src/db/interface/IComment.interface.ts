@@ -10,7 +10,7 @@ export interface ICommentInputs {
 }
 
 export interface IComment extends IMongoDoc, ICommentInputs {
-  attachment: ICloudFile
+  attachment?: ICloudFile
   likedBy: MongoId[]
   totalLikes: number
   replies: MongoId[]

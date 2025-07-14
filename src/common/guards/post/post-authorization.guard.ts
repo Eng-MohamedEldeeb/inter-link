@@ -1,4 +1,3 @@
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
@@ -13,11 +12,12 @@ import { GuardActivator } from '../can-activate.guard'
 class PostAuthorizationGuard extends GuardActivator {
   private readonly userRepository = userRepository
   protected profileId: MongoId | null = null
+  protected createdBy: MongoId | null = null
 
-  protected readonly isAuthorized = async (createdBy: MongoId) => {
+  protected readonly isTheOwner = async () => {
     const postOwner = await this.userRepository.findOne({
       filter: {
-        $and: [{ _id: createdBy }, { deactivatedAt: { $exists: false } }],
+        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
       },
       projection: { isPrivateProfile: 1 },
     })
@@ -32,25 +32,21 @@ class PostAuthorizationGuard extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSinglePostDTO, IGetSinglePostDTO>()
+      const { req } = Ctx.switchToHTTP()
 
-      const { _id: profileId } = req.profile
-      const { createdBy } = req.post
+      this.createdBy = req.post.createdBy
+      this.profileId = req.profile._id
 
-      this.profileId = profileId
-
-      return await this.isAuthorized(createdBy)
+      return await this.isTheOwner()
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { context, info } = Ctx.switchToGraphQL<IGetSinglePostDTO>()
+      const { context } = Ctx.switchToGraphQL()
 
-      const { _id: profileId } = context.profile
-      const { createdBy } = context.post
+      this.createdBy = context.post.createdBy
+      this.profileId = context.profile._id
 
-      this.profileId = profileId
-
-      return await this.isAuthorized(createdBy)
+      return await this.isTheOwner()
     }
   }
 }

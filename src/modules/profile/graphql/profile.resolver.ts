@@ -2,7 +2,7 @@ import { ProfileService } from '../profile.service'
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/decorators/resolver/types/IGraphQL.interface'
+} from '../../../common/interface/IGraphQL.interface'
 import {
   IChangeEmailDTO,
   IConfirmDeleteDTO,

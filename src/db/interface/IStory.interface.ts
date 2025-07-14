@@ -4,9 +4,10 @@ import { MongoId } from '../../common/types/db/db.types'
 
 export interface IStoryInputs {
   content: string
-  attachment: ICloudFile
+  createdBy: MongoId
 }
 export interface IStory extends IStoryInputs, IMongoDoc {
+  attachment: ICloudFile
   viewers: MongoId[]
-  totalviewers: number
+  totalViewers: number
 }

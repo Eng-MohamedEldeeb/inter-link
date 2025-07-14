@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { IRequest } from '../../../common/interface/http/IRequest.interface'
+import { IRequest } from '../../../common/interface/IRequest.interface'
 import { PostService } from './../post.service'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import {
@@ -35,7 +35,6 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const attachments = req.cloudFiles
-
       const createPostDTO: ICreatePostDTO = req.body
       return successResponse(res, {
         status: 201,

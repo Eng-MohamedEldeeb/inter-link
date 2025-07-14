@@ -4,23 +4,13 @@ import { ICloudFile } from '../../common/services/upload/interface/cloud-respons
 import { MongoId } from '../../common/types/db/db.types'
 import {
   IAddCommentDTO,
+  IDeleteCommentDTO,
   IEditCommentDTO,
   IGetPostCommentsDTO,
 } from './dto/comment.dto'
 
 class CommentService {
   protected readonly commentRepository = commentRepository
-
-  readonly getPostComments = async (postId: MongoId) => {
-    const comments = await this.commentRepository.find({
-      filter: { onPost: postId },
-    })
-
-    return {
-      comments,
-      count: comments.length,
-    }
-  }
 
   readonly addComment = async ({
     content,
@@ -30,7 +20,7 @@ class CommentService {
   }: IAddCommentDTO & IGetPostCommentsDTO & { attachment: ICloudFile }) => {
     const postedComment = await this.commentRepository.create({
       content,
-      ...(attachment && { attachment }),
+      ...(attachment.folderId && { attachment }),
       onPost: postId,
       createdBy,
     })
@@ -38,16 +28,10 @@ class CommentService {
     return postedComment
   }
 
-  readonly edit = async ({
-    commentId,
-    editCommentDTO,
-  }: {
-    commentId: MongoId
-    editCommentDTO: IEditCommentDTO
-  }) => {
+  readonly edit = async ({ commentId, content }: IEditCommentDTO) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
       _id: commentId,
-      data: editCommentDTO,
+      data: { content },
       options: { new: true, lean: true, projection: { content: 1 } },
     })
     return (
@@ -59,7 +43,7 @@ class CommentService {
     )
   }
 
-  readonly deleteComment = async (commentId: MongoId) => {
+  readonly deleteComment = async ({ commentId }: IDeleteCommentDTO) => {
     const deletedComment = await this.commentRepository.findByIdAndDelete({
       _id: commentId,
     })

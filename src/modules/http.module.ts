@@ -11,10 +11,6 @@ import { applyRateLimiter } from '../common/utils/security/rate-limiter/rate-lim
 import { applyGuards } from '../common/decorators/guard/apply-guards.decorator'
 import isAuthenticatedGuard from '../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../common/guards/auth/is-authorized.guard'
-import postExistenceGuard from '../common/guards/post/post-existence.guard'
-
-import { validate } from '../common/middlewares/validation/validation.middleware'
-import { getPostCommentsValidator } from './comment/validators/comment.validators'
 
 const router: Router = Router()
 
@@ -42,9 +38,10 @@ router.use(
 )
 
 router.use(
-  '/:postId/comments',
+  '/comment',
   applyRateLimiter({ skipSuccessfulRequests: false }),
-  applyGuards(isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   commentModule,
 )
+
 export default router

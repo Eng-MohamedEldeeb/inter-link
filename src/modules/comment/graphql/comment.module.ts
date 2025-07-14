@@ -6,7 +6,20 @@ export const queryModule = (() => {
     type: returnedType({
       name: 'commentQuery',
       fields: {
-        getPostComments: CommentController.getPostComments(),
+        getSingleComment: CommentController.getSingleComment(),
+      },
+    }),
+    resolve: () => true,
+  }
+})()
+
+export const mutationModule = (() => {
+  return {
+    type: returnedType({
+      name: 'commentMutation',
+      fields: {
+        edit: CommentController.edit(),
+        delete: CommentController.deleteComment(),
       },
     }),
     resolve: () => true,

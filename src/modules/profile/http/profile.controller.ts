@@ -11,7 +11,7 @@ import {
 import { ProfileService } from '../profile.service'
 import { PostService } from '../../post/post.service'
 import { Response } from 'express'
-import { IRequest } from '../../../common/interface/http/IRequest.interface'
+import { IRequest } from '../../../common/interface/IRequest.interface'
 import { IUser } from '../../../db/interface/IUser.interface'
 import { IGetAllDTO } from '../../post/dto/post.dto'
 

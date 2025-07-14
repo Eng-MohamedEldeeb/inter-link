@@ -1,5 +1,6 @@
 import { Schema, SchemaTypes } from 'mongoose'
 import { IGroup } from '../../interface/IGroup.interface'
+import postRepository from '../../../common/repositories/post.repository'
 
 export const GroupSchema = new Schema<IGroup>(
   {
@@ -20,7 +21,11 @@ export const GroupSchema = new Schema<IGroup>(
 
     followers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 )
 
 GroupSchema.virtual('posts', {
@@ -28,10 +33,7 @@ GroupSchema.virtual('posts', {
   localField: '_id',
   foreignField: '',
 })
-// GroupSchema.post('findOneAndDelete', async function (res: IGroup, next) {
-//   Promise.allSettled([
-//     posteRepository.deleteMany({ createdBy: res._id }),
 
-//     groupRepository.deleteMany({ createdBy: res._id }),
-//   ])
-// })
+GroupSchema.post('findOneAndDelete', async function (res: IGroup, next) {
+  await postRepository.deleteMany({ onGroup: res._id })
+})

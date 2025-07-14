@@ -42,7 +42,9 @@ export class PostService {
   }) => {
     return await this.postRepository.create({
       ...createPostDTO.data,
-      attachments: createPostDTO.attachments,
+      ...(createPostDTO.attachments.folderId && {
+        attachments: createPostDTO.attachments,
+      }),
       createdBy,
     })
   }

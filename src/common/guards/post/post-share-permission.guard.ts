@@ -13,11 +13,12 @@ import { GuardActivator } from '../can-activate.guard'
 class PostSharePermission extends GuardActivator {
   private readonly userRepository = userRepository
   protected profileId: MongoId | null = null
+  protected createdBy: MongoId | null = null
 
-  protected readonly sharePermission = async (ownerId: MongoId) => {
+  protected readonly sharePermission = async () => {
     const postOwner = await this.userRepository.findOne({
       filter: {
-        $and: [{ _id: ownerId }, { deactivatedAt: { $exists: false } }],
+        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
       },
       projection: { isPrivateProfile: 1 },
     })
@@ -39,23 +40,19 @@ class PostSharePermission extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSinglePostDTO, IGetSinglePostDTO>()
 
-      const { _id: profileId } = req.profile
-      const { createdBy } = req.post
+      this.createdBy = req.post.createdBy
+      this.profileId = req.profile._id
 
-      this.profileId = profileId
-
-      return await this.sharePermission(createdBy)
+      return await this.sharePermission()
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context, info } = Ctx.switchToGraphQL<IGetSinglePostDTO>()
 
-      const { _id: profileId } = context.profile
-      const { createdBy } = context.post
+      this.createdBy = context.post.createdBy
+      this.profileId = context.profile._id
 
-      this.profileId = profileId
-
-      return await this.sharePermission(createdBy)
+      return await this.sharePermission()
     }
   }
 }

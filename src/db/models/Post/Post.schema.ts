@@ -41,7 +41,11 @@ export const PostSchema = new Schema<IPost>(
 
     archivedAt: { type: Date },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 )
 
 PostSchema.index({ archivedAt: 1 }, { expires: '15d' })
@@ -50,6 +54,7 @@ PostSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
   foreignField: 'onPost',
+  options: { sort: { createdAt: -1 } },
 })
 
 PostSchema.virtual('totalLikes').get(function () {

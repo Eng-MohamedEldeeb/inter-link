@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
-import { IContext, IResolveArgs } from './types/IGraphQL.interface'
+import { IContext, IResolveArgs } from '../../interface/IGraphQL.interface'
 import { asyncHandler } from '../async-handler/async-handler.decorator'
 import { applyGuards } from '../guard/apply-guards.decorator'
 

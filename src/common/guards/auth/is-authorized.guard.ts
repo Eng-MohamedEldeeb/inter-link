@@ -3,8 +3,8 @@ import { GuardActivator } from '../can-activate.guard'
 import { throwError } from '../../handlers/error-message.handler'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { IContext } from '../../decorators/resolver/types/IGraphQL.interface'
-import { IRequest } from '../../interface/http/IRequest.interface'
+import { IContext } from '../../interface/IGraphQL.interface'
+import { IRequest } from '../../interface/IRequest.interface'
 import {
   GraphQLParams,
   HttpParams,

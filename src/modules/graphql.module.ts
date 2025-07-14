@@ -6,6 +6,8 @@ import * as profile from './profile/graphql/profile.module'
 import * as user from './user/graphql/user.module'
 import * as post from './post/graphql/post.module'
 import * as comment from './comment/graphql/comment.module'
+import * as reply from './reply/graphql/reply.module'
+import * as story from './story/graphql/story.module'
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -15,6 +17,8 @@ export const schema = new GraphQLSchema({
       user: user.queryModule,
       post: post.queryModule,
       comment: comment.queryModule,
+      reply: reply.queryModule,
+      story: story.queryModule,
     },
   }),
 
@@ -25,6 +29,9 @@ export const schema = new GraphQLSchema({
       profile: profile.mutationModule,
       user: user.mutationModule,
       post: post.mutationModule,
+      comment: comment.mutationModule,
+      reply: reply.mutationModule,
+      story: story.mutationModule,
     },
   }),
 })

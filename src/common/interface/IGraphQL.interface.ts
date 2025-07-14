@@ -3,11 +3,13 @@ import {
   GraphQLOutputType,
   GraphQLResolveInfo,
 } from 'graphql'
-import { IUser } from '../../../../db/interface/IUser.interface'
-import { IPayload } from '../../../utils/security/token/interface/token.interface'
-import { IPost } from '../../../../db/interface/IPost.interface'
-import { GuardActivator } from '../../../guards/can-activate.guard'
-import { IComment } from '../../../../db/interface/IComment.interface'
+import { IUser } from '../../db/interface/IUser.interface'
+import { IPayload } from '../utils/security/token/interface/token.interface'
+import { IPost } from '../../db/interface/IPost.interface'
+import { GuardActivator } from '../guards/can-activate.guard'
+import { IComment } from '../../db/interface/IComment.interface'
+import { IReply } from '../../db/interface/IReply.interface'
+import { IStory } from '../../db/interface/IStory.interface'
 
 export type ControllerParams = (
   args: any,
@@ -58,4 +60,6 @@ export interface IContext {
   user: IUser
   post: IPost
   comment: IComment
+  reply: IReply
+  story: IStory
 }

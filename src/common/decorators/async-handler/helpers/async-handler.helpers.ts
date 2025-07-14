@@ -1,4 +1,4 @@
-import { IRequest } from '../../../interface/http/IRequest.interface'
+import { IRequest } from '../../../interface/IRequest.interface'
 import { CloudUploader } from '../../../services/upload/cloud.service'
 import { ContextDetector } from '../../context/context-detector.decorator'
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'

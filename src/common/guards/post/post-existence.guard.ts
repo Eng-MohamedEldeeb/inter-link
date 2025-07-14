@@ -24,8 +24,14 @@ class PostExistenceGuard extends GuardActivator {
       const { id, postId } = { ...req.params, ...req.query }
 
       const isExistedPost = await this.postRepository.findOne({
-        filter: { $or: [{ _id: id }, { _id: postId }] },
+        filter: {
+          $and: [
+            { $or: [{ _id: id }, { _id: postId }] },
+            { archivedAt: { $exists: false } },
+          ],
+        },
         projection: { savedBy: 0 },
+        populate: [{ path: 'comments' }],
       })
 
       if (!isExistedPost)
@@ -43,6 +49,7 @@ class PostExistenceGuard extends GuardActivator {
       const { id } = args
       const isExistedPost = await this.postRepository.findOne({
         filter: { $and: [{ _id: id }, { archivedAt: { $exists: false } }] },
+        populate: [{ path: 'comments' }],
       })
 
       if (!isExistedPost)

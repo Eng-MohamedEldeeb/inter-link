@@ -1,5 +1,5 @@
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { IRequest } from '../../../common/interface/http/IRequest.interface'
+import { IRequest } from '../../../common/interface/IRequest.interface'
 import { Response } from 'express'
 import { AuthService } from '../auth.service'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'

@@ -23,7 +23,7 @@ export class PostResponse {
 
   static readonly getSingle = () => {
     return returnedType<Omit<IPost, '__v'>>({
-      name: 'getSingleResponse',
+      name: 'getSinglePostResponse',
       fields: postFields,
     })
   }

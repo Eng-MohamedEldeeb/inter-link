@@ -8,7 +8,7 @@ export const CommentSchema = new Schema<IComment>(
     attachment: {
       fullPath: String,
       folderId: String,
-      path: { type: { secure_url: String, public_id: String } },
+      path: { secure_url: String, public_id: String },
     },
     content: {
       type: String,
@@ -32,7 +32,11 @@ export const CommentSchema = new Schema<IComment>(
 
     replyingTo: { type: SchemaTypes.ObjectId, ref: 'Comment' },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 )
 
 CommentSchema.virtual('replies', {
@@ -46,13 +50,16 @@ CommentSchema.virtual('totalLikes').get(function () {
 })
 
 CommentSchema.virtual('repliesCount').get(function () {
-  return this.replies?.length ?? 0
+  if (!this.replyingTo) return this.replies?.length ?? 0
+  return
 })
 
 CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
-  if (res.attachment.path.public_id) {
-    await CloudUploader.delete(res.attachment.path.public_id)
-    await CloudUploader.deleteFolder(res.attachment.fullPath)
+  const { attachment } = res
+
+  if (attachment?.path.public_id) {
+    await CloudUploader.delete(attachment.path.public_id)
+    await CloudUploader.deleteFolder(attachment.fullPath)
   }
 
   await commentRepository.deleteMany({ replyingTo: res._id })

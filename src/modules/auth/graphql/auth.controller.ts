@@ -1,4 +1,4 @@
-import { IMutationController } from '../../../common/decorators/resolver/types/IGraphQL.interface'
+import { IMutationController } from '../../../common/interface/IGraphQL.interface'
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'

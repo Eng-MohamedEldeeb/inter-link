@@ -4,7 +4,7 @@ import { applyResolver } from '../../../common/decorators/resolver/apply-resolve
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/decorators/resolver/types/IGraphQL.interface'
+} from '../../../common/interface/IGraphQL.interface'
 
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { UserResponse } from './types/user-response.type'

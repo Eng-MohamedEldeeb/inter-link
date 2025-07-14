@@ -2,12 +2,14 @@ import { applyResolver } from '../../../common/decorators/resolver/apply-resolve
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/decorators/resolver/types/IGraphQL.interface'
+} from '../../../common/interface/IGraphQL.interface'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
+import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
+import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
 
 import { CommentResponse } from './types/comment-response.type'
 
@@ -25,32 +27,58 @@ export class CommentController {
   protected static readonly CommentMutationResolver = CommentMutationResolver
 
   // Queries:
-  static readonly getPostComments = (): IQueryController => {
+  static readonly getSingleComment = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getPostComments',
-        data: CommentResponse.getPostComments(),
+        data: CommentResponse.getSingleComment(),
       }),
       args: args.getPostComments,
       resolve: applyResolver({
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.CommentQueryResolver.getPostComments,
+        middlewares: [validate(validators.addValidator.graphQL())],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard],
+        resolver: this.CommentQueryResolver.getSingleComment,
       }),
     }
   }
 
   // Mutations:
-
   static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
-        name: 'editMutation',
+        name: 'editCommentMutation',
       }),
       args: args.edit,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          postExistenceGuard,
+          commentExistenceGuard,
+          commentAuthorizationGuard,
+        ],
         resolver: this.CommentMutationResolver.edit,
+      }),
+    }
+  }
+
+  static readonly deleteComment = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'deleteCommentMutation',
+      }),
+      args: args.deleteComment,
+      resolve: applyResolver({
+        middlewares: [validate(validators.deleteValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          postExistenceGuard,
+          commentExistenceGuard,
+          commentAuthorizationGuard,
+        ],
+        resolver: this.CommentMutationResolver.deleteComment,
       }),
     }
   }
