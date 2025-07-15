@@ -15,8 +15,9 @@ import { StoryQueryResolver, StoryMutationResolver } from './story.resolver'
 import { StoryResponse } from './types/story-response.type'
 
 import * as args from './types/story-args.type'
-import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
-import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
+
+import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
+import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
 
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from '../validators/story.validators'
@@ -47,7 +48,7 @@ export class StoryController {
       args: args.getSingle,
       resolve: applyResolver({
         middlewares: [validate(validators.getSingleValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, storyExistenceGuard],
         resolver: this.StoryQueryResolver.getSingle,
       }),
     }
@@ -63,7 +64,12 @@ export class StoryController {
       args: args.deleteStory,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          storyExistenceGuard,
+          storyAuthorizationGuard,
+        ],
         resolver: this.StoryMutationResolver.deleteStory,
       }),
     }

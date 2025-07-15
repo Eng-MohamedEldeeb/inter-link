@@ -54,14 +54,15 @@ export class ProfileController {
     },
   )
 
-  static readonly updateProfilePic = asyncHandler(
+  static readonly changeAvatar = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { _id } = req.tokenPayload
+      const { _id: profileId, avatar } = req.profile
       const path = req.file?.path!
       return successResponse(res, {
         msg: 'profile Picture has been updated successfully',
-        data: await this.ProfileService.updateProfilePic({
-          profileId: _id,
+        data: await this.ProfileService.changeAvatar({
+          profileId,
+          avatar,
           path,
         }),
       })

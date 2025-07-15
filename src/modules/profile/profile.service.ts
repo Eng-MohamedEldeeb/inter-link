@@ -16,6 +16,7 @@ import { IUser } from '../../db/interface/IUser.interface'
 import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
 import { MongoId } from '../../common/types/db/db.types'
 import { IGetAllDTO } from '../post/dto/post.dto'
+import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 
 export class ProfileService {
   private static readonly userRepository = userRepository
@@ -70,30 +71,22 @@ export class ProfileService {
       page: Math.ceil(posts.length / limitQuery),
     }
   }
-  static readonly updateProfilePic = async ({
+  static readonly changeAvatar = async ({
     profileId,
+    avatar,
     path,
   }: {
     profileId: MongoId
+    avatar: ICloudFile
     path: string
   }) => {
-    const isExistedUser = await this.userRepository.findOne({
-      filter: { _id: profileId, deactivatedAt: { $exists: false } },
-      projection: { _id: 1, avatar: 1 },
-      options: { lean: true },
-    })
-
-    if (!isExistedUser)
-      return throwError({ msg: "user doesn't exist", status: 404 })
-
     const hasDefaultAvatar =
-      isExistedUser.avatar.path.secure_url ==
-      process.env.DEFAULT_PROFILE_AVATAR_PIC
+      avatar.path.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
 
     if (!hasDefaultAvatar) {
       const { secure_url, public_id } = await this.CloudUploader.upload({
         path,
-        public_id: isExistedUser.avatar.path.public_id,
+        public_id: avatar.path.public_id,
       })
 
       return await this.userRepository.findByIdAndUpdate({

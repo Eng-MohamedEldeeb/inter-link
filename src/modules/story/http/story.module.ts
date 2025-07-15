@@ -3,11 +3,14 @@ import { Router } from 'express'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from '../validators/story.validators'
 
-import { StoryController } from './story.controller'
+import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
+import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
+
 import { fileReader } from '../../../common/utils/multer/file-reader'
 import { storyAttachmentUploader } from '../../../common/middlewares/http/story-attachments-uploader.middleware'
 
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+import { StoryController } from './story.controller'
 
 const router: Router = Router()
 
@@ -16,7 +19,7 @@ router.get('/', StoryController.getAll)
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  // applyGuards(),
+  applyGuards(storyExistenceGuard),
   StoryController.getSingle,
 )
 
@@ -31,7 +34,7 @@ router.post(
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),
-  // applyGuards(),
+  applyGuards(storyExistenceGuard, storyAuthorizationGuard),
   StoryController.delete,
 )
 

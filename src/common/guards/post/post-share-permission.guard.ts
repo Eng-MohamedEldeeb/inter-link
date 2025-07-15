@@ -1,14 +1,16 @@
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../../handlers/error-message.handler'
+
 import userRepository from '../../repositories/user.repository'
 import { MongoId } from '../../types/db/db.types'
-import { GuardActivator } from '../can-activate.guard'
+import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+
+import { throwError } from '../../handlers/error-message.handler'
 
 class PostSharePermission extends GuardActivator {
   private readonly userRepository = userRepository

@@ -1,14 +1,16 @@
-import { IGetPostCommentsDTO } from '../../../modules/comment/dto/comment.dto'
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../../handlers/error-message.handler'
+
 import postRepository from '../../repositories/post.repository'
-import { GuardActivator } from '../can-activate.guard'
+import { IGetPostCommentsDTO } from '../../../modules/comment/dto/comment.dto'
+import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+
+import { throwError } from '../../handlers/error-message.handler'
 
 class PostExistenceGuard extends GuardActivator {
   private readonly postRepository = postRepository

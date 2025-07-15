@@ -1,19 +1,15 @@
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
-import {
-  IGetCommentRepliesDTO,
-  IReplyIdDTO,
-} from '../../../modules/reply/dto/reply.dto'
+import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../../handlers/error-message.handler'
 
 import commentRepository from '../../repositories/comment.repository'
+import { IReplyIdDTO } from '../../../modules/reply/dto/reply.dto'
 
-import { GuardActivator } from '../can-activate.guard'
+import { throwError } from '../../handlers/error-message.handler'
 
 class ReplyExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

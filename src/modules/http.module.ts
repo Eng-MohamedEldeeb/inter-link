@@ -5,6 +5,7 @@ import profileModule from './profile/http/profile.module'
 import userModule from './user/http/user.module'
 import postModule from './post/http/post.module'
 import commentModule from './comment/http/comment.module'
+import storyModule from './story/http/story.module'
 
 import { applyRateLimiter } from '../common/utils/security/rate-limiter/rate-limiter'
 
@@ -42,6 +43,13 @@ router.use(
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   commentModule,
+)
+
+router.use(
+  '/story',
+  applyRateLimiter({ skipSuccessfulRequests: false }),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
+  storyModule,
 )
 
 export default router

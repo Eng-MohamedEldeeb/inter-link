@@ -32,7 +32,7 @@ router.patch(
   '/avatar',
   fileReader('image/jpeg', 'image/jpeg', 'image/png').single('avatar'),
   validate(validators.updateProfilePicSchema.http()),
-  ProfileController.updateProfilePic,
+  ProfileController.changeAvatar,
 )
 
 router.delete('/avatar', ProfileController.deleteProfilePic)
