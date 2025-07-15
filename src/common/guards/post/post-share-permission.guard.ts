@@ -8,14 +8,14 @@ import {
 
 import userRepository from '../../repositories/user.repository'
 import { MongoId } from '../../types/db/db.types'
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 
 import { throwError } from '../../handlers/error-message.handler'
 
 class PostSharePermission extends GuardActivator {
   private readonly userRepository = userRepository
-  protected profileId: MongoId | null = null
-  protected createdBy: MongoId | null = null
+  protected profileId!: MongoId
+  protected createdBy!: MongoId
 
   protected readonly sharePermission = async () => {
     const postOwner = await this.userRepository.findOne({
@@ -40,22 +40,20 @@ class PostSharePermission extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSinglePostDTO, IGetSinglePostDTO>()
+      const { req } = Ctx.switchToHTTP<IGetSinglePost, IGetSinglePost>()
 
       this.createdBy = req.post.createdBy
       this.profileId = req.profile._id
-
-      return await this.sharePermission()
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { context, info } = Ctx.switchToGraphQL<IGetSinglePostDTO>()
+      const { context } = Ctx.switchToGraphQL<IGetSinglePost>()
 
       this.createdBy = context.post.createdBy
       this.profileId = context.profile._id
-
-      return await this.sharePermission()
     }
+
+    return await this.sharePermission()
   }
 }
 

@@ -7,7 +7,7 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import commentRepository from '../../repositories/comment.repository'
-import { IReplyIdDTO } from '../../../modules/reply/dto/reply.dto'
+import { IReplyId } from '../../../modules/reply/dto/reply.dto'
 
 import { throwError } from '../../handlers/error-message.handler'
 
@@ -18,7 +18,7 @@ class ReplyExistenceGuard extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IReplyIdDTO>()
+      const { req } = Ctx.switchToHTTP<IReplyId>()
       const { replyId } = req.params
 
       const isExistedReply = await this.commentRepository.findOne({
@@ -37,7 +37,7 @@ class ReplyExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IReplyIdDTO>()
+      const { args, context } = Ctx.switchToGraphQL<IReplyId>()
       const { replyId } = args
 
       const isExistedReply = await this.commentRepository.findOne({

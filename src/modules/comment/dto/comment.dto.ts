@@ -1,23 +1,23 @@
 import { MongoId } from '../../../common/types/db/db.types'
 import { ICommentInputs } from '../../../db/interface/IComment.interface'
 
-export interface IGetSingleCommentDTO {
+export interface IGetSingleComment {
   id: MongoId
 }
 
-export interface IGetPostCommentsDTO {
+export interface IGetPostComments {
   postId: MongoId
 }
 
-export interface IAddCommentDTO
+export interface IAddComment
   extends Omit<ICommentInputs, 'replyingTo' | 'onPost'> {}
 
-export interface ICommentIdDTO {
+export interface ICommentId {
   commentId: MongoId
 }
 
-export interface IEditCommentDTO
+export interface IEditComment
   extends Pick<ICommentInputs, 'content'>,
-    ICommentIdDTO {}
+    ICommentId {}
 
-export interface IDeleteCommentDTO extends ICommentIdDTO {}
+export interface IDeleteComment extends ICommentId {}

@@ -59,7 +59,9 @@ export const userProfileFields: ObjFields<
   >
 > = {
   _id: { type: GraphQLID },
+
   createdAt: { type: DateType },
+
   updatedAt: { type: DateType },
 
   fullName: {
@@ -83,35 +85,52 @@ export const userProfileFields: ObjFields<
   posts: {
     type: userFields.posts,
   },
+
   totalPosts: {
     type: userFields.totalPosts,
   },
+
   savedPosts: {
     type: userFields.savedPosts,
   },
+
   likedPosts: {
     type: userFields.likedPosts,
   },
+
   following: {
     type: userFields.following,
   },
+
   totalFollowing: {
     type: userFields.totalFollowing,
   },
+
   followers: {
     type: userFields.followers,
   },
+
   totalFollowers: {
     type: userFields.totalFollowers,
   },
+
   joinedGroups: {
     type: userFields.joinedGroups,
   },
+
   blockedUsers: {
     type: userFields.blockedUsers,
   },
 
   isPrivateProfile: { type: userFields.isPrivateProfile },
+
+  bio: { type: userFields.bio },
+
+  birthDate: { type: userFields.birthDate },
+
+  phone: { type: userFields.phone },
+
+  changedCredentialsAt: { type: userFields.changedCredentialsAt },
 }
 
 export const profileFields: ObjFields<

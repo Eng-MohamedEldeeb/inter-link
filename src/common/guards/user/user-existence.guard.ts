@@ -1,4 +1,4 @@
-import { IGetUserProfileDTO } from '../../../modules/user/dto/user.dto'
+import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
@@ -17,8 +17,8 @@ class UserExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
-        Pick<IGetUserProfileDTO, 'id'>,
-        IGetUserProfileDTO
+        Pick<IGetUserProfile, 'id'>,
+        IGetUserProfile
       >()
 
       const { user, id: userId } = { ...req.query, ...req.params }
@@ -79,7 +79,7 @@ class UserExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetUserProfileDTO>()
+      const { args, context } = Ctx.switchToGraphQL<IGetUserProfile>()
 
       const { user, id: userId } = args
       const { _id: profileId } = context.profile

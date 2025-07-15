@@ -11,10 +11,7 @@ import {
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-export const validate = (
-  // schema: Record<string, ObjectSchema | ArraySchema>,
-  schema: Record<string, ObjectSchema>,
-) => {
+export const validate = (schema: Record<string, ObjectSchema>) => {
   return asyncHandler(async (...params: HttpParams | GraphQLParams) => {
     const Ctx = ContextDetector.detect(params)
 

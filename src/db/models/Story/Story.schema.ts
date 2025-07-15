@@ -47,7 +47,7 @@ StorySchema.virtual('totalViewers').get(function () {
   return this.viewers?.length ?? 0
 })
 
-StorySchema.post('findOneAndDelete', async function (res: IStory, next) {
+StorySchema.post('findOneAndDelete', async function (res: IStory) {
   const { attachment } = res
 
   if (attachment?.path.public_id) {

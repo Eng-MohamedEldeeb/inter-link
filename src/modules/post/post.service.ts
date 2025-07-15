@@ -1,7 +1,7 @@
 import { MongoId } from './../../common/types/db/db.types'
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
-import { ICreatePostDTO, IEditPostDTO, IGetAllDTO } from './dto/post.dto'
+import { ICreatePost, IEditPost, IGetAll } from './dto/post.dto'
 import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 
@@ -9,7 +9,7 @@ export class PostService {
   private static readonly postRepository = postRepository
   private static readonly userRepository = userRepository
 
-  static readonly getAll = async (query: IGetAllDTO) => {
+  static readonly getAll = async (query: IGetAll) => {
     const { page, limit } = query
 
     const skip = (page ?? 1 - 1) * limit
@@ -32,18 +32,17 @@ export class PostService {
 
   static readonly create = async ({
     createdBy,
-    createPostDTO,
+    createPost,
+    attachments,
   }: {
     createdBy: MongoId
-    createPostDTO: {
-      data: ICreatePostDTO
-      attachments: ICloudFiles
-    }
+    createPost: ICreatePost
+    attachments: ICloudFiles
   }) => {
     return await this.postRepository.create({
-      ...createPostDTO.data,
-      ...(createPostDTO.attachments.folderId && {
-        attachments: createPostDTO.attachments,
+      ...createPost,
+      ...(attachments.folderId && {
+        attachments,
       }),
       createdBy,
     })
@@ -51,17 +50,17 @@ export class PostService {
 
   static readonly edit = async ({
     postId,
-    editPostDTO,
+    editPost,
   }: {
     postId: MongoId
-    editPostDTO: IEditPostDTO
+    editPost: IEditPost
   }) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
-      data: editPostDTO,
-      options: { new: true, projection: Object.keys(editPostDTO).join(' ') },
+      data: editPost,
+      options: { new: true, projection: Object.keys(editPost).join(' ') },
     })
   }
 
@@ -81,7 +80,7 @@ export class PostService {
         ],
       },
       data: {
-        $addToSet: { savedBy: profileId },
+        $adSet: { savedBy: profileId },
         $inc: { totalSaves: 1 },
       },
     })

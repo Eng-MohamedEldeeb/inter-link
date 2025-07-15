@@ -54,7 +54,7 @@ CommentSchema.virtual('repliesCount').get(function () {
   return
 })
 
-CommentSchema.post('findOneAndDelete', async function (res: IComment, next) {
+CommentSchema.post('findOneAndDelete', async function (res: IComment) {
   const { attachment } = res
 
   if (attachment?.path.public_id) {

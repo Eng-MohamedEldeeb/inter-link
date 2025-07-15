@@ -2,18 +2,14 @@ import { Response } from 'express'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import {
-  IAddReplyDTO,
-  IEditReplyDTO,
-  IGetCommentRepliesDTO,
-} from '../dto/reply.dto'
+import { IAddReply, IEditReply, IGetCommentReplies } from '../dto/reply.dto'
 import replyService from '../reply.service'
 
 export class ReplyController {
   protected static readonly replyService = replyService
 
   static readonly getCommentReplies = asyncHandler(
-    async (req: IRequest<IGetCommentRepliesDTO>, res: Response) => {
+    async (req: IRequest<IGetCommentReplies>, res: Response) => {
       const { commentId } = req.params
       return successResponse(res, {
         data: await this.replyService.getCommentReplies(commentId),
@@ -23,12 +19,12 @@ export class ReplyController {
 
   static readonly reply = asyncHandler(
     async (
-      req: IRequest<Pick<IGetCommentRepliesDTO, 'commentId'>>,
+      req: IRequest<Pick<IGetCommentReplies, 'commentId'>>,
       res: Response,
     ) => {
       const { _id: profileId } = req.profile
       const { commentId } = req.params
-      const { content }: IAddReplyDTO = req.body
+      const { content }: IAddReply = req.body
       return successResponse(res, {
         msg: 'Comment has been add Successfully',
         status: 201,
@@ -43,7 +39,7 @@ export class ReplyController {
 
   static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
     const { _id: replyId } = req.reply
-    const { content }: IEditReplyDTO = req.body
+    const { content }: IEditReply = req.body
     return successResponse(res, {
       msg: 'Comment has been Modified Successfully',
       data: await this.replyService.edit({

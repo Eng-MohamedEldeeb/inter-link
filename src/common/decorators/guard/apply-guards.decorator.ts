@@ -12,8 +12,6 @@ export const applyGuards = (...guards: GuardActivator[]) => {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req, res, next } = Ctx.switchToHTTP()
-
       return await httpContextGuardsActivator(Ctx, guards)
     }
 

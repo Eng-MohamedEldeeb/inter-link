@@ -2,14 +2,14 @@ import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import { IEditPostDTO, IGetAllDTO, IGetSinglePostDTO } from '../dto/post.dto'
+import { IEditPost, IGetAll } from '../dto/post.dto'
 import { PostService } from '../post.service'
 
 export class PostQueryResolver {
   private static readonly PostService = PostService
 
   static readonly getAll = async (
-    args: IGetAllDTO,
+    args: IGetAll,
     _: any,
   ): Promise<ISuccessResponse> => {
     return {
@@ -31,12 +31,12 @@ export class PostQueryResolver {
 export class PostMutationResolver {
   private static readonly PostService = PostService
 
-  static readonly edit = async (args: IEditPostDTO, context: IContext) => {
+  static readonly edit = async (args: IEditPost, context: IContext) => {
     const { _id: postId } = context.post
     return {
       msg: 'Post has been modified successfully',
       status: 200,
-      data: this.PostService.edit({ postId, editPostDTO: args }),
+      data: this.PostService.edit({ postId, editPost: args }),
     }
   }
 

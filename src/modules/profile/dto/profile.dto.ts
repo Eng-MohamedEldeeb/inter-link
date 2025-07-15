@@ -1,6 +1,6 @@
 import { IUserInputs } from '../../../db/interface/IUser.interface'
 
-export interface IUpdateProfileDTO
+export interface IUpdateProfile
   extends Omit<
     IUserInputs,
     | 'avatar'
@@ -11,17 +11,17 @@ export interface IUpdateProfileDTO
     | 'isPrivateProfile'
   > {}
 
-export interface IChangeEmailDTO extends Pick<IUserInputs, 'password'> {
+export interface IChangeEmail extends Pick<IUserInputs, 'password'> {
   originalEmail: string
   newEmail: string
 }
 
-export interface IConfirmNewEmailDTO extends Pick<IUserInputs, 'otpCode'> {
+export interface IConfirmNewEmail extends Pick<IUserInputs, 'otpCode'> {
   originalEmail: string
 }
 
-export interface IDeleteAccountDTO
+export interface IDeleteAccount
   extends Pick<IUserInputs, 'email' | 'password'> {}
 
-export interface IConfirmDeleteDTO
+export interface IConfirmDelete
   extends Pick<IUserInputs, 'email' | 'otpCode'> {}

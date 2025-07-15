@@ -1,16 +1,16 @@
 import joi from 'joi'
 import { generalFields } from '../../../common/validation/general-fields'
 import {
-  IAddCommentDTO,
-  ICommentIdDTO,
-  IDeleteCommentDTO,
-  IEditCommentDTO,
+  IAddComment,
+  ICommentId,
+  IDeleteComment,
+  IEditComment,
 } from '../dto/comment.dto'
 import { isValidMongoId } from '../../../common/validation/is-valid'
 
 export const getSingleCommentValidator = {
   schema: joi
-    .object<ICommentIdDTO>()
+    .object<ICommentId>()
     .keys({
       commentId: generalFields.mongoId
         .required()
@@ -53,7 +53,7 @@ export const addValidator = {
           '[/postId/comments] "postId" is Expected but got nothing',
       }),
       body: joi
-        .object<IAddCommentDTO>()
+        .object<IAddComment>()
         .keys(this.schema.body)
         .required()
         .messages({
@@ -65,7 +65,7 @@ export const addValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IAddCommentDTO>()
+        .object<IAddComment>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -87,7 +87,7 @@ export const editValidator = {
   http() {
     return {
       params: joi
-        .object<IEditCommentDTO>()
+        .object<IEditComment>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -103,7 +103,7 @@ export const editValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IEditCommentDTO>()
+        .object<IEditComment>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -123,7 +123,7 @@ export const deleteValidator = {
   http() {
     return {
       params: joi
-        .object<IDeleteCommentDTO>()
+        .object<IDeleteComment>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -136,7 +136,7 @@ export const deleteValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IDeleteCommentDTO>()
+        .object<IDeleteComment>()
         .keys(this.schema.params)
         .required()
         .messages({

@@ -1,10 +1,10 @@
 import joi from 'joi'
 import {
-  IChangeEmailDTO,
-  IConfirmDeleteDTO,
-  IConfirmNewEmailDTO,
-  IDeleteAccountDTO,
-  IUpdateProfileDTO,
+  IChangeEmail,
+  IConfirmDelete,
+  IConfirmNewEmail,
+  IDeleteAccount,
+  IUpdateProfile,
 } from '../dto/profile.dto'
 import { generalFields } from '../../../common/validation/general-fields'
 import { getAllValidator } from '../../post/validators/post.validators'
@@ -13,7 +13,7 @@ export const getAllSavedPostsValidator = getAllValidator
 
 export const updateProfileSchema = {
   schema: joi
-    .object<IUpdateProfileDTO>()
+    .object<IUpdateProfile>()
     .keys({
       fullName: generalFields.fullName,
       username: generalFields.username,
@@ -49,7 +49,7 @@ export const updateProfilePicSchema = {
 
 export const changeEmailSchema = {
   schema: joi
-    .object<IChangeEmailDTO>()
+    .object<IChangeEmail>()
     .keys({
       originalEmail: generalFields.email.required(),
       newEmail: generalFields.email.required(),
@@ -74,7 +74,7 @@ export const changeEmailSchema = {
 
 export const confirmNewEmailSchema = {
   schema: joi
-    .object<IConfirmNewEmailDTO>()
+    .object<IConfirmNewEmail>()
     .keys({
       originalEmail: generalFields.email.required(),
       otpCode: generalFields.otpCode.required(),
@@ -98,7 +98,7 @@ export const confirmNewEmailSchema = {
 
 export const deleteAccountSchema = {
   schema: joi
-    .object<IDeleteAccountDTO>()
+    .object<IDeleteAccount>()
     .keys({
       email: generalFields.email.required().messages({
         'any.required': 'email is required',
@@ -126,7 +126,7 @@ export const deleteAccountSchema = {
 
 export const confirmDeletionSchema = {
   schema: joi
-    .object<IConfirmDeleteDTO>()
+    .object<IConfirmDelete>()
     .keys({
       email: generalFields.email.required().messages({
         'any.required': 'email is required',

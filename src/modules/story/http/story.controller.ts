@@ -3,7 +3,7 @@ import { asyncHandler } from '../../../common/decorators/async-handler/async-han
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { StoryService } from '../story.service'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
-import { ICreateStoryDTO } from '../dto/story.dto'
+import { ICreateStory } from '../dto/story.dto'
 
 export class StoryController {
   private static readonly StoryService = StoryService
@@ -30,14 +30,14 @@ export class StoryController {
     async (req: IRequest, res: Response) => {
       const { _id: createdBy } = req.profile
       const attachment = req.cloudFile
-      const createStoryDTO: ICreateStoryDTO = req.body
+      const createStory: ICreateStory = req.body
       return successResponse(res, {
         status: 201,
         msg: 'Story Uploaded Successfully',
         data: await this.StoryService.create({
           createdBy,
           attachment,
-          createStoryDTO,
+          createStory,
         }),
       })
     },

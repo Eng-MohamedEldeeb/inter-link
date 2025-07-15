@@ -176,7 +176,7 @@ UserSchema.post('findOneAndDelete', async function (res: IUser) {
     postRepository.deleteMany({ createdBy: res._id }),
     commentRepository.deleteMany({ createdBy: res._id }),
     groupRepository.deleteMany({ createdBy: res._id }),
-    res.avatar.path.secure_url != process.env.DEFAULT_PROFILE_AVATAR_PIC &&
+    res.avatar.path.secure_url != process.env.DEFAULT_PIC &&
       (await CloudUploader.delete(res.avatar.path.public_id).then(async () => {
         await CloudUploader.deleteFolder(res.avatar.fullPath)
       })),

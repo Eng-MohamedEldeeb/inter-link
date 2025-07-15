@@ -5,9 +5,9 @@ import { MongoId } from '../../common/types/db/db.types'
 export interface IStoryInputs {
   content: string
   createdBy: MongoId
+  attachment: ICloudFile
 }
 export interface IStory extends IStoryInputs, IMongoDoc {
-  attachment: ICloudFile
   viewers: MongoId[]
   totalViewers: number
 }

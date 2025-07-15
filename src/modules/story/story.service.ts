@@ -1,7 +1,7 @@
 import { MongoId } from '../../common/types/db/db.types'
 import storyRepository from '../../common/repositories/story.repository'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
-import { ICreateStoryDTO } from './dto/story.dto'
+import { ICreateStory } from './dto/story.dto'
 
 export class StoryService {
   private static readonly storyRepository = storyRepository
@@ -21,7 +21,7 @@ export class StoryService {
   }: {
     createdBy: MongoId
     attachment: ICloudFile
-    createStoryDTO: ICreateStoryDTO
+    createStory: ICreateStory
   }) => {
     return await this.storyRepository.create({
       ...(attachment.folderId && {

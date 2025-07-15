@@ -2,7 +2,7 @@ import { ContextType } from '../context/types/enum/context-type.enum'
 import { ContextDetector } from '../context/context-detector.decorator'
 import {
   deleteFilesAfterError,
-  throwErrorDependingOnInstanceType,
+  throwErrorByInstanceType,
 } from './helpers/async-handler.helpers'
 
 export const asyncHandler = (fn: Function) => {
@@ -25,7 +25,7 @@ export const asyncHandler = (fn: Function) => {
         return next(error)
       }
 
-      throwErrorDependingOnInstanceType(error, Ctx)
+      throwErrorByInstanceType(error, Ctx)
     }
   }
 }

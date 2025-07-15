@@ -6,30 +6,15 @@ import {
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-import userRepository from '../../repositories/user.repository'
 import { MongoId } from '../../types/db/db.types'
 
-import { throwError } from '../../handlers/error-message.handler'
-
 class ReplyAuthorizationGuard extends GuardActivator {
-  private readonly userRepository = userRepository
-  protected profileId: MongoId | null = null
-  protected createdBy: MongoId | null = null
+  protected profileId!: MongoId
+  protected createdBy!: MongoId
 
   protected readonly isTheOwner = async () => {
-    const replyOwner = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
-      },
-      projection: { isPrivateProfile: 1 },
-    })
-    if (!replyOwner) return throwError({ msg: 'In-valid Reply Id' })
-
-    if (!replyOwner._id.equals(this.profileId)) return false
-
-    return true
+    return this.createdBy.equals(this.profileId)
   }
-
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
 
@@ -38,8 +23,6 @@ class ReplyAuthorizationGuard extends GuardActivator {
 
       this.createdBy = req.reply.createdBy
       this.profileId = req.profile._id
-
-      return await this.isTheOwner()
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -47,9 +30,9 @@ class ReplyAuthorizationGuard extends GuardActivator {
 
       this.createdBy = context.post.createdBy
       this.profileId = context.profile._id
-
-      return await this.isTheOwner()
     }
+
+    return this.isTheOwner()
   }
 }
 

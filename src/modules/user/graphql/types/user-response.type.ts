@@ -31,7 +31,7 @@ export class UserResponse {
 
   // Mutation:
   // static readonly updateProfileResponse = () => {
-  //   return returnedType<IUpdateProfileDTO>({
+  //   return returnedType<IUpdateProfile>({
   //     name: 'updatedData',
   //     fields: {
   //       username: { type: userFields.username },

@@ -8,20 +8,20 @@ import {
 
 import commentRepository from '../../repositories/comment.repository'
 import {
-  ICommentIdDTO,
-  IGetSingleCommentDTO,
+  ICommentId,
+  IGetSingleComment,
 } from '../../../modules/comment/dto/comment.dto'
 
 import { throwError } from '../../handlers/error-message.handler'
 
-class PostExistenceGuard extends GuardActivator {
+class CommentExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSingleCommentDTO & ICommentIdDTO>()
+      const { req } = Ctx.switchToHTTP<IGetSingleComment & ICommentId>()
       const { id, commentId } = req.params
 
       const isExistedComment = await this.commentRepository.findOne({
@@ -40,7 +40,7 @@ class PostExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSingleCommentDTO>()
+      const { args, context } = Ctx.switchToGraphQL<IGetSingleComment>()
       const { id } = args
 
       const isExistedComment = await this.commentRepository.findOne({
@@ -59,4 +59,4 @@ class PostExistenceGuard extends GuardActivator {
   }
 }
 
-export default new PostExistenceGuard()
+export default new CommentExistenceGuard()

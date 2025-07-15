@@ -5,7 +5,7 @@ import * as validators from './../validators/post.validators'
 
 import { PostController } from './post.controller'
 import { fileReader } from './../../../common/utils/multer/file-reader'
-import { postAttachmentUploader } from '../../../common/middlewares/http/post-attachments-uploader.middleware'
+import { postAttachmentUploader } from '../../../common/middlewares/upload/post-attachments-uploader.middleware'
 
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
@@ -30,8 +30,8 @@ router.get(
 router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
-  postAttachmentUploader,
   validate(validators.createValidator),
+  postAttachmentUploader,
   PostController.create,
 )
 

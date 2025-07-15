@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
-import { IBlockUserDTO, IUnBlockUserDTO } from '../dto/user.dto'
+import { IBlockUser, IUnBlockUser } from '../dto/user.dto'
 
 import { UserService } from '../user.service'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
@@ -47,7 +47,7 @@ export class UserController {
   )
 
   static readonly blockUser = asyncHandler(
-    async (req: IRequest<IBlockUserDTO>, res: Response) => {
+    async (req: IRequest<IBlockUser>, res: Response) => {
       const { id } = req.params
       const { _id: profileId } = req.profile
       await this.UserService.blockUser(profileId, id)
@@ -58,7 +58,7 @@ export class UserController {
   )
 
   static readonly unblockUser = asyncHandler(
-    async (req: IRequest<IUnBlockUserDTO>, res: Response) => {
+    async (req: IRequest<IUnBlockUser>, res: Response) => {
       const { id } = req.params
       const { _id: profileId, blockedUsers } = req.profile
       await this.UserService.unblockUser(profileId, id, blockedUsers)

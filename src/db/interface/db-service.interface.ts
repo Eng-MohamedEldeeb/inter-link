@@ -4,7 +4,6 @@ import {
   PopulateOptions,
   ProjectionType,
   QueryOptions,
-  Types,
 } from 'mongoose'
 import { MongoId } from '../../common/types/db/db.types'
 

@@ -8,7 +8,7 @@ import storyExistenceGuard from '../../../common/guards/story/story-existence.gu
 import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
 
 import { fileReader } from '../../../common/utils/multer/file-reader'
-import { storyAttachmentUploader } from '../../../common/middlewares/http/story-attachments-uploader.middleware'
+import { storyAttachmentUploader } from '../../../common/middlewares/upload/story-attachments-uploader.middleware'
 
 import { StoryController } from './story.controller'
 

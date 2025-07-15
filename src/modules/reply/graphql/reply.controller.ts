@@ -27,7 +27,7 @@ export class ReplyController {
   static readonly getCommentReplies = (): IQueryController => {
     return {
       type: returnedResponseType({
-        name: 'getCommentRepliesDTO',
+        name: 'getCommentReplies',
         data: CommentResponse.getPostComments(),
       }),
       args: args.getCommentReply,

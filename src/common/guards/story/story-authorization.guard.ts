@@ -1,31 +1,19 @@
+import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../../handlers/error-message.handler'
-import userRepository from '../../repositories/user.repository'
+
 import { MongoId } from '../../types/db/db.types'
-import { GuardActivator } from '../can-activate.guard'
 
 class CommentAuthorizationGuard extends GuardActivator {
-  private readonly userRepository = userRepository
-  protected profileId: MongoId | null = null
-  protected createdBy: MongoId | null = null
+  protected profileId!: MongoId
+  protected createdBy!: MongoId
 
   protected readonly isTheOwner = async () => {
-    const commentOwner = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
-      },
-      projection: { isPrivateProfile: 1 },
-    })
-    if (!commentOwner) return throwError({ msg: 'In-valid Comment Id' })
-
-    if (!commentOwner._id.equals(this.profileId)) return false
-
-    return true
+    return this.createdBy.equals(this.profileId)
   }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -36,8 +24,6 @@ class CommentAuthorizationGuard extends GuardActivator {
 
       this.createdBy = req.story.createdBy
       this.profileId = req.profile._id
-
-      return await this.isTheOwner()
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -45,9 +31,9 @@ class CommentAuthorizationGuard extends GuardActivator {
 
       this.createdBy = context.story.createdBy
       this.profileId = context.profile._id
-
-      return await this.isTheOwner()
     }
+
+    return this.isTheOwner()
   }
 }
 

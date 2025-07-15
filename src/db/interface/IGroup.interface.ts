@@ -1,14 +1,19 @@
 import { IMongoDoc } from './IMongo-doc.interface'
 import { MongoId } from '../../common/types/db/db.types'
+import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 
 export interface IGroupInputs {
   name: string
-  cover: Object
+  description: string
+  isPrivateGroup: boolean
   createdBy: MongoId
 }
 
 export interface IGroup extends IMongoDoc, IGroupInputs {
+  slug: string
+  cover: ICloudFile
   posts: MongoId[]
-  followers: MongoId[]
+  members: MongoId[]
+  totalMembers: number
   admins: MongoId[]
 }

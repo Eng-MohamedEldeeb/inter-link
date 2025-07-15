@@ -4,17 +4,17 @@ import { IRequest } from '../../../common/interface/IRequest.interface'
 import { PostService } from './../post.service'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import {
-  ICreatePostDTO,
-  IEditPostDTO,
-  IGetAllDTO,
-  IGetSinglePostDTO,
-} from './../dto/post.dto'
+  ICreatePost,
+  IEditPost,
+  IGetAll,
+  IGetSinglePost,
+} from '../dto/post.dto'
 
 export class PostController {
   private static readonly PostService = PostService
 
   static readonly getAll = asyncHandler(
-    async (req: IRequest<null, IGetAllDTO>, res: Response) => {
+    async (req: IRequest<null, IGetAll>, res: Response) => {
       const query = req.query
       return successResponse(res, {
         data: await this.PostService.getAll(query),
@@ -23,7 +23,7 @@ export class PostController {
   )
 
   static readonly getSingle = asyncHandler(
-    async (req: IRequest<IGetSinglePostDTO>, res: Response) => {
+    async (req: IRequest<IGetSinglePost>, res: Response) => {
       const isExistedPost = req.post
       return successResponse(res, {
         data: isExistedPost,
@@ -35,13 +35,14 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const attachments = req.cloudFiles
-      const createPostDTO: ICreatePostDTO = req.body
+      const createPost: ICreatePost = req.body
       return successResponse(res, {
         status: 201,
         msg: 'Post Uploaded Successfully',
         data: await this.PostService.create({
           createdBy: _id,
-          createPostDTO: { data: createPostDTO, attachments },
+          createPost,
+          attachments,
         }),
       })
     },
@@ -49,11 +50,11 @@ export class PostController {
 
   static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
     const { _id: postId } = req.post
-    const editPostDTO: IEditPostDTO = req.body
+    const editPost: IEditPost = req.body
 
     return successResponse(res, {
       msg: 'Post has been modified successfully',
-      data: await this.PostService.edit({ postId, editPostDTO }),
+      data: await this.PostService.edit({ postId, editPost }),
     })
   })
 

@@ -6,28 +6,14 @@ import {
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-import userRepository from '../../repositories/user.repository'
 import { MongoId } from '../../types/db/db.types'
 
-import { throwError } from '../../handlers/error-message.handler'
-
 class PostAuthorizationGuard extends GuardActivator {
-  private readonly userRepository = userRepository
-  protected profileId: MongoId | null = null
-  protected createdBy: MongoId | null = null
+  protected profileId!: MongoId
+  protected createdBy!: MongoId
 
   protected readonly isTheOwner = async () => {
-    const postOwner = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
-      },
-      projection: { isPrivateProfile: 1 },
-    })
-    if (!postOwner) return throwError({ msg: 'In-valid Post Id' })
-
-    if (!postOwner._id.equals(this.profileId)) return false
-
-    return true
+    return this.createdBy.equals(this.profileId)
   }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -38,8 +24,6 @@ class PostAuthorizationGuard extends GuardActivator {
 
       this.createdBy = req.post.createdBy
       this.profileId = req.profile._id
-
-      return await this.isTheOwner()
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -47,9 +31,9 @@ class PostAuthorizationGuard extends GuardActivator {
 
       this.createdBy = context.post.createdBy
       this.profileId = context.profile._id
-
-      return await this.isTheOwner()
     }
+
+    return this.isTheOwner()
   }
 }
 

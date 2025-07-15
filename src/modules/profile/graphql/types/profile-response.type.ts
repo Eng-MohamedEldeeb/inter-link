@@ -6,7 +6,7 @@ import {
 } from '../../../../common/types/graphql/graphql-fields.types'
 import { IPost } from '../../../../db/interface/IPost.interface'
 import { IUser } from '../../../../db/interface/IUser.interface'
-import { IUpdateProfileDTO } from '../../dto/profile.dto'
+import { IUpdateProfile } from '../../dto/profile.dto'
 import { singlePost } from '../../../post/graphql/types/post-response.type'
 
 export class ProfileResponse {
@@ -56,7 +56,7 @@ export class ProfileResponse {
 
   // Mutation:
   static readonly updateProfileResponse = () => {
-    return returnedType<IUpdateProfileDTO>({
+    return returnedType<IUpdateProfile>({
       name: 'updatedData',
       fields: {
         username: { type: userFields.username },

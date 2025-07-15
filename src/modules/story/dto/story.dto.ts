@@ -1,14 +1,14 @@
 import { MongoId } from '../../../common/types/db/db.types'
 import { IStoryInputs } from '../../../db/interface/IStory.interface'
 
-export interface IGetSingleStoryDTO {
+export interface IGetSingleStory {
   id: MongoId
 }
 
-export interface IStoryIdDTO {
+export interface IStoryId {
   storyId: MongoId
 }
 
-export interface ICreateStoryDTO extends IStoryInputs {}
+export interface ICreateStory extends IStoryInputs {}
 
-export interface IDeleteStoryDTO extends IGetSingleStoryDTO {}
+export interface IDeleteStory extends IGetSingleStory {}

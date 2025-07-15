@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { CommentController } from './comment.controller'
 
 import { fileReader } from '../../../common/utils/multer/file-reader'
-import { commentAttachmentUploader } from '../../../common/middlewares/http/comment-attachments-uploader.middleware'
+import { commentAttachmentUploader } from '../../../common/middlewares/upload/comment-attachments-uploader.middleware'
 
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from './../validators/comment.validators'

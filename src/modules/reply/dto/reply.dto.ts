@@ -1,18 +1,16 @@
 import { MongoId } from '../../../common/types/db/db.types'
 import { IReplyInputs } from '../../../db/interface/IReply.interface'
 
-export interface IGetCommentRepliesDTO {
+export interface IGetCommentReplies {
   commentId: MongoId
 }
 
-export interface IAddReplyDTO extends IReplyInputs {}
+export interface IAddReply extends IReplyInputs {}
 
-export interface IReplyIdDTO {
+export interface IReplyId {
   replyId: MongoId
 }
 
-export interface IEditReplyDTO
-  extends Pick<IReplyInputs, 'content'>,
-    IReplyIdDTO {}
+export interface IEditReply extends Pick<IReplyInputs, 'content'>, IReplyId {}
 
-export interface IDeleteReplyDTO extends IReplyIdDTO {}
+export interface IDeleteReply extends IReplyId {}

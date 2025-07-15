@@ -1,7 +1,7 @@
 import { throwError } from '../../common/handlers/error-message.handler'
 import commentRepository from '../../common/repositories/comment.repository'
 import { MongoId } from '../../common/types/db/db.types'
-import { IAddReplyDTO, IDeleteReplyDTO, IEditReplyDTO } from './dto/reply.dto'
+import { IAddReply, IDeleteReply, IEditReply } from './dto/reply.dto'
 
 class ReplyService {
   protected readonly commentRepository = commentRepository
@@ -16,7 +16,7 @@ class ReplyService {
     }
   }
 
-  readonly reply = async ({ content, createdBy, replyingTo }: IAddReplyDTO) => {
+  readonly reply = async ({ content, createdBy, replyingTo }: IAddReply) => {
     const reply = await this.commentRepository.create({
       content,
       createdBy,
@@ -26,7 +26,7 @@ class ReplyService {
     return reply
   }
 
-  readonly edit = async ({ replyId, content }: IEditReplyDTO) => {
+  readonly edit = async ({ replyId, content }: IEditReply) => {
     const updatedReply = await this.commentRepository.findByIdAndUpdate({
       _id: replyId,
       data: { content },
@@ -41,7 +41,7 @@ class ReplyService {
     )
   }
 
-  readonly deleteReply = async ({ replyId }: IDeleteReplyDTO) => {
+  readonly deleteReply = async ({ replyId }: IDeleteReply) => {
     const deletedReply = await this.commentRepository.findByIdAndDelete({
       _id: replyId,
     })

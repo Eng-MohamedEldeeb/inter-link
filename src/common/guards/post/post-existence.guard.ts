@@ -7,8 +7,8 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import postRepository from '../../repositories/post.repository'
-import { IGetPostCommentsDTO } from '../../../modules/comment/dto/comment.dto'
-import { IGetSinglePostDTO } from '../../../modules/post/dto/post.dto'
+import { IGetPostComments } from '../../../modules/comment/dto/comment.dto'
+import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 
 import { throwError } from '../../handlers/error-message.handler'
 
@@ -20,8 +20,8 @@ class PostExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
-        IGetSinglePostDTO & IGetPostCommentsDTO,
-        IGetSinglePostDTO
+        IGetSinglePost & IGetPostComments,
+        IGetSinglePost
       >()
       const { id, postId } = { ...req.params, ...req.query }
 
@@ -47,7 +47,7 @@ class PostExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSinglePostDTO>()
+      const { args, context } = Ctx.switchToGraphQL<IGetSinglePost>()
       const { id } = args
       const isExistedPost = await this.postRepository.findOne({
         filter: { $and: [{ _id: id }, { archivedAt: { $exists: false } }] },

@@ -33,13 +33,13 @@ export const PostSchema = new Schema<IPost>(
 
     onGroup: { type: SchemaTypes.ObjectId, ref: 'Group' },
 
+    archivedAt: { type: Date },
+
     createdBy: {
       type: SchemaTypes.ObjectId,
       ref: 'User',
       required: [true, 'createdBy is required'],
     },
-
-    archivedAt: { type: Date },
   },
   {
     timestamps: true,
@@ -65,7 +65,7 @@ PostSchema.virtual('totalComments').get(function () {
   return this.comments?.length ?? 0
 })
 
-PostSchema.post('findOneAndDelete', async function (res: IPost, next) {
+PostSchema.post('findOneAndDelete', async function (res: IPost) {
   await commentRepository.deleteMany({ onPost: res._id })
 
   const attachments = res.attachments

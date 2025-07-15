@@ -1,38 +1,38 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
 import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import { IEditPostDTO, IGetAllDTO, IGetSinglePostDTO } from '../../dto/post.dto'
+import { IEditPost, IGetAll, IGetSinglePost } from '../../dto/post.dto'
 
-export const getAll = argsType<IGetAllDTO>({
+export const getAll = argsType<IGetAll>({
   page: { type: GraphQLInt },
   limit: { type: GraphQLInt },
 })
 
-export const getSingle = argsType<IGetSinglePostDTO>({
+export const getSingle = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 
-export const edit = argsType<IGetSinglePostDTO & IEditPostDTO>({
+export const edit = argsType<IGetSinglePost & IEditPost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
   title: { type: GraphQLString },
   content: { type: GraphQLString },
 })
 
-export const save = argsType<IGetSinglePostDTO>({
+export const save = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 
-export const shared = argsType<IGetSinglePostDTO>({
+export const shared = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 
-export const archive = argsType<IGetSinglePostDTO>({
+export const archive = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 
-export const restore = argsType<IGetSinglePostDTO>({
+export const restore = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 
-export const deletePost = argsType<IGetSinglePostDTO>({
+export const deletePost = argsType<IGetSinglePost>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })

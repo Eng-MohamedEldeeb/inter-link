@@ -79,7 +79,7 @@ export class UserService {
         $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
       },
       data: {
-        $addToSet: {
+        $adSet: {
           blockedUsers: userId,
         },
       },

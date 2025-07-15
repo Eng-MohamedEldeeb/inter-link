@@ -4,7 +4,6 @@ import { applyResolver } from '../../../common/decorators/resolver/apply-resolve
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
 
 import {
   IMutationController,
@@ -55,7 +54,6 @@ export class StoryController {
   }
 
   // Mutations:
-
   static readonly deleteStory = (): IMutationController => {
     return {
       type: returnedResponseType({

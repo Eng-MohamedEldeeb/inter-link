@@ -1,8 +1,5 @@
 import { IMongoDoc } from './IMongo-doc.interface'
-import {
-  ICloud,
-  ICloudFile,
-} from '../../common/services/upload/interface/cloud-response.interface'
+import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../common/types/db/db.types'
 
 export interface IUserInputs {
@@ -13,13 +10,13 @@ export interface IUserInputs {
   password: string
   confirmPassword: string
 
-  birthDate?: Date
-  phone?: string
+  birthDate: Date
+  phone: string
 
   otpCode: string
 
-  bio?: string
-  isPrivateProfile?: boolean
+  bio: string
+  isPrivateProfile: boolean
 }
 
 export interface IUser

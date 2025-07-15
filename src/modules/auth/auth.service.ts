@@ -4,11 +4,11 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
 import { signToken } from '../../common/utils/security/token/token.service'
 import {
-  IConfirmEmailDTO,
-  IForgotPasswordDTO,
-  ILoginDTO,
-  IResetPasswordDTO,
-  IRegisterDTO,
+  IConfirmEmail,
+  IForgotPassword,
+  ILogin,
+  IResetPassword,
+  IRegister,
 } from './dto/auth.dto'
 import { OtpType } from '../../db/models/enums/otp.enum'
 
@@ -16,9 +16,9 @@ export class AuthService {
   private static readonly userRepository = userRepository
   private static readonly otpRepository = otpRepository
 
-  static readonly confirmEmail = async (confirmEmailDTO: IConfirmEmailDTO) => {
+  static readonly confirmEmail = async (confirmEmail: IConfirmEmail) => {
     const isExistedUser = await this.userRepository.findOne({
-      filter: { email: confirmEmailDTO.email },
+      filter: { email: confirmEmail.email },
       projection: { email: 1 },
       options: { lean: true },
     })
@@ -27,7 +27,7 @@ export class AuthService {
       return throwError({ msg: 'user already exists', status: 409 })
 
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email: confirmEmailDTO.email },
+      filter: { email: confirmEmail.email },
       projection: { _id: 1 },
       options: { lean: true },
     })
@@ -39,19 +39,19 @@ export class AuthService {
       })
 
     await this.otpRepository.create({
-      email: confirmEmailDTO.email,
+      email: confirmEmail.email,
       type: OtpType.confirmRegistration,
     })
   }
 
   static readonly register = async (
-    registerDTO: Omit<
-      IRegisterDTO,
+    register: Omit<
+      IRegister,
       'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
     >,
   ) => {
     const { fullName, username, email, password, phone, birthDate, otpCode } =
-      registerDTO
+      register
 
     const isConflicted = await this.userRepository.findOne({
       filter: {
@@ -90,8 +90,8 @@ export class AuthService {
     })
   }
 
-  static readonly login = async (loginDTO: ILoginDTO) => {
-    const { username, password } = loginDTO
+  static readonly login = async (login: ILogin) => {
+    const { username, password } = login
 
     const isExistedUser = await this.userRepository.findOne({
       filter: { username },
@@ -136,11 +136,9 @@ export class AuthService {
     return accessToken
   }
 
-  static readonly forgotPassword = async (
-    forgotPasswordDTO: IForgotPasswordDTO,
-  ) => {
+  static readonly forgotPassword = async (forgotPassword: IForgotPassword) => {
     const isExistedUser = await this.userRepository.findOne({
-      filter: { email: forgotPasswordDTO.email },
+      filter: { email: forgotPassword.email },
       projection: { email: 1 },
       options: { lean: true },
     })
@@ -148,7 +146,7 @@ export class AuthService {
     if (!isExistedUser) throw { msg: 'in-valid email', status: 400 }
 
     const isExistedOtp = await this.otpRepository.findOne({
-      filter: { email: forgotPasswordDTO.email, type: OtpType.forgotPassword },
+      filter: { email: forgotPassword.email, type: OtpType.forgotPassword },
       projection: { _id: 1 },
       options: { lean: true },
     })
@@ -160,15 +158,13 @@ export class AuthService {
       })
 
     await this.otpRepository.create({
-      email: forgotPasswordDTO.email,
+      email: forgotPassword.email,
       type: OtpType.forgotPassword,
     })
   }
 
-  static readonly resetPassword = async (
-    resetPasswordDTO: IResetPasswordDTO,
-  ) => {
-    const { email, newPassword, confirmPassword, otpCode } = resetPasswordDTO
+  static readonly resetPassword = async (resetPassword: IResetPassword) => {
+    const { email, newPassword, confirmPassword, otpCode } = resetPassword
 
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },

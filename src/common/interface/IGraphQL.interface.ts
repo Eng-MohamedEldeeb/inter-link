@@ -10,6 +10,7 @@ import { GuardActivator } from '../guards/can-activate.guard'
 import { IComment } from '../../db/interface/IComment.interface'
 import { IReply } from '../../db/interface/IReply.interface'
 import { IStory } from '../../db/interface/IStory.interface'
+import { IGroup } from '../../db/interface/IGroup.interface'
 
 export type ControllerParams = (
   args: any,
@@ -58,8 +59,9 @@ export interface IContext {
   tokenPayload: IPayload
   profile: IUser
   user: IUser
+  story: IStory
   post: IPost
   comment: IComment
   reply: IReply
-  story: IStory
+  group: IGroup
 }

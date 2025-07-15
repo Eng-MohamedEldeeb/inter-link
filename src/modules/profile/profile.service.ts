@@ -5,17 +5,17 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
 import { OtpType } from '../../db/models/enums/otp.enum'
 import {
-  IChangeEmailDTO,
-  IConfirmDeleteDTO,
-  IConfirmNewEmailDTO,
-  IDeleteAccountDTO,
-  IUpdateProfileDTO,
+  IChangeEmail,
+  IConfirmDelete,
+  IConfirmNewEmail,
+  IDeleteAccount,
+  IUpdateProfile,
 } from './dto/profile.dto'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { IUser } from '../../db/interface/IUser.interface'
 import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
 import { MongoId } from '../../common/types/db/db.types'
-import { IGetAllDTO } from '../post/dto/post.dto'
+import { IGetAll } from '../post/dto/post.dto'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 
 export class ProfileService {
@@ -48,7 +48,7 @@ export class ProfileService {
     query,
   }: {
     profileId: MongoId
-    query: IGetAllDTO
+    query: IGetAll
   }) => {
     const { page, limit } = query
 
@@ -71,6 +71,7 @@ export class ProfileService {
       page: Math.ceil(posts.length / limitQuery),
     }
   }
+
   static readonly changeAvatar = async ({
     profileId,
     avatar,
@@ -80,8 +81,7 @@ export class ProfileService {
     avatar: ICloudFile
     path: string
   }) => {
-    const hasDefaultAvatar =
-      avatar.path.secure_url == process.env.DEFAULT_PROFILE_AVATAR_PIC
+    const hasDefaultAvatar = avatar.path.secure_url == process.env.DEFAULT_PIC
 
     if (!hasDefaultAvatar) {
       const { secure_url, public_id } = await this.CloudUploader.upload({
@@ -127,8 +127,7 @@ export class ProfileService {
       return throwError({ msg: "user doesn't exist", status: 404 })
 
     const hasDefaultAvatar =
-      isExistedUser.avatar.path.secure_url ==
-      process.env.DEFAULT_PROFILE_AVATAR_PIC
+      isExistedUser.avatar.path.secure_url == process.env.DEFAULT_PIC
 
     if (hasDefaultAvatar)
       return throwError({
@@ -142,7 +141,7 @@ export class ProfileService {
       _id: userId,
       data: {
         $set: {
-          avatar: { secure_url: process.env.DEFAULT_PROFILE_AVATAR_PIC },
+          avatar: { secure_url: process.env.DEFAULT_PIC },
         },
       },
       options: {
@@ -155,12 +154,12 @@ export class ProfileService {
 
   static readonly updateProfile = async ({
     profileId,
-    updateProfileDTO,
+    updateProfile,
   }: {
     profileId: MongoId
-    updateProfileDTO: IUpdateProfileDTO
+    updateProfile: IUpdateProfile
   }) => {
-    const { username } = updateProfileDTO
+    const { username } = updateProfile
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         _id: profileId,
@@ -185,44 +184,41 @@ export class ProfileService {
 
     return await this.userRepository.findByIdAndUpdate({
       _id: profileId,
-      data: updateProfileDTO,
+      data: updateProfile,
       options: {
         lean: true,
         new: true,
-        projection: Object.keys(updateProfileDTO).join(' '),
+        projection: Object.keys(updateProfile).join(' '),
       },
     })
   }
 
-  static readonly changeVisibility = async (userId: MongoId) => {
-    const isExistedUser = await this.userRepository.findOne({
-      filter: {
-        _id: userId,
-        deactivatedAt: { $exists: false },
-      },
-    })
-
-    if (!isExistedUser)
-      return throwError({ msg: "user doesn't exist", status: 404 })
-
-    await isExistedUser.updateOne(
-      { isPrivateProfile: !Boolean(isExistedUser.isPrivateProfile) },
-      {
+  static readonly changeVisibility = async ({
+    profileId,
+    profileState,
+  }: {
+    profileId: MongoId
+    profileState: boolean
+  }) => {
+    return await this.userRepository.findByIdAndUpdate({
+      _id: profileId,
+      data: { isPrivateProfile: !profileState },
+      options: {
         lean: true,
         new: true,
         projection: { isPrivateProfile: 1 },
       },
-    )
+    })
   }
 
   static readonly changeEmail = async ({
     profileId,
-    changeEmailDTO,
+    changeEmail,
   }: {
     profileId: MongoId
-    changeEmailDTO: IChangeEmailDTO
+    changeEmail: IChangeEmail
   }) => {
-    const { originalEmail, newEmail, password } = changeEmailDTO
+    const { originalEmail, newEmail, password } = changeEmail
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
@@ -265,10 +261,8 @@ export class ProfileService {
     ])
   }
 
-  static readonly confirmNewEmail = async (
-    confirmEmailDTO: IConfirmNewEmailDTO,
-  ) => {
-    const { originalEmail, otpCode } = confirmEmailDTO
+  static readonly confirmNewEmail = async (confirmEmail: IConfirmNewEmail) => {
+    const { originalEmail, otpCode } = confirmEmail
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
@@ -311,10 +305,8 @@ export class ProfileService {
     ])
   }
 
-  static readonly deactivateAccount = async (
-    deleteAccountDTO: IDeleteAccountDTO,
-  ) => {
-    const { email, password } = deleteAccountDTO
+  static readonly deactivateAccount = async (deleteAccount: IDeleteAccount) => {
+    const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { $and: [{ email }, { deactivatedAt: { $exists: false } }] },
       projection: { email: 1, password: 1 },
@@ -350,10 +342,8 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteAccount = async (
-    deleteAccountDTO: IDeleteAccountDTO,
-  ) => {
-    const { email, password } = deleteAccountDTO
+  static readonly deleteAccount = async (deleteAccount: IDeleteAccount) => {
+    const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },
       projection: { email: 1, password: 1 },
@@ -389,10 +379,8 @@ export class ProfileService {
     })
   }
 
-  static readonly confirmDeletion = async (
-    confirmDeletionDTO: IConfirmDeleteDTO,
-  ) => {
-    const { email, otpCode } = confirmDeletionDTO
+  static readonly confirmDeletion = async (confirmDeletion: IConfirmDelete) => {
+    const { email, otpCode } = confirmDeletion
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: {

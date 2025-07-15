@@ -8,10 +8,7 @@ import {
 
 import storyRepository from '../../repositories/story.repository'
 
-import {
-  IGetSingleStoryDTO,
-  IStoryIdDTO,
-} from '../../../modules/story/dto/story.dto'
+import { IGetSingleStory, IStoryId } from '../../../modules/story/dto/story.dto'
 
 import { throwError } from '../../handlers/error-message.handler'
 
@@ -22,7 +19,7 @@ class StoryExistenceGuard extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSingleStoryDTO & IStoryIdDTO>()
+      const { req } = Ctx.switchToHTTP<IGetSingleStory & IStoryId>()
       const { id, storyId } = req.params
 
       const isExistedStory = await this.storyRepository.findOne({
@@ -40,7 +37,7 @@ class StoryExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSingleStoryDTO>()
+      const { args, context } = Ctx.switchToGraphQL<IGetSingleStory>()
       const { id } = args
 
       const isExistedStory = await this.storyRepository.findOne({

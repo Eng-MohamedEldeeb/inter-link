@@ -2,20 +2,20 @@ import { GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
 import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { userFields } from '../../../../common/types/graphql/graphql-fields.types'
 import {
-  IChangeEmailDTO,
-  IConfirmDeleteDTO,
-  IConfirmNewEmailDTO,
-  IDeleteAccountDTO,
-  IUpdateProfileDTO,
+  IChangeEmail,
+  IConfirmDelete,
+  IConfirmNewEmail,
+  IDeleteAccount,
+  IUpdateProfile,
 } from '../../dto/profile.dto'
-import { IGetAllDTO } from '../../../post/dto/post.dto'
+import { IGetAll } from '../../../post/dto/post.dto'
 
-export const getAllSavedPosts = argsType<IGetAllDTO>({
+export const getAllSavedPosts = argsType<IGetAll>({
   page: { type: GraphQLInt },
   limit: { type: GraphQLInt },
 })
 
-export const updateProfile = argsType<IUpdateProfileDTO>({
+export const updateProfile = argsType<IUpdateProfile>({
   username: { type: userFields.username },
   fullName: { type: userFields.fullName },
   bio: { type: userFields.bio },
@@ -23,28 +23,28 @@ export const updateProfile = argsType<IUpdateProfileDTO>({
   phone: { type: userFields.phone },
 })
 
-export const changeEmail = argsType<IChangeEmailDTO>({
+export const changeEmail = argsType<IChangeEmail>({
   originalEmail: { type: new GraphQLNonNull(userFields.email) },
   newEmail: { type: new GraphQLNonNull(userFields.email) },
   password: { type: new GraphQLNonNull(userFields.password) },
 })
 
-export const confirmNewEmail = argsType<IConfirmNewEmailDTO>({
+export const confirmNewEmail = argsType<IConfirmNewEmail>({
   originalEmail: { type: new GraphQLNonNull(userFields.email) },
   otpCode: { type: new GraphQLNonNull(GraphQLString) },
 })
 
-export const deactivateAccount = argsType<IDeleteAccountDTO>({
+export const deactivateAccount = argsType<IDeleteAccount>({
   email: { type: new GraphQLNonNull(userFields.email) },
   password: { type: new GraphQLNonNull(userFields.password) },
 })
 
-export const deleteAccount = argsType<IDeleteAccountDTO>({
+export const deleteAccount = argsType<IDeleteAccount>({
   email: { type: new GraphQLNonNull(userFields.email) },
   password: { type: new GraphQLNonNull(userFields.password) },
 })
 
-export const confirmDeletion = argsType<IConfirmDeleteDTO>({
+export const confirmDeletion = argsType<IConfirmDelete>({
   email: { type: new GraphQLNonNull(userFields.email) },
   otpCode: { type: new GraphQLNonNull(GraphQLString) },
 })

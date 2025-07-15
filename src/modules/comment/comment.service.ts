@@ -3,10 +3,10 @@ import commentRepository from '../../common/repositories/comment.repository'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../common/types/db/db.types'
 import {
-  IAddCommentDTO,
-  IDeleteCommentDTO,
-  IEditCommentDTO,
-  IGetPostCommentsDTO,
+  IAddComment,
+  IDeleteComment,
+  IEditComment,
+  IGetPostComments,
 } from './dto/comment.dto'
 
 class CommentService {
@@ -17,7 +17,7 @@ class CommentService {
     createdBy,
     attachment,
     postId,
-  }: IAddCommentDTO & IGetPostCommentsDTO & { attachment: ICloudFile }) => {
+  }: IAddComment & IGetPostComments & { attachment: ICloudFile }) => {
     const postedComment = await this.commentRepository.create({
       content,
       ...(attachment.folderId && { attachment }),
@@ -28,7 +28,7 @@ class CommentService {
     return postedComment
   }
 
-  readonly edit = async ({ commentId, content }: IEditCommentDTO) => {
+  readonly edit = async ({ commentId, content }: IEditComment) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
       _id: commentId,
       data: { content },
@@ -43,7 +43,7 @@ class CommentService {
     )
   }
 
-  readonly deleteComment = async ({ commentId }: IDeleteCommentDTO) => {
+  readonly deleteComment = async ({ commentId }: IDeleteComment) => {
     const deletedComment = await this.commentRepository.findByIdAndDelete({
       _id: commentId,
     })

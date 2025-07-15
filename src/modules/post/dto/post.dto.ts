@@ -1,16 +1,15 @@
 import { MongoId } from '../../../common/types/db/db.types'
 import { IPostInputs } from '../../../db/interface/IPost.interface'
 
-export interface IGetAllDTO {
+export interface IGetAll {
   page: number
   limit: number
 }
 
-export interface IGetSinglePostDTO {
+export interface IGetSinglePost {
   id: MongoId
 }
 
-export interface ICreatePostDTO extends IPostInputs {}
+export interface ICreatePost extends IPostInputs {}
 
-export interface IEditPostDTO
-  extends Pick<ICreatePostDTO, 'title' | 'content'> {}
+export interface IEditPost extends Pick<ICreatePost, 'title' | 'content'> {}

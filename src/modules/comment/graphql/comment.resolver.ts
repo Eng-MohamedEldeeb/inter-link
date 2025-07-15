@@ -3,7 +3,7 @@ import {
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
 import commentService from '../comment.service'
-import { IEditCommentDTO } from '../dto/comment.dto'
+import { IEditComment } from '../dto/comment.dto'
 
 export class CommentQueryResolver {
   private static readonly commentService = commentService
@@ -24,7 +24,7 @@ export class CommentMutationResolver {
   private static readonly commentService = commentService
 
   static readonly edit = async (
-    args: IEditCommentDTO,
+    args: IEditComment,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: commentId } = context.comment

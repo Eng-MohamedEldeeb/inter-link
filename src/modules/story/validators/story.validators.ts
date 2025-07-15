@@ -1,14 +1,10 @@
 import joi from 'joi'
-import {
-  ICreateStoryDTO,
-  IDeleteStoryDTO,
-  IGetSingleStoryDTO,
-} from '../dto/story.dto'
+import { ICreateStory, IDeleteStory, IGetSingleStory } from '../dto/story.dto'
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const getSingleValidator = {
   schema: joi
-    .object<IGetSingleStoryDTO>()
+    .object<IGetSingleStory>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -33,7 +29,7 @@ export const getSingleValidator = {
 
 export const createValidator = {
   body: joi
-    .object<ICreateStoryDTO>()
+    .object<ICreateStory>()
     .keys({
       content: generalFields.content.max(500),
     })
@@ -53,7 +49,7 @@ export const createValidator = {
 
 export const deleteValidator = {
   schema: joi
-    .object<IDeleteStoryDTO>()
+    .object<IDeleteStory>()
     .keys({
       id: generalFields.mongoId.required(),
     })

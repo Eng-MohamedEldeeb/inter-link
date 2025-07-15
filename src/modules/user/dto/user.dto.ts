@@ -1,10 +1,10 @@
 import { MongoId } from '../../../common/types/db/db.types'
 
-export interface IGetUserProfileDTO {
+export interface IGetUserProfile {
   id: MongoId
   user: string
 }
 
-export interface IBlockUserDTO extends Pick<IGetUserProfileDTO, 'id'> {}
+export interface IBlockUser extends Pick<IGetUserProfile, 'id'> {}
 
-export interface IUnBlockUserDTO extends IGetUserProfileDTO {}
+export interface IUnBlockUser extends IGetUserProfile {}

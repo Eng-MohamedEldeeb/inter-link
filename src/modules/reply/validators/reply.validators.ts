@@ -1,18 +1,18 @@
 import joi from 'joi'
 import { generalFields } from '../../../common/validation/general-fields'
 import {
-  IAddReplyDTO,
-  IDeleteReplyDTO,
-  IEditReplyDTO,
-  IGetCommentRepliesDTO,
-  IReplyIdDTO,
+  IAddReply,
+  IDeleteReply,
+  IEditReply,
+  IGetCommentReplies,
+  IReplyId,
 } from '../dto/reply.dto'
 import { isValidMongoId } from '../../../common/validation/is-valid'
 import { IReplyInputs } from '../../../db/interface/IReply.interface'
 
 export const getCommentRepliesValidator = {
   schema: joi
-    .object<IGetCommentRepliesDTO>()
+    .object<IGetCommentReplies>()
     .keys({
       commentId: generalFields.mongoId.required(),
     })
@@ -52,20 +52,16 @@ export const addValidator = {
         'any.required':
           '[/commentId/reply] "commentId" is Expected but got nothing',
       }),
-      body: joi
-        .object<IAddReplyDTO>()
-        .keys(this.schema.body)
-        .required()
-        .messages({
-          'any.required': '"reply" body is required',
-        }),
+      body: joi.object<IAddReply>().keys(this.schema.body).required().messages({
+        'any.required': '"reply" body is required',
+      }),
     }
   },
 
   graphQL() {
     return {
       args: joi
-        .object<IAddReplyDTO>()
+        .object<IAddReply>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -87,7 +83,7 @@ export const editValidator = {
   http() {
     return {
       params: joi
-        .object<IReplyIdDTO>()
+        .object<IReplyId>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -107,7 +103,7 @@ export const editValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IEditReplyDTO>()
+        .object<IEditReply>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -127,7 +123,7 @@ export const deleteValidator = {
   http() {
     return {
       params: joi
-        .object<IDeleteReplyDTO>()
+        .object<IDeleteReply>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -140,7 +136,7 @@ export const deleteValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IDeleteReplyDTO>()
+        .object<IDeleteReply>()
         .keys(this.schema.params)
         .required()
         .messages({

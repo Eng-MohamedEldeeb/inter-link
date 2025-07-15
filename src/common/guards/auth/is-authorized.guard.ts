@@ -53,10 +53,10 @@ class IsAuthorizedGuard implements GuardActivator {
     if (isExistedUser.changedCredentialsAt)
       this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassedTokenInitiationStamp =
+    const isPassekenInitiationStamp =
       this.checkTokenInitiationStamp(tokenPayload)
 
-    if (isPassedTokenInitiationStamp)
+    if (isPassekenInitiationStamp)
       return throwError({ msg: 're-login is required', status: 403 })
 
     req.profile = isExistedUser
@@ -85,10 +85,10 @@ class IsAuthorizedGuard implements GuardActivator {
     if (isExistedUser.changedCredentialsAt)
       this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassedTokenInitiationStamp =
+    const isPassekenInitiationStamp =
       this.checkTokenInitiationStamp(tokenPayload)
 
-    if (isPassedTokenInitiationStamp)
+    if (isPassekenInitiationStamp)
       return throwError({ msg: 're-login is required', status: 403 })
 
     context.profile = isExistedUser

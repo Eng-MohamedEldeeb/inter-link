@@ -10,6 +10,7 @@ import { IPost } from '../../db/interface/IPost.interface'
 import { IComment } from '../../db/interface/IComment.interface'
 import { IReply } from '../../db/interface/IReply.interface'
 import { IStory } from '../../db/interface/IStory.interface'
+import { IGroup } from '../../db/interface/IGroup.interface'
 
 export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   tokenPayload: IPayload
@@ -18,8 +19,9 @@ export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
 
   profile: IUser
   user: IUser
+  story: IStory
   post: IPost
   comment: IComment
   reply: IReply
-  story: IStory
+  group: IGroup
 }
