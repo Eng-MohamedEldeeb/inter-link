@@ -1,10 +1,12 @@
-import { singleFile } from './../../../../common/services/upload/interface/cloud-response.interface'
 import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
+
 import {
   DateType,
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
+
 import { IComment } from '../../../../db/interface/IComment.interface'
+import { singleFile } from './../../../../common/services/upload/interface/cloud-response.interface'
 
 export const commentFields: ObjFields<Omit<IComment, '__v'>> = {
   _id: { type: GraphQLID },

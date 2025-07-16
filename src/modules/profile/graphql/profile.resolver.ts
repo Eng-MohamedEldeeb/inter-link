@@ -1,18 +1,14 @@
-import { ProfileService } from '../profile.service'
 import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import {
-  IChangeEmail,
-  IConfirmDelete,
-  IConfirmNewEmail,
-  IDeleteAccount,
-  IUpdateProfile,
-} from '../dto/profile.dto'
+
+import { ProfileService } from '../profile.service'
 import { OtpType } from '../../../db/models/enums/otp.enum'
 import { IGetAll } from '../../post/dto/post.dto'
 import { PostService } from '../../post/post.service'
+
+import * as DTO from '../dto/profile.dto'
 
 export class ProfileQueryResolver {
   protected static readonly ProfileService = ProfileService
@@ -74,7 +70,7 @@ export class ProfileMutationResolver {
   protected static readonly ProfileService = ProfileService
 
   static readonly updateProfile = async (
-    args: IUpdateProfile,
+    args: DTO.IUpdateProfile,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id } = context.profile
@@ -114,7 +110,7 @@ export class ProfileMutationResolver {
   }
 
   static readonly changeEmail = async (
-    args: IChangeEmail,
+    args: DTO.IChangeEmail,
     context: IContext,
   ) => {
     const changeEmail = args
@@ -126,7 +122,7 @@ export class ProfileMutationResolver {
     }
   }
   static readonly confirmNewEmail = async (
-    args: IConfirmNewEmail,
+    args: DTO.IConfirmNewEmail,
     _: IContext,
   ) => {
     const confirmNewEmail = args
@@ -138,7 +134,7 @@ export class ProfileMutationResolver {
   }
 
   static readonly deactivateAccount = async (
-    args: IDeleteAccount,
+    args: DTO.IDeleteAccount,
     _: IContext,
   ) => {
     const deleteAccount = args
@@ -149,7 +145,10 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly deleteAccount = async (args: IDeleteAccount, _: IContext) => {
+  static readonly deleteAccount = async (
+    args: DTO.IDeleteAccount,
+    _: IContext,
+  ) => {
     const deleteAccount = args
     await this.ProfileService.deleteAccount(deleteAccount)
     return {
@@ -159,7 +158,7 @@ export class ProfileMutationResolver {
   }
 
   static readonly confirmDeletion = async (
-    args: IConfirmDelete,
+    args: DTO.IConfirmDelete,
     _: IContext,
   ) => {
     const confirmDelete = args

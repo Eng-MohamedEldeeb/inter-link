@@ -1,19 +1,16 @@
 import joi from 'joi'
-import {
-  IChangeGroupVisibility,
-  ICreateGroup,
-  IDeleteGroup,
-  IEditGroup,
-  IGetGroup,
-} from '../dto/group.dto'
+
+import * as GroupDTO from '../dto/group.dto'
+
+import { ICreatePost, IGetSinglePost } from '../../post/dto/post.dto'
+
 import { generalFields } from '../../../common/validation/general-fields'
-import { ICreatePost } from '../../post/dto/post.dto'
 
 export const getGroupValidator = {
   schema: joi
-    .object<IGetGroup>()
+    .object<GroupDTO.IGetGroup>()
     .keys({
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     })
     .required(),
 
@@ -36,7 +33,7 @@ export const getGroupValidator = {
 
 export const createValidator = {
   body: joi
-    .object<ICreateGroup>()
+    .object<GroupDTO.ICreateGroup>()
     .keys({
       name: generalFields.content.min(1).max(28).required(),
       description: generalFields.content.max(500),
@@ -46,6 +43,134 @@ export const createValidator = {
     .messages({
       'any.required': 'createGroup body is required',
     }),
+}
+
+export const addAdminValidator = {
+  schema: {
+    query: {
+      userId: generalFields.mongoId.required(),
+    },
+    params: {
+      groupId: generalFields.mongoId.required(),
+    },
+  },
+  http() {
+    return {
+      query: joi
+        .object<GroupDTO.IAddAdmin>()
+        .keys(this.schema.query)
+        .required()
+        .messages({
+          'any.required': 'expected "userId" but got none',
+        }),
+
+      params: joi
+        .object<GroupDTO.IGetGroup>()
+        .keys(this.schema.params)
+        .required()
+        .messages({
+          'any.required': 'expected "id" param but got none',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<GroupDTO.IAddAdmin>()
+        .keys({ ...this.schema.params, ...this.schema.query })
+        .required()
+        .messages({
+          'any.required': 'expected group "id" and "userId" args but got none',
+        }),
+    }
+  },
+}
+
+export const removeAdminValidator = {
+  schema: {
+    params: {
+      groupId: generalFields.mongoId.required(),
+    },
+    query: {
+      adminId: generalFields.mongoId.required(),
+    },
+  },
+  http() {
+    return {
+      query: joi
+        .object<GroupDTO.IRemoveAdmin>()
+        .keys(this.schema.query)
+        .required()
+        .messages({
+          'any.required': 'expected admin "Id" but got none',
+        }),
+
+      params: joi
+        .object<GroupDTO.IGetGroup>()
+        .keys(this.schema.params)
+        .required()
+        .messages({
+          'any.required': 'expected "id" param but got none',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<GroupDTO.IRemoveAdmin>()
+        .keys({ ...this.schema.params, ...this.schema.query })
+        .required()
+        .messages({
+          'any.required':
+            'expected group "id" and admin "Id" args but got none',
+        }),
+    }
+  },
+}
+
+export const removePostValidator = {
+  schema: {
+    params: {
+      groupId: generalFields.mongoId.required(),
+    },
+    query: {
+      id: generalFields.mongoId.required(),
+    },
+  },
+  http() {
+    return {
+      query: joi
+        .object<IGetSinglePost>()
+        .keys(this.schema.query)
+        .required()
+        .messages({
+          'any.required': 'expected post "Id" query param but got none',
+        }),
+
+      params: joi
+        .object<GroupDTO.IGetGroup>()
+        .keys(this.schema.params)
+        .required()
+        .messages({
+          'any.required': 'expected group "id" param but got none',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<GroupDTO.IGetGroup>()
+        .keys({ ...this.schema.params, ...this.schema.query })
+        .required()
+        .messages({
+          'any.required':
+            'expected group "id" and admin "Id" args but got none',
+        }),
+    }
+  },
 }
 
 export const addPostValidator = {
@@ -59,14 +184,14 @@ export const addPostValidator = {
     .messages({
       'any.required': 'addPost body is required',
     }),
-  query: joi
-    .object<IGetGroup>()
+  params: joi
+    .object<GroupDTO.IGetGroup>()
     .keys({
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     })
     .required()
     .messages({
-      'any.required': 'groupId query param is required',
+      'any.required': 'group "Id" param is required',
     }),
 }
 
@@ -79,14 +204,14 @@ export const editValidator = {
     },
 
     query: {
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     },
   },
 
   http() {
     return {
       body: joi
-        .object<IEditGroup>()
+        .object<GroupDTO.IEditGroup>()
         .keys(this.schema.body)
         .required()
         .messages({
@@ -94,7 +219,7 @@ export const editValidator = {
         }),
 
       query: joi
-        .object<IGetGroup>()
+        .object<GroupDTO.IGetGroup>()
         .keys(this.schema.query)
         .required()
         .messages({
@@ -106,7 +231,7 @@ export const editValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IEditGroup>()
+        .object<GroupDTO.IEditGroup>()
         .keys({ ...this.schema.query, ...this.schema.body })
         .required()
         .messages({
@@ -118,7 +243,7 @@ export const editValidator = {
 
 export const changeCoverValidator = {
   body: joi
-    .object<IEditGroup>()
+    .object<GroupDTO.IEditGroup>()
     .keys({
       name: generalFields.content.min(1).max(28),
       description: generalFields.content.max(500),
@@ -130,9 +255,9 @@ export const changeCoverValidator = {
     }),
 
   query: joi
-    .object<IGetGroup>()
+    .object<GroupDTO.IGetGroup>()
     .keys({
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     })
     .required()
     .messages({
@@ -143,14 +268,14 @@ export const changeCoverValidator = {
 export const changeVisibilityValidator = {
   schema: {
     query: {
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     },
   },
 
   http() {
     return {
       query: joi
-        .object<IChangeGroupVisibility>()
+        .object<GroupDTO.IChangeGroupVisibility>()
         .keys(this.schema.query)
         .required()
         .messages({
@@ -162,7 +287,7 @@ export const changeVisibilityValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IChangeGroupVisibility>()
+        .object<GroupDTO.IChangeGroupVisibility>()
         .keys(this.schema.query)
         .required()
         .messages({
@@ -174,9 +299,9 @@ export const changeVisibilityValidator = {
 
 export const deleteGroupValidator = {
   schema: joi
-    .object<IDeleteGroup>()
+    .object<GroupDTO.IDeleteGroup>()
     .keys({
-      id: generalFields.mongoId.required(),
+      groupId: generalFields.mongoId.required(),
     })
     .required(),
   http() {

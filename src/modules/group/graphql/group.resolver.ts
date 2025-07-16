@@ -1,9 +1,11 @@
+import { GroupService } from '../group.service'
+import { PostService } from '../../post/post.service'
+import { IEditGroup } from '../dto/group.dto'
+
 import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import { IEditGroup } from '../dto/group.dto'
-import { GroupService } from '../group.service'
 
 export class GroupQueryResolver {
   private static readonly GroupService = GroupService
@@ -21,6 +23,28 @@ export class GroupQueryResolver {
 }
 export class GroupMutationResolver {
   private static readonly GroupService = GroupService
+  private static readonly PostService = PostService
+
+  static readonly addAdmin = async (args: IEditGroup, context: IContext) => {
+    const group = context.group
+    const { _id: userId, username } = context.user
+
+    return {
+      msg: `User '${username}' is now a Group Admin`,
+      status: 200,
+      data: await this.GroupService.addAdmin({ group, userId }),
+    }
+  }
+
+  static readonly removeAdmin = async (args: IEditGroup, context: IContext) => {
+    const group = context.group
+    const { _id: userId, username } = context.user
+    return {
+      msg: `User '${username}' is not a Group Admin anymore`,
+      status: 200,
+      data: await this.GroupService.removeAdmin({ group, userId }),
+    }
+  }
 
   static readonly edit = async (args: IEditGroup, context: IContext) => {
     const { _id: groupId } = context.group
@@ -51,10 +75,23 @@ export class GroupMutationResolver {
   static readonly deleteGroup = async (_: any, context: IContext) => {
     const { _id: groupId } = context.group
 
+    await this.GroupService.delete(groupId)
+
     return {
       msg: 'Group has been deleted successfully',
       status: 200,
-      data: await this.GroupService.delete(groupId),
+    }
+  }
+
+  static readonly removePostFromGroup = async (_: any, context: IContext) => {
+    const { _id: groupId, name } = context.group
+    const { _id: postId } = context.post
+
+    await this.PostService.removeFromGroup({ groupId, postId })
+
+    return {
+      msg: `Post has been deleted from ${name} Group Successfully`,
+      status: 200,
     }
   }
 }

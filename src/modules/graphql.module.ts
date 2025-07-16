@@ -1,4 +1,5 @@
 import { GraphQLError, GraphQLObjectType, GraphQLSchema } from 'graphql'
+
 import { createHandler } from 'graphql-http/lib/use/express'
 
 import * as auth from './auth/graphql/auth.module'

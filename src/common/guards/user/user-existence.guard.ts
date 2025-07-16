@@ -1,13 +1,16 @@
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from '../can-activate.guard'
+import { IAddAdmin } from '../../../modules/group/dto/group.dto'
 import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { throwError } from '../../handlers/error-message.handler'
+
 import userRepository from '../../repositories/user.repository'
-import { GuardActivator } from '../can-activate.guard'
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository
@@ -18,10 +21,10 @@ class UserExistenceGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
         Pick<IGetUserProfile, 'id'>,
-        IGetUserProfile
+        IGetUserProfile & IAddAdmin
       >()
 
-      const { user, id: userId } = { ...req.query, ...req.params }
+      const { user, id, userId } = { ...req.query, ...req.params }
       const { _id: profileId } = req.profile
 
       const isExistedUser = await this.userRepository.findOne({
@@ -50,7 +53,10 @@ class UserExistenceGuard extends GuardActivator {
                 ],
               }
             : {
-                $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
+                $and: [
+                  { $or: [{ _id: id }, { _id: userId }] },
+                  { deactivatedAt: { $exists: false } },
+                ],
               }),
         },
         projection: {
@@ -79,9 +85,11 @@ class UserExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetUserProfile>()
+      const { args, context } = Ctx.switchToGraphQL<
+        IGetUserProfile & IAddAdmin
+      >()
 
-      const { user, id: userId } = args
+      const { user, id, userId } = args
       const { _id: profileId } = context.profile
 
       const isExistedUser = await this.userRepository.findOne({
@@ -110,7 +118,10 @@ class UserExistenceGuard extends GuardActivator {
                 ],
               }
             : {
-                $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
+                $and: [
+                  { $or: [{ _id: id }, { _id: userId }] },
+                  { deactivatedAt: { $exists: false } },
+                ],
               }),
         },
         projection: {

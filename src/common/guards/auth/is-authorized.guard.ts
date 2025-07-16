@@ -1,18 +1,17 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { IContext } from '../../interface/IGraphQL.interface'
+import { IRequest } from '../../interface/IRequest.interface'
+import { IPayload } from '../../utils/security/token/interface/token.interface'
+import { throwError } from '../../handlers/error-message.handler'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-import { IContext } from '../../interface/IGraphQL.interface'
-import { IRequest } from '../../interface/IRequest.interface'
-import { IPayload } from '../../utils/security/token/interface/token.interface'
-
 import userRepository from '../../repositories/user.repository'
-
-import { throwError } from '../../handlers/error-message.handler'
 
 class IsAuthorizedGuard implements GuardActivator {
   private readonly userRepository = userRepository

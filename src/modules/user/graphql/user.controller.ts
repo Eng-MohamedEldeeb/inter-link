@@ -1,22 +1,21 @@
-import { UserQueryResolver, UserMutationResolver } from './user.resolver'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
+import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
+import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
+
+import * as args from './types/user-args.type'
+import * as validators from '../validator/user.validator'
 
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
 
+import { UserQueryResolver, UserMutationResolver } from './user.resolver'
+
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { UserResponse } from './types/user-response.type'
-
-import * as args from './types/user-args.type'
-
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validator/user.validator'
 
 export class UserQueryController {
   private static readonly UserQueryResolver = UserQueryResolver

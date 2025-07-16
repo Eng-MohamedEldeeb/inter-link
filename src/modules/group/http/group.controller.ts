@@ -1,11 +1,12 @@
 import { Response } from 'express'
-import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { IRequest } from '../../../common/interface/IRequest.interface'
+import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
+import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { GroupService } from '../group.service'
 import { PostService } from '../../post/post.service'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
-import { ICreateGroup, IEditGroup, IGetGroup } from '../dto/group.dto'
 import { ICreatePost } from '../../post/dto/post.dto'
+
+import * as DTO from '../dto/group.dto'
 
 export class GroupController {
   private static readonly GroupService = GroupService
@@ -23,7 +24,7 @@ export class GroupController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const cover = req.cloudFile
-      const createGroup: ICreateGroup = req.body
+      const createGroup: DTO.ICreateGroup = req.body
       return successResponse(res, {
         status: 201,
         msg: 'Group has been created Successfully',
@@ -37,9 +38,9 @@ export class GroupController {
   )
 
   static readonly addPost = asyncHandler(
-    async (req: IRequest<IGetGroup>, res: Response) => {
+    async (req: IRequest<DTO.IGetGroup>, res: Response) => {
       const { _id } = req.profile
-      const { id } = req.params
+      const { groupId } = req.params
       const { name } = req.group
 
       const attachments = req.cloudFiles
@@ -53,16 +54,61 @@ export class GroupController {
           attachments,
           createPost: {
             ...createPost,
-            onGroup: id,
+            onGroup: groupId,
           },
         }),
       })
     },
   )
 
+  static readonly removePost = asyncHandler(
+    async (req: IRequest<DTO.IGetGroup, DTO.IRemovePost>, res: Response) => {
+      const { _id: postId } = req.post
+      const { _id: groupId, name } = req.group
+
+      return successResponse(res, {
+        status: 201,
+        msg: `Post has been deleted from ${name} Group Successfully`,
+        data: await this.PostService.removeFromGroup({ groupId, postId }),
+      })
+    },
+  )
+
+  static readonly addAdmin = asyncHandler(
+    async (req: IRequest<DTO.IGetGroup>, res: Response) => {
+      const { _id: userId, username } = req.user
+      const { group } = req
+
+      await this.GroupService.addAdmin({
+        group,
+        userId,
+      })
+
+      return successResponse(res, {
+        msg: `User '${username}' is now a Group Admin`,
+      })
+    },
+  )
+
+  static readonly removeAdmin = asyncHandler(
+    async (req: IRequest<DTO.IGetGroup>, res: Response) => {
+      const { _id: userId, username } = req.user
+      const { group } = req
+
+      await this.GroupService.removeAdmin({
+        group,
+        userId,
+      })
+
+      return successResponse(res, {
+        msg: `User '${username}' is not a Group Admin anymore`,
+      })
+    },
+  )
+
   static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
     const { _id: groupId } = req.group
-    const editGroup: IEditGroup = req.body
+    const editGroup: DTO.IEditGroup = req.body
 
     return successResponse(res, {
       msg: 'Group has been modified successfully',

@@ -1,10 +1,9 @@
 import { Router } from 'express'
 import { ProfileController } from './profile.controller'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validator/profile.validator'
-
 import { fileReader } from '../../../common/utils/multer/file-reader'
+
+import * as validators from '../validator/profile.validator'
 
 const router: Router = Router()
 

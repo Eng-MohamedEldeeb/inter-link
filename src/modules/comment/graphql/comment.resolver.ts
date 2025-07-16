@@ -2,12 +2,12 @@ import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import commentService from '../comment.service'
+
 import { IEditComment } from '../dto/comment.dto'
 
-export class CommentQueryResolver {
-  private static readonly commentService = commentService
+import commentService from '../comment.service'
 
+export class CommentQueryResolver {
   static readonly getSingleComment = async (
     _: any,
     context: IContext,

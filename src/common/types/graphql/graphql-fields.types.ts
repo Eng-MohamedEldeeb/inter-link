@@ -6,9 +6,11 @@ import {
   GraphQLObjectType,
   GraphQLString,
 } from 'graphql'
+
+import { DateType, ObjFields } from './graphql.types'
+
 import { IUser } from '../../../db/interface/IUser.interface'
 import { singleFile } from '../../services/upload/interface/cloud-response.interface'
-import { DateType, ObjFields } from './graphql.types'
 import { onePost } from '../../../modules/post/graphql/types/post-fields.type'
 
 const viewer = new GraphQLObjectType({

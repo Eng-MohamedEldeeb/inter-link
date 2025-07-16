@@ -1,7 +1,8 @@
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+
 import { IRequest } from '../../../interface/IRequest.interface'
 import { CloudUploader } from '../../../services/upload/cloud.service'
 import { ContextDetector } from '../../context/context-detector.decorator'
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 import { ContextType } from '../../context/types/enum/context-type.enum'
 import { IError } from '../../../handlers/http/global-error.handler'
 import { GraphQLError } from 'graphql'

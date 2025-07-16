@@ -8,12 +8,14 @@ import {
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-class PostAuthorizationGuard extends GuardActivator {
-  protected profileId!: MongoId
-  protected createdBy!: MongoId
+import groupOwnerAuthorizationGuard from './group-owner-authorization.guard'
 
-  protected readonly isTheOwner = async () => {
-    return this.createdBy.equals(this.profileId)
+class GroupAdminAuthorizationGuard extends GuardActivator {
+  protected profileId!: MongoId
+  protected admins!: MongoId[]
+
+  protected readonly isAdmin = () => {
+    return this.admins.some(adminId => adminId.equals(this.profileId))
   }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -22,19 +24,26 @@ class PostAuthorizationGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
 
-      this.createdBy = req.post.createdBy
+      const { admins } = req.group
+
+      this.admins = admins
       this.profileId = req.profile._id
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
 
-      this.createdBy = context.post.createdBy
+      const { admins } = context.group
+
+      this.admins = admins
       this.profileId = context.profile._id
     }
 
-    return this.isTheOwner()
+    return (
+      this.isAdmin() ||
+      (await groupOwnerAuthorizationGuard.canActivate(...params))
+    )
   }
 }
 
-export default new PostAuthorizationGuard()
+export default new GroupAdminAuthorizationGuard()

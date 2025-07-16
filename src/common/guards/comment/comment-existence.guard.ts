@@ -1,18 +1,19 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
-import commentRepository from '../../repositories/comment.repository'
 import {
   ICommentId,
   IGetSingleComment,
 } from '../../../modules/comment/dto/comment.dto'
 
-import { throwError } from '../../handlers/error-message.handler'
+import commentRepository from '../../repositories/comment.repository'
 
 class CommentExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

@@ -1,14 +1,14 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { MongoId } from '../../types/db/db.types'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 
-import { MongoId } from '../../types/db/db.types'
-
-class GroupAuthorizationGuard extends GuardActivator {
+class GroupOwnerAuthorizationGuard extends GuardActivator {
   protected profileId!: MongoId
   protected createdBy!: MongoId
 
@@ -37,4 +37,4 @@ class GroupAuthorizationGuard extends GuardActivator {
   }
 }
 
-export default new GroupAuthorizationGuard()
+export default new GroupOwnerAuthorizationGuard()

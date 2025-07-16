@@ -1,15 +1,12 @@
 import { Response } from 'express'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
-import commentService from '../comment.service'
 import { IRequest } from '../../../common/interface/IRequest.interface'
+import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import {
-  IAddComment,
-  ICommentId,
-  IEditComment,
-  IGetPostComments,
-} from '../dto/comment.dto'
 import { MongoId } from '../../../common/types/db/db.types'
+
+import commentService from '../comment.service'
+
+import * as DTO from '../dto/comment.dto'
 
 export class CommentController {
   protected static readonly commentService = commentService
@@ -23,11 +20,14 @@ export class CommentController {
   )
 
   static readonly addComment = asyncHandler(
-    async (req: IRequest<Pick<IGetPostComments, 'postId'>>, res: Response) => {
+    async (
+      req: IRequest<Pick<DTO.IGetPostComments, 'postId'>>,
+      res: Response,
+    ) => {
       const { _id: profileId } = req.profile
       const attachment = req.cloudFile
       const { postId } = req.params
-      const { content }: Pick<IAddComment, 'content'> = req.body
+      const { content }: Pick<DTO.IAddComment, 'content'> = req.body
 
       return successResponse(res, {
         msg: 'Comment has been add Successfully',
@@ -43,9 +43,9 @@ export class CommentController {
   )
 
   static readonly edit = asyncHandler(
-    async (req: IRequest<ICommentId>, res: Response) => {
+    async (req: IRequest<DTO.ICommentId>, res: Response) => {
       const { commentId } = req.params
-      const { content }: IEditComment = req.body
+      const { content }: DTO.IEditComment = req.body
       return successResponse(res, {
         msg: 'Comment has been modified Successfully',
         data: await this.commentService.edit({

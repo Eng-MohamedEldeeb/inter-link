@@ -1,8 +1,8 @@
 import { Server } from 'node:http'
 import express from 'express'
+import chalk from 'chalk'
 import { bootstrap } from './app.module'
 import { wsBootStrap } from './web-socket/ws.module'
-import chalk from 'chalk'
 
 const app: express.Express = express()
 const port: number = Number(process.env.PORT) ?? 3001

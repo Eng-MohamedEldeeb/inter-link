@@ -1,4 +1,5 @@
 import { GraphQLID, GraphQLNonNull } from 'graphql'
+
 import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IGetSingleStory } from '../../dto/story.dto'
 

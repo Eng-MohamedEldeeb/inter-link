@@ -1,16 +1,16 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { MongoId } from '../../types/db/db.types'
+import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
+import { throwError } from '../../handlers/error-message.handler'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
 import groupRepository from '../../repositories/group.repository'
-import { MongoId } from '../../types/db/db.types'
-import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
-
-import { throwError } from '../../handlers/error-message.handler'
 
 class PostInGroupPermission extends GuardActivator {
   private readonly groupRepository = groupRepository

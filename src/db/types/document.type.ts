@@ -1,4 +1,5 @@
 import { Document, HydratedDocument } from 'mongoose'
+
 import { IUser } from '../interface/IUser.interface'
 import { IOtp } from '../interface/IOtp.interface'
 import { IGroup } from '../interface/IGroup.interface'

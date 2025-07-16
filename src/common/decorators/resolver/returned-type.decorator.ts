@@ -1,4 +1,5 @@
 import { GraphQLInt, GraphQLObjectType, GraphQLString } from 'graphql'
+
 import { ObjFields } from '../../types/graphql/graphql.types'
 
 export const argsType = <Interface>(fields: ObjFields<Interface>) => {

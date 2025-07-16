@@ -1,16 +1,14 @@
 import { Router } from 'express'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validators/story.validators'
-
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
-import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
-
 import { fileReader } from '../../../common/utils/multer/file-reader'
 import { storyAttachmentUploader } from '../../../common/middlewares/upload/story-attachments-uploader.middleware'
-
 import { StoryController } from './story.controller'
+
+import * as validators from '../validators/story.validators'
+
+import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
+import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
 
 const router: Router = Router()
 

@@ -1,16 +1,16 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { throwError } from '../../handlers/error-message.handler'
+
+import { IGetSingleStory, IStoryId } from '../../../modules/story/dto/story.dto'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
 import storyRepository from '../../repositories/story.repository'
-
-import { IGetSingleStory, IStoryId } from '../../../modules/story/dto/story.dto'
-
-import { throwError } from '../../handlers/error-message.handler'
 
 class StoryExistenceGuard extends GuardActivator {
   private readonly storyRepository = storyRepository

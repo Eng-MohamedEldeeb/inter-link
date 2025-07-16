@@ -1,9 +1,11 @@
 import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
+
+import { IReply } from '../../../../db/interface/IReply.interface'
+
 import {
   DateType,
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
-import { IReply } from '../../../../db/interface/IReply.interface'
 
 export const replyFields: ObjFields<Omit<IReply, '__v'>> = {
   _id: { type: GraphQLID },

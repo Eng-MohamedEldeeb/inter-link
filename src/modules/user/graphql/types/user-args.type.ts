@@ -1,4 +1,5 @@
-import { GraphQLID, GraphQLNonNull, GraphQLString } from 'graphql'
+import { GraphQLID, GraphQLNonNull } from 'graphql'
+
 import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IBlockUser } from '../../dto/user.dto'
 

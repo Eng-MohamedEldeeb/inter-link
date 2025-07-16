@@ -1,19 +1,13 @@
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { OtpType } from '../../../db/models/enums/otp.enum'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import {
-  IChangeEmail,
-  IConfirmDelete,
-  IConfirmNewEmail,
-  IDeleteAccount,
-  IUpdateProfile,
-} from '../dto/profile.dto'
-
 import { ProfileService } from '../profile.service'
 import { Response } from 'express'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { IUser } from '../../../db/interface/IUser.interface'
 import { IGetAll } from '../../post/dto/post.dto'
+
+import * as DTO from '../dto/profile.dto'
 
 export class ProfileController {
   private static readonly ProfileService = ProfileService
@@ -80,7 +74,7 @@ export class ProfileController {
 
   static readonly updateProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const updateProfile: IUpdateProfile = req.body
+      const updateProfile: DTO.IUpdateProfile = req.body
       const { _id } = req.tokenPayload
       return successResponse(res, {
         msg: 'profile has has been updated successfully',
@@ -107,7 +101,7 @@ export class ProfileController {
 
   static readonly changeEmail = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const changeEmail: IChangeEmail = req.body
+      const changeEmail: DTO.IChangeEmail = req.body
       const { _id } = req.tokenPayload
       await this.ProfileService.changeEmail({ profileId: _id, changeEmail })
       return successResponse(res, {
@@ -118,7 +112,7 @@ export class ProfileController {
 
   static readonly confirmNewEmail = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const confirmNewEmail: IConfirmNewEmail = req.body
+      const confirmNewEmail: DTO.IConfirmNewEmail = req.body
       await this.ProfileService.confirmNewEmail(confirmNewEmail)
       return successResponse(res, {
         msg: 'your new e-mail has has been verified successfully',
@@ -128,7 +122,7 @@ export class ProfileController {
 
   static readonly deactivateAccount = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const deleteAccount: IDeleteAccount = req.body
+      const deleteAccount: DTO.IDeleteAccount = req.body
       await this.ProfileService.deactivateAccount(deleteAccount)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
@@ -138,7 +132,7 @@ export class ProfileController {
 
   static readonly deleteAccount = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const deleteAccount: IDeleteAccount = req.body
+      const deleteAccount: DTO.IDeleteAccount = req.body
       await this.ProfileService.deleteAccount(deleteAccount)
       return successResponse(res, {
         msg: 'check your e-mail to confirm',
@@ -148,7 +142,7 @@ export class ProfileController {
 
   static readonly confirmDeletion = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const confirmDelete: IConfirmDelete = req.body
+      const confirmDelete: DTO.IConfirmDelete = req.body
       const type = await this.ProfileService.confirmDeletion(confirmDelete)
       return successResponse(res, {
         msg: `Account has has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,

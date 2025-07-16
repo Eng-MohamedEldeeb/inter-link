@@ -1,13 +1,15 @@
 import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
+
 import { IUser } from '../../interface/IUser.interface'
 import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
-import otpRepository from '../../../common/repositories/otp.repository'
 import { OtpType } from '../enums/otp.enum'
 import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
+
 import postRepository from '../../../common/repositories/post.repository'
 import groupRepository from '../../../common/repositories/group.repository'
-import { CloudUploader } from '../../../common/services/upload/cloud.service'
 import commentRepository from '../../../common/repositories/comment.repository'
+import otpRepository from '../../../common/repositories/otp.repository'
 
 export const UserSchema = new Schema<IUser>(
   {

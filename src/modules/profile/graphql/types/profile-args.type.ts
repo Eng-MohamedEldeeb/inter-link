@@ -1,6 +1,8 @@
 import { GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
 import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { userFields } from '../../../../common/types/graphql/graphql-fields.types'
+import { IGetAll } from '../../../post/dto/post.dto'
+
 import {
   IChangeEmail,
   IConfirmDelete,
@@ -8,7 +10,6 @@ import {
   IDeleteAccount,
   IUpdateProfile,
 } from '../../dto/profile.dto'
-import { IGetAll } from '../../../post/dto/post.dto'
 
 export const getAllSavedPosts = argsType<IGetAll>({
   page: { type: GraphQLInt },

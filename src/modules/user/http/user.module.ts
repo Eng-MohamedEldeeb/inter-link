@@ -1,11 +1,10 @@
 import { Router } from 'express'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { UserController } from './user.controller'
+import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+
 import * as validators from '../validator/user.validator'
 
-import { UserController } from './user.controller'
-
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
 import UserExistenceGuard from '../../../common/guards/user/user-existence.guard'
 import isBlockedUserGuard from '../../../common/guards/user/is-blocked-user.guard'
 

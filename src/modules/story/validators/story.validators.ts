@@ -1,5 +1,7 @@
 import joi from 'joi'
+
 import { ICreateStory, IDeleteStory, IGetSingleStory } from '../dto/story.dto'
+
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const getSingleValidator = {

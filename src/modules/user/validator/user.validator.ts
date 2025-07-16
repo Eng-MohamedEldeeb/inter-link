@@ -1,10 +1,12 @@
 import joi from 'joi'
+
 import { generalFields } from '../../../common/validation/general-fields'
-import { IBlockUser, IGetUserProfile, IUnBlockUser } from '../dto/user.dto'
+
+import * as DTO from '../dto/user.dto'
 
 export const getUserProfileSchema = {
   schema: joi
-    .object<IGetUserProfile>()
+    .object<DTO.IGetUserProfile>()
     .keys({
       id: generalFields.mongoId,
       user: joi.string().min(3).when(joi.ref('id'), {
@@ -36,7 +38,7 @@ export const getUserProfileSchema = {
 
 export const blockUserSchema = {
   schema: joi
-    .object<IBlockUser>()
+    .object<DTO.IBlockUser>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -64,7 +66,7 @@ export const blockUserSchema = {
 
 export const unblockUserSchema = {
   schema: joi
-    .object<IUnBlockUser>()
+    .object<DTO.IUnBlockUser>()
     .keys({
       id: generalFields.mongoId.required(),
     })

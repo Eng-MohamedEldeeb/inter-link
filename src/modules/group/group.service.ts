@@ -1,13 +1,22 @@
-import { MongoId } from './../../common/types/db/db.types'
+import userRepository from '../../common/repositories/user.repository'
 import groupRepository from '../../common/repositories/group.repository'
+
 import { ICreateGroup, IEditGroup } from './dto/group.dto'
+
+import { IGroup } from '../../db/interface/IGroup.interface'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { IGroup } from '../../db/interface/IGroup.interface'
+import { throwError } from '../../common/handlers/error-message.handler'
+import { IUser } from '../../db/interface/IUser.interface'
+import { MongoId } from './../../common/types/db/db.types'
 
 export class GroupService {
+  private static readonly userRepository = userRepository
   private static readonly groupRepository = groupRepository
   private static readonly CloudUploader = CloudUploader
+  protected static userId: MongoId
+  protected static user: IUser
+  protected static group: IGroup
 
   static readonly getGroup = ({
     group,
@@ -39,6 +48,75 @@ export class GroupService {
         cover,
       }),
       createdBy,
+    })
+  }
+
+  protected static readonly isExistedUser = async (): Promise<void> => {
+    const isExistedUser = await this.userRepository.findOne({
+      filter: {
+        $and: [{ _id: this.userId }, { deactivatedAt: { $exists: false } }],
+      },
+      projection: { _id: 1, username: 1 },
+      options: { lean: true },
+    })
+
+    if (!isExistedUser)
+      return throwError({ msg: 'In-valid userId', status: 400 })
+
+    this.user = isExistedUser
+  }
+
+  protected static readonly isAdmin = (): boolean => {
+    return this.group.admins.some(adminId => adminId.equals(this.user._id))
+  }
+
+  static readonly addAdmin = async ({
+    group,
+    userId,
+  }: {
+    group: IGroup
+    userId: MongoId
+  }) => {
+    this.group = group
+    this.userId = userId
+
+    await this.isExistedUser()
+
+    if (this.isAdmin())
+      return throwError({
+        msg: `user '${this.user.username}' is admin already`,
+      })
+
+    await this.groupRepository.findByIdAndUpdate({
+      _id: this.group._id,
+      data: {
+        $addToSet: { admins: this.userId },
+      },
+    })
+  }
+
+  static readonly removeAdmin = async ({
+    group,
+    userId,
+  }: {
+    group: IGroup
+    userId: MongoId
+  }) => {
+    this.group = group
+    this.userId = userId
+
+    await this.isExistedUser()
+
+    if (!this.isAdmin())
+      return throwError({
+        msg: `user ${this.user.username} is not an admin`,
+      })
+
+    await this.groupRepository.findByIdAndUpdate({
+      _id: this.group._id,
+      data: {
+        $pull: { admins: this.userId },
+      },
     })
   }
 

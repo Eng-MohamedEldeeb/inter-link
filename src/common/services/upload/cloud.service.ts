@@ -1,4 +1,5 @@
 import { UploadApiResponse } from 'cloudinary'
+
 import Cloudinary from './config/cloud-config'
 
 export class CloudUploader {

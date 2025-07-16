@@ -1,10 +1,12 @@
 import { RootFilterQuery, UpdateQuery } from 'mongoose'
+
 import {
   FilterQuery,
   PopulateOptions,
   ProjectionType,
   QueryOptions,
 } from 'mongoose'
+
 import { MongoId } from '../../common/types/db/db.types'
 
 export interface IFind<T> {

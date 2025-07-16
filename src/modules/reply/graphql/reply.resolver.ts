@@ -2,8 +2,10 @@ import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import commentService from '../reply.service'
+
 import { IEditReply } from '../dto/reply.dto'
+
+import commentService from '../reply.service'
 
 export class ReplyQueryResolver {
   private static readonly commentService = commentService

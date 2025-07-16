@@ -1,4 +1,5 @@
 import userRepository from '../../common/repositories/user.repository'
+
 import { IUser } from '../../db/interface/IUser.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoId } from '../../common/types/db/db.types'

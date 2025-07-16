@@ -1,9 +1,13 @@
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
+
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { CommentResponse } from './types/comment-response.type'
+
+import * as args from './types/comment-args.type'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
@@ -11,9 +15,6 @@ import postExistenceGuard from '../../../common/guards/post/post-existence.guard
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
 import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
 
-import { CommentResponse } from './types/comment-response.type'
-
-import * as args from './types/comment-args.type'
 import {
   CommentMutationResolver,
   CommentQueryResolver,

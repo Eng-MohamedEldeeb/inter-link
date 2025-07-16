@@ -2,7 +2,7 @@ import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import {} from '../dto/story.dto'
+
 import { StoryService } from '../story.service'
 
 export class StoryQueryResolver {

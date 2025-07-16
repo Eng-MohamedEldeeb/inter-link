@@ -1,15 +1,12 @@
 import joi from 'joi'
-import {
-  ICreatePost,
-  IEditPost,
-  IGetAll,
-  IGetSinglePost,
-} from '../dto/post.dto'
+
+import * as DTO from '../dto/post.dto'
+
 import { isValidNumericString } from '../../../common/validation/is-valid'
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const getAllValidator = {
-  schema: joi.object<IGetAll>().keys({
+  schema: joi.object<DTO.IGetAll>().keys({
     page: joi.string().custom(isValidNumericString('page')).messages({
       'string.base': 'enter a valid page number',
     }),
@@ -33,7 +30,7 @@ export const getAllValidator = {
 
 export const getSingleValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -58,7 +55,7 @@ export const getSingleValidator = {
 
 export const createValidator = {
   body: joi
-    .object<ICreatePost>()
+    .object<DTO.ICreatePost>()
     .keys({
       title: generalFields.content.min(1).max(50).required(),
       content: generalFields.content.max(500),
@@ -88,12 +85,16 @@ export const editValidator = {
 
   http() {
     return {
-      body: joi.object<IEditPost>().keys(this.schema.body).required().messages({
-        'any.required': 'editPost body is required',
-      }),
+      body: joi
+        .object<DTO.IEditPost>()
+        .keys(this.schema.body)
+        .required()
+        .messages({
+          'any.required': 'editPost body is required',
+        }),
 
       query: joi
-        .object<IGetSinglePost>()
+        .object<DTO.IGetSinglePost>()
         .keys(this.schema.query)
         .required()
         .messages({
@@ -105,7 +106,7 @@ export const editValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IEditPost>()
+        .object<DTO.IEditPost>()
         .keys({ ...this.schema.query, ...this.schema.body })
         .required()
         .messages({
@@ -117,7 +118,7 @@ export const editValidator = {
 
 export const saveValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -143,7 +144,7 @@ export const saveValidator = {
 
 export const sharedValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -169,7 +170,7 @@ export const sharedValidator = {
 
 export const archiveValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -195,7 +196,7 @@ export const archiveValidator = {
 
 export const restoreValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })
@@ -221,7 +222,7 @@ export const restoreValidator = {
 
 export const deleteValidator = {
   schema: joi
-    .object<IGetSinglePost>()
+    .object<DTO.IGetSinglePost>()
     .keys({
       id: generalFields.mongoId.required(),
     })

@@ -1,14 +1,11 @@
 import { IMutationController } from '../../../common/interface/IGraphQL.interface'
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { AuthResolver } from './auth.resolver'
 
 import * as args from './types/auth-args.type'
-
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
 import * as validators from './../validator/auth.validator'
-
-import { AuthResolver } from './auth.resolver'
 
 export class AuthController {
   private static readonly AuthResolver = AuthResolver

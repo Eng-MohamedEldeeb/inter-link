@@ -1,13 +1,8 @@
-import { throwError } from '../../common/handlers/error-message.handler'
 import commentRepository from '../../common/repositories/comment.repository'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
-import { MongoId } from '../../common/types/db/db.types'
-import {
-  IAddComment,
-  IDeleteComment,
-  IEditComment,
-  IGetPostComments,
-} from './dto/comment.dto'
+
+import * as DTO from './dto/comment.dto'
+
+import { throwError } from '../../common/handlers/error-message.handler'
 
 class CommentService {
   protected readonly commentRepository = commentRepository
@@ -17,7 +12,7 @@ class CommentService {
     createdBy,
     attachment,
     postId,
-  }: IAddComment & IGetPostComments & { attachment: ICloudFile }) => {
+  }: DTO.IAddComment) => {
     const postedComment = await this.commentRepository.create({
       content,
       ...(attachment.folderId && { attachment }),
@@ -28,7 +23,7 @@ class CommentService {
     return postedComment
   }
 
-  readonly edit = async ({ commentId, content }: IEditComment) => {
+  readonly edit = async ({ commentId, content }: DTO.IEditComment) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
       _id: commentId,
       data: { content },
@@ -43,7 +38,7 @@ class CommentService {
     )
   }
 
-  readonly deleteComment = async ({ commentId }: IDeleteComment) => {
+  readonly deleteComment = async ({ commentId }: DTO.IDeleteComment) => {
     const deletedComment = await this.commentRepository.findByIdAndDelete({
       _id: commentId,
     })

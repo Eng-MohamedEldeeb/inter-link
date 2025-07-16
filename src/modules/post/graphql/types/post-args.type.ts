@@ -1,6 +1,7 @@
 import { GraphQLID, GraphQLInt, GraphQLNonNull, GraphQLString } from 'graphql'
-import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IEditPost, IGetAll, IGetSinglePost } from '../../dto/post.dto'
+
+import { argsType } from '../../../../common/decorators/resolver/returned-type.decorator'
 
 export const getAll = argsType<IGetAll>({
   page: { type: GraphQLInt },

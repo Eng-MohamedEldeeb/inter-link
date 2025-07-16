@@ -1,4 +1,5 @@
 import { UserQueryController, UserMutationController } from './user.controller'
+
 import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
 
 export const queryModule = (() => {

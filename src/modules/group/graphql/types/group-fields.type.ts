@@ -13,6 +13,7 @@ import {
 } from '../../../../common/types/graphql/graphql.types'
 
 import { singleFile } from '../../../../common/services/upload/interface/cloud-response.interface'
+
 import { IGroup } from '../../../../db/interface/IGroup.interface'
 
 export const groupFields: ObjFields<Omit<IGroup, '__v'>> = {

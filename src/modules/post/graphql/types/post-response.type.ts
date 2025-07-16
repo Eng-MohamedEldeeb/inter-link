@@ -1,4 +1,5 @@
 import { GraphQLInt, GraphQLList } from 'graphql'
+
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
 import { IPost } from '../../../../db/interface/IPost.interface'
 import { postFields } from './post-fields.type'

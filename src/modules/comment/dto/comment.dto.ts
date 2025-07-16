@@ -1,3 +1,4 @@
+import { ICloudFile } from '../../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../../common/types/db/db.types'
 import { ICommentInputs } from '../../../db/interface/IComment.interface'
 
@@ -10,7 +11,10 @@ export interface IGetPostComments {
 }
 
 export interface IAddComment
-  extends Omit<ICommentInputs, 'replyingTo' | 'onPost'> {}
+  extends Omit<ICommentInputs, 'replyingTo' | 'onPost'>,
+    IGetPostComments {
+  attachment: ICloudFile
+}
 
 export interface ICommentId {
   commentId: MongoId

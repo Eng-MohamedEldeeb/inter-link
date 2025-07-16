@@ -1,5 +1,6 @@
-import { throwError } from '../../../common/handlers/error-message.handler'
 import userRepository from '../../../common/repositories/user.repository'
+
+import { throwError } from '../../../common/handlers/error-message.handler'
 import { MongoId } from '../../../common/types/db/db.types'
 
 export class UserViewersStrategy {

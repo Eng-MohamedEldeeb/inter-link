@@ -1,4 +1,5 @@
 import { ContextType } from './types/enum/context-type.enum'
+
 import {
   GraphQLContext,
   GraphQLParams,

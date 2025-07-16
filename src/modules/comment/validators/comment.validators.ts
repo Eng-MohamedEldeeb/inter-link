@@ -1,16 +1,13 @@
 import joi from 'joi'
+
+import * as DTO from '../dto/comment.dto'
+
 import { generalFields } from '../../../common/validation/general-fields'
-import {
-  IAddComment,
-  ICommentId,
-  IDeleteComment,
-  IEditComment,
-} from '../dto/comment.dto'
 import { isValidMongoId } from '../../../common/validation/is-valid'
 
 export const getSingleCommentValidator = {
   schema: joi
-    .object<ICommentId>()
+    .object<DTO.ICommentId>()
     .keys({
       commentId: generalFields.mongoId
         .required()
@@ -53,7 +50,7 @@ export const addValidator = {
           '[/postId/comments] "postId" is Expected but got nothing',
       }),
       body: joi
-        .object<IAddComment>()
+        .object<DTO.IAddComment>()
         .keys(this.schema.body)
         .required()
         .messages({
@@ -65,7 +62,7 @@ export const addValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IAddComment>()
+        .object<DTO.IAddComment>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -87,7 +84,7 @@ export const editValidator = {
   http() {
     return {
       params: joi
-        .object<IEditComment>()
+        .object<DTO.IEditComment>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -103,7 +100,7 @@ export const editValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IEditComment>()
+        .object<DTO.IEditComment>()
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
@@ -123,7 +120,7 @@ export const deleteValidator = {
   http() {
     return {
       params: joi
-        .object<IDeleteComment>()
+        .object<DTO.IDeleteComment>()
         .keys(this.schema.params)
         .required()
         .messages({
@@ -136,7 +133,7 @@ export const deleteValidator = {
   graphQL() {
     return {
       args: joi
-        .object<IDeleteComment>()
+        .object<DTO.IDeleteComment>()
         .keys(this.schema.params)
         .required()
         .messages({

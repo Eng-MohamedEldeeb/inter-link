@@ -1,20 +1,16 @@
 import { Response } from 'express'
-import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { IRequest } from '../../../common/interface/IRequest.interface'
-import { PostService } from './../post.service'
+import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
-import {
-  ICreatePost,
-  IEditPost,
-  IGetAll,
-  IGetSinglePost,
-} from '../dto/post.dto'
+import { PostService } from './../post.service'
+
+import * as DTO from '../dto/post.dto'
 
 export class PostController {
   private static readonly PostService = PostService
 
   static readonly getAll = asyncHandler(
-    async (req: IRequest<null, IGetAll>, res: Response) => {
+    async (req: IRequest<null, DTO.IGetAll>, res: Response) => {
       const query = req.query
       return successResponse(res, {
         data: await this.PostService.getAll(query),
@@ -23,7 +19,7 @@ export class PostController {
   )
 
   static readonly getSingle = asyncHandler(
-    async (req: IRequest<IGetSinglePost>, res: Response) => {
+    async (req: IRequest<DTO.IGetSinglePost>, res: Response) => {
       const isExistedPost = req.post
       return successResponse(res, {
         data: isExistedPost,
@@ -35,7 +31,7 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const attachments = req.cloudFiles
-      const createPost: ICreatePost = req.body
+      const createPost: DTO.ICreatePost = req.body
       return successResponse(res, {
         status: 201,
         msg: 'Post Uploaded Successfully',
@@ -50,7 +46,7 @@ export class PostController {
 
   static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
     const { _id: postId } = req.post
-    const editPost: IEditPost = req.body
+    const editPost: DTO.IEditPost = req.body
 
     return successResponse(res, {
       msg: 'Post has been modified successfully',

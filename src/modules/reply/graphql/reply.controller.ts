@@ -1,23 +1,22 @@
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
+
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { CommentResponse } from './types/reply-response.type'
+import { ReplyMutationResolver, ReplyQueryResolver } from './reply.resolver'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
+
+import * as args from './types/reply-args.type'
+import * as validators from '../validators/reply.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
 import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
-
-import { CommentResponse } from './types/reply-response.type'
-
-import * as args from './types/reply-args.type'
-import { ReplyMutationResolver, ReplyQueryResolver } from './reply.resolver'
-
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validators/reply.validators'
 
 export class ReplyController {
   protected static readonly ReplyQueryResolver = ReplyQueryResolver

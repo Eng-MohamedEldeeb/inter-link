@@ -1,16 +1,12 @@
 import joi from 'joi'
-import {
-  IConfirmEmail,
-  IForgotPassword,
-  ILogin,
-  IResetPassword,
-  IRegister,
-} from '../dto/auth.dto'
+
+import * as DTO from '../dto/auth.dto'
+
 import { generalFields } from '../../../common/validation/general-fields'
 
 export const confirmEmailSchema = {
   schema: joi
-    .object<IConfirmEmail>()
+    .object<DTO.IConfirmEmail>()
     .keys({
       email: generalFields.email.required(),
     })
@@ -34,7 +30,7 @@ export const confirmEmailSchema = {
 
 export const registerSchema = {
   schema: joi
-    .object<IRegister>()
+    .object<DTO.IRegister>()
     .keys({
       fullName: generalFields.fullName.required(),
       username: generalFields.username.required(),
@@ -67,7 +63,7 @@ export const registerSchema = {
 
 export const loginSchema = {
   schema: joi
-    .object<ILogin>()
+    .object<DTO.ILogin>()
     .keys({
       username: generalFields.username.required(),
       password: generalFields.password.required(),
@@ -91,7 +87,7 @@ export const loginSchema = {
 
 export const forgotPasswordSchema = {
   schema: joi
-    .object<IForgotPassword>()
+    .object<DTO.IForgotPassword>()
     .keys({
       email: generalFields.email.required(),
     })
@@ -114,7 +110,7 @@ export const forgotPasswordSchema = {
 
 export const resetPasswordSchema = {
   schema: joi
-    .object<IResetPassword>()
+    .object<DTO.IResetPassword>()
     .keys({
       email: generalFields.email.required(),
       newPassword: generalFields.password.required(),

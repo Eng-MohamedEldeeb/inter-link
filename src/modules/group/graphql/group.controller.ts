@@ -1,25 +1,24 @@
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
+import groupAuthorizationGuard from '../../../common/guards/group/group-owner-authorization.guard'
+import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
+import groupAdminsAuthorizationGuard from '../../../common/guards/group/group-admins-authorization.guard'
+import postExistenceInGroupGuard from '../../../common/guards/group/post-existence-in-group.guard'
+
+import * as args from './types/group-args.type'
+import * as validators from '../validators/group.validators'
 
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
+
 import { GroupMutationResolver, GroupQueryResolver } from './group.resolver'
 
+import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { GroupResponse } from './types/group-response.type'
-
-import * as args from './types/group-args.type'
-import groupAuthorizationGuard from '../../../common/guards/group/group-authorization.guard'
-import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validators/group.validators'
 
 export class GroupController {
   private static readonly GroupQueryResolver = GroupQueryResolver
@@ -42,6 +41,43 @@ export class GroupController {
   }
 
   // Mutations:
+  static readonly addAdmin = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'addAdminMutation',
+      }),
+      args: args.addAdmin,
+      resolve: applyResolver({
+        middlewares: [validate(validators.addAdminValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          groupExistenceGuard,
+          groupAuthorizationGuard,
+        ],
+        resolver: this.GroupMutationResolver.addAdmin,
+      }),
+    }
+  }
+
+  static readonly removeAdmin = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'removeAdminMutation',
+      }),
+      args: args.removeAdmin,
+      resolve: applyResolver({
+        middlewares: [validate(validators.removeAdminValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          groupExistenceGuard,
+          groupAuthorizationGuard,
+        ],
+        resolver: this.GroupMutationResolver.removeAdmin,
+      }),
+    }
+  }
 
   static readonly edit = (): IMutationController => {
     return {
@@ -95,6 +131,26 @@ export class GroupController {
           groupAuthorizationGuard,
         ],
         resolver: this.GroupMutationResolver.deleteGroup,
+      }),
+    }
+  }
+
+  static readonly removePostFromGroup = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'removePostFromGroupMutation',
+      }),
+      args: args.removePost,
+      resolve: applyResolver({
+        middlewares: [validate(validators.removePostValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          groupExistenceGuard,
+          groupAdminsAuthorizationGuard,
+          postExistenceInGroupGuard,
+        ],
+        resolver: this.GroupMutationResolver.removePostFromGroup,
       }),
     }
   }

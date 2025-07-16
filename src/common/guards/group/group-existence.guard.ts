@@ -1,15 +1,15 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { IGetGroup } from '../../../modules/group/dto/group.dto'
+import { throwError } from '../../handlers/error-message.handler'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
 
 import groupRepository from '../../repositories/group.repository'
-import { IGetGroup } from '../../../modules/group/dto/group.dto'
-
-import { throwError } from '../../handlers/error-message.handler'
 
 class GroupExistenceGuard extends GuardActivator {
   private readonly groupRepository = groupRepository
@@ -19,10 +19,10 @@ class GroupExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetGroup, IGetGroup>()
-      const { id } = { ...req.params, ...req.query }
+      const { groupId } = { ...req.params, ...req.query }
 
       const isExistedGroup = await this.groupRepository.findOne({
-        filter: { _id: id },
+        filter: { _id: groupId },
       })
 
       if (!isExistedGroup)
@@ -37,10 +37,10 @@ class GroupExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.graphContext) {
       const { args, context } = Ctx.switchToGraphQL<IGetGroup>()
-      const { id } = args
+      const { groupId } = args
 
       const isExistedGroup = await this.groupRepository.findOne({
-        filter: { _id: id },
+        filter: { _id: groupId },
       })
 
       if (!isExistedGroup)

@@ -1,5 +1,5 @@
-import chalk from 'chalk'
 import { connect, Mongoose } from 'mongoose'
+import chalk from 'chalk'
 
 export const dbConnection = async (): Promise<Mongoose | void> => {
   try {

@@ -1,7 +1,9 @@
-import { MongoId } from './../../common/types/db/db.types'
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
-import { ICreatePost, IEditPost, IGetAll } from './dto/post.dto'
+
+import * as DTO from './dto/post.dto'
+
+import { MongoId } from './../../common/types/db/db.types'
 import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 
@@ -9,7 +11,7 @@ export class PostService {
   private static readonly postRepository = postRepository
   private static readonly userRepository = userRepository
 
-  static readonly getAll = async (query: IGetAll) => {
+  static readonly getAll = async (query: DTO.IGetAll) => {
     const { page, limit } = query
 
     const skip = (page ?? 1 - 1) * limit
@@ -36,7 +38,7 @@ export class PostService {
     attachments,
   }: {
     createdBy: MongoId
-    createPost: ICreatePost
+    createPost: DTO.ICreatePost
     attachments: ICloudFiles
   }) => {
     return await this.postRepository.create({
@@ -53,7 +55,7 @@ export class PostService {
     editPost,
   }: {
     postId: MongoId
-    editPost: IEditPost
+    editPost: DTO.IEditPost
   }) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
@@ -144,6 +146,20 @@ export class PostService {
       filter: {
         $and: [{ _id: postId }],
       },
+    })
+  }
+
+  static readonly removeFromGroup = async ({
+    groupId,
+    postId,
+  }: {
+    groupId: MongoId
+    postId: MongoId
+  }) => {
+    return await this.postRepository.findOneAndUpdate({
+      filter: { $and: [{ _id: postId }, { onGroup: groupId }] },
+      data: { $unset: { onGroup: 1 } },
+      options: { lean: true, new: true },
     })
   }
 }

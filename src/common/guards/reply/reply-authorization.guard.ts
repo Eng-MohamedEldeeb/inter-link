@@ -1,12 +1,12 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { MongoId } from '../../types/db/db.types'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-
-import { MongoId } from '../../types/db/db.types'
 
 class ReplyAuthorizationGuard extends GuardActivator {
   protected profileId!: MongoId

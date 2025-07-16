@@ -1,18 +1,16 @@
 import { Router } from 'express'
 import { CommentController } from './comment.controller'
-
 import { fileReader } from '../../../common/utils/multer/file-reader'
 import { commentAttachmentUploader } from '../../../common/middlewares/upload/comment-attachments-uploader.middleware'
-
+import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
+
 import * as validators from './../validators/comment.validators'
 
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
 import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
-
-import replyRouter from './../../reply/http/reply.module'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
+import replyRouter from './../../reply/http/reply.module'
 
 const router: Router = Router({ mergeParams: true })
 

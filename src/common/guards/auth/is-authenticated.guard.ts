@@ -1,17 +1,15 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { IContext } from '../../interface/IGraphQL.interface'
+import { IRequest } from '../../interface/IRequest.interface'
+import { verifyToken } from '../../utils/security/token/token.service'
+import { throwError } from '../../handlers/error-message.handler'
+
 import {
   GraphQLParams,
   HttpParams,
 } from '../../decorators/context/types/context-detector.types'
-
-import { IContext } from '../../interface/IGraphQL.interface'
-import { IRequest } from '../../interface/IRequest.interface'
-
-import { verifyToken } from '../../utils/security/token/token.service'
-
-import { throwError } from '../../handlers/error-message.handler'
 
 class IsAuthenticatedGuard implements GuardActivator {
   async canActivate(...params: HttpParams | GraphQLParams) {

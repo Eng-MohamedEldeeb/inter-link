@@ -28,18 +28,4 @@ export class UserResponse {
       },
     })
   }
-
-  // Mutation:
-  // static readonly updateProfileResponse = () => {
-  //   return returnedType<IUpdateProfile>({
-  //     name: 'updatedData',
-  //     fields: {
-  //       username: { type: userFields.username },
-  //       fullName: { type: userFields.fullName },
-  //       bio: { type: userFields.bio },
-  //       birthDate: { type: userFields.birthDate },
-  //       phone: { type: userFields.phone },
-  //     },
-  //   })
-  // }
 }

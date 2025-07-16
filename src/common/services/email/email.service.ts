@@ -1,4 +1,5 @@
 import { ISendArgs } from './event/interface/send-args.interface'
+
 import emailEvent from './event/send-email.event'
 
 export class EmailService {

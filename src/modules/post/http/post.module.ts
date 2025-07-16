@@ -1,13 +1,12 @@
 import { Router } from 'express'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from './../validators/post.validators'
-
 import { PostController } from './post.controller'
 import { fileReader } from './../../../common/utils/multer/file-reader'
 import { postAttachmentUploader } from '../../../common/middlewares/upload/post-attachments-uploader.middleware'
-
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+
+import * as validators from './../validators/post.validators'
+
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
 import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
 import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'

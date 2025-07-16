@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
-import { IBlockUser, IUnBlockUser } from '../dto/user.dto'
-
 import { UserService } from '../user.service'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
+
+import { IBlockUser, IUnBlockUser } from '../dto/user.dto'
 
 export class UserController {
   private static readonly UserService = UserService

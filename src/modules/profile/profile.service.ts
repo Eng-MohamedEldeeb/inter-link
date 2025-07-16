@@ -1,21 +1,17 @@
 import otpRepository from '../../common/repositories/otp.repository'
 import userRepository from '../../common/repositories/user.repository'
 import postRepository from '../../common/repositories/post.repository'
+
+import * as DTO from './dto/profile.dto'
+
 import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
-import { OtpType } from '../../db/models/enums/otp.enum'
-import {
-  IChangeEmail,
-  IConfirmDelete,
-  IConfirmNewEmail,
-  IDeleteAccount,
-  IUpdateProfile,
-} from './dto/profile.dto'
-import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { IUser } from '../../db/interface/IUser.interface'
 import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
-import { MongoId } from '../../common/types/db/db.types'
+import { OtpType } from '../../db/models/enums/otp.enum'
 import { IGetAll } from '../post/dto/post.dto'
+import { IUser } from '../../db/interface/IUser.interface'
+import { MongoId } from '../../common/types/db/db.types'
+import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 
 export class ProfileService {
@@ -157,7 +153,7 @@ export class ProfileService {
     updateProfile,
   }: {
     profileId: MongoId
-    updateProfile: IUpdateProfile
+    updateProfile: DTO.IUpdateProfile
   }) => {
     const { username } = updateProfile
     const isExistedUser = await this.userRepository.findOne({
@@ -216,7 +212,7 @@ export class ProfileService {
     changeEmail,
   }: {
     profileId: MongoId
-    changeEmail: IChangeEmail
+    changeEmail: DTO.IChangeEmail
   }) => {
     const { originalEmail, newEmail, password } = changeEmail
 
@@ -261,7 +257,9 @@ export class ProfileService {
     ])
   }
 
-  static readonly confirmNewEmail = async (confirmEmail: IConfirmNewEmail) => {
+  static readonly confirmNewEmail = async (
+    confirmEmail: DTO.IConfirmNewEmail,
+  ) => {
     const { originalEmail, otpCode } = confirmEmail
 
     const isExistedUser = await this.userRepository.findOne({
@@ -305,7 +303,9 @@ export class ProfileService {
     ])
   }
 
-  static readonly deactivateAccount = async (deleteAccount: IDeleteAccount) => {
+  static readonly deactivateAccount = async (
+    deleteAccount: DTO.IDeleteAccount,
+  ) => {
     const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { $and: [{ email }, { deactivatedAt: { $exists: false } }] },
@@ -342,7 +342,7 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteAccount = async (deleteAccount: IDeleteAccount) => {
+  static readonly deleteAccount = async (deleteAccount: DTO.IDeleteAccount) => {
     const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },
@@ -379,7 +379,9 @@ export class ProfileService {
     })
   }
 
-  static readonly confirmDeletion = async (confirmDeletion: IConfirmDelete) => {
+  static readonly confirmDeletion = async (
+    confirmDeletion: DTO.IConfirmDelete,
+  ) => {
     const { email, otpCode } = confirmDeletion
 
     const isExistedOtp = await this.otpRepository.findOne({

@@ -1,13 +1,11 @@
 import { GraphQLInt, GraphQLList } from 'graphql'
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import {
-  profileFields,
-  userFields,
-} from '../../../../common/types/graphql/graphql-fields.types'
 import { IPost } from '../../../../db/interface/IPost.interface'
 import { IUser } from '../../../../db/interface/IUser.interface'
 import { IUpdateProfile } from '../../dto/profile.dto'
 import { singlePost } from '../../../post/graphql/types/post-response.type'
+
+import * as graphQlFields from '../../../../common/types/graphql/graphql-fields.types'
 
 export class ProfileResponse {
   // Query:
@@ -19,7 +17,7 @@ export class ProfileResponse {
       >
     >({
       name: 'fullProfile',
-      fields: profileFields,
+      fields: graphQlFields.profileFields,
     })
   }
 
@@ -27,7 +25,7 @@ export class ProfileResponse {
     return returnedType<Pick<IUser, 'followers'>>({
       name: 'profileFollowers',
       fields: {
-        followers: profileFields.followers,
+        followers: graphQlFields.profileFields.followers,
       },
     })
   }
@@ -36,7 +34,7 @@ export class ProfileResponse {
     return returnedType<Pick<IUser, 'following'>>({
       name: 'profileFollowing',
       fields: {
-        following: profileFields.following,
+        following: graphQlFields.profileFields.following,
       },
     })
   }
@@ -59,11 +57,11 @@ export class ProfileResponse {
     return returnedType<IUpdateProfile>({
       name: 'updatedData',
       fields: {
-        username: { type: userFields.username },
-        fullName: { type: userFields.fullName },
-        bio: { type: userFields.bio },
-        birthDate: { type: userFields.birthDate },
-        phone: { type: userFields.phone },
+        username: { type: graphQlFields.userFields.username },
+        fullName: { type: graphQlFields.userFields.fullName },
+        bio: { type: graphQlFields.userFields.bio },
+        birthDate: { type: graphQlFields.userFields.birthDate },
+        phone: { type: graphQlFields.userFields.phone },
       },
     })
   }

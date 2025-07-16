@@ -1,24 +1,22 @@
+import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
+import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
+
+import * as args from './types/profile-args.type'
+import * as validators from '../validator/profile.validator'
+
 import {
   ProfileQueryResolver,
   ProfileMutationResolver,
 } from './profile.resolver'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
 
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { ProfileResponse } from './types/profile-response.type'
-
-import * as args from './types/profile-args.type'
-
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from '../validator/profile.validator'
 
 export class ProfileController {
   private static readonly ProfileQueryResolver = ProfileQueryResolver

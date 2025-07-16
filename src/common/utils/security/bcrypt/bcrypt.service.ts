@@ -1,4 +1,5 @@
 import { compareSync, hashSync } from 'bcrypt'
+
 import { ICompareValuesArgs } from './interface/bcrypt.interface'
 
 export const hashValue = (

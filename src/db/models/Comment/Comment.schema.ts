@@ -1,7 +1,9 @@
 import { Schema, SchemaTypes } from 'mongoose'
+
 import { IComment } from '../../interface/IComment.interface'
-import commentRepository from '../../../common/repositories/comment.repository'
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
+
+import commentRepository from '../../../common/repositories/comment.repository'
 
 export const CommentSchema = new Schema<IComment>(
   {

@@ -1,7 +1,8 @@
 import { EventEmitter } from 'node:events'
 import { transporter } from '../config/email-transporter'
-import * as emailSchemas from '../schemas/email-schema'
 import { ISendArgs } from './interface/send-args.interface'
+
+import * as emailSchemas from '../schemas/email-schema'
 
 const emailEvent = new EventEmitter()
 

@@ -1,22 +1,18 @@
 import otpRepository from '../../common/repositories/otp.repository'
 import userRepository from '../../common/repositories/user.repository'
+
+import * as DTO from './dto/auth.dto'
+
 import { throwError } from '../../common/handlers/error-message.handler'
 import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
 import { signToken } from '../../common/utils/security/token/token.service'
-import {
-  IConfirmEmail,
-  IForgotPassword,
-  ILogin,
-  IResetPassword,
-  IRegister,
-} from './dto/auth.dto'
 import { OtpType } from '../../db/models/enums/otp.enum'
 
 export class AuthService {
   private static readonly userRepository = userRepository
   private static readonly otpRepository = otpRepository
 
-  static readonly confirmEmail = async (confirmEmail: IConfirmEmail) => {
+  static readonly confirmEmail = async (confirmEmail: DTO.IConfirmEmail) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { email: confirmEmail.email },
       projection: { email: 1 },
@@ -46,7 +42,7 @@ export class AuthService {
 
   static readonly register = async (
     register: Omit<
-      IRegister,
+      DTO.IRegister,
       'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
     >,
   ) => {
@@ -90,7 +86,7 @@ export class AuthService {
     })
   }
 
-  static readonly login = async (login: ILogin) => {
+  static readonly login = async (login: DTO.ILogin) => {
     const { username, password } = login
 
     const isExistedUser = await this.userRepository.findOne({
@@ -136,7 +132,9 @@ export class AuthService {
     return accessToken
   }
 
-  static readonly forgotPassword = async (forgotPassword: IForgotPassword) => {
+  static readonly forgotPassword = async (
+    forgotPassword: DTO.IForgotPassword,
+  ) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { email: forgotPassword.email },
       projection: { email: 1 },
@@ -163,8 +161,8 @@ export class AuthService {
     })
   }
 
-  static readonly resetPassword = async (resetPassword: IResetPassword) => {
-    const { email, newPassword, confirmPassword, otpCode } = resetPassword
+  static readonly resetPassword = async (resetPassword: DTO.IResetPassword) => {
+    const { email, newPassword, otpCode } = resetPassword
 
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },

@@ -1,5 +1,7 @@
 import { Schema, SchemaTypes } from 'mongoose'
+
 import { IGroup } from '../../interface/IGroup.interface'
+
 import postRepository from '../../../common/repositories/post.repository'
 import slugify from 'slugify'
 

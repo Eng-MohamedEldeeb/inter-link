@@ -1,25 +1,22 @@
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-
+import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
+import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
+
+import * as args from './types/post-args.type'
+import * as validators from './../validators/post.validators'
 
 import {
   IMutationController,
   IQueryController,
 } from '../../../common/interface/IGraphQL.interface'
+
 import { PostMutationResolver, PostQueryResolver } from './post.resolver'
-
 import { PostResponse } from './types/post-response.type'
-
-import * as args from './types/post-args.type'
-import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
-import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
-
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from './../validators/post.validators'
+import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 
 export class PostController {
   private static readonly PostQueryResolver = PostQueryResolver

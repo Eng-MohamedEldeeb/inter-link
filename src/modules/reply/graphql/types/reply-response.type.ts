@@ -1,8 +1,9 @@
-import { GraphQLList } from 'graphql'
 import {
   returnedResponseType,
   returnedType,
 } from '../../../../common/decorators/resolver/returned-type.decorator'
+
+import { GraphQLList } from 'graphql'
 import { replyFields } from './reply-fields.type'
 import { IReply } from '../../../../db/interface/IReply.interface'
 

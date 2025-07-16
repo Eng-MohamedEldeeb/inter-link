@@ -1,9 +1,9 @@
 import { UserService } from '../user.service'
+
 import {
   IContext,
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
-import { IUser } from '../../../db/interface/IUser.interface'
 
 export class UserQueryResolver {
   protected static readonly UserService = UserService
