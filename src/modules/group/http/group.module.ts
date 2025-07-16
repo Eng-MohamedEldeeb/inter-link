@@ -86,7 +86,7 @@ router.patch(
 )
 
 router.patch(
-  '/visibility',
+  '/change-visibility',
   validate(validators.changeVisibilityValidator.http()),
   applyGuards(groupExistenceGuard, groupOwnerAuthorizationGuard),
   GroupController.changeVisibility,
