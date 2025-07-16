@@ -184,14 +184,14 @@ export const addPostValidator = {
     .messages({
       'any.required': 'addPost body is required',
     }),
-  params: joi
+  query: joi
     .object<GroupDTO.IGetGroup>()
     .keys({
       groupId: generalFields.mongoId.required(),
     })
     .required()
     .messages({
-      'any.required': 'group "Id" param is required',
+      'any.required': 'group "Id" query param is required',
     }),
 }
 

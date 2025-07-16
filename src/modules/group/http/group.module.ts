@@ -51,7 +51,7 @@ router.patch(
 )
 
 router.post(
-  '/:groupId/add-post',
+  '/add-post',
   fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
   validate(validators.addPostValidator),
   applyGuards(groupExistenceGuard, postInGroupPermissionGuard),
@@ -61,14 +61,12 @@ router.post(
 
 router.delete(
   '/:groupId/remove-post',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
   validate(validators.removePostValidator.http()),
   applyGuards(
     groupExistenceGuard,
     groupAdminsAuthorizationGuard,
     postExistenceInGroupGuard,
   ),
-  groupAttachmentsUploader,
   GroupController.removePost,
 )
 
