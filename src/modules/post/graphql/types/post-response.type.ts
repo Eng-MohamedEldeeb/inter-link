@@ -4,7 +4,9 @@ import { returnedType } from '../../../../common/decorators/resolver/returned-ty
 import { IPost } from '../../../../db/interface/IPost.interface'
 import { postFields } from './post-fields.type'
 
-export const singlePost = returnedType<Omit<IPost, '__v'>>({
+export const singlePost = returnedType<
+  Omit<IPost, '__v' | 'savedBy' | 'archivedAt'>
+>({
   name: 'singlePost',
   fields: postFields,
 })
@@ -23,7 +25,7 @@ export class PostResponse {
   }
 
   static readonly getSingle = () => {
-    return returnedType<Omit<IPost, '__v'>>({
+    return returnedType<Omit<IPost, '__v' | 'savedBy' | 'archivedAt'>>({
       name: 'getSinglePostResponse',
       fields: postFields,
     })

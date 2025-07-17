@@ -17,7 +17,6 @@ export const edit = argsType<DTO.IEditGroup>({
   groupId: { type: new GraphQLNonNull(GraphQLID) },
   name: { type: GraphQLString },
   description: { type: GraphQLString },
-  isPrivateGroup: { type: GraphQLBoolean },
 })
 
 export const addAdmin = argsType<DTO.IAddAdmin>({
@@ -37,4 +36,8 @@ export const deleteGroup = argsType<DTO.IDeleteGroup>({
 export const removePost = argsType<DTO.IRemovePost>({
   groupId: { type: new GraphQLNonNull(GraphQLID) },
   postId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
+export const changeVisibility = argsType<DTO.IChangeGroupVisibility>({
+  groupId: { type: new GraphQLNonNull(GraphQLID) },
 })

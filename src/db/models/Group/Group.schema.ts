@@ -4,6 +4,7 @@ import { IGroup } from '../../interface/IGroup.interface'
 
 import postRepository from '../../../common/repositories/post.repository'
 import slugify from 'slugify'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const GroupSchema = new Schema<IGroup>(
   {
@@ -67,10 +68,16 @@ GroupSchema.virtual('posts', {
 })
 
 GroupSchema.virtual('totalMembers').get(function (this: IGroup) {
-  if (this.members.length) return this.members.length
+  if (this.members) return this.members.length
   return 0
 })
 
 GroupSchema.post('findOneAndDelete', async function (res: IGroup) {
-  await postRepository.deleteMany({ onGroup: res._id })
+  const { _id, cover } = res
+
+  await postRepository.deleteMany({ onGroup: _id })
+
+  if (cover.path) {
+    await CloudUploader.deleteFolder({ fullPath: cover.fullPath })
+  }
 })

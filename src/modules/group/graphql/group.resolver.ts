@@ -25,7 +25,7 @@ export class GroupMutationResolver {
   private static readonly GroupService = GroupService
   private static readonly PostService = PostService
 
-  static readonly addAdmin = async (args: IEditGroup, context: IContext) => {
+  static readonly addAdmin = async (_: any, context: IContext) => {
     const group = context.group
     const { _id: userId, username } = context.user
 

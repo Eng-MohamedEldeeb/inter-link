@@ -14,10 +14,7 @@ export const globalError = (
 ) => {
   res.status(error.status || 500).json({
     success: false,
-    error: {
-      msg: error.msg || error.message,
-      ...(error.details && { details: error.details }),
-    },
+    error,
     stack: error.stack,
   })
 }

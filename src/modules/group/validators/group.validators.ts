@@ -2,7 +2,7 @@ import joi from 'joi'
 
 import * as GroupDTO from '../dto/group.dto'
 
-import { ICreatePost, IGetSinglePost } from '../../post/dto/post.dto'
+import { ICreatePost, IPostId } from '../../post/dto/post.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
 
@@ -130,24 +130,42 @@ export const removeAdminValidator = {
   },
 }
 
+export const addPostValidator = {
+  body: joi
+    .object<ICreatePost>()
+    .keys({
+      title: generalFields.content.min(1).max(28).required(),
+      content: generalFields.content.max(500),
+    })
+    .required()
+    .messages({
+      'any.required': 'addPost body is required',
+    }),
+  query: joi
+    .object<GroupDTO.IGetGroup>()
+    .keys({
+      groupId: generalFields.mongoId.required(),
+    })
+    .required()
+    .messages({
+      'any.required': 'group "Id" query param is required',
+    }),
+}
+
 export const removePostValidator = {
   schema: {
     params: {
       groupId: generalFields.mongoId.required(),
     },
     query: {
-      id: generalFields.mongoId.required(),
+      postId: generalFields.mongoId.required(),
     },
   },
   http() {
     return {
-      query: joi
-        .object<IGetSinglePost>()
-        .keys(this.schema.query)
-        .required()
-        .messages({
-          'any.required': 'expected post "Id" query param but got none',
-        }),
+      query: joi.object<IPostId>().keys(this.schema.query).required().messages({
+        'any.required': 'expected post "Id" query param but got none',
+      }),
 
       params: joi
         .object<GroupDTO.IGetGroup>()
@@ -171,28 +189,6 @@ export const removePostValidator = {
         }),
     }
   },
-}
-
-export const addPostValidator = {
-  body: joi
-    .object<ICreatePost>()
-    .keys({
-      title: generalFields.content.min(1).max(28).required(),
-      content: generalFields.content.max(500),
-    })
-    .required()
-    .messages({
-      'any.required': 'addPost body is required',
-    }),
-  query: joi
-    .object<GroupDTO.IGetGroup>()
-    .keys({
-      groupId: generalFields.mongoId.required(),
-    })
-    .required()
-    .messages({
-      'any.required': 'group "Id" query param is required',
-    }),
 }
 
 export const editValidator = {
@@ -247,7 +243,6 @@ export const changeCoverValidator = {
     .keys({
       name: generalFields.content.min(1).max(28),
       description: generalFields.content.max(500),
-      isPrivateGroup: joi.bool(),
     })
     .required()
     .messages({

@@ -1,9 +1,9 @@
 import { GuardActivator } from '../can-activate.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { IGetPostComments } from '../../../modules/comment/dto/comment.dto'
-import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 import { throwError } from '../../handlers/error-message.handler'
+
+import { IGetSinglePost, IPostId } from '../../../modules/post/dto/post.dto'
 
 import {
   GraphQLParams,
@@ -11,56 +11,60 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import postRepository from '../../repositories/post.repository'
+import { MongoId } from '../../types/db/db.types'
 
 class PostExistenceGuard extends GuardActivator {
   private readonly postRepository = postRepository
+  protected postId!: MongoId
+  protected id!: MongoId
+
+  protected readonly isExistedPost = async () => {
+    const isExistedPost = await this.postRepository.findOne({
+      filter: {
+        $and: [
+          { $or: [{ _id: this.id }, { _id: this.postId }] },
+          { archivedAt: { $exists: false } },
+        ],
+      },
+      projection: { savedBy: 0 },
+      populate: [{ path: 'comments' }],
+    })
+
+    if (!isExistedPost)
+      return throwError({
+        msg: 'Un-Existed Post or In-valid Id',
+        status: 404,
+      })
+    return isExistedPost
+  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
-        IGetSinglePost & IGetPostComments,
+        IGetSinglePost & IPostId,
         IGetSinglePost
       >()
       const { id, postId } = { ...req.params, ...req.query }
 
-      const isExistedPost = await this.postRepository.findOne({
-        filter: {
-          $and: [
-            { $or: [{ _id: id }, { _id: postId }] },
-            { archivedAt: { $exists: false } },
-          ],
-        },
-        projection: { savedBy: 0 },
-        populate: [{ path: 'comments' }],
-      })
+      this.postId = postId
+      this.id = id
 
-      if (!isExistedPost)
-        return throwError({
-          msg: 'Un-Existed Post or In-valid Id',
-          status: 404,
-        })
+      req.post = await this.isExistedPost()
 
-      req.post = isExistedPost
       return true
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSinglePost>()
-      const { id } = args
-      const isExistedPost = await this.postRepository.findOne({
-        filter: { $and: [{ _id: id }, { archivedAt: { $exists: false } }] },
-        populate: [{ path: 'comments' }],
-      })
+      const { args, context } = Ctx.switchToGraphQL<IGetSinglePost & IPostId>()
+      const { id, postId } = args
 
-      if (!isExistedPost)
-        return throwError({
-          msg: 'Un-Existed Post or In-valid Id',
-          status: 404,
-        })
+      this.postId = postId
+      this.id = id
 
-      context.post = isExistedPost
+      context.post = await this.isExistedPost()
+
       return true
     }
   }

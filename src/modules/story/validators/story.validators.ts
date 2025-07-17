@@ -1,8 +1,38 @@
 import joi from 'joi'
 
-import { ICreateStory, IDeleteStory, IGetSingleStory } from '../dto/story.dto'
+import {
+  ICreateStory,
+  IDeleteStory,
+  IGetAllStory,
+  IGetSingleStory,
+} from '../dto/story.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
+
+export const getAllValidator = {
+  schema: joi
+    .object<IGetAllStory>()
+    .keys({
+      userId: generalFields.mongoId.required(),
+    })
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': 'user id query param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': 'user id arg is required',
+      }),
+    }
+  },
+}
 
 export const getSingleValidator = {
   schema: joi

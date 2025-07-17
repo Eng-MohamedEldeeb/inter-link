@@ -10,9 +10,28 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import groupRepository from '../../repositories/group.repository'
+import { MongoId } from '../../types/db/db.types'
 
 class GroupExistenceGuard extends GuardActivator {
   private readonly groupRepository = groupRepository
+  protected groupId!: MongoId
+  protected profileId!: MongoId
+  protected createdBy!: MongoId
+
+  protected readonly checkGroupExistence = async () => {
+    const isExistedGroup = await this.groupRepository.findOne({
+      filter: { _id: this.groupId },
+      populate: [{ path: 'posts', options: { sort: { createdAt: -1 } } }],
+    })
+
+    if (!isExistedGroup)
+      return throwError({
+        msg: 'Un-Existed Group or In-valid Id',
+        status: 404,
+      })
+
+    return isExistedGroup
+  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -21,17 +40,10 @@ class GroupExistenceGuard extends GuardActivator {
       const { req } = Ctx.switchToHTTP<IGetGroup, IGetGroup>()
       const { groupId } = { ...req.params, ...req.query }
 
-      const isExistedGroup = await this.groupRepository.findOne({
-        filter: { _id: groupId },
-      })
-
-      if (!isExistedGroup)
-        return throwError({
-          msg: 'Un-Existed Group or In-valid Id',
-          status: 404,
-        })
-
+      this.groupId = groupId
+      const isExistedGroup = await this.checkGroupExistence()
       req.group = isExistedGroup
+
       return true
     }
 
@@ -39,17 +51,10 @@ class GroupExistenceGuard extends GuardActivator {
       const { args, context } = Ctx.switchToGraphQL<IGetGroup>()
       const { groupId } = args
 
-      const isExistedGroup = await this.groupRepository.findOne({
-        filter: { _id: groupId },
-      })
-
-      if (!isExistedGroup)
-        return throwError({
-          msg: 'Un-Existed Group or In-valid Id',
-          status: 404,
-        })
-
+      this.groupId = groupId
+      const isExistedGroup = await this.checkGroupExistence()
       context.group = isExistedGroup
+
       return true
     }
   }

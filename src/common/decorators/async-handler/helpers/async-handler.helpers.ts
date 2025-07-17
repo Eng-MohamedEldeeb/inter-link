@@ -9,20 +9,16 @@ import { GraphQLError } from 'graphql'
 
 export const deleteFilesAfterError = async (req: IRequest) => {
   if (req.cloudFile?.folderId) {
-    await CloudUploader.delete(req.cloudFile.path.public_id)
-    await CloudUploader.deleteFolder(req.cloudFile.fullPath)
+    await CloudUploader.deleteFolder({ fullPath: req.cloudFile.fullPath })
   }
 
   if (req.cloudFiles?.paths.length) {
-    for (const file of req.cloudFiles.paths) {
-      await CloudUploader.delete(file.public_id)
-    }
-    await CloudUploader.deleteFolder(req.cloudFiles.fullPath)
+    await CloudUploader.deleteFolder({ fullPath: req.cloudFiles.fullPath })
   }
 }
 
 export const throwErrorByInstanceType = (
-  error: unknown,
+  error: any,
   ctx: typeof ContextDetector,
 ) => {
   const { next } = ctx.switchToHTTP()
@@ -52,8 +48,9 @@ export const throwErrorByInstanceType = (
 
       const { extensions, msg, details, message }: GraphQLError & IError =
         error as any
+
       throw new GraphQLError(msg || message, {
-        extensions: { ...extensions, details },
+        extensions: { ...(extensions && extensions), details },
       })
   }
 }

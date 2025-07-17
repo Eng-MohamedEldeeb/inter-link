@@ -17,6 +17,8 @@ import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.g
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
 import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
+import storyViewPermissionGuard from '../../../common/guards/story/story-view-permission.guard'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
 export class StoryController {
   private static readonly StoryQueryResolver = StoryQueryResolver
@@ -27,9 +29,11 @@ export class StoryController {
     return {
       type: returnedResponseType({
         name: 'getAllStoriesQuery',
+        data: StoryResponse.getAll(),
       }),
       resolve: applyResolver({
-        guards: [isAuthenticatedGuard, isAuthorizedGuard],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
+        middlewares: [validate(validators.getAllValidator.graphQL())],
         resolver: this.StoryQueryResolver.getAll,
       }),
     }
@@ -44,7 +48,12 @@ export class StoryController {
       args: args.getSingle,
       resolve: applyResolver({
         middlewares: [validate(validators.getSingleValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, storyExistenceGuard],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          storyExistenceGuard,
+          storyViewPermissionGuard,
+        ],
         resolver: this.StoryQueryResolver.getSingle,
       }),
     }

@@ -71,11 +71,9 @@ PostSchema.post('findOneAndDelete', async function (res: IPost) {
   await commentRepository.deleteMany({ onPost: res._id })
 
   const attachments = res.attachments
+  console.log({ attachments })
 
   if (attachments.paths.length) {
-    for (const path of attachments.paths) {
-      await CloudUploader.delete(path.public_id)
-    }
-    await CloudUploader.deleteFolder(attachments.fullPath)
+    await CloudUploader.deleteFolder({ fullPath: attachments.fullPath })
   }
 })

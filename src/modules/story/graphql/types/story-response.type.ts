@@ -4,13 +4,13 @@ import { storyFields } from './story-fields.type'
 import { IStory } from '../../../../db/interface/IStory.interface'
 
 export const singleStory = returnedType<Omit<IStory, '__v'>>({
-  name: 'singlePost',
+  name: 'singleStory',
   fields: storyFields,
 })
 export class StoryResponse {
   static readonly getAll = () => {
     return returnedType<{ stories: IStory[] }>({
-      name: 'getAllResponse',
+      name: 'getAllStoriesResponse',
       fields: {
         stories: {
           type: new GraphQLList(singleStory),

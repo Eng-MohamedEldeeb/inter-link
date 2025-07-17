@@ -9,23 +9,30 @@ import * as validators from '../validators/story.validators'
 
 import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
 import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
+import storyViewPermissionGuard from '../../../common/guards/story/story-view-permission.guard'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
 const router: Router = Router()
 
-router.get('/', StoryController.getAll)
+router.get(
+  '/',
+  validate(validators.getAllValidator.http()),
+  applyGuards(userExistenceGuard),
+  StoryController.getAll,
+)
 
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  applyGuards(storyExistenceGuard),
+  applyGuards(storyExistenceGuard, storyViewPermissionGuard),
   StoryController.getSingle,
 )
 
 router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('attachment'),
-  storyAttachmentUploader,
   validate(validators.createValidator),
+  storyAttachmentUploader,
   StoryController.create,
 )
 

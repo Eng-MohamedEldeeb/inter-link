@@ -32,7 +32,7 @@ export class CommentMutationResolver {
       msg: 'Comment has been modified successfully',
       status: 201,
       data: await this.commentService.edit({
-        commentId,
+        id: commentId,
         content: args.content,
       }),
     }
@@ -46,7 +46,7 @@ export class CommentMutationResolver {
     return {
       msg: 'Comment has been deleted successfully',
       status: 201,
-      data: await this.commentService.deleteComment({ commentId }),
+      data: await this.commentService.deleteComment({ id: commentId }),
     }
   }
 }

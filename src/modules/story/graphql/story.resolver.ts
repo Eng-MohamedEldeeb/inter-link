@@ -12,11 +12,11 @@ export class StoryQueryResolver {
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: profileId } = context.profile
+    const { _id: userId } = context.user
     return {
       msg: 'done',
       status: 200,
-      data: await this.StoryService.getAll(profileId),
+      data: await this.StoryService.getAll(userId),
     }
   }
 

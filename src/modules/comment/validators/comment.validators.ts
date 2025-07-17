@@ -7,9 +7,9 @@ import { isValidMongoId } from '../../../common/validation/is-valid'
 
 export const getSingleCommentValidator = {
   schema: joi
-    .object<DTO.ICommentId>()
+    .object<DTO.IGetSingleComment>()
     .keys({
-      commentId: generalFields.mongoId
+      id: generalFields.mongoId
         .required()
         .messages({ 'string.base': 'In-valid commentId' }),
     })
@@ -74,7 +74,7 @@ export const addValidator = {
 export const editValidator = {
   schema: {
     params: {
-      commentId: joi.string().custom(isValidMongoId).required(),
+      id: joi.string().custom(isValidMongoId).required(),
     },
     body: {
       content: generalFields.content.max(250).required(),
@@ -113,7 +113,7 @@ export const editValidator = {
 export const deleteValidator = {
   schema: {
     params: {
-      commentId: joi.string().custom(isValidMongoId).required(),
+      id: joi.string().custom(isValidMongoId).required(),
     },
   },
 

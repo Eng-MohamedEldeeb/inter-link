@@ -14,6 +14,7 @@ import postInGroupPermissionGuard from '../../../common/guards/group/post-in-gro
 import postExistenceInGroupGuard from '../../../common/guards/group/post-existence-in-group.guard'
 import groupAdminsAuthorizationGuard from '../../../common/guards/group/group-admins-authorization.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
+import groupConflictedNameGuard from '../../../common/guards/group/group-conflicted-name.guard'
 
 const router: Router = Router()
 
@@ -28,6 +29,7 @@ router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.createValidator),
+  applyGuards(groupConflictedNameGuard),
   groupCoverUploader,
   GroupController.create,
 )
@@ -46,7 +48,11 @@ router.post(
 router.patch(
   '/:groupId/remove-admin',
   validate(validators.removeAdminValidator.http()),
-  applyGuards(groupExistenceGuard, groupOwnerAuthorizationGuard),
+  applyGuards(
+    groupExistenceGuard,
+    groupOwnerAuthorizationGuard,
+    userExistenceGuard,
+  ),
   GroupController.removeAdmin,
 )
 

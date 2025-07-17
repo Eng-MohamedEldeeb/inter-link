@@ -131,7 +131,7 @@ export class ProfileService {
         status: 400,
       })
 
-    await this.CloudUploader.delete(isExistedUser.avatar.path.public_id)
+    await this.CloudUploader.deleteAsset(isExistedUser.avatar.path.public_id)
 
     return await this.userRepository.findByIdAndUpdate({
       _id: userId,

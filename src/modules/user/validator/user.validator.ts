@@ -9,7 +9,7 @@ export const getUserProfileSchema = {
     .object<DTO.IGetUserProfile>()
     .keys({
       id: generalFields.mongoId,
-      user: joi.string().min(3).when(joi.ref('id'), {
+      username: joi.string().min(3).when(joi.ref('id'), {
         is: joi.exist(),
         then: joi.optional(),
         otherwise: joi.required(),
@@ -20,8 +20,8 @@ export const getUserProfileSchema = {
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'one of [ id , user ] query params is required',
-        '"object.unknown"': 'only  [ id , user ]  query params are allowed',
+        'any.required': 'one of [ id , username ] query params is required',
+        '"object.unknown"': 'only  [ id , username ]  query params are allowed',
       }),
     }
   },
@@ -29,8 +29,8 @@ export const getUserProfileSchema = {
   graphQL() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'one of [ id , user ] args is required',
-        '"object.unknown"': 'only  [ id , user ]  args are allowed',
+        'any.required': 'one of [ id , username ] args is required',
+        '"object.unknown"': 'only  [ id , username ]  args are allowed',
       }),
     }
   },

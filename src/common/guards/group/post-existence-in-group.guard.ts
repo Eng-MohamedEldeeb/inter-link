@@ -11,9 +11,32 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import postRepository from '../../repositories/post.repository'
+import { MongoId } from '../../types/db/db.types'
 
 class PostExistenceInGroupGuard extends GuardActivator {
   private readonly postRepository = postRepository
+  protected groupName!: string
+  protected groupId!: MongoId
+  protected postId!: MongoId
+
+  protected readonly checkPostInGroup = async () => {
+    const isExistedInGroup = await this.postRepository.findOne({
+      filter: {
+        $and: [
+          { _id: this.postId },
+          { onGroup: this.groupId },
+          { archivedAt: { $exists: false } },
+        ],
+      },
+    })
+
+    if (!isExistedInGroup)
+      return throwError({
+        msg: `Post Doesn't exist in '${this.groupName}' group`,
+        status: 404,
+      })
+    return isExistedInGroup
+  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -23,47 +46,29 @@ class PostExistenceInGroupGuard extends GuardActivator {
       const { _id: groupId, name } = req.group
       const { postId } = req.query
 
-      const isExistedInGroup = await this.postRepository.findOne({
-        filter: {
-          $and: [
-            { _id: postId },
-            { onGroup: groupId },
-            { archivedAt: { $exists: false } },
-          ],
-        },
-      })
+      this.groupName = name
+      this.groupId = groupId
+      this.postId = postId
 
-      if (!isExistedInGroup)
-        return throwError({
-          msg: `Post Doesn't exist in '${name}' group`,
-          status: 404,
-        })
+      const post = await this.checkPostInGroup()
 
-      req.post = isExistedInGroup
+      req.post = post
+
       return true
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { args, context } = Ctx.switchToGraphQL<IGetGroup & IRemovePost>()
-      const { groupId, postId } = args
+      const { _id: groupId, name } = context.group
+      const { postId } = args
 
-      const isExistedInGroup = await this.postRepository.findOne({
-        filter: {
-          $and: [
-            { _id: postId },
-            { onGroup: groupId },
-            { archivedAt: { $exists: false } },
-          ],
-        },
-      })
+      this.groupName = name
+      this.groupId = groupId
+      this.postId = postId
 
-      if (!isExistedInGroup)
-        return throwError({
-          msg: `Post Doesn't exist in '${name}' group`,
-          status: 404,
-        })
+      const post = await this.checkPostInGroup()
 
-      context.post = isExistedInGroup
+      context.post = post
 
       return true
     }

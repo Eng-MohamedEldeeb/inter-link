@@ -35,15 +35,15 @@ export class GroupService {
 
   static readonly create = async ({
     createdBy,
-    createGroup,
+    createGroupDTO,
     cover,
   }: {
     createdBy: MongoId
-    createGroup: ICreateGroup
+    createGroupDTO: ICreateGroup
     cover: ICloudFile
   }) => {
     return await this.groupRepository.create({
-      ...createGroup,
+      ...createGroupDTO,
       ...(cover.folderId && {
         cover,
       }),
@@ -116,6 +116,7 @@ export class GroupService {
       _id: this.group._id,
       data: {
         $pull: { admins: this.userId },
+        $addToSet: { members: this.userId },
       },
     })
   }
@@ -195,7 +196,11 @@ export class GroupService {
         _id: groupId,
       },
       data: editGroup,
-      options: { new: true, projection: Object.keys(editGroup).join(' ') },
+      options: {
+        new: true,
+        projection: Object.keys(editGroup).join(' '),
+        lean: true,
+      },
     })
   }
 

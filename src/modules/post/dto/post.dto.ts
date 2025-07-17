@@ -6,6 +6,9 @@ export interface IGetAll {
   limit: number
 }
 
+export interface IPostId {
+  postId: MongoId
+}
 export interface IGetSinglePost {
   id: MongoId
 }

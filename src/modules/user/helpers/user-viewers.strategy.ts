@@ -33,7 +33,6 @@ export class UserViewersStrategy {
           phone: 0,
           'avatar.public_id': 0,
         },
-        lean: true,
       },
     })
 
@@ -53,7 +52,7 @@ export class UserViewersStrategy {
     profileId: MongoId
     userId: MongoId
   }) => {
-    const updatedViews = await await this.userRepository.findOneAndUpdate({
+    const updatedViews = await this.userRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
       },

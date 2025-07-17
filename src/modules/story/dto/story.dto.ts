@@ -1,6 +1,10 @@
 import { MongoId } from '../../../common/types/db/db.types'
 import { IStoryInputs } from '../../../db/interface/IStory.interface'
 
+export interface IGetAllStory {
+  userId: MongoId
+}
+
 export interface IGetSingleStory {
   id: MongoId
 }

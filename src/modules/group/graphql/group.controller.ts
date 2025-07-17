@@ -19,6 +19,7 @@ import { returnedResponseType } from '../../../common/decorators/resolver/return
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { GroupResponse } from './types/group-response.type'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
 export class GroupController {
   private static readonly GroupQueryResolver = GroupQueryResolver
@@ -54,6 +55,7 @@ export class GroupController {
           isAuthorizedGuard,
           groupExistenceGuard,
           groupAuthorizationGuard,
+          userExistenceGuard,
         ],
         resolver: this.GroupMutationResolver.addAdmin,
       }),
@@ -73,6 +75,7 @@ export class GroupController {
           isAuthorizedGuard,
           groupExistenceGuard,
           groupAuthorizationGuard,
+          userExistenceGuard,
         ],
         resolver: this.GroupMutationResolver.removeAdmin,
       }),
@@ -98,13 +101,14 @@ export class GroupController {
     }
   }
 
-  static readonly changeVisibility = (): Omit<IMutationController, 'args'> => {
+  static readonly changeVisibility = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'changeGroupVisibilityMutation',
       }),
+      args: args.changeVisibility,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphQL())],
+        middlewares: [validate(validators.changeVisibilityValidator.graphQL())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

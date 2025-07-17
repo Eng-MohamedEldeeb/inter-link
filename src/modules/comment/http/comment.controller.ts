@@ -3,10 +3,11 @@ import { IRequest } from '../../../common/interface/IRequest.interface'
 import { successResponse } from '../../../common/handlers/http/success-response.handler'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { MongoId } from '../../../common/types/db/db.types'
-
-import commentService from '../comment.service'
+import { IPostId } from '../../post/dto/post.dto'
 
 import * as DTO from '../dto/comment.dto'
+
+import commentService from '../comment.service'
 
 export class CommentController {
   protected static readonly commentService = commentService
@@ -20,10 +21,7 @@ export class CommentController {
   )
 
   static readonly addComment = asyncHandler(
-    async (
-      req: IRequest<Pick<DTO.IGetPostComments, 'postId'>>,
-      res: Response,
-    ) => {
+    async (req: IRequest<IPostId>, res: Response) => {
       const { _id: profileId } = req.profile
       const attachment = req.cloudFile
       const { postId } = req.params
@@ -49,7 +47,7 @@ export class CommentController {
       return successResponse(res, {
         msg: 'Comment has been modified Successfully',
         data: await this.commentService.edit({
-          commentId,
+          id: commentId,
           content,
         }),
       })
@@ -59,7 +57,7 @@ export class CommentController {
   static readonly deleteComment = asyncHandler(
     async (req: IRequest<{ commentId: MongoId }>, res: Response) => {
       const { commentId } = req.params
-      await this.commentService.deleteComment({ commentId })
+      await this.commentService.deleteComment({ id: commentId })
       return successResponse(res, {
         msg: 'Comment has been deleted successfully',
       })

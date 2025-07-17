@@ -20,10 +20,27 @@ class PostInGroupPermission extends GuardActivator {
   protected admins!: MongoId[]
   protected isPrivateGroup!: boolean
 
+  protected readonly userInGroupMembers = (): boolean => {
+    return this.members.some((memberId: MongoId) =>
+      memberId.equals(this.profileId),
+    )
+  }
+
+  protected readonly userInGroupAdmins = (): boolean => {
+    return this.admins.some((adminId: MongoId) =>
+      adminId.equals(this.profileId),
+    )
+  }
+
   protected readonly postPermission = async () => {
     if (this.profileId.equals(this.createdBy)) return true
 
-    const allowedToPost = this.userInGroupMembers() && !this.isPrivateGroup
+    console.log({
+      userInGroupMembers: this.userInGroupMembers(),
+      userInGroupAdmins: this.userInGroupAdmins(),
+    })
+
+    const allowedToPost = this.userInGroupMembers() || this.userInGroupAdmins()
 
     return allowedToPost
       ? true
@@ -31,10 +48,6 @@ class PostInGroupPermission extends GuardActivator {
           msg: 'only members are allowed to share posts in the group',
           status: 403,
         })
-  }
-
-  protected readonly userInGroupMembers = (): boolean => {
-    return this.members.map(String).includes(this.profileId.toString())
   }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -61,6 +74,12 @@ class PostInGroupPermission extends GuardActivator {
       this.admins = admins
       this.isPrivateGroup = isPrivateGroup
     }
+
+    if (this.isPrivateGroup)
+      return throwError({
+        msg: 'only members are allowed to share posts in this private group',
+        status: 403,
+      })
 
     return this.postPermission()
   }

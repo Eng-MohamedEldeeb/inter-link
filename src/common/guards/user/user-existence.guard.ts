@@ -1,7 +1,7 @@
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
 import { throwError } from '../../handlers/error-message.handler'
 import { GuardActivator } from '../can-activate.guard'
-import { IAddAdmin } from '../../../modules/group/dto/group.dto'
+import { IAddAdmin, IRemoveAdmin } from '../../../modules/group/dto/group.dto'
 import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 
@@ -11,9 +11,72 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 import userRepository from '../../repositories/user.repository'
+import { MongoId } from '../../types/db/db.types'
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository
+  private username: string = ''
+  private userId!: MongoId
+  private adminId!: MongoId
+  private id!: MongoId
+
+  protected readonly checkUserExistence = async () => {
+    const isExistedUser = await this.userRepository.findOne({
+      filter: {
+        ...(this.username
+          ? {
+              $or: [
+                {
+                  $and: [
+                    { username: { $regex: this.username } },
+
+                    {
+                      deactivatedAt: { $exists: false },
+                    },
+                  ],
+                },
+                {
+                  $and: [
+                    { fullName: { $regex: this.username } },
+
+                    {
+                      deactivatedAt: { $exists: false },
+                    },
+                  ],
+                },
+              ],
+            }
+          : this.adminId
+            ? {
+                $and: [
+                  { _id: this.adminId },
+                  { deactivatedAt: { $exists: false } },
+                ],
+              }
+            : {
+                $and: [
+                  { $or: [{ _id: this.id }, { _id: this.userId }] },
+                  { deactivatedAt: { $exists: false } },
+                ],
+              }),
+      },
+      populate: [{ path: 'posts' }],
+      projection: {
+        password: 0,
+        oldPasswords: 0,
+        phone: 0,
+        'avatar.public_id': 0,
+      },
+    })
+
+    if (!isExistedUser)
+      return throwError({
+        msg: "user doesn't exist",
+        status: 400,
+      })
+
+    return isExistedUser
+  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -21,130 +84,50 @@ class UserExistenceGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
         Pick<IGetUserProfile, 'id'>,
-        IGetUserProfile & IAddAdmin
+        IGetUserProfile & IAddAdmin & IRemoveAdmin
       >()
 
-      const { user, id, userId } = { ...req.query, ...req.params }
+      const { username, id, userId, adminId } = { ...req.query, ...req.params }
       const { _id: profileId } = req.profile
 
-      const isExistedUser = await this.userRepository.findOne({
-        filter: {
-          ...(user
-            ? {
-                $or: [
-                  {
-                    $and: [
-                      { username: { $regex: user } },
+      this.username = username
+      this.userId = userId
+      this.adminId = adminId
+      this.id = id
 
-                      {
-                        deactivatedAt: { $exists: false },
-                      },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { fullName: { $regex: user } },
+      const user = await this.checkUserExistence()
 
-                      {
-                        deactivatedAt: { $exists: false },
-                      },
-                    ],
-                  },
-                ],
-              }
-            : {
-                $and: [
-                  { $or: [{ _id: id }, { _id: userId }] },
-                  { deactivatedAt: { $exists: false } },
-                ],
-              }),
-        },
-        projection: {
-          password: 0,
-          oldPasswords: 0,
-          phone: 0,
-          'avatar.public_id': 0,
-        },
-        options: { lean: true },
-      })
-
-      if (!isExistedUser)
-        return throwError({
-          msg: "user doesn't exist",
-          status: 400,
-        })
-
-      if (isExistedUser._id.equals(profileId)) {
-        req.user = isExistedUser
+      if (user._id.equals(profileId)) {
+        req.user = user
         return true
       }
 
-      req.user = isExistedUser
+      req.user = user
 
       return true
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { args, context } = Ctx.switchToGraphQL<
-        IGetUserProfile & IAddAdmin
+        IGetUserProfile & IAddAdmin & IRemoveAdmin
       >()
 
-      const { user, id, userId } = args
+      const { username, id, userId, adminId } = args
       const { _id: profileId } = context.profile
 
-      const isExistedUser = await this.userRepository.findOne({
-        filter: {
-          ...(user
-            ? {
-                $or: [
-                  {
-                    $and: [
-                      { username: { $regex: user } },
+      this.username = username
+      this.adminId = adminId
+      this.userId = userId
+      this.id = id
 
-                      {
-                        deactivatedAt: { $exists: false },
-                      },
-                    ],
-                  },
-                  {
-                    $and: [
-                      { fullName: { $regex: user } },
+      const user = await this.checkUserExistence()
 
-                      {
-                        deactivatedAt: { $exists: false },
-                      },
-                    ],
-                  },
-                ],
-              }
-            : {
-                $and: [
-                  { $or: [{ _id: id }, { _id: userId }] },
-                  { deactivatedAt: { $exists: false } },
-                ],
-              }),
-        },
-        projection: {
-          password: 0,
-          oldPasswords: 0,
-          phone: 0,
-          'avatar.public_id': 0,
-        },
-        options: { lean: true },
-      })
-
-      if (!isExistedUser)
-        return throwError({
-          msg: "user doesn't exist",
-          status: 400,
-        })
-
-      if (isExistedUser._id.equals(profileId)) {
-        context.user = isExistedUser
+      if (user._id.equals(profileId)) {
+        context.user = user
         return true
       }
 
-      context.user = isExistedUser
+      context.user = user
 
       return true
     }

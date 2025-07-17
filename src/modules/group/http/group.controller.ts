@@ -24,13 +24,13 @@ export class GroupController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const cover = req.cloudFile
-      const createGroup: DTO.ICreateGroup = req.body
+      const createGroupDTO: DTO.ICreateGroup = req.body
       return successResponse(res, {
         status: 201,
         msg: 'Group has been created Successfully',
         data: await this.GroupService.create({
           createdBy: _id,
-          createGroup,
+          createGroupDTO,
           cover,
         }),
       })
@@ -40,8 +40,7 @@ export class GroupController {
   static readonly addPost = asyncHandler(
     async (req: IRequest<DTO.IGetGroup>, res: Response) => {
       const { _id } = req.profile
-      const { groupId } = req.params
-      const { name } = req.group
+      const { _id: groupId, name } = req.group
 
       const attachments = req.cloudFiles
       const createPost: ICreatePost = req.body
@@ -66,10 +65,10 @@ export class GroupController {
       const { _id: postId } = req.post
       const { _id: groupId, name } = req.group
 
+      await this.PostService.removeFromGroup({ groupId, postId })
+
       return successResponse(res, {
-        status: 201,
         msg: `Post has been deleted from ${name} Group Successfully`,
-        data: await this.PostService.removeFromGroup({ groupId, postId }),
       })
     },
   )

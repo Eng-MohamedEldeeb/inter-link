@@ -32,6 +32,17 @@ class IsAuthorizedGuard implements GuardActivator {
     }
   }
 
+  protected readonly checkTokenInitiationStamp = (
+    tokenPayload: IPayload,
+  ): boolean => {
+    const { iat } = tokenPayload
+
+    if (iat && this.changedCredentialsAt)
+      return iat < Math.ceil(this.changedCredentialsAt.getTime() / 1000)
+
+    return false
+  }
+
   protected readonly httpAuthorization = async (req: IRequest) => {
     const tokenPayload = req.tokenPayload
 
@@ -52,10 +63,10 @@ class IsAuthorizedGuard implements GuardActivator {
     if (isExistedUser.changedCredentialsAt)
       this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassekenInitiationStamp =
+    const isPassedTokenInitiationStamp =
       this.checkTokenInitiationStamp(tokenPayload)
 
-    if (isPassekenInitiationStamp)
+    if (isPassedTokenInitiationStamp)
       return throwError({ msg: 're-login is required', status: 403 })
 
     req.profile = isExistedUser
@@ -84,26 +95,15 @@ class IsAuthorizedGuard implements GuardActivator {
     if (isExistedUser.changedCredentialsAt)
       this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassekenInitiationStamp =
+    const isPassedTokenInitiationStamp =
       this.checkTokenInitiationStamp(tokenPayload)
 
-    if (isPassekenInitiationStamp)
+    if (isPassedTokenInitiationStamp)
       return throwError({ msg: 're-login is required', status: 403 })
 
     context.profile = isExistedUser
 
     return context
-  }
-
-  protected readonly checkTokenInitiationStamp = (
-    tokenPayload: IPayload,
-  ): boolean => {
-    const { iat } = tokenPayload
-
-    if (iat && this.changedCredentialsAt)
-      return iat < Math.ceil(this.changedCredentialsAt.getTime() / 1000)
-
-    return false
   }
 }
 

@@ -19,15 +19,18 @@ export class CloudUploader {
     return await this.cloud.uploader.upload(path, { folder: folderName })
   }
 
-  static readonly delete = async (
+  static readonly deleteAsset = async (
     public_id: string,
   ): Promise<UploadApiResponse> => {
     return await this.cloud.uploader.destroy(public_id)
   }
 
-  static readonly deleteFolder = async (
-    folderId: string,
-  ): Promise<UploadApiResponse> => {
-    return await this.cloud.api.delete_folder(folderId)
+  static readonly deleteFolder = async ({
+    fullPath,
+  }: {
+    fullPath: string
+  }): Promise<UploadApiResponse> => {
+    await this.cloud.api.delete_resources_by_prefix(fullPath)
+    return await this.cloud.api.delete_folder(fullPath)
   }
 }

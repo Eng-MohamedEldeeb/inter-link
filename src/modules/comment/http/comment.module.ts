@@ -17,7 +17,7 @@ const router: Router = Router({ mergeParams: true })
 router.use('/reply', replyRouter)
 
 router.get(
-  '/:commentId',
+  '/:id',
   validate(validators.getSingleCommentValidator.http()),
   applyGuards(commentExistenceGuard),
   CommentController.getSingle,
@@ -33,14 +33,14 @@ router.post(
 )
 
 router.patch(
-  '/:commentId',
+  '/:id',
   validate(validators.editValidator.http()),
   applyGuards(commentExistenceGuard, commentAuthorizationGuard),
   CommentController.edit,
 )
 
 router.delete(
-  '/:commentId',
+  '/:id',
   applyGuards(commentExistenceGuard, commentAuthorizationGuard),
   validate(validators.deleteValidator.http()),
   CommentController.deleteComment,

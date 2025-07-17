@@ -60,8 +60,7 @@ CommentSchema.post('findOneAndDelete', async function (res: IComment) {
   const { attachment } = res
 
   if (attachment?.path.public_id) {
-    await CloudUploader.delete(attachment.path.public_id)
-    await CloudUploader.deleteFolder(attachment.fullPath)
+    await CloudUploader.deleteFolder({ fullPath: attachment.fullPath })
   }
 
   await commentRepository.deleteMany({ replyingTo: res._id })

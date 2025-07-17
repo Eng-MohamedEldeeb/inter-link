@@ -15,10 +15,8 @@ export const StorySchema = new Schema<IStory>(
     attachment: {
       folderId: String,
       path: {
-        type: {
-          secure_url: String,
-          public_id: String,
-        },
+        secure_url: String,
+        public_id: String,
       },
     },
 
@@ -52,7 +50,6 @@ StorySchema.post('findOneAndDelete', async function (res: IStory) {
   const { attachment } = res
 
   if (attachment?.path.public_id) {
-    await CloudUploader.delete(attachment.path.public_id)
-    await CloudUploader.deleteFolder(attachment.fullPath)
+    await CloudUploader.deleteFolder({ fullPath: attachment.fullPath })
   }
 })

@@ -10,9 +10,9 @@ export class StoryController {
 
   static readonly getAll = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { _id: profileId } = req.profile
+      const { _id: userId } = req.user
       return successResponse(res, {
-        data: await this.StoryService.getAll(profileId),
+        data: await this.StoryService.getAll(userId),
       })
     },
   )

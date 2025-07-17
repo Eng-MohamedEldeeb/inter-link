@@ -23,9 +23,9 @@ class CommentService {
     return postedComment
   }
 
-  readonly edit = async ({ commentId, content }: DTO.IEditComment) => {
+  readonly edit = async ({ id, content }: DTO.IEditComment) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
-      _id: commentId,
+      _id: id,
       data: { content },
       options: { new: true, lean: true, projection: { content: 1 } },
     })
@@ -38,9 +38,9 @@ class CommentService {
     )
   }
 
-  readonly deleteComment = async ({ commentId }: DTO.IDeleteComment) => {
+  readonly deleteComment = async ({ id }: DTO.IDeleteComment) => {
     const deletedComment = await this.commentRepository.findByIdAndDelete({
-      _id: commentId,
+      _id: id,
     })
     return (
       deletedComment ??
