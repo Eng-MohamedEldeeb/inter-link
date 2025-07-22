@@ -24,9 +24,22 @@ export const graphQlContextGuardsActivator = async (
 
   for (const guard of guards) {
     await guard.canActivate(source, args, context, info)
-
     if (!context) return throwError({ msg: 'forbidden request', status: 403 })
   }
 
   return context
+}
+
+export const socketContextGuardsActivator = async (
+  Ctx: typeof ContextDetector,
+  guards: GuardActivator[],
+) => {
+  const { socket, socketServerNext } = Ctx.switchToSocket()
+
+  for (const guard of guards) {
+    const result = await guard.canActivate(socket, socketServerNext)
+    if (!result) return socketServerNext(new Error('forbidden request'))
+  }
+
+  return socketServerNext()
 }

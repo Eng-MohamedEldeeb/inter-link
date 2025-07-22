@@ -22,35 +22,57 @@ export const throwErrorByInstanceType = (
   ctx: typeof ContextDetector,
 ) => {
   const { next } = ctx.switchToHTTP()
+  const { socketServerNext } = ctx.switchToSocket()
+
   switch (true) {
     case error instanceof TokenExpiredError:
       if (ctx.type === ContextType.httpContext)
         return next({ msg: 'Token is expired', status: 400 })
-      throw new GraphQLError('Token Error', {
-        extensions: { msg: 'Token is expired', status: 400 },
-      })
+
+      if (ctx.type === ContextType.graphContext)
+        throw new GraphQLError('Token Error', {
+          extensions: { msg: 'Token is expired', status: 400 },
+        })
+
+      if (ctx.type === ContextType.socketContext)
+        if (ctx.hasSocketMiddlewareParams())
+          return socketServerNext(new Error('Token is expired'))
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext)
         return next({ msg: 'in-valid token', status: 400 })
-      throw new GraphQLError('Token Error', {
-        extensions: { msg: 'in-valid token', status: 400 },
-      })
+
+      if (ctx.type === ContextType.graphContext)
+        throw new GraphQLError('Token Error', {
+          extensions: { msg: 'in-valid token', status: 400 },
+        })
+
+      if (ctx.type === ContextType.socketContext)
+        if (ctx.hasSocketMiddlewareParams())
+          return socketServerNext(new Error('in-valid token'))
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext) return next(error)
-      throw new GraphQLError('Token Error', {
-        extensions: { msg: error.message, status: 400 },
-      })
+
+      if (ctx.type === ContextType.graphContext)
+        throw new GraphQLError('Token Error', {
+          extensions: { msg: error.message, status: 400 },
+        })
+
+      if (ctx.type === ContextType.socketContext)
+        if (ctx.hasSocketMiddlewareParams())
+          return socketServerNext(new Error('Token Error'))
 
     default:
       if (ctx.type === ContextType.httpContext) return next(error)
 
-      const { extensions, msg, details, message }: GraphQLError & IError =
-        error as any
+      if (ctx.type === ContextType.graphContext) {
+        const { extensions, msg, details, message }: GraphQLError & IError =
+          error as any
 
-      throw new GraphQLError(msg || message, {
-        extensions: { ...(extensions && extensions), details },
-      })
+        throw new GraphQLError(msg || message, {
+          extensions: { ...(extensions && extensions), details },
+        })
+      }
   }
 }

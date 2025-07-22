@@ -50,7 +50,7 @@ export class ProfileController {
   static readonly changeAvatar = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId, avatar } = req.profile
-      const path = req.file?.path!
+      const path = req.file!.path!
       return successResponse(res, {
         msg: 'profile Picture has been updated successfully',
         data: await this.ProfileService.changeAvatar({

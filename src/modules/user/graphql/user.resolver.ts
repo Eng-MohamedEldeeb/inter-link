@@ -71,7 +71,11 @@ export class UserMutationResolver {
     return {
       msg: 'done',
       status: 200,
-      data: await this.UserService.unblockUser(profileId, userId, blockedUsers),
+      data: await this.UserService.unblockUser({
+        profileId,
+        userId,
+        blockedUsers,
+      }),
     }
   }
 }

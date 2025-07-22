@@ -14,8 +14,6 @@ import otpRepository from '../../../common/repositories/otp.repository'
 export const UserSchema = new Schema<IUser>(
   {
     avatar: {
-      fullPath: String,
-      folderId: String,
       secure_url: {
         type: String,
         default:
@@ -76,6 +74,8 @@ export const UserSchema = new Schema<IUser>(
     following: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
     followers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+
+    requests: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
     blockedUsers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
@@ -178,7 +178,7 @@ UserSchema.post('findOneAndDelete', async function ({ _id, avatar }: IUser) {
     postRepository.deleteMany({ createdBy: _id }),
     commentRepository.deleteMany({ createdBy: _id }),
     groupRepository.deleteMany({ createdBy: _id }),
-    avatar.path.secure_url != process.env.DEFAULT_PIC &&
+    avatar.secure_url != process.env.DEFAULT_PIC &&
       (await CloudUploader.deleteFolder({ fullPath: _id.toString() })),
   ])
 })

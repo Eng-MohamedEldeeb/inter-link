@@ -4,13 +4,18 @@ import { successResponse } from '../../../common/handlers/http/success-response.
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { MongoId } from '../../../common/types/db/db.types'
 import { IPostId } from '../../post/dto/post.dto'
+import { CommentService } from '../comment.service'
 
 import * as DTO from '../dto/comment.dto'
 
-import commentService from '../comment.service'
+import onlineUsersController from '../../../common/services/notifications/online-users.controller'
+import notificationsService from '../../../common/services/notifications/notification.service'
+import { ICommentedOnPostNotification } from '../../../db/interface/INotification.interface'
 
 export class CommentController {
-  protected static readonly commentService = commentService
+  protected static readonly CommentService = CommentService
+  protected static readonly onlineUsersController = onlineUsersController
+  protected static readonly notificationsService = notificationsService
 
   static readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -22,20 +27,35 @@ export class CommentController {
 
   static readonly addComment = asyncHandler(
     async (req: IRequest<IPostId>, res: Response) => {
-      const { _id: profileId } = req.profile
       const attachment = req.cloudFile
-      const { postId } = req.params
       const { content }: Pick<DTO.IAddComment, 'content'> = req.body
 
+      const { _id: profileId, avatar, username, fullName } = req.profile
+      const { _id: postId, createdBy, attachments } = req.post
+
+      await this.CommentService.addComment({
+        postId,
+        attachment,
+        content,
+        createdBy: profileId,
+      })
+
+      const notification: ICommentedOnPostNotification = {
+        title: `${username} Commented On Your Post! 💛`,
+        content,
+        from: { _id: profileId, avatar, username, fullName },
+        on: { _id: postId, attachments },
+        refTo: 'Post',
+      }
+
+      await this.notificationsService.sendNotification({
+        to: createdBy,
+        notification,
+      })
+
       return successResponse(res, {
-        msg: 'Comment has been add Successfully',
+        msg: 'Comment has been added Successfully',
         status: 201,
-        data: await this.commentService.addComment({
-          postId,
-          attachment,
-          content,
-          createdBy: profileId,
-        }),
       })
     },
   )
@@ -46,7 +66,7 @@ export class CommentController {
       const { content }: DTO.IEditComment = req.body
       return successResponse(res, {
         msg: 'Comment has been modified Successfully',
-        data: await this.commentService.edit({
+        data: await this.CommentService.edit({
           id: commentId,
           content,
         }),
@@ -57,7 +77,7 @@ export class CommentController {
   static readonly deleteComment = asyncHandler(
     async (req: IRequest<{ commentId: MongoId }>, res: Response) => {
       const { commentId } = req.params
-      await this.commentService.deleteComment({ id: commentId })
+      await this.CommentService.deleteComment({ id: commentId })
       return successResponse(res, {
         msg: 'Comment has been deleted successfully',
       })

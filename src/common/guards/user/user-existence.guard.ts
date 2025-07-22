@@ -8,6 +8,7 @@ import { ContextDetector } from '../../decorators/context/context-detector.decor
 import {
   GraphQLParams,
   HttpParams,
+  SocketServerParams,
 } from '../../decorators/context/types/context-detector.types'
 
 import userRepository from '../../repositories/user.repository'
@@ -18,7 +19,7 @@ class UserExistenceGuard extends GuardActivator {
   private username: string = ''
   private userId!: MongoId
   private adminId!: MongoId
-  private id!: MongoId
+  private id!: MongoId | string
 
   protected readonly checkUserExistence = async () => {
     const isExistedUser = await this.userRepository.findOne({
@@ -66,6 +67,7 @@ class UserExistenceGuard extends GuardActivator {
         oldPasswords: 0,
         phone: 0,
         'avatar.public_id': 0,
+        'avatar.folderPath': 0,
       },
     })
 
@@ -78,7 +80,9 @@ class UserExistenceGuard extends GuardActivator {
     return isExistedUser
   }
 
-  async canActivate(...params: HttpParams | GraphQLParams) {
+  async canActivate(
+    ...params: HttpParams | GraphQLParams | SocketServerParams
+  ) {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {

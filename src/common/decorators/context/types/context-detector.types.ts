@@ -4,6 +4,8 @@ import { GraphQLResolveInfo } from 'graphql'
 
 import { IRequest } from '../../../interface/IRequest.interface'
 import { IContext } from '../../../interface/IGraphQL.interface'
+import { ISocket } from '../../../interface/ISocket.interface'
+import { ExtendedError } from 'socket.io'
 
 export type HttpParams<P = any, Q = any> = [
   IRequest<P, Q>,
@@ -29,4 +31,11 @@ export type GraphQLContext<Args = any> = {
   args: Args
   context: IContext
   info: GraphQLResolveInfo
+}
+
+export type SocketServerParams = [ISocket, (err?: ExtendedError) => void]
+
+export type SocketServerContext = {
+  socket: ISocket
+  socketServerNext: (err?: ExtendedError) => void
 }

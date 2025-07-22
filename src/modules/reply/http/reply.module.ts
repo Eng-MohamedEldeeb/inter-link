@@ -14,7 +14,7 @@ const router: Router = Router({ mergeParams: true })
 router.get(
   '/:commentId',
   validate(validators.getCommentRepliesValidator.http()),
-  applyGuards(commentExistenceGuard),
+  applyGuards(replyExistenceGuard),
   ReplyController.getCommentReplies,
 )
 

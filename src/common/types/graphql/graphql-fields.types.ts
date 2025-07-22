@@ -116,6 +116,10 @@ export const userProfileFields: ObjFields<
     type: userFields.totalFollowers,
   },
 
+  requests: {
+    type: userFields.totalFollowers,
+  },
+
   joinedGroups: {
     type: userFields.joinedGroups,
   },

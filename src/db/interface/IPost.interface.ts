@@ -16,7 +16,6 @@ export interface IPost extends IMongoDoc, IPostInputs {
   totalLikes: number
   comments: MongoId[]
   totalComments: number
-  savedBy: MongoId[]
   totalSaves: number
   shares: number
   archivedAt: Date

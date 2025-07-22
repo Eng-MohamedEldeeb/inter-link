@@ -6,6 +6,7 @@ import { IGroup } from '../interface/IGroup.interface'
 import { IPost } from '../interface/IPost.interface'
 import { IComment } from '../interface/IComment.interface'
 import { IStory } from '../interface/IStory.interface'
+import { INotification } from '../interface/INotification.interface'
 
 export type TOtp = HydratedDocument<IOtp> & Document
 
@@ -18,3 +19,5 @@ export type TStory = HydratedDocument<IStory> & Document
 export type TComment = HydratedDocument<IComment> & Document
 
 export type TGroup = HydratedDocument<IGroup> & Document
+
+export type TNotification = HydratedDocument<INotification> & Document

@@ -37,19 +37,12 @@ export const getUserProfileSchema = {
 }
 
 export const blockUserSchema = {
-  schema: joi
-    .object<DTO.IBlockUser>()
-    .keys({
-      id: generalFields.mongoId.required(),
-    })
-    .required()
-    .messages({
-      'any.required': 'blockUser body is required',
-    }),
-
+  schema: joi.object<DTO.IBlockUser>().keys({
+    id: generalFields.mongoId.required(),
+  }),
   http() {
     return {
-      params: this.schema.required().messages({
+      query: this.schema.required().messages({
         'any.required': '[id] param is required',
       }),
     }
@@ -65,13 +58,93 @@ export const blockUserSchema = {
 }
 
 export const unblockUserSchema = {
-  schema: joi
-    .object<DTO.IUnBlockUser>()
-    .keys({
-      id: generalFields.mongoId.required(),
-    })
-    .required(),
+  schema: joi.object<DTO.IUnBlockUser>().keys({
+    id: generalFields.mongoId.required(),
+  }),
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] param is required',
+      }),
+    }
+  },
 
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
+      }),
+    }
+  },
+}
+
+export const followUserSchema = {
+  schema: joi.object<DTO.IFollowUser>().keys({
+    id: generalFields.mongoId.required(),
+  }),
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
+      }),
+    }
+  },
+}
+
+export const unfollowUserSchema = {
+  schema: joi.object<DTO.IUnFollowUser>().keys({
+    id: generalFields.mongoId.required(),
+  }),
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
+      }),
+    }
+  },
+}
+
+export const acceptFollowRequestSchema = {
+  schema: joi.object<DTO.IAcceptFollowRequest>().keys({
+    id: generalFields.mongoId.required(),
+  }),
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
+      }),
+    }
+  },
+}
+
+export const rejectFollowRequestSchema = {
+  schema: joi.object<DTO.IRejectFollowRequest>().keys({
+    id: generalFields.mongoId.required(),
+  }),
   http() {
     return {
       params: this.schema.required().messages({

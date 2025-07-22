@@ -27,8 +27,6 @@ export const PostSchema = new Schema<IPost>(
 
     likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
-    savedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
-
     totalSaves: { type: Number },
 
     shares: { type: Number },

@@ -8,3 +8,11 @@ export interface IGetUserProfile {
 export interface IBlockUser extends Pick<IGetUserProfile, 'id'> {}
 
 export interface IUnBlockUser extends IGetUserProfile {}
+
+export interface IFollowUser extends Pick<IGetUserProfile, 'id'> {}
+
+export interface IUnFollowUser extends Pick<IGetUserProfile, 'id'> {}
+
+export interface IAcceptFollowRequest extends Pick<IGetUserProfile, 'id'> {}
+
+export interface IRejectFollowRequest extends Pick<IGetUserProfile, 'id'> {}

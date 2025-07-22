@@ -5,10 +5,10 @@ import {
 
 import { IEditReply } from '../dto/reply.dto'
 
-import commentService from '../reply.service'
+import { ReplyService } from '../reply.service'
 
 export class ReplyQueryResolver {
-  private static readonly commentService = commentService
+  private static readonly ReplyService = ReplyService
 
   static readonly getCommentReplies = async (
     _: any,
@@ -18,13 +18,13 @@ export class ReplyQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: await this.commentService.getCommentReplies(postId),
+      data: await this.ReplyService.getCommentReplies(postId),
     }
   }
 }
 
 export class ReplyMutationResolver {
-  private static readonly commentService = commentService
+  private static readonly ReplyService = ReplyService
 
   static readonly edit = async (
     args: IEditReply,
@@ -34,7 +34,7 @@ export class ReplyMutationResolver {
     return {
       msg: 'Reply has been modified successfully',
       status: 201,
-      data: await this.commentService.edit({
+      data: await this.ReplyService.edit({
         replyId,
         content: args.content,
       }),
@@ -49,7 +49,7 @@ export class ReplyMutationResolver {
     return {
       msg: 'Reply has been deleted successfully',
       status: 201,
-      data: await this.commentService.deleteReply({ replyId }),
+      data: await this.ReplyService.deleteReply({ replyId }),
     }
   }
 }

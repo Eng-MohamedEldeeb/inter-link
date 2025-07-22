@@ -6,10 +6,11 @@ import { ContextType } from '../context/types/enum/context-type.enum'
 import {
   graphQlContextGuardsActivator,
   httpContextGuardsActivator,
+  socketContextGuardsActivator,
 } from './helpers/apply-guards.helper'
 
 export const applyGuards = (...guards: GuardActivator[]) => {
-  return asyncHandler(async (...params: any[any]) => {
+  return asyncHandler(async (...params: any[]) => {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
@@ -18,6 +19,10 @@ export const applyGuards = (...guards: GuardActivator[]) => {
 
     if (Ctx.type === ContextType.graphContext) {
       return await graphQlContextGuardsActivator(Ctx, guards)
+    }
+
+    if (Ctx.type === ContextType.socketContext) {
+      return await socketContextGuardsActivator(Ctx, guards)
     }
   })
 }

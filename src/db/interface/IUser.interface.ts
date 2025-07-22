@@ -1,5 +1,5 @@
 import { IMongoDoc } from './IMongo-doc.interface'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
+import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../common/types/db/db.types'
 
 export interface IUserInputs {
@@ -22,7 +22,7 @@ export interface IUserInputs {
 export interface IUser
   extends IMongoDoc,
     Omit<IUserInputs, 'confirmPassword' | 'otpCode'> {
-  avatar: ICloudFile
+  avatar: ICloud
 
   age: number
 
@@ -41,6 +41,8 @@ export interface IUser
 
   followers: MongoId[]
   totalFollowers: number
+
+  requests: MongoId[]
 
   viewers: {
     viewer: MongoId

@@ -35,7 +35,7 @@ export interface IFindOneAndUpdate<T> extends IFilterQuery<T> {
 export interface IFindOneAndDelete<T> extends IFilterQuery<T> {}
 
 export interface IFilterById<T> {
-  _id: MongoId
+  _id: MongoId | string
   options?: QueryOptions<T>
 }
 export interface IFindById<T> extends IFilterById<T> {

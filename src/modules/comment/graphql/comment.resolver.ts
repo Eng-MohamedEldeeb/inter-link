@@ -5,7 +5,7 @@ import {
 
 import { IEditComment } from '../dto/comment.dto'
 
-import commentService from '../comment.service'
+import { CommentService } from '../comment.service'
 
 export class CommentQueryResolver {
   static readonly getSingleComment = async (
@@ -21,7 +21,7 @@ export class CommentQueryResolver {
 }
 
 export class CommentMutationResolver {
-  private static readonly commentService = commentService
+  private static readonly CommentService = CommentService
 
   static readonly edit = async (
     args: IEditComment,
@@ -31,7 +31,7 @@ export class CommentMutationResolver {
     return {
       msg: 'Comment has been modified successfully',
       status: 201,
-      data: await this.commentService.edit({
+      data: await this.CommentService.edit({
         id: commentId,
         content: args.content,
       }),
@@ -46,7 +46,7 @@ export class CommentMutationResolver {
     return {
       msg: 'Comment has been deleted successfully',
       status: 201,
-      data: await this.commentService.deleteComment({ id: commentId }),
+      data: await this.CommentService.deleteComment({ id: commentId }),
     }
   }
 }

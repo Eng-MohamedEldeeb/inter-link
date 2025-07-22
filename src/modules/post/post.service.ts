@@ -6,6 +6,7 @@ import * as DTO from './dto/post.dto'
 import { MongoId } from './../../common/types/db/db.types'
 import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
+import { IUser } from '../../db/interface/IUser.interface'
 
 export class PostService {
   private static readonly postRepository = postRepository
@@ -160,6 +161,37 @@ export class PostService {
       filter: { $and: [{ _id: postId }, { onGroup: groupId }] },
       data: { $unset: { onGroup: 1 } },
       options: { lean: true, new: true },
+    })
+  }
+
+  static readonly like = async ({
+    profile,
+    postId,
+  }: {
+    profile: IUser
+    postId: string
+  }) => {
+    const postDoc = await this.postRepository.findByIdAndUpdate({
+      _id: postId,
+      data: { $addToSet: { likedBy: profile._id } },
+      options: {
+        lean: true,
+        new: true,
+        projection: { attachments: 1, createdBy: 1 },
+      },
+    })
+  }
+
+  static readonly unlike = async ({
+    profileId,
+    postId,
+  }: {
+    postId: string
+    profileId: MongoId
+  }) => {
+    await this.postRepository.findByIdAndUpdate({
+      _id: postId,
+      data: { $pull: { likedBy: profileId } },
     })
   }
 }

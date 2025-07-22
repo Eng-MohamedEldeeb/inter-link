@@ -4,6 +4,7 @@ import { IUser } from '../../db/interface/IUser.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoId } from '../../common/types/db/db.types'
 import { UserViewersStrategy } from './helpers/user-viewers.strategy'
+import { IFollowedUserNotification } from '../../db/interface/INotification.interface'
 
 export class UserService {
   private static readonly userRepository = userRepository
@@ -88,11 +89,15 @@ export class UserService {
     })
   }
 
-  static readonly unblockUser = async (
-    profileId: MongoId,
-    userId: MongoId,
-    blockedUsers: MongoId[],
-  ) => {
+  static readonly unblockUser = async ({
+    userId,
+    profileId,
+    blockedUsers,
+  }: {
+    profileId: MongoId
+    userId: MongoId
+    blockedUsers: MongoId[]
+  }) => {
     const isBlocked = blockedUsers.some(id => id.equals(userId))
 
     if (!isBlocked)
@@ -108,6 +113,104 @@ export class UserService {
         },
       },
       options: { lean: true, new: true },
+    })
+  }
+
+  static readonly follow = async ({
+    userId,
+    userProfileState,
+    profileId,
+  }: {
+    userId: MongoId
+    userProfileState: boolean
+    profileId: MongoId
+  }) => {
+    if (userProfileState) {
+      await this.userRepository.findByIdAndUpdate({
+        _id: userId,
+        data: { $addToSet: { requests: profileId } },
+      })
+    }
+
+    await this.userRepository.findByIdAndUpdate({
+      _id: userId,
+      data: { $addToSet: { followers: profileId } },
+    })
+
+    await this.userRepository.findByIdAndUpdate({
+      _id: profileId,
+      data: { $addToSet: { following: userId } },
+    })
+  }
+
+  static readonly acceptFollowRequest = async ({
+    profile,
+    user,
+  }: {
+    profile: Pick<IUser, '_id' | 'isPrivateProfile' | 'requests'>
+    user: Pick<IUser, '_id'>
+  }) => {
+    const { _id: profileId, isPrivateProfile, requests } = profile
+    const { _id: userId } = user
+
+    const inRequests = requests.some(id => id.equals(userId))
+
+    if (!inRequests)
+      return throwError({ msg: 'Follow Request Not Found', status: 404 })
+
+    await this.userRepository.findOneAndUpdate({
+      filter: {
+        $and: [
+          { $and: [{ _id: profileId }, { isPrivateProfile }] },
+          { deactivatedAt: { $exists: false } },
+        ],
+      },
+      data: { $addToSet: { followers: userId }, $pull: { requests: userId } },
+    })
+
+    await this.userRepository.findByIdAndUpdate({
+      _id: userId,
+      data: { $addToSet: { following: profileId } },
+    })
+  }
+
+  static readonly unfollow = async ({
+    userId,
+    profileId,
+  }: {
+    userId: MongoId
+    profileId: MongoId
+  }) => {
+    await this.userRepository.findByIdAndUpdate({
+      _id: userId,
+      data: { $pull: { followers: profileId } },
+    })
+
+    await this.userRepository.findByIdAndUpdate({
+      _id: profileId,
+      data: { $pull: { following: userId } },
+    })
+  }
+
+  static readonly rejectFollowRequest = async ({
+    user,
+    profile,
+  }: {
+    user: Pick<IUser, 'isPrivateProfile' | '_id'>
+    profile: Pick<IUser, '_id'>
+  }) => {
+    const { _id: profileId } = profile
+    const { _id: userId, isPrivateProfile } = user
+
+    await this.userRepository.findOneAndUpdate({
+      filter: {
+        $and: [
+          { _id: profileId },
+          { isPrivateProfile },
+          { deactivatedAt: { $exists: false } },
+        ],
+      },
+      data: { $pull: { requests: userId } },
     })
   }
 }

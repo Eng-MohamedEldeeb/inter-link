@@ -12,7 +12,10 @@ import { IGetAll } from '../post/dto/post.dto'
 import { IUser } from '../../db/interface/IUser.interface'
 import { MongoId } from '../../common/types/db/db.types'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
+import {
+  ICloud,
+  ICloudFile,
+} from '../../common/services/upload/interface/cloud-response.interface'
 
 export class ProfileService {
   private static readonly userRepository = userRepository
@@ -74,15 +77,15 @@ export class ProfileService {
     path,
   }: {
     profileId: MongoId
-    avatar: ICloudFile
+    avatar: ICloud
     path: string
   }) => {
-    const hasDefaultAvatar = avatar.path.secure_url == process.env.DEFAULT_PIC
+    const hasDefaultAvatar = avatar.secure_url == process.env.DEFAULT_PIC
 
     if (!hasDefaultAvatar) {
       const { secure_url, public_id } = await this.CloudUploader.upload({
         path,
-        public_id: avatar.path.public_id,
+        public_id: avatar.public_id,
       })
 
       return await this.userRepository.findByIdAndUpdate({
@@ -123,7 +126,7 @@ export class ProfileService {
       return throwError({ msg: "user doesn't exist", status: 404 })
 
     const hasDefaultAvatar =
-      isExistedUser.avatar.path.secure_url == process.env.DEFAULT_PIC
+      isExistedUser.avatar.secure_url == process.env.DEFAULT_PIC
 
     if (hasDefaultAvatar)
       return throwError({
@@ -131,7 +134,7 @@ export class ProfileService {
         status: 400,
       })
 
-    await this.CloudUploader.deleteAsset(isExistedUser.avatar.path.public_id)
+    await this.CloudUploader.deleteAsset(isExistedUser.avatar.public_id)
 
     return await this.userRepository.findByIdAndUpdate({
       _id: userId,

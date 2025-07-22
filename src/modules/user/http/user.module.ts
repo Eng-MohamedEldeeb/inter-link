@@ -21,28 +21,56 @@ router.get(
   '/following',
   validate(validators.getUserProfileSchema.http()),
   applyGuards(UserExistenceGuard, isBlockedUserGuard),
-  UserController.getUseFollowing,
+  UserController.getUserFollowing,
 )
 
 router.get(
   '/followers',
   validate(validators.getUserProfileSchema.http()),
   applyGuards(UserExistenceGuard, isBlockedUserGuard),
-  UserController.getUseFollowers,
+  UserController.getUserFollowers,
 )
 
 router.post(
-  '/block/:id',
+  '/block',
   validate(validators.blockUserSchema.http()),
   applyGuards(UserExistenceGuard, isBlockedUserGuard),
-  UserController.blockUser,
+  UserController.block,
 )
 
 router.patch(
-  '/un-block/:id',
+  '/un-block',
   validate(validators.blockUserSchema.http()),
   applyGuards(UserExistenceGuard),
-  UserController.unblockUser,
+  UserController.unblock,
+)
+
+router.post(
+  '/follow',
+  validate(validators.blockUserSchema.http()),
+  applyGuards(UserExistenceGuard),
+  UserController.follow,
+)
+
+router.delete(
+  '/un-follow',
+  validate(validators.blockUserSchema.http()),
+  applyGuards(UserExistenceGuard),
+  UserController.unfollow,
+)
+
+router.post(
+  '/follow/accept-request',
+  validate(validators.blockUserSchema.http()),
+  applyGuards(UserExistenceGuard),
+  UserController.acceptFollowRequest,
+)
+
+router.delete(
+  '/follow/reject-request',
+  validate(validators.blockUserSchema.http()),
+  applyGuards(UserExistenceGuard),
+  UserController.rejectFollowRequest,
 )
 
 export default router

@@ -4,11 +4,16 @@ import * as DTO from './dto/reply.dto'
 
 import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoId } from '../../common/types/db/db.types'
+import onlineUsersController from '../../common/services/notifications/online-users.controller'
 
-class ReplyService {
-  protected readonly commentRepository = commentRepository
+import { IUser } from '../../db/interface/IUser.interface'
+import { INotificationDetails } from '../../db/interface/INotification.interface'
 
-  readonly getCommentReplies = async (commentId: MongoId) => {
+export class ReplyService {
+  protected static readonly commentRepository = commentRepository
+  private static readonly onlineUsersController = onlineUsersController
+
+  static readonly getCommentReplies = async (commentId: MongoId) => {
     const replies = await this.commentRepository.find({
       filter: { replyingTo: commentId },
     })
@@ -18,7 +23,7 @@ class ReplyService {
     }
   }
 
-  readonly reply = async ({
+  static readonly reply = async ({
     content,
     createdBy,
     replyingTo,
@@ -32,7 +37,7 @@ class ReplyService {
     return reply
   }
 
-  readonly edit = async ({ replyId, content }: DTO.IEditReply) => {
+  static readonly edit = async ({ replyId, content }: DTO.IEditReply) => {
     const updatedReply = await this.commentRepository.findByIdAndUpdate({
       _id: replyId,
       data: { content },
@@ -47,7 +52,7 @@ class ReplyService {
     )
   }
 
-  readonly deleteReply = async ({ replyId }: DTO.IDeleteReply) => {
+  static readonly deleteReply = async ({ replyId }: DTO.IDeleteReply) => {
     const deletedReply = await this.commentRepository.findByIdAndDelete({
       _id: replyId,
     })
@@ -59,6 +64,31 @@ class ReplyService {
       })
     )
   }
-}
 
-export default new ReplyService()
+  static readonly like = async ({
+    profile,
+    replyId,
+  }: {
+    profile: IUser
+    replyId: string
+  }) => {
+    await this.commentRepository.findByIdAndUpdate({
+      _id: replyId,
+      data: { $addToSet: { likedBy: profile._id } },
+      options: { lean: true, new: true, projection: {} },
+    })
+  }
+
+  static readonly unlike = async ({
+    profileId,
+    replyId,
+  }: {
+    replyId: string
+    profileId: MongoId
+  }) => {
+    await this.commentRepository.findByIdAndUpdate({
+      _id: replyId,
+      data: { $pull: { likedBy: profileId } },
+    })
+  }
+}
