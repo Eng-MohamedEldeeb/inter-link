@@ -38,7 +38,6 @@ export const addValidator = {
     },
     body: {
       content: generalFields.content.max(250).required(),
-      replyingTo: joi.string().custom(isValidMongoId),
     },
   },
 
@@ -46,7 +45,7 @@ export const addValidator = {
     return {
       params: joi.object().keys(this.schema.params).required().messages({
         'any.required':
-          '[/commentId/reply] "commentId" is Expected but got nothing',
+          '[/reply/commentId] "commentId" is Expected but got nothing',
       }),
       body: joi
         .object<DTO.IAddReply>()
@@ -70,9 +69,10 @@ export const addValidator = {
     }
   },
 }
+
 export const editValidator = {
   schema: {
-    params: {
+    query: {
       replyId: joi.string().custom(isValidMongoId).required(),
     },
     body: {
@@ -82,9 +82,9 @@ export const editValidator = {
 
   http() {
     return {
-      params: joi
+      query: joi
         .object<DTO.IReplyId>()
-        .keys(this.schema.params)
+        .keys(this.schema.query)
         .required()
         .messages({
           'any.required':
@@ -104,7 +104,7 @@ export const editValidator = {
     return {
       args: joi
         .object<DTO.IEditReply>()
-        .keys({ ...this.schema.body, ...this.schema.params })
+        .keys({ ...this.schema.body, ...this.schema.query })
         .required()
         .messages({
           'any.required': 'editComment args is required',
@@ -138,6 +138,39 @@ export const deleteValidator = {
       args: joi
         .object<DTO.IDeleteReply>()
         .keys(this.schema.params)
+        .required()
+        .messages({
+          'any.required': 'commentId is Expected but Got Nothing',
+        }),
+    }
+  },
+}
+
+export const likeValidator = {
+  schema: {
+    query: {
+      replyId: joi.string().custom(isValidMongoId).required(),
+    },
+  },
+
+  http() {
+    return {
+      query: joi
+        .object<DTO.ILikeReply>()
+        .keys(this.schema.query)
+        .required()
+        .messages({
+          'any.required':
+            '[/reply/replyId] "replyId" is Expected but got nothing',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<DTO.ILikeReply>()
+        .keys(this.schema.query)
         .required()
         .messages({
           'any.required': 'commentId is Expected but Got Nothing',

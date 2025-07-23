@@ -49,7 +49,7 @@ export class PostController {
     const editPost: DTO.IEditPost = req.body
 
     return successResponse(res, {
-      msg: 'Post has been modified successfully',
+      msg: 'Post is modified successfully',
       data: await this.PostService.edit({ postId, editPost }),
     })
   })
@@ -59,7 +59,7 @@ export class PostController {
     const { _id: postId } = req.post
     await this.PostService.save({ postId, profileId })
     return successResponse(res, {
-      msg: 'Post has been Saved successfully',
+      msg: 'Post is Saved successfully',
     })
   })
 
@@ -81,12 +81,23 @@ export class PostController {
     },
   )
 
+  static readonly like = asyncHandler(async (req: IRequest, res: Response) => {
+    const { msg } = await this.PostService.like({
+      post: req.post,
+      profile: req.profile,
+    })
+
+    return successResponse(res, { msg })
+  })
+
   static readonly archive = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: postId } = req.post
+
+      await this.PostService.archive(postId)
+
       return successResponse(res, {
-        msg: 'Post has been archived successfully',
-        data: await this.PostService.archive(postId),
+        msg: 'Post is archived successfully',
       })
     },
   )
@@ -94,9 +105,11 @@ export class PostController {
   static readonly restore = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: postId } = req.post
+
       await this.PostService.restore(postId)
+
       return successResponse(res, {
-        msg: 'Post has been restored successfully',
+        msg: 'Post is restored successfully',
       })
     },
   )
@@ -105,9 +118,11 @@ export class PostController {
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const { _id: postId } = req.post
+
       await this.PostService.delete({ profileId, postId })
+
       return successResponse(res, {
-        msg: 'Post has been deleted successfully',
+        msg: 'Post is deleted successfully',
       })
     },
   )

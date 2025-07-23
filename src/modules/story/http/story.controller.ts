@@ -43,13 +43,22 @@ export class StoryController {
     },
   )
 
+  static readonly like = asyncHandler(async (req: IRequest, res: Response) => {
+    const { msg } = await this.StoryService.like({
+      profile: req.profile,
+      story: req.story,
+    })
+
+    return successResponse(res, { msg })
+  })
+
   static readonly delete = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const { _id: storyId } = req.story
       await this.StoryService.delete({ profileId, storyId })
       return successResponse(res, {
-        msg: 'Story has been deleted successfully',
+        msg: 'Story is deleted successfully',
       })
     },
   )

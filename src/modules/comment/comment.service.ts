@@ -1,28 +1,98 @@
-import commentRepository from '../../common/repositories/comment.repository'
-
-import * as DTO from './dto/comment.dto'
-
 import { throwError } from '../../common/handlers/error-message.handler'
-import onlineUsersController from '../../common/services/notifications/online-users.controller'
 import { IUser } from '../../db/interface/IUser.interface'
 import { MongoId } from '../../common/types/db/db.types'
 
+import * as DTO from './dto/comment.dto'
+
+import commentRepository from '../../common/repositories/comment.repository'
+import notificationsService from '../../common/services/notifications/notifications.service'
+import {
+  ICommentedOnPostNotification,
+  ILikedCommentNotification,
+  ILikedPostNotification,
+} from '../../db/interface/INotification.interface'
+import { IComment } from '../../db/interface/IComment.interface'
+
 export class CommentService {
-  protected static readonly commentRepository = commentRepository
-  private static readonly onlineUsersController = onlineUsersController
+  private static readonly commentRepository = commentRepository
+  private static readonly notificationsService = notificationsService
 
   static readonly addComment = async ({
     content,
-    createdBy,
     attachment,
-    postId,
+    post,
+    profile,
   }: DTO.IAddComment) => {
+    const { _id: profileId, avatar, username, fullName } = profile
+    const { _id: postId, createdBy, attachments } = post
+
     await this.commentRepository.create({
       content,
       ...(attachment.folderId && { attachment }),
       onPost: postId,
-      createdBy,
+      createdBy: profileId,
     })
+
+    const notification: ICommentedOnPostNotification = {
+      title: `${username} Commented On Your Post! 💬`,
+      content,
+      from: { _id: profileId, avatar, username, fullName },
+      on: { _id: postId, attachments },
+      refTo: 'Post',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: createdBy,
+      notificationDetails: notification,
+    })
+  }
+
+  static readonly like = async ({
+    profile,
+    comment,
+  }: {
+    profile: IUser
+    comment: IComment
+  }) => {
+    const { _id: commentId, likedBy, createdBy, attachment } = comment
+    const { _id: profileId, username, avatar, fullName } = profile
+
+    const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
+
+    if (isAlreadyLiked) {
+      await this.commentRepository.findByIdAndUpdate({
+        _id: commentId,
+        data: { $pull: { likedBy: profileId } },
+        options: {
+          lean: true,
+          new: true,
+        },
+      })
+      return { msg: 'Done' }
+    }
+
+    await this.commentRepository.findByIdAndUpdate({
+      _id: commentId,
+      data: { $addToSet: { likedBy: profile._id } },
+      options: {
+        lean: true,
+        new: true,
+      },
+    })
+
+    const notification: ILikedCommentNotification = {
+      title: `${username} Liked Your Comment 💚`,
+      on: { _id: commentId, attachment },
+      from: { _id: profileId, avatar, fullName, username },
+      refTo: 'Comment',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: createdBy,
+      notificationDetails: notification,
+    })
+
+    return { msg: 'comment is liked successfully' }
   }
 
   static readonly edit = async ({ id, content }: DTO.IEditComment) => {
@@ -51,43 +121,5 @@ export class CommentService {
         status: 404,
       })
     )
-  }
-
-  static readonly like = async ({
-    profile,
-    commentId,
-  }: {
-    profile: IUser
-    commentId: string
-  }) => {
-    const commentDoc = await this.commentRepository.findByIdAndUpdate({
-      _id: commentId,
-      data: { $addToSet: { likedBy: profile._id } },
-      options: { lean: true, new: true, projection: {} },
-    })
-
-    // const id = this.onlineUsersController .get(commentDoc!.createdBy)
-
-    // const notification: ICommentNotification = {
-    //   title: `${profile.username} Liked Your Comment! ❤️`,
-    //   from: profile,
-    //   on
-    //   refTo : 'Comment'
-    // }
-
-    // return { createdBy: commentDoc!.createdBy.toString()!, notification }
-  }
-
-  static readonly unlike = async ({
-    profileId,
-    commentId,
-  }: {
-    commentId: string
-    profileId: MongoId
-  }) => {
-    await this.commentRepository.findByIdAndUpdate({
-      _id: commentId,
-      data: { $pull: { likedBy: profileId } },
-    })
   }
 }

@@ -9,6 +9,7 @@ export interface INotificationDetails {
   title: string
   from: MongoId | Partial<IUser> | Partial<IPost> | Partial<IComment>
   refTo: keyof typeof refTo
+  on?: MongoId | Partial<IUser> | Partial<IPost> | Partial<IComment>
 }
 export interface IFollowedUserNotification extends INotificationDetails {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
@@ -17,6 +18,11 @@ export interface IFollowedUserNotification extends INotificationDetails {
 export interface ILikedPostNotification extends INotificationDetails {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   on: Pick<IPost, '_id' | 'attachments'>
+}
+
+export interface ILikedCommentNotification extends INotificationDetails {
+  from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
+  on: Pick<IComment, '_id' | 'attachment'>
 }
 
 export interface ICommentedOnPostNotification extends INotificationDetails {
@@ -36,6 +42,6 @@ export interface ILikedStoryNotification extends INotificationDetails {
 
 export interface INotification {
   missed: INotificationDetails[]
-  seen: INotificationDetails[]
+  received: INotificationDetails[]
   belongsTo: MongoId
 }

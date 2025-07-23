@@ -43,7 +43,7 @@ export const NotificationSchema = new Schema<INotification>(
       ],
     },
 
-    seen: {
+    received: {
       type: [
         {
           title: {

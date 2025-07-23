@@ -52,7 +52,7 @@ export class ProfileController {
       const { _id: profileId, avatar } = req.profile
       const path = req.file!.path!
       return successResponse(res, {
-        msg: 'profile Picture has been updated successfully',
+        msg: 'profile Picture is updated successfully',
         data: await this.ProfileService.changeAvatar({
           profileId,
           avatar,
@@ -66,7 +66,7 @@ export class ProfileController {
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
       return successResponse(res, {
-        msg: 'profile Picture has been deleted successfully',
+        msg: 'profile Picture is deleted successfully',
         data: await this.ProfileService.deleteProfilePic(_id),
       })
     },
@@ -77,7 +77,7 @@ export class ProfileController {
       const updateProfile: DTO.IUpdateProfile = req.body
       const { _id } = req.tokenPayload
       return successResponse(res, {
-        msg: 'profile has has been updated successfully',
+        msg: 'profile has is updated successfully',
         data: await this.ProfileService.updateProfile({
           profileId: _id,
           updateProfile,
@@ -94,7 +94,7 @@ export class ProfileController {
         profileState: isPrivateProfile,
       })
       return successResponse(res, {
-        msg: 'Profile Visibility has been updated successfully',
+        msg: 'Profile Visibility is updated successfully',
       })
     },
   )
@@ -115,7 +115,7 @@ export class ProfileController {
       const confirmNewEmail: DTO.IConfirmNewEmail = req.body
       await this.ProfileService.confirmNewEmail(confirmNewEmail)
       return successResponse(res, {
-        msg: 'your new e-mail has has been verified successfully',
+        msg: 'your new e-mail has is verified successfully',
       })
     },
   )
@@ -145,7 +145,7 @@ export class ProfileController {
       const confirmDelete: DTO.IConfirmDelete = req.body
       const type = await this.ProfileService.confirmDeletion(confirmDelete)
       return successResponse(res, {
-        msg: `Account has has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
+        msg: `Account has is ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
       })
     },
   )

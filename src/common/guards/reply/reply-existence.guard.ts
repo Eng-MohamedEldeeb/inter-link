@@ -19,7 +19,7 @@ class ReplyExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IReplyId>()
-      const { replyId } = req.params
+      const { replyId } = { ...req.params, ...req.query }
 
       const isExistedReply = await this.commentRepository.findOne({
         filter: { _id: replyId },

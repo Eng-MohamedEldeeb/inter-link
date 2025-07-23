@@ -76,7 +76,7 @@ export class ProfileMutationResolver {
     const { _id } = context.profile
     const updateProfile = args
     return {
-      msg: 'Profile has has been updated successfully',
+      msg: 'Profile has is updated successfully',
       status: 200,
       data: await this.ProfileService.updateProfile({
         profileId: _id,
@@ -88,7 +88,7 @@ export class ProfileMutationResolver {
   static readonly deleteProfilePic = async (_: any, context: IContext) => {
     const { _id } = context.tokenPayload
     return {
-      msg: 'Profile Picture has been deleted successfully',
+      msg: 'Profile Picture is deleted successfully',
       data: await this.ProfileService.deleteProfilePic(_id),
       status: 200,
     }
@@ -104,7 +104,7 @@ export class ProfileMutationResolver {
       profileState: isPrivateProfile,
     })
     return {
-      msg: 'Profile has has been updated successfully',
+      msg: 'Profile has is updated successfully',
       status: 200,
     }
   }
@@ -128,7 +128,7 @@ export class ProfileMutationResolver {
     const confirmNewEmail = args
     await this.ProfileService.confirmNewEmail(confirmNewEmail)
     return {
-      msg: 'your new e-mail has has been verified successfully',
+      msg: 'your new e-mail has is verified successfully',
       status: 200,
     }
   }
@@ -164,7 +164,7 @@ export class ProfileMutationResolver {
     const confirmDelete = args
     const type = await this.ProfileService.confirmDeletion(confirmDelete)
     return {
-      msg: `Account has has been ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
+      msg: `Account has is ${type == OtpType.verifyDeletion ? 'deleted' : 'deactivated'} successfully`,
       status: 200,
     }
   }

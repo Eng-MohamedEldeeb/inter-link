@@ -60,6 +60,25 @@ export class StoryController {
   }
 
   // Mutations:
+  static readonly like = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'likeStoryMutation',
+      }),
+      args: args.likeStory,
+      resolve: applyResolver({
+        middlewares: [validate(validators.likeValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          storyExistenceGuard,
+          storyAuthorizationGuard,
+        ],
+        resolver: this.StoryMutationResolver.like,
+      }),
+    }
+  }
+
   static readonly deleteStory = (): IMutationController => {
     return {
       type: returnedResponseType({

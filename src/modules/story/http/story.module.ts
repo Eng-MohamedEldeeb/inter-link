@@ -36,6 +36,13 @@ router.post(
   StoryController.create,
 )
 
+router.post(
+  '/like',
+  validate(validators.likeValidator.http()),
+  applyGuards(storyExistenceGuard),
+  StoryController.like,
+)
+
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),

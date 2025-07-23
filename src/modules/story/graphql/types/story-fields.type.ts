@@ -21,6 +21,7 @@ export const storyFields: ObjFields<Omit<IStory, '__v'>> = {
   content: { type: GraphQLString },
   createdBy: { type: GraphQLString },
   viewers: { type: new GraphQLList(GraphQLID) },
+  likedBy: { type: new GraphQLList(GraphQLID) },
   totalViewers: { type: GraphQLInt },
 }
 

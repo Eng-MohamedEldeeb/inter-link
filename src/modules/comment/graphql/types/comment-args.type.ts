@@ -9,6 +9,10 @@ export const getPostComments = argsType<IPostId>({
   postId: { type: new GraphQLNonNull(GraphQLID) },
 })
 
+export const like = argsType<DTO.ILikeComment>({
+  id: { type: new GraphQLNonNull(GraphQLID) },
+})
+
 export const edit = argsType<DTO.IEditComment>({
   content: { type: new GraphQLNonNull(GraphQLString) },
   id: { type: new GraphQLNonNull(GraphQLID) },

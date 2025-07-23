@@ -14,3 +14,5 @@ export interface IReplyId {
 export interface IEditReply extends Pick<IReplyInputs, 'content'>, IReplyId {}
 
 export interface IDeleteReply extends IReplyId {}
+
+export interface ILikeReply extends IReplyId {}

@@ -49,7 +49,7 @@ export class GroupMutationResolver {
   static readonly edit = async (args: IEditGroup, context: IContext) => {
     const { _id: groupId } = context.group
     return {
-      msg: 'Group has been modified successfully',
+      msg: 'Group is modified successfully',
       status: 200,
       data: await this.GroupService.edit({ groupId, editGroup: args }),
     }
@@ -67,7 +67,7 @@ export class GroupMutationResolver {
     })
 
     return {
-      msg: 'Group Visibility has been Changed successfully',
+      msg: 'Group Visibility is Changed successfully',
       status: 200,
     }
   }
@@ -78,7 +78,7 @@ export class GroupMutationResolver {
     await this.GroupService.delete(groupId)
 
     return {
-      msg: 'Group has been deleted successfully',
+      msg: 'Group is deleted successfully',
       status: 200,
     }
   }
@@ -90,7 +90,7 @@ export class GroupMutationResolver {
     await this.PostService.removeFromGroup({ groupId, postId })
 
     return {
-      msg: `Post has been deleted from ${name} Group Successfully`,
+      msg: `Post is deleted from ${name} Group Successfully`,
       status: 200,
     }
   }

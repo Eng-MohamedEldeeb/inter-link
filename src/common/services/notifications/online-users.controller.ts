@@ -1,10 +1,8 @@
 class OnlineUsersController {
   protected readonly onlineUsers = new Map<string, string>()
 
-  public readonly get = (userId: string) => {
-    const id = this.onlineUsers.get(userId)
-
-    return id
+  public readonly getSocketId = (userId: string): string | undefined => {
+    return this.onlineUsers.get(userId)
   }
 
   public readonly register = ({

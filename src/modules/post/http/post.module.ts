@@ -55,6 +55,13 @@ router.post(
   PostController.shared,
 )
 
+router.post(
+  '/like',
+  validate(validators.likeValidator.http()),
+  applyGuards(postExistenceGuard),
+  PostController.like,
+)
+
 router.patch(
   '/archive',
   validate(validators.archiveValidator.http()),

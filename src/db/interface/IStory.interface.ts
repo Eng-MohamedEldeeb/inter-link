@@ -10,4 +10,5 @@ export interface IStoryInputs {
 export interface IStory extends IStoryInputs, IMongoDoc {
   viewers: MongoId[]
   totalViewers: number
+  likedBy: MongoId[]
 }

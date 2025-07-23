@@ -168,6 +168,32 @@ export const sharedValidator = {
   },
 }
 
+export const likeValidator = {
+  schema: joi
+    .object<DTO.ILikePost>()
+    .keys({
+      id: generalFields.mongoId.required(),
+    })
+    .required(),
+
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': '[id] query param is required',
+        '"object.unknown"': 'only [id] query param is allowed',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': '[id] arg is required',
+      }),
+    }
+  },
+}
+
 export const archiveValidator = {
   schema: joi
     .object<DTO.IGetSinglePost>()

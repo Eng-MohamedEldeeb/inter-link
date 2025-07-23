@@ -22,6 +22,8 @@ export const StorySchema = new Schema<IStory>(
 
     viewers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
+    likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+
     createdBy: {
       type: SchemaTypes.ObjectId,
       ref: 'User',
@@ -44,6 +46,10 @@ StorySchema.index(
 
 StorySchema.virtual('totalViewers').get(function () {
   return this.viewers?.length ?? 0
+})
+
+StorySchema.virtual('totalLikes').get(function () {
+  return this.likedBy?.length ?? 0
 })
 
 StorySchema.post('findOneAndDelete', async function (res: IStory) {

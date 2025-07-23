@@ -5,6 +5,7 @@ import {
   IDeleteStory,
   IGetAllStory,
   IGetSingleStory,
+  ILikeStory,
 } from '../dto/story.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
@@ -90,6 +91,30 @@ export const deleteValidator = {
     return {
       params: this.schema.required().messages({
         'any.required': 'deletePost id param is required',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: this.schema.required().messages({
+        'any.required': 'deletePost id arg is required',
+      }),
+    }
+  },
+}
+
+export const likeValidator = {
+  schema: joi
+    .object<ILikeStory>()
+    .keys({
+      id: generalFields.mongoId.required(),
+    })
+    .required(),
+  http() {
+    return {
+      query: this.schema.required().messages({
+        'any.required': 'deletePost id query param is required',
       }),
     }
   },

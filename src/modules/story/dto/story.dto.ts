@@ -16,3 +16,5 @@ export interface IStoryId {
 export interface ICreateStory extends IStoryInputs {}
 
 export interface IDeleteStory extends IGetSingleStory {}
+
+export interface ILikeStory extends IGetSingleStory {}

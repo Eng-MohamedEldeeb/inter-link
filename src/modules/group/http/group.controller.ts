@@ -27,7 +27,7 @@ export class GroupController {
       const createGroupDTO: DTO.ICreateGroup = req.body
       return successResponse(res, {
         status: 201,
-        msg: 'Group has been created Successfully',
+        msg: 'Group is created Successfully',
         data: await this.GroupService.create({
           createdBy: _id,
           createGroupDTO,
@@ -47,7 +47,7 @@ export class GroupController {
 
       return successResponse(res, {
         status: 201,
-        msg: `Post has been uploaded to ${name} Group Successfully`,
+        msg: `Post is uploaded to ${name} Group Successfully`,
         data: await this.PostService.create({
           createdBy: _id,
           attachments,
@@ -68,7 +68,7 @@ export class GroupController {
       await this.PostService.removeFromGroup({ groupId, postId })
 
       return successResponse(res, {
-        msg: `Post has been deleted from ${name} Group Successfully`,
+        msg: `Post is deleted from ${name} Group Successfully`,
       })
     },
   )
@@ -110,7 +110,7 @@ export class GroupController {
     const editGroup: DTO.IEditGroup = req.body
 
     return successResponse(res, {
-      msg: 'Group has been modified successfully',
+      msg: 'Group is modified successfully',
       data: await this.GroupService.edit({ groupId, editGroup }),
     })
   })
@@ -121,7 +121,7 @@ export class GroupController {
       const path = req.file?.path!
 
       return successResponse(res, {
-        msg: 'Group has been modified successfully',
+        msg: 'Group is modified successfully',
         data: await this.GroupService.changeCover({ group, path }),
       })
     },
@@ -135,7 +135,7 @@ export class GroupController {
         state: isPrivateGroup,
       })
       return successResponse(res, {
-        msg: 'Group Visibility has been Changed successfully',
+        msg: 'Group Visibility is Changed successfully',
       })
     },
   )
@@ -145,7 +145,7 @@ export class GroupController {
       const { _id: groupId } = req.group
       await this.GroupService.delete(groupId)
       return successResponse(res, {
-        msg: 'Group has been deleted successfully',
+        msg: 'Group is deleted successfully',
       })
     },
   )

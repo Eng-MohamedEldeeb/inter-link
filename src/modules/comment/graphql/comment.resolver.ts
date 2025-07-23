@@ -4,7 +4,6 @@ import {
 } from '../../../common/interface/IGraphQL.interface'
 
 import { IEditComment } from '../dto/comment.dto'
-
 import { CommentService } from '../comment.service'
 
 export class CommentQueryResolver {
@@ -23,13 +22,26 @@ export class CommentQueryResolver {
 export class CommentMutationResolver {
   private static readonly CommentService = CommentService
 
+  static readonly like = async (
+    _: any,
+    context: IContext,
+  ): Promise<ISuccessResponse> => {
+    return {
+      msg: 'Comment is liked successfully',
+      data: await this.CommentService.like({
+        profile: context.profile,
+        comment: context.comment,
+      }),
+    }
+  }
+
   static readonly edit = async (
     args: IEditComment,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: commentId } = context.comment
     return {
-      msg: 'Comment has been modified successfully',
+      msg: 'Comment is modified successfully',
       status: 201,
       data: await this.CommentService.edit({
         id: commentId,
@@ -44,7 +56,7 @@ export class CommentMutationResolver {
   ): Promise<ISuccessResponse> => {
     const { _id: commentId } = context.comment
     return {
-      msg: 'Comment has been deleted successfully',
+      msg: 'Comment is deleted successfully',
       status: 201,
       data: await this.CommentService.deleteComment({ id: commentId }),
     }

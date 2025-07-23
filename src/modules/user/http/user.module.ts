@@ -47,28 +47,28 @@ router.patch(
 
 router.post(
   '/follow',
-  validate(validators.blockUserSchema.http()),
+  validate(validators.followUserSchema.http()),
   applyGuards(UserExistenceGuard),
   UserController.follow,
 )
 
 router.delete(
   '/un-follow',
-  validate(validators.blockUserSchema.http()),
+  validate(validators.unfollowUserSchema.http()),
   applyGuards(UserExistenceGuard),
   UserController.unfollow,
 )
 
 router.post(
   '/follow/accept-request',
-  validate(validators.blockUserSchema.http()),
+  validate(validators.acceptFollowRequestSchema.http()),
   applyGuards(UserExistenceGuard),
   UserController.acceptFollowRequest,
 )
 
 router.delete(
   '/follow/reject-request',
-  validate(validators.blockUserSchema.http()),
+  validate(validators.rejectFollowRequestSchema.http()),
   applyGuards(UserExistenceGuard),
   UserController.rejectFollowRequest,
 )

@@ -3,7 +3,7 @@ import {
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
 
-import { IEditReply } from '../dto/reply.dto'
+import { IEditReply, ILikeReply } from '../dto/reply.dto'
 
 import { ReplyService } from '../reply.service'
 
@@ -26,13 +26,27 @@ export class ReplyQueryResolver {
 export class ReplyMutationResolver {
   private static readonly ReplyService = ReplyService
 
+  static readonly like = async (
+    _: any,
+    context: IContext,
+  ): Promise<ISuccessResponse> => {
+    return {
+      msg: 'Reply is Liked successfully',
+      status: 201,
+      data: await this.ReplyService.like({
+        profile: context.profile,
+        reply: context.reply,
+      }),
+    }
+  }
+
   static readonly edit = async (
     args: IEditReply,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: replyId } = context.reply
     return {
-      msg: 'Reply has been modified successfully',
+      msg: 'Reply is modified successfully',
       status: 201,
       data: await this.ReplyService.edit({
         replyId,
@@ -47,7 +61,7 @@ export class ReplyMutationResolver {
   ): Promise<ISuccessResponse> => {
     const { _id: replyId } = context.reply
     return {
-      msg: 'Reply has been deleted successfully',
+      msg: 'Reply is deleted successfully',
       status: 201,
       data: await this.ReplyService.deleteReply({ replyId }),
     }

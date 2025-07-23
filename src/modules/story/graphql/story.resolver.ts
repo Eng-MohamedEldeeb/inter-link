@@ -32,14 +32,24 @@ export class StoryQueryResolver {
 export class StoryMutationResolver {
   private static readonly StoryService = StoryService
 
+  static readonly like = async (_: any, context: IContext) => {
+    await this.StoryService.like({
+      profile: context.profile,
+      story: context.story,
+    })
+    return {
+      msg: 'SStory is liked successfully',
+    }
+  }
+
   static readonly deleteStory = async (_: any, context: IContext) => {
     const { _id: profileId } = context.profile
     const { _id: storyId } = context.story
 
     return {
-      msg: 'Post has been deleted successfully',
+      msg: 'SStory is deleted successfully',
       status: 200,
-      data: this.StoryService.delete({ profileId, storyId }),
+      data: await this.StoryService.delete({ profileId, storyId }),
     }
   }
 }

@@ -18,8 +18,9 @@ export const mutationModule = (() => {
     type: returnedType({
       name: 'commentMutation',
       fields: {
+        likeComment: CommentController.likeComment(),
         edit: CommentController.edit(),
-        delete: CommentController.deleteComment(),
+        deleteComment: CommentController.deleteComment(),
       },
     }),
     resolve: () => true,

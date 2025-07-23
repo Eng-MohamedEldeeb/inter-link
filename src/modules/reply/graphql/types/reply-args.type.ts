@@ -8,6 +8,10 @@ export const getCommentReply = argsType<DTO.IGetCommentReplies>({
   commentId: { type: new GraphQLNonNull(GraphQLID) },
 })
 
+export const like = argsType<DTO.ILikeReply>({
+  replyId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
 export const edit = argsType<DTO.IEditReply>({
   content: { type: new GraphQLNonNull(GraphQLString) },
   replyId: { type: new GraphQLNonNull(GraphQLID) },

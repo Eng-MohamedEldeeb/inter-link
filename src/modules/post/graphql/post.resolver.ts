@@ -36,7 +36,7 @@ export class PostMutationResolver {
   static readonly edit = async (args: DTO.IEditPost, context: IContext) => {
     const { _id: postId } = context.post
     return {
-      msg: 'Post has been modified successfully',
+      msg: 'Post is modified successfully',
       status: 200,
       data: this.PostService.edit({ postId, editPost: args }),
     }
@@ -47,7 +47,7 @@ export class PostMutationResolver {
     const { _id: postId } = context.post
 
     return {
-      msg: 'Post has been saved successfully',
+      msg: 'Post is saved successfully',
       status: 200,
       data: this.PostService.save({ postId, profileId }),
     }
@@ -67,7 +67,7 @@ export class PostMutationResolver {
     const { _id: postId } = context.post
 
     return {
-      msg: 'Post has been archived successfully',
+      msg: 'Post is archived successfully',
       status: 200,
       data: this.PostService.archive(postId),
     }
@@ -76,7 +76,7 @@ export class PostMutationResolver {
     const { _id: postId } = context.post
 
     return {
-      msg: 'Post has been restored successfully',
+      msg: 'Post is restored successfully',
       status: 200,
       data: this.PostService.restore(postId),
     }
@@ -87,7 +87,7 @@ export class PostMutationResolver {
     const { _id: postId } = context.post
 
     return {
-      msg: 'Post has been deleted successfully',
+      msg: 'Post is deleted successfully',
       status: 200,
       data: this.PostService.delete({ profileId, postId }),
     }

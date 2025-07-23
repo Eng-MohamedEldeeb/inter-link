@@ -30,7 +30,7 @@ export const UserSchema = new Schema<IUser>(
 
     bio: {
       type: String,
-      maxlength: [700, 'bio limit has been reached [700 char only allowed]'],
+      maxlength: [700, 'bio limit is reached [700 char only allowed]'],
     },
 
     username: {

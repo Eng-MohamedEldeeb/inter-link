@@ -24,7 +24,7 @@ router.get(
 )
 
 router.post(
-  '/:postId',
+  '/add/:postId',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('attachment'),
   validate(validators.addValidator.http()),
   applyGuards(postExistenceGuard),
@@ -32,8 +32,15 @@ router.post(
   CommentController.addComment,
 )
 
+router.post(
+  '/like',
+  validate(validators.likeValidator.http()),
+  applyGuards(commentExistenceGuard),
+  CommentController.like,
+)
+
 router.patch(
-  '/:id',
+  '/edit',
   validate(validators.editValidator.http()),
   applyGuards(commentExistenceGuard, commentAuthorizationGuard),
   CommentController.edit,

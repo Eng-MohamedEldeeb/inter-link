@@ -16,3 +16,5 @@ export interface IGetSinglePost {
 export interface ICreatePost extends IPostInputs {}
 
 export interface IEditPost extends Pick<ICreatePost, 'title' | 'content'> {}
+
+export interface ILikePost extends IGetSinglePost {}

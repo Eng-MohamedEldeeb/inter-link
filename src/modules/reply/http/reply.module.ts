@@ -19,14 +19,21 @@ router.get(
 )
 
 router.post(
-  '/:commentId',
+  '/add/:commentId',
   validate(validators.addValidator.http()),
   applyGuards(commentExistenceGuard),
   ReplyController.reply,
 )
 
+router.post(
+  '/like',
+  validate(validators.likeValidator.http()),
+  applyGuards(replyExistenceGuard),
+  ReplyController.like,
+)
+
 router.patch(
-  '/:replyId',
+  '/edit',
   validate(validators.editValidator.http()),
   applyGuards(replyExistenceGuard, replyAuthorizationGuard),
   ReplyController.edit,

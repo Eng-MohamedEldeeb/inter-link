@@ -1,16 +1,20 @@
-import postRepository from '../../common/repositories/post.repository'
-import userRepository from '../../common/repositories/user.repository'
-
-import * as DTO from './dto/post.dto'
-
 import { MongoId } from './../../common/types/db/db.types'
 import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
 import { throwError } from '../../common/handlers/error-message.handler'
 import { IUser } from '../../db/interface/IUser.interface'
+import { IPost } from '../../db/interface/IPost.interface'
+import { ILikedPostNotification } from '../../db/interface/INotification.interface'
+
+import * as DTO from './dto/post.dto'
+
+import postRepository from '../../common/repositories/post.repository'
+import userRepository from '../../common/repositories/user.repository'
+import notificationsService from '../../common/services/notifications/notifications.service'
 
 export class PostService {
   private static readonly postRepository = postRepository
   private static readonly userRepository = userRepository
+  private static readonly notificationsService = notificationsService
 
   static readonly getAll = async (query: DTO.IGetAll) => {
     const { page, limit } = query
@@ -166,20 +170,51 @@ export class PostService {
 
   static readonly like = async ({
     profile,
-    postId,
+    post,
   }: {
     profile: IUser
-    postId: string
+    post: IPost
   }) => {
-    const postDoc = await this.postRepository.findByIdAndUpdate({
+    const { _id: postId, likedBy, createdBy, attachments } = post
+    const { _id: profileId, username, avatar, fullName } = profile
+
+    const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
+
+    if (isAlreadyLiked) {
+      await this.postRepository.findByIdAndUpdate({
+        _id: postId,
+        data: { $pull: { likedBy: profileId } },
+        options: {
+          lean: true,
+          new: true,
+        },
+      })
+      return { msg: 'Done' }
+    }
+
+    await this.postRepository.findByIdAndUpdate({
       _id: postId,
-      data: { $addToSet: { likedBy: profile._id } },
+      data: { $addToSet: { likedBy: profileId } },
       options: {
         lean: true,
         new: true,
         projection: { attachments: 1, createdBy: 1 },
       },
     })
+
+    const notification: ILikedPostNotification = {
+      title: `${username} Liked Your Post ❤️`,
+      on: { _id: postId, attachments },
+      from: { _id: profileId, avatar, fullName, username },
+      refTo: 'Post',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: createdBy,
+      notificationDetails: notification,
+    })
+
+    return { msg: 'Post is liked successfully' }
   }
 
   static readonly unlike = async ({

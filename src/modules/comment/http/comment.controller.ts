@@ -8,14 +8,8 @@ import { CommentService } from '../comment.service'
 
 import * as DTO from '../dto/comment.dto'
 
-import onlineUsersController from '../../../common/services/notifications/online-users.controller'
-import notificationsService from '../../../common/services/notifications/notification.service'
-import { ICommentedOnPostNotification } from '../../../db/interface/INotification.interface'
-
 export class CommentController {
-  protected static readonly CommentService = CommentService
-  protected static readonly onlineUsersController = onlineUsersController
-  protected static readonly notificationsService = notificationsService
+  private static readonly CommentService = CommentService
 
   static readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -30,42 +24,35 @@ export class CommentController {
       const attachment = req.cloudFile
       const { content }: Pick<DTO.IAddComment, 'content'> = req.body
 
-      const { _id: profileId, avatar, username, fullName } = req.profile
-      const { _id: postId, createdBy, attachments } = req.post
-
       await this.CommentService.addComment({
-        postId,
         attachment,
         content,
-        createdBy: profileId,
-      })
-
-      const notification: ICommentedOnPostNotification = {
-        title: `${username} Commented On Your Post! 💛`,
-        content,
-        from: { _id: profileId, avatar, username, fullName },
-        on: { _id: postId, attachments },
-        refTo: 'Post',
-      }
-
-      await this.notificationsService.sendNotification({
-        to: createdBy,
-        notification,
+        profile: req.profile,
+        post: req.post,
       })
 
       return successResponse(res, {
-        msg: 'Comment has been added Successfully',
+        msg: 'Comment added Successfully',
         status: 201,
       })
     },
   )
+
+  static readonly like = asyncHandler(async (req: IRequest, res: Response) => {
+    const { msg } = await this.CommentService.like({
+      profile: req.profile,
+      comment: req.comment,
+    })
+
+    return successResponse(res, { msg })
+  })
 
   static readonly edit = asyncHandler(
     async (req: IRequest<DTO.ICommentId>, res: Response) => {
       const { commentId } = req.params
       const { content }: DTO.IEditComment = req.body
       return successResponse(res, {
-        msg: 'Comment has been modified Successfully',
+        msg: 'Comment is modified Successfully',
         data: await this.CommentService.edit({
           id: commentId,
           content,
@@ -79,7 +66,7 @@ export class CommentController {
       const { commentId } = req.params
       await this.CommentService.deleteComment({ id: commentId })
       return successResponse(res, {
-        msg: 'Comment has been deleted successfully',
+        msg: 'Comment is deleted successfully',
       })
     },
   )

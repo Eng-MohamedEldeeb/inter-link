@@ -36,8 +36,6 @@ class IsAuthenticatedGuard implements GuardActivator {
       return this.socketAuthentication(socket)
     }
 
-    console.log('IsAuthenticatedGuard')
-
     return false
   }
 

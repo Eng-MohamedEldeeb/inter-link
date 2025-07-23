@@ -6,26 +6,22 @@ import {
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
 import { CommentResponse } from './types/comment-response.type'
+import { validate } from '../../../common/middlewares/validation/validation.middleware'
 
+import * as resolvers from './comment.resolver'
 import * as args from './types/comment-args.type'
+import * as validators from './../validators/comment.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
 import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
 
-import {
-  CommentMutationResolver,
-  CommentQueryResolver,
-} from './comment.resolver'
-
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import * as validators from './../validators/comment.validators'
-
 export class CommentController {
-  protected static readonly CommentQueryResolver = CommentQueryResolver
-  protected static readonly CommentMutationResolver = CommentMutationResolver
+  protected static readonly CommentQueryResolver =
+    resolvers.CommentQueryResolver
+  protected static readonly CommentMutationResolver =
+    resolvers.CommentMutationResolver
 
   // Queries:
   static readonly getSingleComment = (): IQueryController => {
@@ -44,6 +40,24 @@ export class CommentController {
   }
 
   // Mutations:
+  static readonly likeComment = (): IMutationController => {
+    return {
+      type: returnedResponseType({
+        name: 'likeCommentMutation',
+      }),
+      args: args.like,
+      resolve: applyResolver({
+        middlewares: [validate(validators.editValidator.graphQL())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          commentExistenceGuard,
+        ],
+        resolver: this.CommentMutationResolver.like,
+      }),
+    }
+  }
+
   static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
@@ -55,7 +69,6 @@ export class CommentController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          postExistenceGuard,
           commentExistenceGuard,
           commentAuthorizationGuard,
         ],
@@ -75,7 +88,6 @@ export class CommentController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          postExistenceGuard,
           commentExistenceGuard,
           commentAuthorizationGuard,
         ],

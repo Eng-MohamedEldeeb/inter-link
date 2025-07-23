@@ -55,7 +55,7 @@ export class AuthController {
       const resetPassword: DTO.IResetPassword = req.body
       await this.AuthService.resetPassword(resetPassword)
       return successResponse(res, {
-        msg: 'password has been reset successfully',
+        msg: 'password is reset successfully',
       })
     },
   )

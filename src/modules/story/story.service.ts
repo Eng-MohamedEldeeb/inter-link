@@ -1,15 +1,16 @@
-import storyRepository from '../../common/repositories/story.repository'
-
 import { MongoId } from '../../common/types/db/db.types'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { ICreateStory } from './dto/story.dto'
-import { TNotificationDetails } from '../../db/types/notification.type'
+import { IStory } from '../../db/interface/IStory.interface'
+import { ILikedStoryNotification } from '../../db/interface/INotification.interface'
 import { IUser } from '../../db/interface/IUser.interface'
-import onlineUsersController from '../../common/services/notifications/online-users.controller'
+
+import storyRepository from '../../common/repositories/story.repository'
+import notificationsService from '../../common/services/notifications/notifications.service'
 
 export class StoryService {
   private static readonly storyRepository = storyRepository
-  private static readonly onlineUsersController = onlineUsersController
+  private static readonly notificationsService = notificationsService
 
   static readonly getAll = async (userId: MongoId) => {
     const stories = await this.storyRepository.find({
@@ -41,6 +42,55 @@ export class StoryService {
     })
   }
 
+  static readonly like = async ({
+    profile,
+    story,
+  }: {
+    profile: IUser
+    story: IStory
+  }) => {
+    const { _id: storyId, likedBy, createdBy, attachment } = story
+    const { _id: profileId, username, avatar, fullName } = profile
+
+    const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
+
+    if (isAlreadyLiked) {
+      await this.storyRepository.findByIdAndUpdate({
+        _id: storyId,
+        data: { $pull: { likedBy: profileId } },
+        options: {
+          lean: true,
+          new: true,
+        },
+      })
+      return { msg: 'Done' }
+    }
+
+    await this.storyRepository.findByIdAndUpdate({
+      _id: storyId,
+      data: { $addToSet: { likedBy: profile._id } },
+      options: {
+        lean: true,
+        new: true,
+        projection: { attachments: 1, createdBy: 1 },
+      },
+    })
+
+    const notification: ILikedStoryNotification = {
+      title: `${username} Liked Your Story ❤️`,
+      on: { _id: storyId, attachment },
+      from: { _id: profileId, avatar, fullName, username },
+      refTo: 'Story',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: createdBy,
+      notificationDetails: notification,
+    })
+
+    return { msg: 'Story is liked successfully' }
+  }
+
   static readonly delete = async ({
     profileId,
     storyId,
@@ -52,35 +102,6 @@ export class StoryService {
       filter: {
         $and: [{ _id: storyId }, { createdBy: profileId }],
       },
-    })
-  }
-
-  static readonly like = async ({
-    profile,
-    storyId,
-  }: {
-    profile: IUser
-    storyId: string
-  }) => {
-    const storyDoc = await this.storyRepository.findByIdAndUpdate({
-      _id: storyId,
-      data: { $addToSet: { likedBy: profile._id } },
-      options: { lean: true, new: true, projection: { createdBy: 1 } },
-    })
-
-    // const id = this.onlineUsersController .get(storyDoc!.createdBy)
-  }
-
-  static readonly unlike = async ({
-    profileId,
-    storyId,
-  }: {
-    storyId: string
-    profileId: MongoId
-  }) => {
-    await this.storyRepository.findByIdAndUpdate({
-      _id: storyId,
-      data: { $pull: { likedBy: profileId } },
     })
   }
 }

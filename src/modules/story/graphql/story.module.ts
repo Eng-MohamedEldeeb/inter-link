@@ -19,6 +19,7 @@ export const mutationModule = (() => {
     type: returnedType({
       name: 'storyMutation',
       fields: {
+        like: StoryController.like(),
         deleteStory: StoryController.deleteStory(),
       },
     }),

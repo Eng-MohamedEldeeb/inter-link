@@ -6,9 +6,12 @@ import { MongoId } from '../../common/types/db/db.types'
 import { UserViewersStrategy } from './helpers/user-viewers.strategy'
 import { IFollowedUserNotification } from '../../db/interface/INotification.interface'
 
+import notificationsService from '../../common/services/notifications/notifications.service'
+
 export class UserService {
   private static readonly userRepository = userRepository
   private static readonly UserViewersStrategy = UserViewersStrategy
+  private static readonly notificationsService = notificationsService
 
   static readonly getUserProfile = async ({
     profileId,
@@ -117,18 +120,30 @@ export class UserService {
   }
 
   static readonly follow = async ({
-    userId,
-    userProfileState,
-    profileId,
+    user,
+    profile,
   }: {
-    userId: MongoId
-    userProfileState: boolean
-    profileId: MongoId
+    user: IUser
+    profile: IUser
   }) => {
-    if (userProfileState) {
+    const { _id: userId, isPrivateProfile } = user
+    const { _id: profileId, avatar, fullName, username } = profile
+
+    if (isPrivateProfile) {
       await this.userRepository.findByIdAndUpdate({
         _id: userId,
         data: { $addToSet: { requests: profileId } },
+      })
+
+      const notification: IFollowedUserNotification = {
+        title: `${username} Requested To Follow You 💛`,
+        from: { _id: profileId, avatar, fullName, username },
+        refTo: 'User',
+      }
+
+      return await this.notificationsService.sendNotification({
+        toUser: userId,
+        notificationDetails: notification,
       })
     }
 
@@ -141,16 +156,34 @@ export class UserService {
       _id: profileId,
       data: { $addToSet: { following: userId } },
     })
+
+    const notification: IFollowedUserNotification = {
+      title: `${username} Started Following You 💚`,
+      from: { _id: profileId, avatar, fullName, username },
+      refTo: 'User',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: userId,
+      notificationDetails: notification,
+    })
   }
 
   static readonly acceptFollowRequest = async ({
     profile,
     user,
   }: {
-    profile: Pick<IUser, '_id' | 'isPrivateProfile' | 'requests'>
-    user: Pick<IUser, '_id'>
+    profile: IUser
+    user: IUser
   }) => {
-    const { _id: profileId, isPrivateProfile, requests } = profile
+    const {
+      _id: profileId,
+      isPrivateProfile,
+      requests,
+      avatar,
+      username,
+      fullName,
+    } = profile
     const { _id: userId } = user
 
     const inRequests = requests.some(id => id.equals(userId))
@@ -171,6 +204,17 @@ export class UserService {
     await this.userRepository.findByIdAndUpdate({
       _id: userId,
       data: { $addToSet: { following: profileId } },
+    })
+
+    const notification: IFollowedUserNotification = {
+      title: `${username} Accepted Your Follow Request 🩵`,
+      from: { _id: profileId, username, fullName, avatar },
+      refTo: 'User',
+    }
+
+    await this.notificationsService.sendNotification({
+      toUser: userId,
+      notificationDetails: notification,
     })
   }
 

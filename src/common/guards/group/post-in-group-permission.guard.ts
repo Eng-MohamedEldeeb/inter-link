@@ -35,11 +35,6 @@ class PostInGroupPermission extends GuardActivator {
   protected readonly postPermission = async () => {
     if (this.profileId.equals(this.createdBy)) return true
 
-    console.log({
-      userInGroupMembers: this.userInGroupMembers(),
-      userInGroupAdmins: this.userInGroupAdmins(),
-    })
-
     const allowedToPost = this.userInGroupMembers() || this.userInGroupAdmins()
 
     return allowedToPost

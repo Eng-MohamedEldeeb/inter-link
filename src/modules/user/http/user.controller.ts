@@ -13,12 +13,8 @@ import {
   IUnFollowUser,
 } from '../dto/user.dto'
 
-import notificationsService from '../../../common/services/notifications/notification.service'
-import { IFollowedUserNotification } from '../../../db/interface/INotification.interface'
-
 export class UserController {
   private static readonly UserService = UserService
-  private static readonly notificationsService = notificationsService
 
   static readonly getUserProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -63,7 +59,7 @@ export class UserController {
       const { _id: profileId } = req.profile
       await this.UserService.blockUser(profileId, id)
       return successResponse(res, {
-        msg: 'user has been blocked successfully',
+        msg: 'user is blocked successfully',
       })
     },
   )
@@ -74,60 +70,33 @@ export class UserController {
       const { _id: profileId, blockedUsers } = req.profile
       await this.UserService.unblockUser({ userId, profileId, blockedUsers })
       return successResponse(res, {
-        msg: 'user has been un-blocked successfully',
+        msg: 'user is un-blocked successfully',
       })
     },
   )
 
   static readonly follow = asyncHandler(
     async (req: IRequest<IFollowUser>, res: Response) => {
-      const { _id: userId, isPrivateProfile } = req.user
-      const { _id: profileId, avatar, fullName, username } = req.profile
-
       await this.UserService.follow({
-        userId,
-        userProfileState: isPrivateProfile,
-        profileId,
-      })
-      const notification: IFollowedUserNotification = {
-        title: `${username} Requested To Follow You!`,
-        from: { _id: profileId, avatar, fullName, username },
-        refTo: 'User',
-      }
-
-      await this.notificationsService.sendNotification({
-        to: userId,
-        notification,
+        user: req.user,
+        profile: req.profile,
       })
 
       return successResponse(res, {
-        msg: 'followed successfully',
+        msg: 'User is Followed Successfully',
       })
     },
   )
 
   static readonly acceptFollowRequest = asyncHandler(
     async (req: IRequest<IAcceptFollowRequest>, res: Response) => {
-      const { _id: profileId, avatar, username, fullName } = req.profile
-      const { _id: userId } = req.user
-
       await this.UserService.acceptFollowRequest({
         user: req.user,
         profile: req.profile,
       })
 
-      const notification: IFollowedUserNotification = {
-        title: `${username} Accepted Your Follow Request`,
-        from: { _id: profileId, username, fullName, avatar },
-        refTo: 'User',
-      }
-      await this.notificationsService.sendNotification({
-        to: userId,
-        notification,
-      })
-
       return successResponse(res, {
-        msg: 'Follow request has been accepted successfully',
+        msg: 'Follow request is Accepted Successfully',
       })
     },
   )
@@ -159,7 +128,7 @@ export class UserController {
       })
 
       return successResponse(res, {
-        msg: 'Follow request has been rejected successfully',
+        msg: 'Follow request is rejected successfully',
       })
     },
   )

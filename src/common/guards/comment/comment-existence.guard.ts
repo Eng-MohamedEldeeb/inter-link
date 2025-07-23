@@ -23,7 +23,7 @@ class CommentExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleComment & ICommentId>()
-      const { id, commentId } = req.params
+      const { id, commentId } = { ...req.params, ...req.query }
 
       const isExistedComment = await this.commentRepository.findOne({
         filter: { $or: [{ _id: id }, { _id: commentId }] },

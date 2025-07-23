@@ -55,7 +55,7 @@ export class AuthResolver {
     _: any,
   ): Promise<ISuccessResponse> => {
     return {
-      msg: 'password has been reset successfully',
+      msg: 'password is reset successfully',
       status: 200,
       data: await this.AuthService.resetPassword(args),
     }
