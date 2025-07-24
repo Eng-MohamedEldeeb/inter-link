@@ -77,13 +77,13 @@ export class UserController {
 
   static readonly follow = asyncHandler(
     async (req: IRequest<IFollowUser>, res: Response) => {
-      await this.UserService.follow({
+      const { msg } = await this.UserService.follow({
         user: req.user,
         profile: req.profile,
       })
 
       return successResponse(res, {
-        msg: 'User is Followed Successfully',
+        msg,
       })
     },
   )
