@@ -63,11 +63,14 @@ class UserExistenceGuard extends GuardActivator {
       },
       populate: [{ path: 'posts' }],
       projection: {
+        phone: 0,
         password: 0,
         oldPasswords: 0,
-        phone: 0,
         'avatar.public_id': 0,
         'avatar.folderPath': 0,
+        blockedUsers: 0,
+        savedPosts: 0,
+        requests: 0,
       },
     })
 

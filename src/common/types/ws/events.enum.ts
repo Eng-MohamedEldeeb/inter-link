@@ -1,4 +1,4 @@
 export enum EventType {
   notification = 'notification',
-  missedNotifications = 'missed-notifications',
+  newNotifications = 'new-notifications',
 }

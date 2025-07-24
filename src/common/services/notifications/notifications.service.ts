@@ -3,10 +3,10 @@ import { io } from '../../../main'
 import { EventType } from '../../types/ws/events.enum'
 import { MongoId } from '../../types/db/db.types'
 import { TNotification } from '../../../db/types/document.type'
+import { INotificationDetails } from '../../../db/interface/INotification.interface'
 
 import onlineUsersController from './online-users.controller'
 import notificationRepository from '../../repositories/notification.repository'
-import { INotificationDetails } from '../../../db/interface/INotification.interface'
 
 class NotificationsService {
   protected readonly onlineUsersController = onlineUsersController
@@ -20,10 +20,10 @@ class NotificationsService {
   protected readonly getUserNotifications = async () => {
     return await this.notificationRepository.findOne({
       filter: { belongsTo: this.userId },
-      projection: { missed: 1, received: 1 },
+      projection: { received: 1, seen: 1 },
       populate: [
         {
-          path: 'missed.from',
+          path: 'received.from',
           select: {
             _id: 1,
             username: 1,
@@ -36,7 +36,7 @@ class NotificationsService {
           options: { lean: true },
         },
         {
-          path: 'missed.on',
+          path: 'received.on',
           select: {
             _id: 1,
             username: 1,
@@ -55,52 +55,56 @@ class NotificationsService {
   }
 
   protected updateUserNotifications = async (
-    notificationDetails: INotificationDetails,
+    notificationDetails: Omit<
+      INotificationDetails,
+      '__v' | 'updatedAt' | 'createdAt' | '_id'
+    >,
   ) => {
-    const { received } = this.oldNotifications
+    const { seen } = this.oldNotifications
+
+    console.log({ updateUserNotifications: this.oldNotifications })
+
     const { title, from, refTo, on } = notificationDetails
 
     return await this.notificationRepository.findByIdAndUpdate({
       _id: this.oldNotifications._id,
       data: {
-        received: [
+        seen: [
           {
             title,
             from,
             refTo,
             ...(on && { on }),
           },
-          ...(received && received),
+          ...(seen && seen.length > 0 ? seen : []),
         ],
       },
     })
   }
 
-  protected readonly markAsReceived = async () => {
-    const { _id, missed, received } = this.oldNotifications
-    console.log({ oldNotifications: this.oldNotifications })
+  protected readonly markAsSeen = async () => {
+    const { _id, received, seen } = this.oldNotifications
+
+    console.log({ markAsSeen: this.oldNotifications })
 
     return await this.notificationRepository.findByIdAndUpdate({
       _id,
       data: {
-        $unset: { missed: 1 },
-        received: [
-          ...missed,
-          ...(received && received.length > 0 ? received : []),
-        ],
+        $unset: { received: 1 },
+        seen: [...received, ...(seen && seen.length > 0 ? seen : [])],
       },
-      options: { new: true },
+      options: { received: true },
     })
   }
 
-  public readonly readMissedNotifications = async ({
+  public readonly readReceivedNotifications = async ({
     userId,
     socketId,
   }: {
     userId: MongoId
     socketId: string
   }) => {
-    const event = this.eventType.missedNotifications
+    const event = this.eventType.newNotifications
 
     this.userId = userId
 
@@ -108,18 +112,20 @@ class NotificationsService {
 
     if (!oldNotifications) return
 
-    if (oldNotifications.missed.length === 0) return
+    if (oldNotifications.received.length === 0) return
 
     this.oldNotifications = oldNotifications
 
-    for (const notification of this.oldNotifications.missed) {
+    console.log({ readReceivedNotifications: this.oldNotifications })
+
+    for (const notification of this.oldNotifications.received) {
       io.to(socketId).emit(event, notification)
     }
 
-    return await this.markAsReceived()
+    return await this.markAsSeen()
   }
 
-  protected readonly addToMissedNotifications = async (
+  protected readonly addToReceivedNotifications = async (
     notificationDetails: INotificationDetails,
   ) => {
     const notifications = await this.getUserNotifications()
@@ -127,12 +133,12 @@ class NotificationsService {
     if (!notifications)
       return await this.notificationRepository.create({
         belongsTo: this.userId,
-        missed: [notificationDetails],
+        received: [notificationDetails],
       })
 
     return await this.notificationRepository.findOneAndUpdate({
       filter: { belongsTo: this.userId },
-      data: { $push: { missed: notificationDetails } },
+      data: { $push: { received: notificationDetails } },
     })
   }
 
@@ -151,7 +157,7 @@ class NotificationsService {
     )
 
     if (!socketId)
-      return await this.addToMissedNotifications(notificationDetails)
+      return await this.addToReceivedNotifications(notificationDetails)
 
     this.socketId = socketId
 
@@ -160,11 +166,13 @@ class NotificationsService {
     if (!userNotifications) {
       await this.notificationRepository.create({
         belongsTo: this.userId,
-        received: [notificationDetails],
+        seen: [notificationDetails],
       })
 
       return io.to(this.socketId).emit(event, notificationDetails)
     }
+
+    this.oldNotifications = userNotifications
 
     await this.updateUserNotifications(notificationDetails)
 

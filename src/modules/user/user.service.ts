@@ -9,9 +9,28 @@ import { IFollowedUserNotification } from '../../db/interface/INotification.inte
 import notificationsService from '../../common/services/notifications/notifications.service'
 
 export class UserService {
-  private static readonly userRepository = userRepository
-  private static readonly UserViewersStrategy = UserViewersStrategy
-  private static readonly notificationsService = notificationsService
+  protected static readonly userRepository = userRepository
+  protected static readonly UserViewersStrategy = UserViewersStrategy
+  protected static readonly notificationsService = notificationsService
+  protected static views: { viewer: MongoId; totalVisits: number }[]
+  protected static userId: MongoId
+  protected static profileId: MongoId
+
+  protected static readonly updateUserViewers = async () => {
+    const inViews = this.views.some(views =>
+      views.viewer.equals(this.profileId),
+    )
+    if (inViews)
+      return await this.UserViewersStrategy.incUserProfileViewersCount({
+        userId: this.userId,
+        profileId: this.profileId,
+      })
+
+    return await this.UserViewersStrategy.addViewerToProfile({
+      userId: this.userId,
+      profileId: this.profileId,
+    })
+  }
 
   static readonly getUserProfile = async ({
     profileId,
@@ -20,31 +39,18 @@ export class UserService {
     profileId: MongoId
     user: Omit<IUser, 'password' | 'oldPasswords'>
   }) => {
-    if (user.isPrivateProfile)
-      return {
-        _id: user._id,
-        avatar: user.avatar,
-        fullName: user.fullName,
-        totalPosts: user.posts.length ?? 0,
-        totalFollowers: user.followers.length ?? 0,
-        totalFollowing: user.following.length ?? 0,
-        isPrivateProfile: user.isPrivateProfile,
-      }
+    this.profileId = profileId
+    this.userId = user._id
+    console.log({ user })
 
-    const isInViewersList = user.viewers.some(({ viewer }) =>
-      viewer.equals(profileId),
-    )
+    if (user.isPrivateProfile && user.viewers) {
+      this.views = user.viewers
+      console.log({ user })
 
-    if (isInViewersList)
-      return await this.UserViewersStrategy.incUserProfileViewersCount({
-        userId: user._id,
-        profileId,
-      })
+      return await this.updateUserViewers()
+    }
 
-    return await this.UserViewersStrategy.addViewerToProfile({
-      userId: user._id,
-      profileId,
-    })
+    return user
   }
 
   static readonly getUseFollowers = async (
@@ -129,6 +135,20 @@ export class UserService {
     const { _id: userId, isPrivateProfile } = user
     const { _id: profileId, avatar, fullName, username } = profile
 
+    const checkFollowing = await this.userRepository.findOne({
+      filter: {
+        $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
+      },
+    })
+
+    const { following, requests } = checkFollowing!
+
+    const alreadyFollowed = following.some(userId => userId.equals(profileId))
+    const alreadyRequested = requests.some(userId => userId.equals(profileId))
+
+    if (alreadyFollowed) return { msg: 'User is Followed Successfully' }
+    if (alreadyRequested) return { msg: 'Follow Request sent Successfully' }
+
     if (isPrivateProfile) {
       await this.userRepository.findByIdAndUpdate({
         _id: userId,
@@ -141,10 +161,12 @@ export class UserService {
         refTo: 'User',
       }
 
-      return await this.notificationsService.sendNotification({
+      await this.notificationsService.sendNotification({
         toUser: userId,
         notificationDetails: notification,
       })
+
+      return { msg: 'Follow Request sent Successfully' }
     }
 
     await this.userRepository.findByIdAndUpdate({
@@ -167,6 +189,8 @@ export class UserService {
       toUser: userId,
       notificationDetails: notification,
     })
+
+    return { msg: 'User is Followed Successfully' }
   }
 
   static readonly acceptFollowRequest = async ({

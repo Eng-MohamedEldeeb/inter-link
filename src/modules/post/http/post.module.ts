@@ -22,7 +22,7 @@ router.get(
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  applyGuards(postExistenceGuard),
+  applyGuards([postExistenceGuard]),
   PostController.getSingle,
 )
 
@@ -37,49 +37,49 @@ router.post(
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards(postExistenceGuard, postAuthorizationGuard),
+  applyGuards([postExistenceGuard, postAuthorizationGuard]),
   PostController.edit,
 )
 
 router.post(
   '/save',
   validate(validators.saveValidator.http()),
-  applyGuards(postExistenceGuard),
+  applyGuards([postExistenceGuard]),
   PostController.save,
 )
 
 router.post(
   '/shared',
   validate(validators.sharedValidator.http()),
-  applyGuards(postExistenceGuard, postSharePermissionGuard),
+  applyGuards([postExistenceGuard, postSharePermissionGuard]),
   PostController.shared,
 )
 
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards(postExistenceGuard),
+  applyGuards([postExistenceGuard]),
   PostController.like,
 )
 
 router.patch(
   '/archive',
   validate(validators.archiveValidator.http()),
-  applyGuards(postExistenceGuard, postAuthorizationGuard),
+  applyGuards([postExistenceGuard, postAuthorizationGuard]),
   PostController.archive,
 )
 
 router.patch(
   '/restore',
   validate(validators.restoreValidator.http()),
-  applyGuards(postExistenceGuard, postAuthorizationGuard),
+  applyGuards([postExistenceGuard, postAuthorizationGuard]),
   PostController.restore,
 )
 
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),
-  applyGuards(postExistenceGuard, postAuthorizationGuard),
+  applyGuards([postExistenceGuard, postAuthorizationGuard]),
   PostController.delete,
 )
 

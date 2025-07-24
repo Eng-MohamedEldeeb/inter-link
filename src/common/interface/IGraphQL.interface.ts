@@ -12,6 +12,10 @@ import { IComment } from '../../db/interface/IComment.interface'
 import { IReply } from '../../db/interface/IReply.interface'
 import { IStory } from '../../db/interface/IStory.interface'
 import { IGroup } from '../../db/interface/IGroup.interface'
+import {
+  INotificationDetails,
+  INotifications,
+} from '../../db/interface/INotification.interface'
 
 export type ControllerParams = (
   args: any,
@@ -58,6 +62,7 @@ export interface ISuccessResponse {
 export interface IContext {
   authorization: string
   tokenPayload: IPayload
+
   profile: IUser
   user: IUser
   story: IStory
@@ -65,4 +70,6 @@ export interface IContext {
   comment: IComment
   reply: IReply
   group: IGroup
+  notifications: INotifications
+  notification: Partial<INotificationDetails>
 }

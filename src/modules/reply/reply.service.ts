@@ -118,11 +118,11 @@ export class ReplyService {
   }
 
   static readonly deleteReply = async ({ replyId }: DTO.IDeleteReply) => {
-    const deletedReply = await this.commentRepository.findByIdAndDelete({
+    const isDeletedReply = await this.commentRepository.findByIdAndDelete({
       _id: replyId,
     })
     return (
-      deletedReply ??
+      isDeletedReply ??
       throwError({
         msg: "In-valid Reply id or Reply doesn't exist",
         status: 404,

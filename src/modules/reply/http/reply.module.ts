@@ -14,34 +14,34 @@ const router: Router = Router({ mergeParams: true })
 router.get(
   '/:commentId',
   validate(validators.getCommentRepliesValidator.http()),
-  applyGuards(replyExistenceGuard),
+  applyGuards([replyExistenceGuard]),
   ReplyController.getCommentReplies,
 )
 
 router.post(
   '/add/:commentId',
   validate(validators.addValidator.http()),
-  applyGuards(commentExistenceGuard),
+  applyGuards([commentExistenceGuard]),
   ReplyController.reply,
 )
 
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards(replyExistenceGuard),
+  applyGuards([replyExistenceGuard]),
   ReplyController.like,
 )
 
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards(replyExistenceGuard, replyAuthorizationGuard),
+  applyGuards([replyExistenceGuard, replyAuthorizationGuard]),
   ReplyController.edit,
 )
 
 router.delete(
   '/:replyId',
-  applyGuards(replyExistenceGuard, replyAuthorizationGuard),
+  applyGuards([replyExistenceGuard, replyAuthorizationGuard]),
   validate(validators.deleteValidator.http()),
   ReplyController.deleteReply,
 )

@@ -111,11 +111,11 @@ export class CommentService {
   }
 
   static readonly deleteComment = async ({ id }: DTO.IDeleteComment) => {
-    const deletedComment = await this.commentRepository.findByIdAndDelete({
+    const isDeletedComment = await this.commentRepository.findByIdAndDelete({
       _id: id,
     })
     return (
-      deletedComment ??
+      isDeletedComment ??
       throwError({
         msg: "In-valid Comment id or comment doesn't exist",
         status: 404,

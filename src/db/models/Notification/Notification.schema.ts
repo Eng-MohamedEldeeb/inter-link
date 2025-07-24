@@ -1,46 +1,15 @@
+import { INotifications } from './../../interface/INotification.interface'
 import { Schema, SchemaTypes } from 'mongoose'
 
-import {
-  INotification,
-  INotificationDetails,
-} from '../../interface/INotification.interface'
+import { INotificationDetails } from '../../interface/INotification.interface'
 import { refTo } from '../../types/notification.type'
 
-export const NotificationSchema = new Schema<INotification>(
+export const NotificationSchema = new Schema<INotifications>(
   {
     belongsTo: {
       type: SchemaTypes.ObjectId,
       ref: 'User',
       unique: [true, '"belongsTo" Id already exists'],
-    },
-
-    missed: {
-      type: [
-        {
-          title: {
-            type: String,
-          },
-
-          content: String,
-
-          from: {
-            type: SchemaTypes.ObjectId,
-            ref: 'User',
-          },
-
-          on: {
-            type: SchemaTypes.ObjectId,
-            ref: function (this: INotificationDetails) {
-              return this.refTo
-            },
-          },
-
-          refTo: {
-            type: String,
-            enum: refTo,
-          },
-        },
-      ],
     },
 
     received: {
@@ -68,6 +37,45 @@ export const NotificationSchema = new Schema<INotification>(
             type: String,
             enum: refTo,
           },
+
+          createdAt: {
+            type: Date,
+            default: Date.now(),
+          },
+        },
+      ],
+    },
+
+    seen: {
+      type: [
+        {
+          title: {
+            type: String,
+          },
+
+          content: String,
+
+          from: {
+            type: SchemaTypes.ObjectId,
+            ref: 'User',
+          },
+
+          on: {
+            type: SchemaTypes.ObjectId,
+            ref: function (this: INotificationDetails) {
+              return this.refTo
+            },
+          },
+
+          refTo: {
+            type: String,
+            enum: refTo,
+          },
+
+          createdAt: {
+            type: Date,
+            default: Date.now(),
+          },
         },
       ],
     },
@@ -79,8 +87,8 @@ export const NotificationSchema = new Schema<INotification>(
   },
 )
 
-NotificationSchema.virtual('totalMissedNotifications').get(function (
-  this: INotification,
+NotificationSchema.virtual('totalReceivedNotifications').get(function (
+  this: INotifications,
 ) {
-  return this.missed && this.missed.length ? this.missed.length : 0
+  return this.received && this.received.length ? this.received.length : 0
 })

@@ -4,13 +4,21 @@ import { IUser } from './IUser.interface'
 import { IPost } from './IPost.interface'
 import { IComment } from './IComment.interface'
 import { IStory } from './IStory.interface'
+import { IMongoDoc } from './IMongo-doc.interface'
 
 export interface INotificationDetails {
+  _id?: MongoId
   title: string
-  from: MongoId | Partial<IUser> | Partial<IPost> | Partial<IComment>
+  from: MongoId | Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   refTo: keyof typeof refTo
-  on?: MongoId | Partial<IUser> | Partial<IPost> | Partial<IComment>
+  on?:
+    | MongoId
+    | Pick<IPost, '_id' | 'attachments'>
+    | Pick<IComment, '_id' | 'attachment'>
+    | Pick<IStory, '_id' | 'attachment'>
+  createdAt?: Date
 }
+
 export interface IFollowedUserNotification extends INotificationDetails {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
 }
@@ -40,8 +48,9 @@ export interface ILikedStoryNotification extends INotificationDetails {
   on: Pick<IStory, '_id' | 'attachment'>
 }
 
-export interface INotification {
-  missed: INotificationDetails[]
+export interface INotifications extends IMongoDoc {
   received: INotificationDetails[]
+  seen: INotificationDetails[]
   belongsTo: MongoId
+  totalReceivedNotifications: number
 }

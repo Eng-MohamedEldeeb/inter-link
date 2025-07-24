@@ -17,14 +17,14 @@ const router: Router = Router()
 router.get(
   '/',
   validate(validators.getAllValidator.http()),
-  applyGuards(userExistenceGuard),
+  applyGuards([userExistenceGuard]),
   StoryController.getAll,
 )
 
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  applyGuards(storyExistenceGuard, storyViewPermissionGuard),
+  applyGuards([storyExistenceGuard, storyViewPermissionGuard]),
   StoryController.getSingle,
 )
 
@@ -39,14 +39,14 @@ router.post(
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards(storyExistenceGuard),
+  applyGuards([storyExistenceGuard]),
   StoryController.like,
 )
 
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),
-  applyGuards(storyExistenceGuard, storyAuthorizationGuard),
+  applyGuards([storyExistenceGuard, storyAuthorizationGuard]),
   StoryController.delete,
 )
 

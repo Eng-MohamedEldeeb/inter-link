@@ -3,7 +3,6 @@ import { throwError } from '../../handlers/error-message.handler'
 import { GuardActivator } from '../can-activate.guard'
 import { MongoId } from '../../types/db/db.types'
 import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { Types } from 'mongoose'
 
 import {
   GraphQLParams,
@@ -11,7 +10,8 @@ import {
 } from '../../decorators/context/types/context-detector.types'
 
 class IsBlockedUserGuard extends GuardActivator {
-  protected userId: string = ''
+  protected userId!: MongoId
+  protected blockedUsers!: MongoId[]
 
   canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -22,9 +22,10 @@ class IsBlockedUserGuard extends GuardActivator {
       const { blockedUsers } = req.profile
       const { _id: userId } = req.user
 
-      this.userId = userId.toString()
+      this.userId = userId
+      this.blockedUsers = blockedUsers
 
-      const isBlockedUser = this.checkIfBlocked(blockedUsers)
+      const isBlockedUser = this.checkIfBlocked()
 
       if (isBlockedUser)
         return throwError({ msg: 'user not found', status: 404 })
@@ -38,9 +39,10 @@ class IsBlockedUserGuard extends GuardActivator {
       const { blockedUsers } = context.profile
       const { _id: userId } = context.user
 
-      this.userId = userId.toString()
+      this.userId = userId
+      this.blockedUsers = blockedUsers
 
-      const isBlockedUser = this.checkIfBlocked(blockedUsers)
+      const isBlockedUser = this.checkIfBlocked()
 
       if (isBlockedUser)
         return throwError({ msg: 'user not found', status: 404 })
@@ -49,11 +51,9 @@ class IsBlockedUserGuard extends GuardActivator {
     }
   }
 
-  protected readonly checkIfBlocked = (
-    blockedUsers: Types.ObjectId[],
-  ): boolean => {
-    if (blockedUsers.length) {
-      const isBlockedUser = blockedUsers.some((blockedUserId: MongoId) =>
+  protected readonly checkIfBlocked = (): boolean => {
+    if (this.blockedUsers.length) {
+      const isBlockedUser = this.blockedUsers.some((blockedUserId: MongoId) =>
         blockedUserId.equals(this.userId),
       )
       return isBlockedUser

@@ -11,11 +11,16 @@ import {
   ICloudFile,
   ICloudFiles,
 } from '../services/upload/interface/cloud-response.interface'
+import {
+  INotificationDetails,
+  INotifications,
+} from '../../db/interface/INotification.interface'
 
 export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
-  tokenPayload: IPayload
   cloudFile: ICloudFile
   cloudFiles: ICloudFiles
+
+  tokenPayload: IPayload
 
   profile: IUser
   user: IUser
@@ -24,4 +29,6 @@ export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   comment: IComment
   reply: IReply
   group: IGroup
+  notifications: INotifications
+  notification: INotificationDetails
 }

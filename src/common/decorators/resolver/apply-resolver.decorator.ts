@@ -13,7 +13,7 @@ export const applyResolver = ({
   return asyncHandler(
     async (_: any, args: any, context: IContext, __: GraphQLResolveInfo) => {
       if (guards?.length)
-        await applyGuards(...guards).apply(this, [_, args, context, __])
+        await applyGuards(guards).apply(this, [_, args, context, __])
 
       if (middlewares?.length)
         for (const middleware of middlewares) {

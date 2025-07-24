@@ -19,7 +19,7 @@ router.use('/reply', replyRouter)
 router.get(
   '/:id',
   validate(validators.getSingleCommentValidator.http()),
-  applyGuards(commentExistenceGuard),
+  applyGuards([commentExistenceGuard]),
   CommentController.getSingle,
 )
 
@@ -27,7 +27,7 @@ router.post(
   '/add/:postId',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('attachment'),
   validate(validators.addValidator.http()),
-  applyGuards(postExistenceGuard),
+  applyGuards([postExistenceGuard]),
   commentAttachmentUploader,
   CommentController.addComment,
 )
@@ -35,20 +35,20 @@ router.post(
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards(commentExistenceGuard),
+  applyGuards([commentExistenceGuard]),
   CommentController.like,
 )
 
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards(commentExistenceGuard, commentAuthorizationGuard),
+  applyGuards([commentExistenceGuard, commentAuthorizationGuard]),
   CommentController.edit,
 )
 
 router.delete(
   '/:id',
-  applyGuards(commentExistenceGuard, commentAuthorizationGuard),
+  applyGuards([commentExistenceGuard, commentAuthorizationGuard]),
   validate(validators.deleteValidator.http()),
   CommentController.deleteComment,
 )

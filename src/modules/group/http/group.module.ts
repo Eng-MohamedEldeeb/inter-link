@@ -21,7 +21,7 @@ const router: Router = Router()
 router.get(
   '/:groupId',
   validate(validators.getGroupValidator.http()),
-  applyGuards(groupExistenceGuard),
+  applyGuards([groupExistenceGuard]),
   GroupController.getGroup,
 )
 
@@ -29,7 +29,7 @@ router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.createValidator),
-  applyGuards(groupConflictedNameGuard),
+  applyGuards([groupConflictedNameGuard]),
   groupCoverUploader,
   GroupController.create,
 )
@@ -37,22 +37,22 @@ router.post(
 router.post(
   '/:groupId/add-admin',
   validate(validators.addAdminValidator.http()),
-  applyGuards(
+  applyGuards([
     groupExistenceGuard,
     groupOwnerAuthorizationGuard,
     userExistenceGuard,
-  ),
+  ]),
   GroupController.addAdmin,
 )
 
 router.patch(
   '/:groupId/remove-admin',
   validate(validators.removeAdminValidator.http()),
-  applyGuards(
+  applyGuards([
     groupExistenceGuard,
     groupOwnerAuthorizationGuard,
     userExistenceGuard,
-  ),
+  ]),
   GroupController.removeAdmin,
 )
 
@@ -60,7 +60,7 @@ router.post(
   '/add-post',
   fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
   validate(validators.addPostValidator),
-  applyGuards(groupExistenceGuard, postInGroupPermissionGuard),
+  applyGuards([groupExistenceGuard, postInGroupPermissionGuard]),
   groupAttachmentsUploader,
   GroupController.addPost,
 )
@@ -68,11 +68,11 @@ router.post(
 router.delete(
   '/:groupId/remove-post',
   validate(validators.removePostValidator.http()),
-  applyGuards(
+  applyGuards([
     groupExistenceGuard,
     groupAdminsAuthorizationGuard,
     postExistenceInGroupGuard,
-  ),
+  ]),
   GroupController.removePost,
 )
 
@@ -80,28 +80,28 @@ router.patch(
   '/change-cover',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.changeCoverValidator),
-  applyGuards(groupExistenceGuard, groupAdminsAuthorizationGuard),
+  applyGuards([groupExistenceGuard, groupAdminsAuthorizationGuard]),
   GroupController.changeCover,
 )
 
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards(groupExistenceGuard, groupAdminsAuthorizationGuard),
+  applyGuards([groupExistenceGuard, groupAdminsAuthorizationGuard]),
   GroupController.edit,
 )
 
 router.patch(
   '/change-visibility',
   validate(validators.changeVisibilityValidator.http()),
-  applyGuards(groupExistenceGuard, groupOwnerAuthorizationGuard),
+  applyGuards([groupExistenceGuard, groupOwnerAuthorizationGuard]),
   GroupController.changeVisibility,
 )
 
 router.delete(
   '/:groupId',
   validate(validators.deleteGroupValidator.http()),
-  applyGuards(groupExistenceGuard, groupOwnerAuthorizationGuard),
+  applyGuards([groupExistenceGuard, groupOwnerAuthorizationGuard]),
   GroupController.delete,
 )
 

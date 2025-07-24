@@ -3,6 +3,7 @@ import { GraphQLError, GraphQLObjectType, GraphQLSchema } from 'graphql'
 import { createHandler } from 'graphql-http/lib/use/express'
 
 import * as auth from './auth/graphql/auth.module'
+import * as notification from './notification/graphql/notification.module'
 import * as profile from './profile/graphql/profile.module'
 import * as user from './user/graphql/user.module'
 import * as post from './post/graphql/post.module'
@@ -15,6 +16,7 @@ export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
     name: 'mainRootQuery',
     fields: {
+      notification: notification.queryModule,
       profile: profile.queryModule,
       user: user.queryModule,
       post: post.queryModule,
@@ -29,6 +31,7 @@ export const schema = new GraphQLSchema({
     name: 'mainRootMutation',
     fields: {
       auth: auth.mutationModule,
+      notification: notification.mutationModule,
       profile: profile.mutationModule,
       user: user.mutationModule,
       post: post.mutationModule,

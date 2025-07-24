@@ -27,11 +27,16 @@ export class UserViewersStrategy {
 
       options: {
         new: true,
+        populate: [{ path: 'posts' }],
         projection: {
+          phone: 0,
           password: 0,
           oldPasswords: 0,
-          phone: 0,
           'avatar.public_id': 0,
+          'avatar.folderPath': 0,
+          blockedUsers: 0,
+          savedPosts: 0,
+          requests: 0,
         },
       },
     })
@@ -66,11 +71,16 @@ export class UserViewersStrategy {
       },
       options: {
         new: true,
+        populate: [{ path: 'posts' }],
         projection: {
+          phone: 0,
           password: 0,
           oldPasswords: 0,
-          phone: 0,
           'avatar.public_id': 0,
+          'avatar.folderPath': 0,
+          blockedUsers: 0,
+          savedPosts: 0,
+          requests: 0,
         },
       },
     })
