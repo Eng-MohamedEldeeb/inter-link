@@ -5,7 +5,7 @@ import {
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
 
-import { IComment } from '../../../../db/interface/IComment.interface'
+import { IComment } from '../../../../db/interfaces/IComment.interface'
 import { multiFiles } from './../../../../common/services/upload/interface/cloud-response.interface'
 
 export const commentFields: ObjFields<Omit<IComment, '__v'>> = {

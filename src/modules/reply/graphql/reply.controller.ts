@@ -14,8 +14,8 @@ import * as validators from '../validators/reply.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
+import replyExistenceGuard from '../../../common/guards/reply/reply-existence.guard'
+import replyOwnerGuard from '../../../common/guards/reply/reply-owner.guard'
 
 export class ReplyController {
   protected static readonly ReplyQueryResolver = resolvers.ReplyQueryResolver
@@ -23,7 +23,7 @@ export class ReplyController {
     resolvers.ReplyMutationResolver
 
   // Queries:
-  static readonly getCommentReplies = (): IQueryController => {
+  public static readonly getCommentReplies = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getCommentReplies',
@@ -38,7 +38,7 @@ export class ReplyController {
   }
 
   // Mutations:
-  static readonly like = (): IMutationController => {
+  public static readonly like = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'likeReplyMutation',
@@ -46,18 +46,13 @@ export class ReplyController {
       args: args.like,
       resolve: applyResolver({
         middlewares: [validate(validators.likeValidator.graphQL())],
-        guards: [
-          isAuthenticatedGuard,
-          isAuthorizedGuard,
-          commentExistenceGuard,
-          commentAuthorizationGuard,
-        ],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, replyExistenceGuard],
         resolver: this.ReplyMutationResolver.like,
       }),
     }
   }
 
-  static readonly edit = (): IMutationController => {
+  public static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'editReplyMutation',
@@ -68,15 +63,15 @@ export class ReplyController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          commentExistenceGuard,
-          commentAuthorizationGuard,
+          replyExistenceGuard,
+          replyOwnerGuard,
         ],
         resolver: this.ReplyMutationResolver.edit,
       }),
     }
   }
 
-  static readonly deleteReply = (): IMutationController => {
+  public static readonly deleteReply = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteReplyMutation',
@@ -87,8 +82,8 @@ export class ReplyController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          commentExistenceGuard,
-          commentAuthorizationGuard,
+          replyExistenceGuard,
+          replyOwnerGuard,
         ],
         resolver: this.ReplyMutationResolver.deleteReply,
       }),

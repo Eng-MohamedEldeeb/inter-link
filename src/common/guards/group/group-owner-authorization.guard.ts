@@ -1,20 +1,13 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { MongoId } from '../../types/db/db.types'
+import { ContextType } from '../../decorators/context/types'
+import { MongoId } from '../../types/db'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 class GroupOwnerAuthorizationGuard extends GuardActivator {
   protected profileId!: MongoId
   protected createdBy!: MongoId
-
-  protected readonly isTheOwner = async () => {
-    return this.createdBy.equals(this.profileId)
-  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -34,6 +27,10 @@ class GroupOwnerAuthorizationGuard extends GuardActivator {
     }
 
     return this.isTheOwner()
+  }
+
+  protected readonly isTheOwner = async () => {
+    return this.createdBy.equals(this.profileId)
   }
 }
 

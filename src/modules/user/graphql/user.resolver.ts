@@ -8,7 +8,7 @@ import {
 export class UserQueryResolver {
   protected static readonly UserService = UserService
 
-  static readonly getUserProfile = (
+  public static readonly getUserProfile = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -21,7 +21,7 @@ export class UserQueryResolver {
     }
   }
 
-  static readonly getUseFollowers = (
+  public static readonly getUseFollowers = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -33,7 +33,7 @@ export class UserQueryResolver {
     }
   }
 
-  static readonly getUseFollowing = (
+  public static readonly getUseFollowing = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -49,7 +49,7 @@ export class UserQueryResolver {
 export class UserMutationResolver {
   protected static readonly UserService = UserService
 
-  static readonly blockUser = async (
+  public static readonly blockUser = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -62,7 +62,7 @@ export class UserMutationResolver {
     }
   }
 
-  static readonly unblockUser = async (
+  public static readonly unblockUser = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {

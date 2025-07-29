@@ -6,12 +6,12 @@ export const confirmRegistration = ({
   otpCode,
 }: IEmailSchemaArgs): IEmailServiceArgs => {
   return {
-    from: `"Keep Notes" <${process.env.EMAIL}>`,
+    from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
     subject: 'Confirm E-mail',
     html: `
           <div style="text-align: center;">
-              <h1>Welcome to our Keep Notes Application</h1>
+              <h1>Welcome to our $process.env.APP_NAMEs Application</h1>
               <h3>First we need you to confirm your e-mail by using the following code</h3>
               <h2>${otpCode}</h2>
           </div>
@@ -24,7 +24,7 @@ export const confirmNewEmail = ({
   otpCode,
 }: IEmailSchemaArgs): IEmailServiceArgs => {
   return {
-    from: `"Keep Notes" <${process.env.EMAIL}>`,
+    from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
     subject: 'Verify E-mail',
     html: `
@@ -42,7 +42,7 @@ export const forgotPassword = ({
   otpCode,
 }: IEmailSchemaArgs): IEmailServiceArgs => {
   return {
-    from: `"Keep Notes" <${process.env.EMAIL}>`,
+    from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
     subject: 'Verify E-mail',
     html: `
@@ -60,7 +60,7 @@ export const verifyDeletion = ({
   otpCode,
 }: IEmailSchemaArgs): IEmailServiceArgs => {
   return {
-    from: `"Keep Notes" <${process.env.EMAIL}>`,
+    from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
     subject: 'Verify E-mail',
     html: `

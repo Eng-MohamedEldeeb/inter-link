@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
+import { successResponse } from '../../../common/handlers/success-response.handler'
 import { GroupService } from '../group.service'
 import { PostService } from '../../post/post.service'
 import { ICreatePost } from '../../post/dto/post.dto'
@@ -12,15 +12,17 @@ export class GroupController {
   private static readonly GroupService = GroupService
   private static readonly PostService = PostService
 
-  static readonly getGroup = asyncHandler((req: IRequest, res: Response) => {
-    const { _id: profileId } = req.profile
-    const group = req.group
-    return successResponse(res, {
-      data: this.GroupService.getGroup({ profileId, group }),
-    })
-  })
+  public static readonly getGroup = asyncHandler(
+    (req: IRequest, res: Response) => {
+      const { _id: profileId } = req.profile
+      const group = req.group
+      return successResponse(res, {
+        data: this.GroupService.getGroup({ profileId, group }),
+      })
+    },
+  )
 
-  static readonly create = asyncHandler(
+  public static readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const cover = req.cloudFile
@@ -37,7 +39,7 @@ export class GroupController {
     },
   )
 
-  static readonly addPost = asyncHandler(
+  public static readonly addPost = asyncHandler(
     async (req: IRequest<DTO.IGetGroup>, res: Response) => {
       const { _id } = req.profile
       const { _id: groupId, name } = req.group
@@ -60,7 +62,7 @@ export class GroupController {
     },
   )
 
-  static readonly removePost = asyncHandler(
+  public static readonly removePost = asyncHandler(
     async (req: IRequest<DTO.IGetGroup, DTO.IRemovePost>, res: Response) => {
       const { _id: postId } = req.post
       const { _id: groupId, name } = req.group
@@ -73,7 +75,7 @@ export class GroupController {
     },
   )
 
-  static readonly addAdmin = asyncHandler(
+  public static readonly addAdmin = asyncHandler(
     async (req: IRequest<DTO.IGetGroup>, res: Response) => {
       const { _id: userId, username } = req.user
       const { group } = req
@@ -89,7 +91,7 @@ export class GroupController {
     },
   )
 
-  static readonly removeAdmin = asyncHandler(
+  public static readonly removeAdmin = asyncHandler(
     async (req: IRequest<DTO.IGetGroup>, res: Response) => {
       const { _id: userId, username } = req.user
       const { group } = req
@@ -105,17 +107,19 @@ export class GroupController {
     },
   )
 
-  static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
-    const { _id: groupId } = req.group
-    const editGroup: DTO.IEditGroup = req.body
+  public static readonly edit = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { _id: groupId } = req.group
+      const editGroup: DTO.IEditGroup = req.body
 
-    return successResponse(res, {
-      msg: 'Group is modified successfully',
-      data: await this.GroupService.edit({ groupId, editGroup }),
-    })
-  })
+      return successResponse(res, {
+        msg: 'Group is modified successfully',
+        data: await this.GroupService.edit({ groupId, editGroup }),
+      })
+    },
+  )
 
-  static readonly changeCover = asyncHandler(
+  public static readonly changeCover = asyncHandler(
     async (req: IRequest, res: Response) => {
       const group = req.group
       const path = req.file?.path!
@@ -127,7 +131,7 @@ export class GroupController {
     },
   )
 
-  static readonly changeVisibility = asyncHandler(
+  public static readonly changeVisibility = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: groupId, isPrivateGroup } = req.group
       await this.GroupService.changeVisibility({
@@ -140,7 +144,7 @@ export class GroupController {
     },
   )
 
-  static readonly delete = asyncHandler(
+  public static readonly delete = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: groupId } = req.group
       await this.GroupService.delete(groupId)

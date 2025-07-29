@@ -8,8 +8,8 @@ import { applyGuards } from '../../../common/decorators/guard/apply-guards.decor
 import * as validators from './../validators/post.validators'
 
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
-import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
-import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
+import PostOwnerGuard from '../../../common/guards/post/post-owner.guard'
+import PostSharePermissionGuardGuard from '../../../common/guards/post/post-share-permission.guard'
 
 const router: Router = Router()
 
@@ -22,7 +22,7 @@ router.get(
 router.get(
   '/:id',
   validate(validators.getSingleValidator.http()),
-  applyGuards([postExistenceGuard]),
+  applyGuards(postExistenceGuard),
   PostController.getSingle,
 )
 
@@ -37,49 +37,49 @@ router.post(
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards([postExistenceGuard, postAuthorizationGuard]),
+  applyGuards(postExistenceGuard, PostOwnerGuard),
   PostController.edit,
 )
 
 router.post(
   '/save',
   validate(validators.saveValidator.http()),
-  applyGuards([postExistenceGuard]),
+  applyGuards(postExistenceGuard),
   PostController.save,
 )
 
 router.post(
   '/shared',
   validate(validators.sharedValidator.http()),
-  applyGuards([postExistenceGuard, postSharePermissionGuard]),
+  applyGuards(postExistenceGuard, PostSharePermissionGuardGuard),
   PostController.shared,
 )
 
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards([postExistenceGuard]),
+  applyGuards(postExistenceGuard),
   PostController.like,
 )
 
 router.patch(
   '/archive',
   validate(validators.archiveValidator.http()),
-  applyGuards([postExistenceGuard, postAuthorizationGuard]),
+  applyGuards(postExistenceGuard, PostOwnerGuard),
   PostController.archive,
 )
 
 router.patch(
   '/restore',
   validate(validators.restoreValidator.http()),
-  applyGuards([postExistenceGuard, postAuthorizationGuard]),
+  applyGuards(postExistenceGuard, PostOwnerGuard),
   PostController.restore,
 )
 
 router.delete(
   '/:id',
   validate(validators.deleteValidator.http()),
-  applyGuards([postExistenceGuard, postAuthorizationGuard]),
+  applyGuards(postExistenceGuard, PostOwnerGuard),
   PostController.delete,
 )
 

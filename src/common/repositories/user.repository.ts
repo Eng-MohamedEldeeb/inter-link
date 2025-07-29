@@ -1,7 +1,7 @@
-import { IUser } from '../../db/interface/IUser.interface'
+import { IUser } from '../../db/interfaces/IUser.interface'
 import { Model } from 'mongoose'
 import { DataBaseService } from './db-service.repository'
-import { TUser } from '../../db/types/document.type'
+import { TUser } from '../../db/documents'
 import { UserModel } from '../../db/models/User/User.model'
 
 class UserRepository extends DataBaseService<IUser, TUser> {

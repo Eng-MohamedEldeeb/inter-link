@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose'
-import { IOtp } from '../../interface/IOtp.interface'
+import { IOtp } from '../../interfaces/IOtp.interface'
 import { OtpType } from '../enums/otp.enum'
 import { generateCode } from '../../../common/utils/randomstring/generate-code.function'
 import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'

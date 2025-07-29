@@ -1,8 +1,8 @@
 import { ICloudFile } from '../../../common/services/upload/interface/cloud-response.interface'
-import { MongoId } from '../../../common/types/db/db.types'
-import { ICommentInputs } from '../../../db/interface/IComment.interface'
-import { IPost } from '../../../db/interface/IPost.interface'
-import { IUser } from '../../../db/interface/IUser.interface'
+import { MongoId } from '../../../common/types/db'
+import { ICommentInputs } from '../../../db/interfaces/IComment.interface'
+import { IPost } from '../../../db/interfaces/IPost.interface'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 import { IPostId } from '../../post/dto/post.dto'
 
 export interface IGetSingleComment {

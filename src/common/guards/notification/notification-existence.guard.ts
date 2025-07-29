@@ -1,29 +1,55 @@
-import { INotificationDetails } from './../../../db/interface/INotification.interface'
+import { INotificationDetails } from '../../../db/interfaces/INotification.interface'
 import { IGetNotification } from '../../../modules/notification/dto/notification.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
-import { MongoId } from '../../types/db/db.types'
+import { MongoId } from '../../types/db'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import notificationRepository from '../../repositories/notification.repository'
+import { GuardActivator } from '../class/guard-activator.class'
 
-class NotificationExistence {
+class NotificationExistenceGuard extends GuardActivator {
   protected readonly notificationRepository = notificationRepository
   protected profileId!: MongoId
   protected notificationId!: MongoId
 
-  protected readonly isExistedNotification =
+  async canActivate(...params: HttpParams | GraphQLParams) {
+    const Ctx = ContextDetector.detect(params)
+
+    if (Ctx.type === ContextType.httpContext) {
+      const { req } = Ctx.switchToHTTP<IGetNotification>()
+      const { _id: profileId } = req.profile
+      const { id } = { ...req.params, ...req.query }
+
+      this.profileId = profileId
+      this.notificationId = id
+
+      req.notification = await this.getNotificationDetails()
+    }
+
+    if (Ctx.type === ContextType.graphContext) {
+      const { args, context } = Ctx.switchToGraphQL<IGetNotification>()
+      const { _id: profileId } = context.profile
+      const { id } = args
+
+      this.profileId = profileId
+      this.notificationId = id
+
+      context.notification = await this.getNotificationDetails()
+    }
+
+    return true
+  }
+
+  protected readonly getNotificationDetails =
     async (): Promise<INotificationDetails> => {
-      const hasNotifications = await this.notificationRepository.findOne({
+      const userNotification = await this.notificationRepository.findOne({
         filter: { belongsTo: this.profileId },
         populate: [
           {
-            path: 'received.from',
+            path: 'missed.from',
             select: {
               _id: 1,
               username: 1,
@@ -36,7 +62,7 @@ class NotificationExistence {
             options: { lean: true },
           },
           {
-            path: 'received.on',
+            path: 'missed.on',
             select: {
               _id: 1,
               username: 1,
@@ -80,35 +106,21 @@ class NotificationExistence {
         options: { lean: true },
       })
 
-      if (!hasNotifications)
+      if (!userNotification)
         return throwError({
           msg: 'Un-Existed Notification or In-valid Id',
           status: 404,
         })
 
-      const { received, seen } = hasNotifications
+      const { missed, seen } = userNotification
 
-      const inReceived =
-        received &&
-        received.some(notification =>
-          notification._id!.equals(this.notificationId),
-        )
-      const inSeen =
-        seen &&
-        seen.some(notification => notification._id!.equals(this.notificationId))
+      const inmissed = missed.length && missed.find(this.targetedNotification)!
 
-      if (inReceived) {
-        const notification = received.find(e =>
-          e._id!.equals(this.notificationId),
-        )!
+      if (inmissed) return inmissed
 
-        return notification
-      }
+      const inSeen = seen.length && seen.find(this.targetedNotification)!
 
-      if (inSeen) {
-        const notification = seen.find(e => e._id!.equals(this.notificationId))!
-        return notification
-      }
+      if (inSeen) return inSeen
 
       return throwError({
         msg: 'Un-Existed Notification or In-valid Id',
@@ -116,35 +128,9 @@ class NotificationExistence {
       })
     }
 
-  async canActivate(...params: HttpParams | GraphQLParams) {
-    const Ctx = ContextDetector.detect(params)
-
-    if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetNotification>()
-      const { _id: profileId } = req.profile
-      const { id } = { ...req.params, ...req.query }
-
-      this.profileId = profileId
-      this.notificationId = id
-
-      req.notification = await this.isExistedNotification()
-
-      return true
-    }
-
-    if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetNotification>()
-      const { _id: profileId } = context.profile
-      const { id } = args
-
-      this.profileId = profileId
-      this.notificationId = id
-
-      context.notification = await this.isExistedNotification()
-
-      return true
-    }
-  }
+  protected readonly targetedNotification = (
+    notification: INotificationDetails,
+  ) => notification._id!.equals(this.notificationId)
 }
 
-export default new NotificationExistence()
+export default new NotificationExistenceGuard()

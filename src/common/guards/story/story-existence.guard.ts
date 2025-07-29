@@ -1,19 +1,19 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
+import { MongoId } from '../../types/db'
 
 import { IGetSingleStory, IStoryId } from '../../../modules/story/dto/story.dto'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import storyRepository from '../../repositories/story.repository'
 
 class StoryExistenceGuard extends GuardActivator {
-  private readonly storyRepository = storyRepository
+  protected readonly storyRepository = storyRepository
+  protected id: MongoId | undefined = undefined
+  protected storyId: MongoId | undefined = undefined
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -22,37 +22,36 @@ class StoryExistenceGuard extends GuardActivator {
       const { req } = Ctx.switchToHTTP<IGetSingleStory & IStoryId>()
       const { id, storyId } = req.params
 
-      const isExistedStory = await this.storyRepository.findOne({
-        filter: { $or: [{ _id: id }, { _id: storyId }] },
-      })
+      this.id = id
+      this.storyId = storyId
 
-      if (!isExistedStory)
-        return throwError({
-          msg: 'Un-Existed Story or In-valid Id',
-          status: 404,
-        })
-
-      req.story = isExistedStory
-      return true
+      req.story = await this.getStoryDetails()
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { args, context } = Ctx.switchToGraphQL<IGetSingleStory>()
       const { id } = args
 
-      const isExistedStory = await this.storyRepository.findOne({
-        filter: { _id: id },
+      this.id = id
+
+      context.story = await this.getStoryDetails()
+    }
+
+    return true
+  }
+
+  protected readonly getStoryDetails = async () => {
+    const isExistedStory = await this.storyRepository.findOne({
+      filter: { $or: [{ _id: this.id }, { _id: this.storyId }] },
+    })
+
+    if (!isExistedStory)
+      return throwError({
+        msg: 'Un-Existed Story or In-valid Id',
+        status: 404,
       })
 
-      if (!isExistedStory)
-        return throwError({
-          msg: 'Un-Existed Story or In-valid Id',
-          status: 404,
-        })
-
-      context.story = isExistedStory
-      return true
-    }
+    return isExistedStory
   }
 }
 

@@ -10,7 +10,10 @@ import {
 export class GroupQueryResolver {
   private static readonly GroupService = GroupService
 
-  static readonly getGroup = (_: any, context: IContext): ISuccessResponse => {
+  public static readonly getGroup = (
+    _: any,
+    context: IContext,
+  ): ISuccessResponse => {
     const { _id: profileId } = context.profile
     const { group } = context
 
@@ -25,7 +28,7 @@ export class GroupMutationResolver {
   private static readonly GroupService = GroupService
   private static readonly PostService = PostService
 
-  static readonly addAdmin = async (_: any, context: IContext) => {
+  public static readonly addAdmin = async (_: any, context: IContext) => {
     const group = context.group
     const { _id: userId, username } = context.user
 
@@ -36,7 +39,10 @@ export class GroupMutationResolver {
     }
   }
 
-  static readonly removeAdmin = async (args: IEditGroup, context: IContext) => {
+  public static readonly removeAdmin = async (
+    args: IEditGroup,
+    context: IContext,
+  ) => {
     const group = context.group
     const { _id: userId, username } = context.user
     return {
@@ -46,7 +52,7 @@ export class GroupMutationResolver {
     }
   }
 
-  static readonly edit = async (args: IEditGroup, context: IContext) => {
+  public static readonly edit = async (args: IEditGroup, context: IContext) => {
     const { _id: groupId } = context.group
     return {
       msg: 'Group is modified successfully',
@@ -55,7 +61,7 @@ export class GroupMutationResolver {
     }
   }
 
-  static readonly changeVisibility = async (
+  public static readonly changeVisibility = async (
     args: IEditGroup,
     context: IContext,
   ) => {
@@ -72,7 +78,7 @@ export class GroupMutationResolver {
     }
   }
 
-  static readonly deleteGroup = async (_: any, context: IContext) => {
+  public static readonly deleteGroup = async (_: any, context: IContext) => {
     const { _id: groupId } = context.group
 
     await this.GroupService.delete(groupId)
@@ -83,7 +89,10 @@ export class GroupMutationResolver {
     }
   }
 
-  static readonly removePostFromGroup = async (_: any, context: IContext) => {
+  public static readonly removePostFromGroup = async (
+    _: any,
+    context: IContext,
+  ) => {
     const { _id: groupId, name } = context.group
     const { _id: postId } = context.post
 

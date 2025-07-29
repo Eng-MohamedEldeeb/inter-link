@@ -1,10 +1,10 @@
 import { Schema, SchemaTypes } from 'mongoose'
 
-import { IGroup } from '../../interface/IGroup.interface'
+import { IGroup } from '../../interfaces/IGroup.interface'
+import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 import postRepository from '../../../common/repositories/post.repository'
 import slugify from 'slugify'
-import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 export const GroupSchema = new Schema<IGroup>(
   {

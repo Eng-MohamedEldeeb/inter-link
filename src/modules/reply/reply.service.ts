@@ -1,22 +1,23 @@
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db/db.types'
-import { IUser } from '../../db/interface/IUser.interface'
-import {
-  ILikedCommentNotification,
-  IReplyToCommentNotification,
-} from '../../db/interface/INotification.interface'
+import commentRepository from '../../common/repositories/comment.repository'
+import notificationsService from '../../common/services/notifications/notifications.service'
 
 import * as DTO from './dto/reply.dto'
 
-import commentRepository from '../../common/repositories/comment.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
-import { IReply } from '../../db/interface/IReply.interface'
+import {
+  ILikedCommentNotification,
+  IReplyToCommentNotification,
+} from '../../db/interfaces/INotification.interface'
+
+import { throwError } from '../../common/handlers/error-message.handler'
+import { MongoId } from '../../common/types/db'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { IReply } from '../../db/interfaces/IReply.interface'
 
 export class ReplyService {
-  private static readonly commentRepository = commentRepository
-  private static readonly notificationsService = notificationsService
+  protected static readonly commentRepository = commentRepository
+  protected static readonly notificationsService = notificationsService
 
-  static readonly getCommentReplies = async (commentId: MongoId) => {
+  public static readonly getCommentReplies = async (commentId: MongoId) => {
     const replies = await this.commentRepository.find({
       filter: { replyingTo: commentId },
     })
@@ -26,7 +27,7 @@ export class ReplyService {
     }
   }
 
-  static readonly reply = async ({
+  public static readonly reply = async ({
     content,
     profile,
     comment,
@@ -54,7 +55,7 @@ export class ReplyService {
     })
   }
 
-  static readonly like = async ({
+  public static readonly like = async ({
     profile,
     reply,
   }: {
@@ -102,7 +103,10 @@ export class ReplyService {
     return { msg: 'comment is liked successfully' }
   }
 
-  static readonly edit = async ({ replyId, content }: DTO.IEditReply) => {
+  public static readonly edit = async ({
+    replyId,
+    content,
+  }: DTO.IEditReply) => {
     const updatedReply = await this.commentRepository.findByIdAndUpdate({
       _id: replyId,
       data: { content },
@@ -117,7 +121,9 @@ export class ReplyService {
     )
   }
 
-  static readonly deleteReply = async ({ replyId }: DTO.IDeleteReply) => {
+  public static readonly deleteReply = async ({
+    replyId,
+  }: DTO.IDeleteReply) => {
     const isDeletedReply = await this.commentRepository.findByIdAndDelete({
       _id: replyId,
     })

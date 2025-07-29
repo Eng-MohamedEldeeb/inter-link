@@ -1,22 +1,22 @@
-import { MongoId } from './../../common/types/db/db.types'
-import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
-import { throwError } from '../../common/handlers/error-message.handler'
-import { IUser } from '../../db/interface/IUser.interface'
-import { IPost } from '../../db/interface/IPost.interface'
-import { ILikedPostNotification } from '../../db/interface/INotification.interface'
-
-import * as DTO from './dto/post.dto'
-
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
-export class PostService {
-  private static readonly postRepository = postRepository
-  private static readonly userRepository = userRepository
-  private static readonly notificationsService = notificationsService
+import * as DTO from './dto/post.dto'
 
-  static readonly getAll = async (query: DTO.IGetAll) => {
+import { MongoId } from '../../common/types/db'
+import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
+import { throwError } from '../../common/handlers/error-message.handler'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { IPost } from '../../db/interfaces/IPost.interface'
+import { ILikedPostNotification } from '../../db/interfaces/INotification.interface'
+
+export class PostService {
+  protected static readonly postRepository = postRepository
+  protected static readonly userRepository = userRepository
+  protected static readonly notificationsService = notificationsService
+
+  public static readonly getAll = async (query: DTO.IGetAll) => {
     const { page, limit } = query
 
     const skip = (page ?? 1 - 1) * limit
@@ -37,7 +37,7 @@ export class PostService {
     }
   }
 
-  static readonly create = async ({
+  public static readonly create = async ({
     createdBy,
     createPost,
     attachments,
@@ -55,7 +55,7 @@ export class PostService {
     })
   }
 
-  static readonly edit = async ({
+  public static readonly edit = async ({
     postId,
     editPost,
   }: {
@@ -71,7 +71,7 @@ export class PostService {
     })
   }
 
-  static readonly save = async ({
+  public static readonly save = async ({
     profileId,
     postId,
   }: {
@@ -93,7 +93,7 @@ export class PostService {
     })
   }
 
-  static readonly shared = async (postId: MongoId) => {
+  public static readonly shared = async (postId: MongoId) => {
     await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -104,7 +104,7 @@ export class PostService {
     })
   }
 
-  static readonly archive = async (postId: MongoId) => {
+  public static readonly archive = async (postId: MongoId) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -114,7 +114,7 @@ export class PostService {
     })
   }
 
-  static readonly restore = async (postId: MongoId) => {
+  public static readonly restore = async (postId: MongoId) => {
     const isRestored = await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: true } }],
@@ -133,7 +133,7 @@ export class PostService {
         })
   }
 
-  static readonly delete = async ({
+  public static readonly delete = async ({
     profileId,
     postId,
   }: {
@@ -154,7 +154,7 @@ export class PostService {
     })
   }
 
-  static readonly removeFromGroup = async ({
+  public static readonly removeFromGroup = async ({
     groupId,
     postId,
   }: {
@@ -168,7 +168,7 @@ export class PostService {
     })
   }
 
-  static readonly like = async ({
+  public static readonly like = async ({
     profile,
     post,
   }: {
@@ -217,7 +217,7 @@ export class PostService {
     return { msg: 'Post is liked successfully' }
   }
 
-  static readonly unlike = async ({
+  public static readonly unlike = async ({
     profileId,
     postId,
   }: {

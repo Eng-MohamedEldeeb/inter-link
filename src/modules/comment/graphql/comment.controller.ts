@@ -15,7 +15,7 @@ import * as validators from './../validators/comment.validators'
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
+import CommentOwnerGuard from '../../../common/guards/comment/comment-owner.guard'
 
 export class CommentController {
   protected static readonly CommentQueryResolver =
@@ -24,7 +24,7 @@ export class CommentController {
     resolvers.CommentMutationResolver
 
   // Queries:
-  static readonly getSingleComment = (): IQueryController => {
+  public static readonly getSingleComment = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getPostComments',
@@ -40,7 +40,7 @@ export class CommentController {
   }
 
   // Mutations:
-  static readonly likeComment = (): IMutationController => {
+  public static readonly likeComment = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'likeCommentMutation',
@@ -58,7 +58,7 @@ export class CommentController {
     }
   }
 
-  static readonly edit = (): IMutationController => {
+  public static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'editCommentMutation',
@@ -70,14 +70,14 @@ export class CommentController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           commentExistenceGuard,
-          commentAuthorizationGuard,
+          CommentOwnerGuard,
         ],
         resolver: this.CommentMutationResolver.edit,
       }),
     }
   }
 
-  static readonly deleteComment = (): IMutationController => {
+  public static readonly deleteComment = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteCommentMutation',
@@ -89,7 +89,7 @@ export class CommentController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           commentExistenceGuard,
-          commentAuthorizationGuard,
+          CommentOwnerGuard,
         ],
         resolver: this.CommentMutationResolver.deleteComment,
       }),

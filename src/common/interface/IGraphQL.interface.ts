@@ -4,18 +4,20 @@ import {
   GraphQLResolveInfo,
 } from 'graphql'
 
-import { IUser } from '../../db/interface/IUser.interface'
-import { IPayload } from '../utils/security/token/interface/token.interface'
-import { IPost } from '../../db/interface/IPost.interface'
-import { GuardActivator } from '../guards/can-activate.guard'
-import { IComment } from '../../db/interface/IComment.interface'
-import { IReply } from '../../db/interface/IReply.interface'
-import { IStory } from '../../db/interface/IStory.interface'
-import { IGroup } from '../../db/interface/IGroup.interface'
 import {
   INotificationDetails,
   INotifications,
-} from '../../db/interface/INotification.interface'
+} from '../../db/interfaces/INotification.interface'
+
+import { GuardActivator } from '../guards/class/guard-activator.class'
+import { IPayload } from '../utils/security/token/interface/token.interface'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { IPost } from '../../db/interfaces/IPost.interface'
+import { IComment } from '../../db/interfaces/IComment.interface'
+import { IReply } from '../../db/interfaces/IReply.interface'
+import { IStory } from '../../db/interfaces/IStory.interface'
+import { IGroup } from '../../db/interfaces/IGroup.interface'
+import { IChat } from '../../db/interfaces/IChat.interface'
 
 export type ControllerParams = (
   args: any,
@@ -72,4 +74,5 @@ export interface IContext {
   group: IGroup
   notifications: INotifications
   notification: Partial<INotificationDetails>
+  chat: IChat
 }

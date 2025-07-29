@@ -9,7 +9,7 @@ import {
 
 import { DateType, ObjFields } from './graphql.types'
 
-import { IUser } from '../../../db/interface/IUser.interface'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 import { singleFile } from '../../services/upload/interface/cloud-response.interface'
 import { onePost } from '../../../modules/post/graphql/types/post-fields.type'
 

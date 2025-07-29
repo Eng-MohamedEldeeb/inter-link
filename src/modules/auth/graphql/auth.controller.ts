@@ -10,7 +10,7 @@ import * as validators from './../validator/auth.validator'
 export class AuthController {
   private static readonly AuthResolver = AuthResolver
 
-  static readonly confirmEmail = (): IMutationController => {
+  public static readonly confirmEmail = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'confirmEmail',
@@ -23,7 +23,7 @@ export class AuthController {
     }
   }
 
-  static readonly register = (): IMutationController => {
+  public static readonly register = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'register',
@@ -36,7 +36,7 @@ export class AuthController {
     }
   }
 
-  static readonly login = (): IMutationController => {
+  public static readonly login = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'login',
@@ -49,7 +49,7 @@ export class AuthController {
     }
   }
 
-  static readonly forgotPassword = (): IMutationController => {
+  public static readonly forgotPassword = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'forgotPassword',
@@ -62,7 +62,7 @@ export class AuthController {
     }
   }
 
-  static readonly resetPassword = (): IMutationController => {
+  public static readonly resetPassword = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'resetPassword',

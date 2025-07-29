@@ -1,12 +1,10 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
+import { MongoId } from '../../types/db'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import {
   ICommentId,
@@ -16,47 +14,52 @@ import {
 import commentRepository from '../../repositories/comment.repository'
 
 class CommentExistenceGuard extends GuardActivator {
-  private readonly commentRepository = commentRepository
+  protected readonly commentRepository = commentRepository
+  protected id: MongoId | undefined = undefined
+  protected commentId: MongoId | undefined = undefined
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleComment & ICommentId>()
+
       const { id, commentId } = { ...req.params, ...req.query }
 
-      const isExistedComment = await this.commentRepository.findOne({
-        filter: { $or: [{ _id: id }, { _id: commentId }] },
-        populate: [{ path: 'replies' }],
-      })
+      this.id = id
+      this.commentId = commentId
 
-      if (!isExistedComment)
-        return throwError({
-          msg: 'Un-Existed Comment or In-valid Id',
-          status: 404,
-        })
-
-      req.comment = isExistedComment
-      return true
+      req.comment = await this.getCommentDetails()
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSingleComment>()
-      const { id } = args
+      const { args, context } = Ctx.switchToGraphQL<
+        IGetSingleComment & ICommentId
+      >()
+      const { id, commentId } = args
 
-      const isExistedComment = await this.commentRepository.findOne({
-        filter: { _id: id },
+      this.id = id
+      this.commentId = commentId
+
+      context.comment = await this.getCommentDetails()
+    }
+
+    return true
+  }
+
+  protected readonly getCommentDetails = async () => {
+    const isExistedComment = await this.commentRepository.findOne({
+      filter: { $or: [{ _id: this.id }, { _id: this.commentId }] },
+      populate: [{ path: 'replies' }],
+    })
+
+    if (!isExistedComment)
+      return throwError({
+        msg: 'Un-Existed Comment or In-valid Id',
+        status: 404,
       })
 
-      if (!isExistedComment)
-        return throwError({
-          msg: 'Un-Existed Comment or In-valid Id',
-          status: 404,
-        })
-
-      context.comment = isExistedComment
-      return true
-    }
+    return isExistedComment
   }
 }
 

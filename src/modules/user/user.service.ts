@@ -1,18 +1,19 @@
 import userRepository from '../../common/repositories/user.repository'
-
-import { IUser } from '../../db/interface/IUser.interface'
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db/db.types'
-import { UserViewersStrategy } from './helpers/user-viewers.strategy'
-import { IFollowedUserNotification } from '../../db/interface/INotification.interface'
-
 import notificationsService from '../../common/services/notifications/notifications.service'
+
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { throwError } from '../../common/handlers/error-message.handler'
+import { MongoId } from '../../common/types/db'
+import { UserViewersStrategy } from './helpers/user-viewers.strategy'
+import { IFollowedUserNotification } from '../../db/interfaces/INotification.interface'
 
 export class UserService {
   protected static readonly userRepository = userRepository
-  protected static readonly UserViewersStrategy = UserViewersStrategy
   protected static readonly notificationsService = notificationsService
+
+  protected static readonly UserViewersStrategy = UserViewersStrategy
   protected static views: { viewer: MongoId; totalVisits: number }[]
+
   protected static userId: MongoId
   protected static profileId: MongoId
 
@@ -32,7 +33,7 @@ export class UserService {
     })
   }
 
-  static readonly getUserProfile = async ({
+  public static readonly getUserProfile = async ({
     profileId,
     user,
   }: {
@@ -53,7 +54,7 @@ export class UserService {
     return user
   }
 
-  static readonly getUseFollowers = async (
+  public static readonly getUseFollowers = async (
     user: Omit<IUser, 'password' | 'oldPasswords'>,
   ) => {
     const { isPrivateProfile, followers } = user
@@ -69,7 +70,7 @@ export class UserService {
     }
   }
 
-  static readonly getUseFollowing = async (
+  public static readonly getUseFollowing = async (
     user: Omit<IUser, 'password' | 'oldPasswords'>,
   ) => {
     const { isPrivateProfile, following } = user
@@ -84,7 +85,11 @@ export class UserService {
       following,
     }
   }
-  static readonly blockUser = async (profileId: MongoId, userId: MongoId) => {
+
+  public static readonly blockUser = async (
+    profileId: MongoId,
+    userId: MongoId,
+  ) => {
     await this.userRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
@@ -98,7 +103,7 @@ export class UserService {
     })
   }
 
-  static readonly unblockUser = async ({
+  public static readonly unblockUser = async ({
     userId,
     profileId,
     blockedUsers,
@@ -125,25 +130,17 @@ export class UserService {
     })
   }
 
-  static readonly follow = async ({
+  public static readonly follow = async ({
     user,
     profile,
   }: {
     user: IUser
     profile: IUser
   }) => {
-    const { _id: userId, isPrivateProfile } = user
-    const { _id: profileId, avatar, fullName, username } = profile
+    const { _id: userId, isPrivateProfile, requests } = user
+    const { _id: profileId, avatar, fullName, username, following } = profile
 
-    const checkFollowing = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: userId }, { deactivatedAt: { $exists: false } }],
-      },
-    })
-
-    const { following, requests } = checkFollowing!
-
-    const alreadyFollowed = following.some(userId => userId.equals(profileId))
+    const alreadyFollowed = following.some(userId => userId.equals(userId))
     const alreadyRequested = requests.some(userId => userId.equals(profileId))
 
     if (alreadyFollowed) return { msg: 'User is Followed Successfully' }
@@ -193,7 +190,7 @@ export class UserService {
     return { msg: 'User is Followed Successfully' }
   }
 
-  static readonly acceptFollowRequest = async ({
+  public static readonly acceptFollowRequest = async ({
     profile,
     user,
   }: {
@@ -242,7 +239,7 @@ export class UserService {
     })
   }
 
-  static readonly unfollow = async ({
+  public static readonly unfollow = async ({
     userId,
     profileId,
   }: {
@@ -260,7 +257,7 @@ export class UserService {
     })
   }
 
-  static readonly rejectFollowRequest = async ({
+  public static readonly rejectFollowRequest = async ({
     user,
     profile,
   }: {

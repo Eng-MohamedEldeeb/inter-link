@@ -1,7 +1,7 @@
-import { IComment } from '../../db/interface/IComment.interface'
 import { Model } from 'mongoose'
+import { IComment } from '../../db/interfaces/IComment.interface'
 import { DataBaseService } from './db-service.repository'
-import { TComment } from '../../db/types/document.type'
+import { TComment } from '../../db/documents'
 import { CommentModel } from '../../db/models/Comment/Comment.model'
 
 class CommentRepository extends DataBaseService<IComment, TComment> {

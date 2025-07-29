@@ -1,23 +1,27 @@
-class OnlineUsersController {
-  protected readonly onlineUsers = new Map<string, string>()
+import { UserStatus } from './types'
 
-  public readonly getSocketId = (userId: string): string | undefined => {
-    return this.onlineUsers.get(userId)
+class ConnectedUsers {
+  protected readonly users = new Map<string, UserStatus>()
+
+  public readonly getStatus = (userId: string): UserStatus => {
+    return this.users.get(userId.toString())!
   }
 
-  public readonly register = ({
+  public readonly setOnline = ({
     userId,
     socketId,
   }: {
     userId: string
     socketId: string
   }) => {
-    this.onlineUsers.set(userId, socketId)
+    this.users.set(userId, { socketId, isOnline: true })
   }
 
-  public readonly remove = (userId: string) => {
-    this.onlineUsers.delete(userId)
+  public readonly setOffline = (userId: string) => {
+    const { socketId } = this.getStatus(userId)
+
+    this.users.set(userId, { socketId, isOnline: false })
   }
 }
 
-export default new OnlineUsersController()
+export default new ConnectedUsers()

@@ -1,13 +1,13 @@
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
 
+import { GraphQLError } from 'graphql'
 import { IRequest } from '../../../interface/IRequest.interface'
 import { CloudUploader } from '../../../services/upload/cloud.service'
 import { ContextDetector } from '../../context/context-detector.decorator'
-import { ContextType } from '../../context/types/enum/context-type.enum'
-import { IError } from '../../../handlers/http/global-error.handler'
-import { GraphQLError } from 'graphql'
+import { ContextType } from '../../context/types'
+import { IError } from '../../../handlers/global-error.handler'
 
-export const deleteFilesAfterError = async (req: IRequest) => {
+const deleteFiles = async (req: IRequest) => {
   if (req.cloudFile?.folderId) {
     await CloudUploader.deleteFolder({ fullPath: req.cloudFile.fullPath })
   }
@@ -17,12 +17,11 @@ export const deleteFilesAfterError = async (req: IRequest) => {
   }
 }
 
-export const throwErrorByInstanceType = (
-  error: any,
-  ctx: typeof ContextDetector,
-) => {
-  const { next } = ctx.switchToHTTP()
+export const onError = async (error: any, ctx: typeof ContextDetector) => {
+  const { req, next } = ctx.switchToHTTP()
   const { socketServerNext } = ctx.switchToSocket()
+
+  if (ctx.type === ContextType.httpContext) await deleteFiles(req)
 
   switch (true) {
     case error instanceof TokenExpiredError:
@@ -35,8 +34,7 @@ export const throwErrorByInstanceType = (
         })
 
       if (ctx.type === ContextType.socketContext)
-        if (ctx.hasSocketMiddlewareParams())
-          return socketServerNext(new Error('Token is expired'))
+        return socketServerNext(new Error('Token is expired'))
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext)
@@ -67,12 +65,17 @@ export const throwErrorByInstanceType = (
       if (ctx.type === ContextType.httpContext) return next(error)
 
       if (ctx.type === ContextType.graphContext) {
-        const { extensions, msg, details, message }: GraphQLError & IError =
-          error as any
+        const { msg, message, extensions, details }: GraphQLError & IError =
+          error
 
         throw new GraphQLError(msg || message, {
           extensions: { ...(extensions && extensions), details },
         })
+      }
+
+      if (ctx.type === ContextType.socketContext) {
+        console.log({ error })
+        return socketServerNext(new Error(error.msg || error.message))
       }
   }
 }

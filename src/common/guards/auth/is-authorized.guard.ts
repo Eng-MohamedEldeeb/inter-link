@@ -1,6 +1,6 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { ContextType } from '../../decorators/context/types'
 import { IContext } from '../../interface/IGraphQL.interface'
 import { IRequest } from '../../interface/IRequest.interface'
 import { IPayload } from '../../utils/security/token/interface/token.interface'
@@ -10,14 +10,16 @@ import {
   GraphQLParams,
   HttpParams,
   SocketServerParams,
-} from '../../decorators/context/types/context-detector.types'
+} from '../../decorators/context/types'
 
 import userRepository from '../../repositories/user.repository'
 import { ISocket } from '../../interface/ISocket.interface'
 
 class IsAuthorizedGuard implements GuardActivator {
-  private readonly userRepository = userRepository
-  protected changedCredentialsAt: Date | null = null
+  protected readonly userRepository = userRepository
+  protected contextArg!: IRequest | IContext | ISocket
+  protected tokenPayload!: IPayload
+  protected changedCredentialsAt: Date | undefined = undefined
 
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
@@ -26,38 +28,38 @@ class IsAuthorizedGuard implements GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
-      return await this.httpAuthorization(req)
+      this.contextArg = req
+      return await this.httpAuthorization()
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
-      return await this.graphQLAuthorization(context)
+      this.contextArg = context
+      return await this.graphQLAuthorization()
     }
 
     if (Ctx.type === ContextType.socketContext) {
       const { socket } = Ctx.switchToSocket()
-      return await this.socketAuthorization(socket)
+      this.contextArg = socket
+      return await this.socketAuthorization()
     }
   }
 
-  protected readonly checkTokenInitiationStamp = (
-    tokenPayload: IPayload,
-  ): boolean => {
-    const { iat } = tokenPayload
+  protected readonly hasChangedCredentials = (): boolean => {
+    const { iat } = this.tokenPayload
 
-    if (iat && this.changedCredentialsAt)
-      return iat < Math.ceil(this.changedCredentialsAt.getTime() / 1000)
+    if (!this.changedCredentialsAt) return false
 
-    return false
+    return iat < Math.ceil(this.changedCredentialsAt.getTime() / 1000)
   }
 
-  protected readonly httpAuthorization = async (req: IRequest) => {
-    const tokenPayload = req.tokenPayload
+  protected readonly httpAuthorization = async () => {
+    this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         $and: [
-          { _id: tokenPayload._id },
+          { _id: this.tokenPayload._id },
           { deactivatedAt: { $exists: false } },
         ],
       },
@@ -74,27 +76,23 @@ class IsAuthorizedGuard implements GuardActivator {
     if (!isExistedUser)
       return throwError({ msg: 'un-authenticated user', status: 403 })
 
-    if (isExistedUser.changedCredentialsAt)
-      this.changedCredentialsAt = isExistedUser.changedCredentialsAt
+    this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassedTokenInitiationStamp =
-      this.checkTokenInitiationStamp(tokenPayload)
-
-    if (isPassedTokenInitiationStamp)
+    if (this.hasChangedCredentials())
       return throwError({ msg: 're-login is required', status: 403 })
 
-    req.profile = isExistedUser
+    this.contextArg.profile = isExistedUser
 
     return true
   }
 
-  protected readonly graphQLAuthorization = async (context: IContext) => {
-    const tokenPayload = context.tokenPayload
+  protected readonly graphQLAuthorization = async () => {
+    this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         $and: [
-          { _id: tokenPayload._id },
+          { _id: this.tokenPayload._id },
           { deactivatedAt: { $exists: false } },
         ],
       },
@@ -106,27 +104,23 @@ class IsAuthorizedGuard implements GuardActivator {
     if (!isExistedUser)
       return throwError({ msg: 'un-authenticated user', status: 403 })
 
-    if (isExistedUser.changedCredentialsAt)
-      this.changedCredentialsAt = isExistedUser.changedCredentialsAt
+    this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassedTokenInitiationStamp =
-      this.checkTokenInitiationStamp(tokenPayload)
-
-    if (isPassedTokenInitiationStamp)
+    if (this.hasChangedCredentials())
       return throwError({ msg: 're-login is required', status: 403 })
 
-    context.profile = isExistedUser
+    this.contextArg.profile = isExistedUser
 
-    return context
+    return this.contextArg
   }
 
-  protected readonly socketAuthorization = async (socket: ISocket) => {
-    const tokenPayload = socket.tokenPayload
+  protected readonly socketAuthorization = async () => {
+    this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         $and: [
-          { _id: tokenPayload._id },
+          { _id: this.tokenPayload._id },
           { deactivatedAt: { $exists: false } },
         ],
       },
@@ -142,16 +136,12 @@ class IsAuthorizedGuard implements GuardActivator {
     if (!isExistedUser)
       return throwError({ msg: 'un-authenticated user', status: 403 })
 
-    if (isExistedUser.changedCredentialsAt)
-      this.changedCredentialsAt = isExistedUser.changedCredentialsAt
+    this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
-    const isPassedTokenInitiationStamp =
-      this.checkTokenInitiationStamp(tokenPayload)
-
-    if (isPassedTokenInitiationStamp)
+    if (this.hasChangedCredentials())
       return throwError({ msg: 're-login is required', status: 403 })
 
-    socket.profile = isExistedUser
+    this.contextArg.profile = isExistedUser
 
     return true
   }

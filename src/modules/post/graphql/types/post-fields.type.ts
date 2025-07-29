@@ -11,7 +11,7 @@ import {
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
 
-import { IPost } from '../../../../db/interface/IPost.interface'
+import { IPost } from '../../../../db/interfaces/IPost.interface'
 import { multiFiles } from '../../../../common/services/upload/interface/cloud-response.interface'
 
 export const postFields: ObjFields<

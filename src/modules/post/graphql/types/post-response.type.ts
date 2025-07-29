@@ -1,7 +1,7 @@
 import { GraphQLInt, GraphQLList } from 'graphql'
 
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import { IPost } from '../../../../db/interface/IPost.interface'
+import { IPost } from '../../../../db/interfaces/IPost.interface'
 import { postFields } from './post-fields.type'
 
 export const singlePost = returnedType<
@@ -11,7 +11,7 @@ export const singlePost = returnedType<
   fields: postFields,
 })
 export class PostResponse {
-  static readonly getAll = () => {
+  public static readonly getAll = () => {
     return returnedType<{ posts: IPost[]; count: number; page: number }>({
       name: 'getAllResponse',
       fields: {
@@ -24,7 +24,7 @@ export class PostResponse {
     })
   }
 
-  static readonly getSingle = () => {
+  public static readonly getSingle = () => {
     return returnedType<Omit<IPost, '__v' | 'savedBy' | 'archivedAt'>>({
       name: 'getSinglePostResponse',
       fields: postFields,

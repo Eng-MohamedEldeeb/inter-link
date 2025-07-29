@@ -1,31 +1,16 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { ICreateGroup, IGetGroup } from '../../../modules/group/dto/group.dto'
+import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { ICreateGroup, IGetGroup } from '../../../modules/group/dto/group.dto'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import groupRepository from '../../repositories/group.repository'
 
 class GroupConflictedNameGuard extends GuardActivator {
-  private readonly groupRepository = groupRepository
+  protected readonly groupRepository = groupRepository
   protected name!: string
-
-  protected readonly checkConflictedGroupNames = async (): Promise<boolean> => {
-    const existedGroup = await this.groupRepository.findOne({
-      filter: { name: this.name },
-      projection: { _id: 1 },
-      options: { lean: true },
-    })
-    if (existedGroup)
-      return throwError({ msg: `'${this.name}' is and In-valid group name` })
-
-    return true
-  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -36,8 +21,20 @@ class GroupConflictedNameGuard extends GuardActivator {
 
       this.name = name
 
-      return await this.checkConflictedGroupNames()
+      return await this.isValidGroupName()
     }
+  }
+
+  protected readonly isValidGroupName = async (): Promise<boolean> => {
+    const existedGroup = await this.groupRepository.findOne({
+      filter: { name: this.name },
+      projection: { _id: 1 },
+      options: { lean: true },
+    })
+    if (existedGroup)
+      return throwError({ msg: `'${this.name}' is and In-valid group name` })
+
+    return true
   }
 }
 

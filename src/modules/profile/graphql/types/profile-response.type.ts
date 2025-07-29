@@ -1,7 +1,7 @@
 import { GraphQLInt, GraphQLList } from 'graphql'
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import { IPost } from '../../../../db/interface/IPost.interface'
-import { IUser } from '../../../../db/interface/IUser.interface'
+import { IPost } from '../../../../db/interfaces/IPost.interface'
+import { IUser } from '../../../../db/interfaces/IUser.interface'
 import { IUpdateProfile } from '../../dto/profile.dto'
 import { singlePost } from '../../../post/graphql/types/post-response.type'
 
@@ -9,7 +9,7 @@ import * as graphQlFields from '../../../../common/types/graphql/graphql-fields.
 
 export class ProfileResponse {
   // Query:
-  static readonly getProfile = () => {
+  public static readonly getProfile = () => {
     return returnedType<
       Omit<
         IUser,
@@ -21,7 +21,7 @@ export class ProfileResponse {
     })
   }
 
-  static readonly getFollowers = () => {
+  public static readonly getFollowers = () => {
     return returnedType<Pick<IUser, 'followers'>>({
       name: 'profileFollowers',
       fields: {
@@ -30,7 +30,7 @@ export class ProfileResponse {
     })
   }
 
-  static readonly getFollowing = () => {
+  public static readonly getFollowing = () => {
     return returnedType<Pick<IUser, 'following'>>({
       name: 'profileFollowing',
       fields: {
@@ -39,7 +39,7 @@ export class ProfileResponse {
     })
   }
 
-  static readonly getAllSavedPosts = () => {
+  public static readonly getAllSavedPosts = () => {
     return returnedType<{ posts: IPost[]; count: number; page: number }>({
       name: 'getAllSavedPostsResponse',
       fields: {
@@ -53,7 +53,7 @@ export class ProfileResponse {
   }
 
   // Mutation:
-  static readonly updateProfileResponse = () => {
+  public static readonly updateProfileResponse = () => {
     return returnedType<IUpdateProfile>({
       name: 'updatedData',
       fields: {

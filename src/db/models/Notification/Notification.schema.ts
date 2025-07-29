@@ -1,8 +1,8 @@
-import { INotifications } from './../../interface/INotification.interface'
 import { Schema, SchemaTypes } from 'mongoose'
 
-import { INotificationDetails } from '../../interface/INotification.interface'
-import { refTo } from '../../types/notification.type'
+import { INotifications } from './../../interfaces/INotification.interface'
+import { INotificationDetails } from '../../interfaces/INotification.interface'
+import { refTo } from '../../../common/services/notifications/types'
 
 export const NotificationSchema = new Schema<INotifications>(
   {
@@ -12,7 +12,7 @@ export const NotificationSchema = new Schema<INotifications>(
       unique: [true, '"belongsTo" Id already exists'],
     },
 
-    received: {
+    missed: {
       type: [
         {
           title: {
@@ -87,8 +87,8 @@ export const NotificationSchema = new Schema<INotifications>(
   },
 )
 
-NotificationSchema.virtual('totalReceivedNotifications').get(function (
+NotificationSchema.virtual('totalMissedNotifications').get(function (
   this: INotifications,
 ) {
-  return this.received && this.received.length ? this.received.length : 0
+  return this.missed && this.missed.length ? this.missed.length : 0
 })

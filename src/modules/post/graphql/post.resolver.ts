@@ -10,7 +10,7 @@ import { PostService } from '../post.service'
 export class PostQueryResolver {
   private static readonly PostService = PostService
 
-  static readonly getAll = async (
+  public static readonly getAll = async (
     args: DTO.IGetAll,
     _: any,
   ): Promise<ISuccessResponse> => {
@@ -21,7 +21,10 @@ export class PostQueryResolver {
     }
   }
 
-  static readonly getSingle = (_: any, context: IContext): ISuccessResponse => {
+  public static readonly getSingle = (
+    _: any,
+    context: IContext,
+  ): ISuccessResponse => {
     const { post } = context
     return {
       msg: 'done',
@@ -33,7 +36,10 @@ export class PostQueryResolver {
 export class PostMutationResolver {
   private static readonly PostService = PostService
 
-  static readonly edit = async (args: DTO.IEditPost, context: IContext) => {
+  public static readonly edit = async (
+    args: DTO.IEditPost,
+    context: IContext,
+  ) => {
     const { _id: postId } = context.post
     return {
       msg: 'Post is modified successfully',
@@ -42,7 +48,7 @@ export class PostMutationResolver {
     }
   }
 
-  static readonly save = async (_: any, context: IContext) => {
+  public static readonly save = async (_: any, context: IContext) => {
     const { _id: profileId } = context.profile
     const { _id: postId } = context.post
 
@@ -53,7 +59,7 @@ export class PostMutationResolver {
     }
   }
 
-  static readonly shared = async (_: any, context: IContext) => {
+  public static readonly shared = async (_: any, context: IContext) => {
     const { _id: postId } = context.post
 
     return {
@@ -63,7 +69,7 @@ export class PostMutationResolver {
     }
   }
 
-  static readonly archive = async (_: any, context: IContext) => {
+  public static readonly archive = async (_: any, context: IContext) => {
     const { _id: postId } = context.post
 
     return {
@@ -72,7 +78,7 @@ export class PostMutationResolver {
       data: this.PostService.archive(postId),
     }
   }
-  static readonly restore = async (_: any, context: IContext) => {
+  public static readonly restore = async (_: any, context: IContext) => {
     const { _id: postId } = context.post
 
     return {
@@ -82,7 +88,7 @@ export class PostMutationResolver {
     }
   }
 
-  static readonly deletePost = async (_: any, context: IContext) => {
+  public static readonly deletePost = async (_: any, context: IContext) => {
     const { _id: profileId } = context.profile
     const { _id: postId } = context.post
 

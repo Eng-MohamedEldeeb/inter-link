@@ -1,10 +1,10 @@
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
+import { successResponse } from '../../../common/handlers/success-response.handler'
 import { OtpType } from '../../../db/models/enums/otp.enum'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { ProfileService } from '../profile.service'
 import { Response } from 'express'
 import { IRequest } from '../../../common/interface/IRequest.interface'
-import { IUser } from '../../../db/interface/IUser.interface'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 import { IGetAll } from '../../post/dto/post.dto'
 
 import * as DTO from '../dto/profile.dto'
@@ -12,14 +12,16 @@ import * as DTO from '../dto/profile.dto'
 export class ProfileController {
   private static readonly ProfileService = ProfileService
 
-  static readonly getProfile = asyncHandler((req: IRequest, res: Response) => {
-    const profile: IUser = req.profile
-    return successResponse(res, {
-      data: this.ProfileService.getProfile(profile),
-    })
-  })
+  public static readonly getProfile = asyncHandler(
+    (req: IRequest, res: Response) => {
+      const profile: IUser = req.profile
+      return successResponse(res, {
+        data: this.ProfileService.getProfile(profile),
+      })
+    },
+  )
 
-  static readonly getFollowers = asyncHandler(
+  public static readonly getFollowers = asyncHandler(
     (req: IRequest, res: Response) => {
       const profile: IUser = req.profile
       return successResponse(res, {
@@ -28,7 +30,7 @@ export class ProfileController {
     },
   )
 
-  static readonly getFollowing = asyncHandler(
+  public static readonly getFollowing = asyncHandler(
     (req: IRequest, res: Response) => {
       const profile: IUser = req.profile
       return successResponse(res, {
@@ -37,7 +39,7 @@ export class ProfileController {
     },
   )
 
-  static readonly getAllSavedPosts = asyncHandler(
+  public static readonly getAllSavedPosts = asyncHandler(
     async (req: IRequest<null, IGetAll>, res: Response) => {
       const { _id: profileId } = req.profile
       const query = req.query
@@ -47,7 +49,7 @@ export class ProfileController {
     },
   )
 
-  static readonly changeAvatar = asyncHandler(
+  public static readonly changeAvatar = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId, avatar } = req.profile
       const path = req.file!.path!
@@ -62,7 +64,7 @@ export class ProfileController {
     },
   )
 
-  static readonly deleteProfilePic = asyncHandler(
+  public static readonly deleteProfilePic = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.tokenPayload
       return successResponse(res, {
@@ -72,7 +74,7 @@ export class ProfileController {
     },
   )
 
-  static readonly updateProfile = asyncHandler(
+  public static readonly updateProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
       const updateProfile: DTO.IUpdateProfile = req.body
       const { _id } = req.tokenPayload
@@ -86,7 +88,7 @@ export class ProfileController {
     },
   )
 
-  static readonly changeVisibility = asyncHandler(
+  public static readonly changeVisibility = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId, isPrivateProfile } = req.profile
       await this.ProfileService.changeVisibility({
@@ -99,7 +101,7 @@ export class ProfileController {
     },
   )
 
-  static readonly changeEmail = asyncHandler(
+  public static readonly changeEmail = asyncHandler(
     async (req: IRequest, res: Response) => {
       const changeEmail: DTO.IChangeEmail = req.body
       const { _id } = req.tokenPayload
@@ -110,7 +112,7 @@ export class ProfileController {
     },
   )
 
-  static readonly confirmNewEmail = asyncHandler(
+  public static readonly confirmNewEmail = asyncHandler(
     async (req: IRequest, res: Response) => {
       const confirmNewEmail: DTO.IConfirmNewEmail = req.body
       await this.ProfileService.confirmNewEmail(confirmNewEmail)
@@ -120,7 +122,7 @@ export class ProfileController {
     },
   )
 
-  static readonly deactivateAccount = asyncHandler(
+  public static readonly deactivateAccount = asyncHandler(
     async (req: IRequest, res: Response) => {
       const deleteAccount: DTO.IDeleteAccount = req.body
       await this.ProfileService.deactivateAccount(deleteAccount)
@@ -130,7 +132,7 @@ export class ProfileController {
     },
   )
 
-  static readonly deleteAccount = asyncHandler(
+  public static readonly deleteAccount = asyncHandler(
     async (req: IRequest, res: Response) => {
       const deleteAccount: DTO.IDeleteAccount = req.body
       await this.ProfileService.deleteAccount(deleteAccount)
@@ -140,7 +142,7 @@ export class ProfileController {
     },
   )
 
-  static readonly confirmDeletion = asyncHandler(
+  public static readonly confirmDeletion = asyncHandler(
     async (req: IRequest, res: Response) => {
       const confirmDelete: DTO.IConfirmDelete = req.body
       const type = await this.ProfileService.confirmDeletion(confirmDelete)

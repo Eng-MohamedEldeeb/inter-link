@@ -26,7 +26,7 @@ export class GroupController {
   private static readonly GroupMutationResolver = GroupMutationResolver
 
   // Queries:
-  static readonly getGroup = (): IQueryController => {
+  public static readonly getGroup = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getGroupPostQuery',
@@ -42,7 +42,7 @@ export class GroupController {
   }
 
   // Mutations:
-  static readonly addAdmin = (): IMutationController => {
+  public static readonly addAdmin = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'addAdminMutation',
@@ -62,7 +62,7 @@ export class GroupController {
     }
   }
 
-  static readonly removeAdmin = (): IMutationController => {
+  public static readonly removeAdmin = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'removeAdminMutation',
@@ -82,7 +82,7 @@ export class GroupController {
     }
   }
 
-  static readonly edit = (): IMutationController => {
+  public static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'editGroupMutation',
@@ -101,7 +101,7 @@ export class GroupController {
     }
   }
 
-  static readonly changeVisibility = (): IMutationController => {
+  public static readonly changeVisibility = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'changeGroupVisibilityMutation',
@@ -120,7 +120,7 @@ export class GroupController {
     }
   }
 
-  static readonly deleteGroup = (): IMutationController => {
+  public static readonly deleteGroup = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteGroupMutation',
@@ -139,7 +139,7 @@ export class GroupController {
     }
   }
 
-  static readonly removePostFromGroup = (): IMutationController => {
+  public static readonly removePostFromGroup = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'removePostFromGroupMutation',

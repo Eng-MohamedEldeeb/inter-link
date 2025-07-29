@@ -1,5 +1,5 @@
-import { MongoId } from '../../../common/types/db/db.types'
-import { IReplyInputs } from '../../../db/interface/IReply.interface'
+import { MongoId } from '../../../common/types/db'
+import { IReplyInputs } from '../../../db/interfaces/IReply.interface'
 
 export interface IGetCommentReplies {
   commentId: MongoId

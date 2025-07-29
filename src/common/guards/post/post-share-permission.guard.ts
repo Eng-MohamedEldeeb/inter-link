@@ -1,40 +1,18 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { MongoId } from '../../types/db/db.types'
+import { ContextType } from '../../decorators/context/types'
+import { MongoId } from '../../types/db'
 import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 import { throwError } from '../../handlers/error-message.handler'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import userRepository from '../../repositories/user.repository'
 
-class PostSharePermission extends GuardActivator {
-  private readonly userRepository = userRepository
+class PostSharePermissionGuard extends GuardActivator {
+  protected readonly userRepository = userRepository
   protected profileId!: MongoId
   protected createdBy!: MongoId
-
-  protected readonly sharePermission = async () => {
-    const postOwner = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
-      },
-      projection: { isPrivateProfile: 1 },
-    })
-
-    if (!postOwner) return throwError({ msg: 'In-valid Post Id' })
-
-    if (postOwner.isPrivateProfile && !postOwner._id.equals(this.profileId))
-      return throwError({
-        msg: 'Only Private Profiles can share their own posts ',
-        status: 403,
-      })
-
-    return true
-  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -53,8 +31,30 @@ class PostSharePermission extends GuardActivator {
       this.profileId = context.profile._id
     }
 
-    return await this.sharePermission()
+    return await this.allowedToShare()
+  }
+
+  protected readonly allowedToShare = async () => {
+    const ownerProfile = await this.userRepository.findOne({
+      filter: {
+        $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
+      },
+      projection: { isPrivateProfile: 1 },
+    })
+
+    if (!ownerProfile) return throwError({ msg: 'In-valid Post Id' })
+
+    if (
+      ownerProfile.isPrivateProfile &&
+      !ownerProfile._id.equals(this.profileId)
+    )
+      return throwError({
+        msg: 'Only Followers can share their own posts of this Private Profile',
+        status: 403,
+      })
+
+    return true
   }
 }
 
-export default new PostSharePermission()
+export default new PostSharePermissionGuard()

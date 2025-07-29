@@ -5,7 +5,7 @@ import Cloudinary from './config/cloud-config'
 export class CloudUploader {
   private static readonly cloud: typeof Cloudinary = Cloudinary
 
-  static readonly upload = async ({
+  public static readonly upload = async ({
     path,
     folderName,
     public_id,
@@ -19,13 +19,13 @@ export class CloudUploader {
     return await this.cloud.uploader.upload(path, { folder: folderName })
   }
 
-  static readonly deleteAsset = async (
+  public static readonly deleteAsset = async (
     public_id: string,
   ): Promise<UploadApiResponse> => {
     return await this.cloud.uploader.destroy(public_id)
   }
 
-  static readonly deleteFolder = async ({
+  public static readonly deleteFolder = async ({
     fullPath,
   }: {
     fullPath: string

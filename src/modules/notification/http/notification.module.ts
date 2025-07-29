@@ -5,8 +5,8 @@ import { NotificationController } from './notification.controller'
 
 import * as validators from '../validators/notification.validators'
 
-import notificationExistenceGuard from '../../../common/guards/notification/notification-existence.guard'
-import notificationAuthorizationGuard from '../../../common/guards/notification/notification-authorization.guard'
+import NotificationExistenceGuardGuard from '../../../common/guards/notification/notification-existence.guard'
+import NotificationOwnerGuardGuard from '../../../common/guards/notification/notification-owner.guard'
 
 const router: Router = Router()
 
@@ -19,13 +19,13 @@ router.get(
 router.get(
   '/:id',
   validate(validators.getAllNotificationsValidator.http()),
-  applyGuards([notificationExistenceGuard]),
+  applyGuards(NotificationExistenceGuardGuard),
   NotificationController.getNotification,
 )
 
 router.delete(
   '/:id',
-  applyGuards([notificationExistenceGuard, notificationAuthorizationGuard]),
+  applyGuards(NotificationExistenceGuardGuard, NotificationOwnerGuardGuard),
   validate(validators.deleteNotificationValidator.http()),
   NotificationController.deleteNotification,
 )

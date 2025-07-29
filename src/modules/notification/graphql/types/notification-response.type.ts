@@ -6,7 +6,7 @@ import {
 import { notificationFields } from './notification-fields.type'
 
 export class NotificationResponse {
-  static readonly getAllNotifications = () => {
+  public static readonly getAllNotifications = () => {
     return returnedResponseType({
       name: 'getAllNotificationsResponse',
       data: returnedType({

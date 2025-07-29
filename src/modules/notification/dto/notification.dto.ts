@@ -1,4 +1,4 @@
-import { MongoId } from '../../../common/types/db/db.types'
+import { MongoId } from '../../../common/types/db'
 
 export interface IGetNotification {
   id: MongoId

@@ -8,7 +8,7 @@ import { StoryService } from '../story.service'
 export class StoryQueryResolver {
   private static readonly StoryService = StoryService
 
-  static readonly getAll = async (
+  public static readonly getAll = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -20,7 +20,10 @@ export class StoryQueryResolver {
     }
   }
 
-  static readonly getSingle = (_: any, context: IContext): ISuccessResponse => {
+  public static readonly getSingle = (
+    _: any,
+    context: IContext,
+  ): ISuccessResponse => {
     const { story } = context
     return {
       msg: 'done',
@@ -32,7 +35,7 @@ export class StoryQueryResolver {
 export class StoryMutationResolver {
   private static readonly StoryService = StoryService
 
-  static readonly like = async (_: any, context: IContext) => {
+  public static readonly like = async (_: any, context: IContext) => {
     await this.StoryService.like({
       profile: context.profile,
       story: context.story,
@@ -42,7 +45,7 @@ export class StoryMutationResolver {
     }
   }
 
-  static readonly deleteStory = async (_: any, context: IContext) => {
+  public static readonly deleteStory = async (_: any, context: IContext) => {
     const { _id: profileId } = context.profile
     const { _id: storyId } = context.story
 

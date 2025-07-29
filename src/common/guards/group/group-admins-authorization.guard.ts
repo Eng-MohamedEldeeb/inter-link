@@ -1,22 +1,15 @@
-import { GuardActivator } from '../can-activate.guard'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
-import { MongoId } from '../../types/db/db.types'
+import { ContextType } from '../../decorators/context/types'
+import { MongoId } from '../../types/db'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
-import groupOwnerAuthorizationGuard from './group-owner-authorization.guard'
+import GroupOwnerAuthorizationGuard from './group-owner-authorization.guard'
 
 class GroupAdminAuthorizationGuard extends GuardActivator {
   protected profileId!: MongoId
   protected admins!: MongoId[]
-
-  protected readonly isAdmin = () => {
-    return this.admins.some(adminId => adminId.equals(this.profileId))
-  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -41,8 +34,12 @@ class GroupAdminAuthorizationGuard extends GuardActivator {
 
     return (
       this.isAdmin() ||
-      (await groupOwnerAuthorizationGuard.canActivate(...params))
+      (await GroupOwnerAuthorizationGuard.canActivate(...params))
     )
+  }
+
+  protected readonly isAdmin = () => {
+    return this.admins.some(adminId => adminId.equals(this.profileId))
   }
 }
 

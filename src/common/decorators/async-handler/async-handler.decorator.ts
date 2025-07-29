@@ -1,10 +1,7 @@
-import { ContextType } from '../context/types/enum/context-type.enum'
+import { ContextType } from '../context/types'
 import { ContextDetector } from '../context/context-detector.decorator'
 
-import {
-  deleteFilesAfterError,
-  throwErrorByInstanceType,
-} from './helpers/async-handler.helpers'
+import { onError } from './helpers/async-handler.helpers'
 
 export const asyncHandler = (fn: Function) => {
   return async (...params: any[]) => {
@@ -26,12 +23,7 @@ export const asyncHandler = (fn: Function) => {
         return await fn(socket, socketServerNext)
       }
     } catch (error) {
-      if (Ctx.type === ContextType.httpContext) {
-        const { req } = Ctx.switchToHTTP()
-        await deleteFilesAfterError(req)
-      }
-
-      throwErrorByInstanceType(error, Ctx)
+      return await onError(error, Ctx)
     }
   }
 }

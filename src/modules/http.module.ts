@@ -21,49 +21,49 @@ router.use('/auth', applyRateLimiter(), authModule)
 router.use(
   '/notification',
   applyRateLimiter({ skipSuccessfulRequests: true }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   notificationModule,
 )
 
 router.use(
   '/profile',
   applyRateLimiter({ skipSuccessfulRequests: true }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   profileModule,
 )
 
 router.use(
   '/user',
   applyRateLimiter({ skipSuccessfulRequests: true }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   userModule,
 )
 
 router.use(
   '/story',
   applyRateLimiter({ skipSuccessfulRequests: false }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   storyModule,
 )
 
 router.use(
   '/post',
   applyRateLimiter({ skipSuccessfulRequests: false }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   postModule,
 )
 
 router.use(
   '/comment',
   applyRateLimiter({ skipSuccessfulRequests: false }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   commentModule,
 )
 
 router.use(
   '/group',
   applyRateLimiter({ skipSuccessfulRequests: false }),
-  applyGuards([isAuthenticatedGuard, isAuthorizedGuard]),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   groupModule,
 )
 

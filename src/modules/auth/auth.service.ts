@@ -12,7 +12,9 @@ export class AuthService {
   private static readonly userRepository = userRepository
   private static readonly otpRepository = otpRepository
 
-  static readonly confirmEmail = async (confirmEmail: DTO.IConfirmEmail) => {
+  public static readonly confirmEmail = async (
+    confirmEmail: DTO.IConfirmEmail,
+  ) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { email: confirmEmail.email },
       projection: { email: 1 },
@@ -40,7 +42,7 @@ export class AuthService {
     })
   }
 
-  static readonly register = async (
+  public static readonly register = async (
     register: Omit<
       DTO.IRegister,
       'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
@@ -84,9 +86,11 @@ export class AuthService {
       phone,
       birthDate,
     })
+
+    return await this.login({ username, password })
   }
 
-  static readonly login = async (login: DTO.ILogin) => {
+  public static readonly login = async (login: DTO.ILogin) => {
     const { username, password } = login
 
     const isExistedUser = await this.userRepository.findOne({
@@ -132,7 +136,7 @@ export class AuthService {
     return accessToken
   }
 
-  static readonly forgotPassword = async (
+  public static readonly forgotPassword = async (
     forgotPassword: DTO.IForgotPassword,
   ) => {
     const isExistedUser = await this.userRepository.findOne({
@@ -161,7 +165,9 @@ export class AuthService {
     })
   }
 
-  static readonly resetPassword = async (resetPassword: DTO.IResetPassword) => {
+  public static readonly resetPassword = async (
+    resetPassword: DTO.IResetPassword,
+  ) => {
     const { email, newPassword, otpCode } = resetPassword
 
     const isExistedUser = await this.userRepository.findOne({

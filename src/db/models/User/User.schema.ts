@@ -1,6 +1,6 @@
 import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
 
-import { IUser } from '../../interface/IUser.interface'
+import { IUser } from '../../interfaces/IUser.interface'
 import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
 import { OtpType } from '../enums/otp.enum'
 import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'

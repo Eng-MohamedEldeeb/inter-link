@@ -1,5 +1,5 @@
-import { MongoId } from '../../../common/types/db/db.types'
-import { IPostInputs } from '../../../db/interface/IPost.interface'
+import { MongoId } from '../../../common/types/db'
+import { IPostInputs } from '../../../db/interfaces/IPost.interface'
 
 export interface IGetAll {
   page: number

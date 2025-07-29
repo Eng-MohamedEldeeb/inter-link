@@ -7,7 +7,7 @@ import { IEditComment } from '../dto/comment.dto'
 import { CommentService } from '../comment.service'
 
 export class CommentQueryResolver {
-  static readonly getSingleComment = async (
+  public static readonly getSingleComment = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -22,7 +22,7 @@ export class CommentQueryResolver {
 export class CommentMutationResolver {
   private static readonly CommentService = CommentService
 
-  static readonly like = async (
+  public static readonly like = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -35,7 +35,7 @@ export class CommentMutationResolver {
     }
   }
 
-  static readonly edit = async (
+  public static readonly edit = async (
     args: IEditComment,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -50,7 +50,7 @@ export class CommentMutationResolver {
     }
   }
 
-  static readonly deleteComment = async (
+  public static readonly deleteComment = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {

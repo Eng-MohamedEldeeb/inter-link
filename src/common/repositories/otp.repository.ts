@@ -1,7 +1,7 @@
-import { IOtp } from '../../db/interface/IOtp.interface'
+import { IOtp } from '../../db/interfaces/IOtp.interface'
 import { Model } from 'mongoose'
 import { DataBaseService } from './db-service.repository'
-import { TOtp } from '../../db/types/document.type'
+import { TOtp } from '../../db/documents'
 import { OtpModel } from '../../db/models/Otp/Otp.model'
 
 class OtpRepository extends DataBaseService<IOtp, TOtp> {

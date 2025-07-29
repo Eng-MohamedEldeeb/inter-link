@@ -14,8 +14,8 @@ import * as validators from '../validators/notification.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import notificationExistenceGuard from '../../../common/guards/notification/notification-authorization.guard'
-import notificationAuthorizationGuard from '../../../common/guards/notification/notification-authorization.guard'
+import NotificationExistenceGuardGuard from '../../../common/guards/notification/notification-owner.guard'
+import NotificationOwnerGuardGuard from '../../../common/guards/notification/notification-owner.guard'
 
 export class NotificationController {
   protected static readonly NotificationQueryResolver =
@@ -24,7 +24,7 @@ export class NotificationController {
     resolvers.NotificationMutationResolver
 
   // Queries:
-  static readonly getAllNotifications = (): IQueryController => {
+  public static readonly getAllNotifications = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getAllNotifications',
@@ -34,7 +34,7 @@ export class NotificationController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          notificationExistenceGuard,
+          NotificationExistenceGuardGuard,
         ],
         resolver: this.NotificationQueryResolver.getAllNotifications,
       }),
@@ -42,7 +42,7 @@ export class NotificationController {
   }
 
   // Mutations:
-  static readonly deleteNotification = (): IMutationController => {
+  public static readonly deleteNotification = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteNotification',
@@ -55,8 +55,8 @@ export class NotificationController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          notificationExistenceGuard,
-          notificationAuthorizationGuard,
+          NotificationExistenceGuardGuard,
+          NotificationOwnerGuardGuard,
         ],
         resolver: this.NotificationMutationResolver.deleteNotification,
       }),

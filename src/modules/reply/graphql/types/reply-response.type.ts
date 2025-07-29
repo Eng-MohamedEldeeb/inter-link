@@ -5,14 +5,14 @@ import {
 
 import { GraphQLList } from 'graphql'
 import { replyFields } from './reply-fields.type'
-import { IReply } from '../../../../db/interface/IReply.interface'
+import { IReply } from '../../../../db/interfaces/IReply.interface'
 
 export const singleReply = returnedType<Omit<IReply, '__v'>>({
   name: 'singleReply',
   fields: replyFields,
 })
 export class CommentResponse {
-  static readonly getPostComments = () => {
+  public static readonly getPostComments = () => {
     return returnedResponseType({
       name: 'getCommentRepliesResponse',
       data: returnedType<{ replies: IReply[] }>({

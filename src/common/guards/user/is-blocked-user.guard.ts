@@ -1,13 +1,10 @@
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { throwError } from '../../handlers/error-message.handler'
-import { GuardActivator } from '../can-activate.guard'
-import { MongoId } from '../../types/db/db.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { GuardActivator } from '../class/guard-activator.class'
+import { MongoId } from '../../types/db'
+import { ContextType } from '../../decorators/context/types'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 class IsBlockedUserGuard extends GuardActivator {
   protected userId!: MongoId
@@ -29,8 +26,6 @@ class IsBlockedUserGuard extends GuardActivator {
 
       if (isBlockedUser)
         return throwError({ msg: 'user not found', status: 404 })
-
-      return true
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -46,9 +41,9 @@ class IsBlockedUserGuard extends GuardActivator {
 
       if (isBlockedUser)
         return throwError({ msg: 'user not found', status: 404 })
-
-      return context
     }
+
+    return true
   }
 
   protected readonly checkIfBlocked = (): boolean => {

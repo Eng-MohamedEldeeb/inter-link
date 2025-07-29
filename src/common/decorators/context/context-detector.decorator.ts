@@ -1,4 +1,4 @@
-import { ContextType } from './types/enum/context-type.enum'
+import { ContextType } from './types'
 
 import {
   HttpContext,
@@ -7,7 +7,7 @@ import {
   GraphQLParams,
   SocketServerContext,
   SocketServerParams,
-} from './types/context-detector.types'
+} from './types'
 
 export class ContextDetector {
   static type: ContextType
@@ -38,26 +38,20 @@ export class ContextDetector {
       this.params[this.params.length - 1] instanceof Function
     )
   }
-  static readonly detect = (params: any[]) => {
+  public static readonly detect = (params: any[]) => {
     this.params = params
 
-    const hasHttpParams = this.hasHttpParams()
-
-    const hasGraphQLParams = this.hasGraphQLParams()
-
-    const hasSocketServerParams = this.hasSocketServerParams()
-
-    if (hasHttpParams) {
+    if (this.hasHttpParams()) {
       this.type = ContextType.httpContext
       return this
     }
 
-    if (hasGraphQLParams) {
+    if (this.hasGraphQLParams()) {
       this.type = ContextType.graphContext
       return this
     }
 
-    if (hasSocketServerParams) {
+    if (this.hasSocketServerParams()) {
       this.type = ContextType.socketContext
       return this
     }
@@ -65,19 +59,24 @@ export class ContextDetector {
     throw new Error('Un-known Context')
   }
 
-  static readonly switchToHTTP = <P = any, Q = any>(): HttpContext<P, Q> => {
+  public static readonly switchToHTTP = <P = any, Q = any>(): HttpContext<
+    P,
+    Q
+  > => {
     const [req, res, next]: HttpParams<P, Q> = this.params
 
     return { req, res, next }
   }
 
-  static readonly switchToGraphQL = <Args = any>(): GraphQLContext<Args> => {
+  public static readonly switchToGraphQL = <
+    Args = any,
+  >(): GraphQLContext<Args> => {
     const [source, args, context, info]: GraphQLParams<Args> = this.params
 
     return { source, args, context, info }
   }
 
-  static readonly switchToSocket = (): SocketServerContext => {
+  public static readonly switchToSocket = (): SocketServerContext => {
     const [socket, socketServerNext]: SocketServerParams = this.params
     return { socket, socketServerNext }
   }

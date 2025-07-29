@@ -19,7 +19,7 @@ import { validate } from '../../../common/middlewares/validation/validation.midd
 
 export class UserQueryController {
   private static readonly UserQueryResolver = UserQueryResolver
-  static readonly getUserProfile = (): IQueryController => {
+  public static readonly getUserProfile = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getUserProfile',
@@ -34,7 +34,7 @@ export class UserQueryController {
     }
   }
 
-  static readonly getUserFollowers = (): IQueryController => {
+  public static readonly getUserFollowers = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getUserFollowers',
@@ -48,7 +48,7 @@ export class UserQueryController {
     }
   }
 
-  static readonly getUserFollowing = (): IQueryController => {
+  public static readonly getUserFollowing = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getUserFollowing',
@@ -66,7 +66,7 @@ export class UserQueryController {
 export class UserMutationController {
   private static readonly UserMutationResolver = UserMutationResolver
 
-  static readonly blockUser = (): IMutationController => {
+  public static readonly blockUser = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'blockUser',
@@ -80,7 +80,7 @@ export class UserMutationController {
     }
   }
 
-  static readonly unblockUser = (): IMutationController => {
+  public static readonly unblockUser = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'unblockUser',

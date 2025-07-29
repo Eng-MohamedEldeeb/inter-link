@@ -14,7 +14,6 @@ export const validateHttpInputs = async (
   for (const key of Object.keys(schema)) {
     const { error } = schema[key].validate(req[key as keyof IRequest], {
       abortEarly: false,
-      // allowUnknown: false,
     })
 
     if (error) {
@@ -62,5 +61,6 @@ export const validateGraphQLInputs = async (
     })
   }
 
-  if (errors.length) throw { msg: 'validation error', extensions: { errors } }
+  if (errors.length)
+    throw { msg: 'validation error', extensions: { details: errors } }
 }

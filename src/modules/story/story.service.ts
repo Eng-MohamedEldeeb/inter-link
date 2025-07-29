@@ -1,18 +1,18 @@
-import { MongoId } from '../../common/types/db/db.types'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
-import { ICreateStory } from './dto/story.dto'
-import { IStory } from '../../db/interface/IStory.interface'
-import { ILikedStoryNotification } from '../../db/interface/INotification.interface'
-import { IUser } from '../../db/interface/IUser.interface'
-
 import storyRepository from '../../common/repositories/story.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
-export class StoryService {
-  private static readonly storyRepository = storyRepository
-  private static readonly notificationsService = notificationsService
+import { MongoId } from '../../common/types/db'
+import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
+import { ICreateStory } from './dto/story.dto'
+import { IStory } from '../../db/interfaces/IStory.interface'
+import { ILikedStoryNotification } from '../../db/interfaces/INotification.interface'
+import { IUser } from '../../db/interfaces/IUser.interface'
 
-  static readonly getAll = async (userId: MongoId) => {
+export class StoryService {
+  protected static readonly storyRepository = storyRepository
+  protected static readonly notificationsService = notificationsService
+
+  public static readonly getAll = async (userId: MongoId) => {
     const stories = await this.storyRepository.find({
       filter: { createdBy: userId, 'createdBy.isPrivateProfile': false },
       projection: {
@@ -26,7 +26,7 @@ export class StoryService {
     return stories
   }
 
-  static readonly create = async ({
+  public static readonly create = async ({
     createdBy,
     attachment,
   }: {
@@ -42,7 +42,7 @@ export class StoryService {
     })
   }
 
-  static readonly like = async ({
+  public static readonly like = async ({
     profile,
     story,
   }: {
@@ -91,7 +91,7 @@ export class StoryService {
     return { msg: 'Story is liked successfully' }
   }
 
-  static readonly delete = async ({
+  public static readonly delete = async ({
     profileId,
     storyId,
   }: {

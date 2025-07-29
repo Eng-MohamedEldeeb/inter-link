@@ -14,7 +14,7 @@ export class ProfileQueryResolver {
   protected static readonly ProfileService = ProfileService
   protected static readonly PostService = PostService
 
-  static readonly getProfile = (
+  public static readonly getProfile = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -26,7 +26,7 @@ export class ProfileQueryResolver {
     }
   }
 
-  static readonly getFollowers = (
+  public static readonly getFollowers = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -38,7 +38,7 @@ export class ProfileQueryResolver {
     }
   }
 
-  static readonly getFollowing = (
+  public static readonly getFollowing = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
@@ -50,7 +50,7 @@ export class ProfileQueryResolver {
     }
   }
 
-  static readonly getAllSavedPosts = async (
+  public static readonly getAllSavedPosts = async (
     args: IGetAll,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -69,7 +69,7 @@ export class ProfileQueryResolver {
 export class ProfileMutationResolver {
   protected static readonly ProfileService = ProfileService
 
-  static readonly updateProfile = async (
+  public static readonly updateProfile = async (
     args: DTO.IUpdateProfile,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -85,7 +85,10 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly deleteProfilePic = async (_: any, context: IContext) => {
+  public static readonly deleteProfilePic = async (
+    _: any,
+    context: IContext,
+  ) => {
     const { _id } = context.tokenPayload
     return {
       msg: 'Profile Picture is deleted successfully',
@@ -94,7 +97,7 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly changeVisibility = async (
+  public static readonly changeVisibility = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -109,7 +112,7 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly changeEmail = async (
+  public static readonly changeEmail = async (
     args: DTO.IChangeEmail,
     context: IContext,
   ) => {
@@ -121,7 +124,7 @@ export class ProfileMutationResolver {
       status: 200,
     }
   }
-  static readonly confirmNewEmail = async (
+  public static readonly confirmNewEmail = async (
     args: DTO.IConfirmNewEmail,
     _: IContext,
   ) => {
@@ -133,7 +136,7 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly deactivateAccount = async (
+  public static readonly deactivateAccount = async (
     args: DTO.IDeleteAccount,
     _: IContext,
   ) => {
@@ -145,7 +148,7 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly deleteAccount = async (
+  public static readonly deleteAccount = async (
     args: DTO.IDeleteAccount,
     _: IContext,
   ) => {
@@ -157,7 +160,7 @@ export class ProfileMutationResolver {
     }
   }
 
-  static readonly confirmDeletion = async (
+  public static readonly confirmDeletion = async (
     args: DTO.IConfirmDelete,
     _: IContext,
   ) => {

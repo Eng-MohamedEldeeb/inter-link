@@ -1,13 +1,10 @@
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { GuardActivator } from '../can-activate.guard'
-import { MongoId } from '../../types/db/db.types'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { GuardActivator } from '../class/guard-activator.class'
+import { MongoId } from '../../types/db'
+import { ContextType } from '../../decorators/context/types'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
-import { IUser } from '../../../db/interface/IUser.interface'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 
 class UserPrivacyGuard extends GuardActivator {
   protected userId!: MongoId
@@ -31,6 +28,7 @@ class UserPrivacyGuard extends GuardActivator {
         totalFollowers,
         totalFollowing,
         totalPosts,
+        requests,
       } = req.user as IUser
 
       this.userId = userId
@@ -46,12 +44,9 @@ class UserPrivacyGuard extends GuardActivator {
           totalFollowers,
           totalFollowing,
           totalPosts,
+          requests,
         } as IUser
-
-        return true
       }
-
-      return true
     }
 
     if (Ctx.type === ContextType.graphContext) {
@@ -66,6 +61,7 @@ class UserPrivacyGuard extends GuardActivator {
         totalFollowers,
         totalFollowing,
         totalPosts,
+        requests,
       } = context.user as IUser
 
       this.userId = userId
@@ -81,12 +77,12 @@ class UserPrivacyGuard extends GuardActivator {
           totalFollowers,
           totalFollowing,
           totalPosts,
+          requests,
         } as IUser
-        return context
       }
-
-      return context
     }
+
+    return true
   }
 
   protected readonly isAllowedToView = (): boolean => {

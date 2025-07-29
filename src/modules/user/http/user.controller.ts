@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
+import { successResponse } from '../../../common/handlers/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { UserService } from '../user.service'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
@@ -16,7 +16,7 @@ import {
 export class UserController {
   private static readonly UserService = UserService
 
-  static readonly getUserProfile = asyncHandler(
+  public static readonly getUserProfile = asyncHandler(
     async (req: IRequest, res: Response) => {
       const user = req.user
       const { _id: profileId } = req.profile
@@ -29,7 +29,7 @@ export class UserController {
     },
   )
 
-  static readonly getUserFollowers = asyncHandler(
+  public static readonly getUserFollowers = asyncHandler(
     async (req: IRequest, res: Response) => {
       const user = req.user
       const profile = req.profile
@@ -41,7 +41,7 @@ export class UserController {
     },
   )
 
-  static readonly getUserFollowing = asyncHandler(
+  public static readonly getUserFollowing = asyncHandler(
     async (req: IRequest, res: Response) => {
       const user = req.user
       const profile = req.profile
@@ -53,7 +53,7 @@ export class UserController {
     },
   )
 
-  static readonly block = asyncHandler(
+  public static readonly block = asyncHandler(
     async (req: IRequest<IBlockUser>, res: Response) => {
       const { id } = req.params
       const { _id: profileId } = req.profile
@@ -64,7 +64,7 @@ export class UserController {
     },
   )
 
-  static readonly unblock = asyncHandler(
+  public static readonly unblock = asyncHandler(
     async (req: IRequest<IUnBlockUser>, res: Response) => {
       const { _id: userId } = req.user
       const { _id: profileId, blockedUsers } = req.profile
@@ -75,7 +75,7 @@ export class UserController {
     },
   )
 
-  static readonly follow = asyncHandler(
+  public static readonly follow = asyncHandler(
     async (req: IRequest<IFollowUser>, res: Response) => {
       const { msg } = await this.UserService.follow({
         user: req.user,
@@ -88,7 +88,7 @@ export class UserController {
     },
   )
 
-  static readonly acceptFollowRequest = asyncHandler(
+  public static readonly acceptFollowRequest = asyncHandler(
     async (req: IRequest<IAcceptFollowRequest>, res: Response) => {
       await this.UserService.acceptFollowRequest({
         user: req.user,
@@ -101,7 +101,7 @@ export class UserController {
     },
   )
 
-  static readonly unfollow = asyncHandler(
+  public static readonly unfollow = asyncHandler(
     async (req: IRequest<IUnFollowUser>, res: Response) => {
       const { _id: userId } = req.user
       const { _id: profileId } = req.profile
@@ -117,7 +117,7 @@ export class UserController {
     },
   )
 
-  static readonly rejectFollowRequest = asyncHandler(
+  public static readonly rejectFollowRequest = asyncHandler(
     async (req: IRequest<IRejectFollowRequest>, res: Response) => {
       const user = req.user
       const profile = req.profile

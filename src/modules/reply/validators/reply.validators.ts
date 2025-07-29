@@ -4,7 +4,7 @@ import * as DTO from '../dto/reply.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
 import { isValidMongoId } from '../../../common/validation/is-valid'
-import { IReplyInputs } from '../../../db/interface/IReply.interface'
+import { IReplyInputs } from '../../../db/interfaces/IReply.interface'
 
 export const getCommentRepliesValidator = {
   schema: joi

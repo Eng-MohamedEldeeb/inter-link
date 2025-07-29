@@ -10,7 +10,7 @@ import { ReplyService } from '../reply.service'
 export class ReplyQueryResolver {
   private static readonly ReplyService = ReplyService
 
-  static readonly getCommentReplies = async (
+  public static readonly getCommentReplies = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -26,7 +26,7 @@ export class ReplyQueryResolver {
 export class ReplyMutationResolver {
   private static readonly ReplyService = ReplyService
 
-  static readonly like = async (
+  public static readonly like = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -40,7 +40,7 @@ export class ReplyMutationResolver {
     }
   }
 
-  static readonly edit = async (
+  public static readonly edit = async (
     args: IEditReply,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -55,7 +55,7 @@ export class ReplyMutationResolver {
     }
   }
 
-  static readonly deleteReply = async (
+  public static readonly deleteReply = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {

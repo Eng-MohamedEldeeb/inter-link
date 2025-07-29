@@ -11,7 +11,7 @@ import {
 } from '../../../../common/types/graphql/graphql.types'
 
 import { singleFile } from '../../../../common/services/upload/interface/cloud-response.interface'
-import { IStory } from '../../../../db/interface/IStory.interface'
+import { IStory } from '../../../../db/interfaces/IStory.interface'
 
 export const storyFields: ObjFields<Omit<IStory, '__v'>> = {
   _id: { type: GraphQLID },

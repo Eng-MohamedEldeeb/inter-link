@@ -3,22 +3,22 @@ import groupRepository from '../../common/repositories/group.repository'
 
 import { ICreateGroup, IEditGroup } from './dto/group.dto'
 
-import { IGroup } from '../../db/interface/IGroup.interface'
+import { IGroup } from '../../db/interfaces/IGroup.interface'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { throwError } from '../../common/handlers/error-message.handler'
-import { IUser } from '../../db/interface/IUser.interface'
-import { MongoId } from './../../common/types/db/db.types'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { MongoId } from '../../common/types/db'
 
 export class GroupService {
-  private static readonly userRepository = userRepository
-  private static readonly groupRepository = groupRepository
-  private static readonly CloudUploader = CloudUploader
+  protected static readonly userRepository = userRepository
+  protected static readonly groupRepository = groupRepository
+  protected static readonly CloudUploader = CloudUploader
   protected static userId: MongoId
   protected static user: IUser
   protected static group: IGroup
 
-  static readonly getGroup = ({
+  public static readonly getGroup = ({
     group,
     profileId,
   }: {
@@ -33,7 +33,7 @@ export class GroupService {
     return group
   }
 
-  static readonly create = async ({
+  public static readonly create = async ({
     createdBy,
     createGroupDTO,
     cover,
@@ -70,7 +70,7 @@ export class GroupService {
     return this.group.admins.some(adminId => adminId.equals(this.user._id))
   }
 
-  static readonly addAdmin = async ({
+  public static readonly addAdmin = async ({
     group,
     userId,
   }: {
@@ -95,7 +95,7 @@ export class GroupService {
     })
   }
 
-  static readonly removeAdmin = async ({
+  public static readonly removeAdmin = async ({
     group,
     userId,
   }: {
@@ -121,7 +121,7 @@ export class GroupService {
     })
   }
 
-  static readonly changeCover = async ({
+  public static readonly changeCover = async ({
     group,
     path,
   }: {
@@ -164,7 +164,7 @@ export class GroupService {
     })
   }
 
-  static readonly changeVisibility = async ({
+  public static readonly changeVisibility = async ({
     groupId,
     state,
   }: {
@@ -184,7 +184,7 @@ export class GroupService {
     })
   }
 
-  static readonly edit = async ({
+  public static readonly edit = async ({
     groupId,
     editGroup,
   }: {
@@ -204,7 +204,7 @@ export class GroupService {
     })
   }
 
-  static readonly delete = async (groupId: MongoId) => {
+  public static readonly delete = async (groupId: MongoId) => {
     await this.groupRepository.findOneAndDelete({
       filter: {
         _id: groupId,

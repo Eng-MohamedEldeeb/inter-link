@@ -11,6 +11,7 @@ import * as comment from './comment/graphql/comment.module'
 import * as reply from './reply/graphql/reply.module'
 import * as story from './story/graphql/story.module'
 import * as group from './group/graphql/group.module'
+import * as chat from './chat/graphql/chat.module'
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -24,6 +25,7 @@ export const schema = new GraphQLSchema({
       reply: reply.queryModule,
       story: story.queryModule,
       group: group.queryModule,
+      chat: chat.queryModule,
     },
   }),
 
@@ -39,6 +41,7 @@ export const schema = new GraphQLSchema({
       reply: reply.mutationModule,
       story: story.mutationModule,
       group: group.mutationModule,
+      chat: chat.mutationModule,
     },
   }),
 })

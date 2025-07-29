@@ -1,4 +1,4 @@
-import { GuardActivator } from '../../../guards/can-activate.guard'
+import { GuardActivator } from '../../../guards/class/guard-activator.class'
 import { throwError } from '../../../handlers/error-message.handler'
 import { ContextDetector } from '../../context/context-detector.decorator'
 
@@ -23,8 +23,8 @@ export const graphQlContextGuardsActivator = async (
   const { source, args, context, info } = Ctx.switchToGraphQL()
 
   for (const guard of guards) {
-    await guard.canActivate(source, args, context, info)
-    if (!context) return throwError({ msg: 'forbidden request', status: 403 })
+    const result = await guard.canActivate(source, args, context, info)
+    if (!result) return throwError({ msg: 'forbidden request', status: 403 })
   }
 
   return context

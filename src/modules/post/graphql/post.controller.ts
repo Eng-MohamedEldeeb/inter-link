@@ -1,8 +1,8 @@
-import postSharePermissionGuard from '../../../common/guards/post/post-share-permission.guard'
+import PostSharePermissionGuardGuard from '../../../common/guards/post/post-share-permission.guard'
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
-import postAuthorizationGuard from '../../../common/guards/post/post-authorization.guard'
+import PostOwnerGuard from '../../../common/guards/post/post-owner.guard'
 
 import * as args from './types/post-args.type'
 import * as validators from './../validators/post.validators'
@@ -23,7 +23,7 @@ export class PostController {
   private static readonly PostMutationResolver = PostMutationResolver
 
   // Queries:
-  static readonly getAll = (): IQueryController => {
+  public static readonly getAll = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getAllPostsQuery',
@@ -38,7 +38,7 @@ export class PostController {
     }
   }
 
-  static readonly getSingle = (): IQueryController => {
+  public static readonly getSingle = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getSinglePostQuery',
@@ -55,7 +55,7 @@ export class PostController {
 
   // Mutations:
 
-  static readonly edit = (): IMutationController => {
+  public static readonly edit = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'editPostMutation',
@@ -67,14 +67,14 @@ export class PostController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           postExistenceGuard,
-          postAuthorizationGuard,
+          PostOwnerGuard,
         ],
         resolver: this.PostMutationResolver.edit,
       }),
     }
   }
 
-  static readonly save = (): IMutationController => {
+  public static readonly save = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'savePostMutation',
@@ -88,7 +88,7 @@ export class PostController {
     }
   }
 
-  static readonly shared = (): IMutationController => {
+  public static readonly shared = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'sharedPostMutation',
@@ -100,14 +100,14 @@ export class PostController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           postExistenceGuard,
-          postSharePermissionGuard,
+          PostSharePermissionGuardGuard,
         ],
         resolver: this.PostMutationResolver.shared,
       }),
     }
   }
 
-  static readonly archive = (): IMutationController => {
+  public static readonly archive = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'archivePostMutation',
@@ -121,7 +121,7 @@ export class PostController {
     }
   }
 
-  static readonly restore = (): IMutationController => {
+  public static readonly restore = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'restorePostMutation',
@@ -135,7 +135,7 @@ export class PostController {
     }
   }
 
-  static readonly deletePost = (): IMutationController => {
+  public static readonly deletePost = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deletePostMutation',

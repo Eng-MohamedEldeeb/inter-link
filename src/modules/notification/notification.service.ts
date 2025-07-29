@@ -1,14 +1,14 @@
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db/db.types'
+import notificationRepository from '../../common/repositories/notification.repository'
 
 import * as DTO from './dto/notification.dto'
 
-import notificationRepository from '../../common/repositories/notification.repository'
+import { throwError } from '../../common/handlers/error-message.handler'
+import { MongoId } from '../../common/types/db'
 
 export class NotificationService {
-  private static readonly notificationRepository = notificationRepository
+  protected static readonly notificationRepository = notificationRepository
 
-  static readonly getAllNotifications = async (profileId: MongoId) => {
+  public static readonly getAllNotifications = async (profileId: MongoId) => {
     const notifications = await this.notificationRepository.findOne({
       filter: { belongsTo: profileId },
     })
@@ -16,19 +16,19 @@ export class NotificationService {
     if (!notifications)
       return {
         notifications: null,
-        totalReceivedNotifications: 0,
+        totalMissedNotifications: 0,
       }
 
     return {
       notifications: {
-        received: notifications.received,
+        missed: notifications.missed,
         seen: notifications.seen,
       },
-      totalReceivedNotifications: notifications.totalReceivedNotifications,
+      totalMissedNotifications: notifications.totalMissedNotifications,
     }
   }
 
-  static readonly deleteNotification = async ({
+  public static readonly deleteNotification = async ({
     profileId,
     id,
   }: DTO.IDeleteNotifications) => {
@@ -36,7 +36,7 @@ export class NotificationService {
       filter: {
         belongsTo: profileId,
       },
-      data: { $pull: { seen: id, received: id } },
+      data: { $pull: { seen: id, missed: id } },
     })
 
     return (

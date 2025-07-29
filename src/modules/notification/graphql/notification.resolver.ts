@@ -8,7 +8,7 @@ import { NotificationService } from '../notification.service'
 export class NotificationQueryResolver {
   private static readonly NotificationService = NotificationService
 
-  static readonly getAllNotifications = async (
+  public static readonly getAllNotifications = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -24,7 +24,7 @@ export class NotificationQueryResolver {
 export class NotificationMutationResolver {
   private static readonly NotificationService = NotificationService
 
-  static readonly deleteNotification = async (
+  public static readonly deleteNotification = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {

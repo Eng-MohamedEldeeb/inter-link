@@ -3,7 +3,6 @@ import joi from 'joi'
 import * as DTO from '../dto/notification.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
-import { isValidMongoId } from '../../../common/validation/is-valid'
 
 export const getAllNotificationsValidator = {
   schema: joi

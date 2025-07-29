@@ -2,13 +2,13 @@ import { Response } from 'express'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { StoryService } from '../story.service'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
+import { successResponse } from '../../../common/handlers/success-response.handler'
 import { ICreateStory } from '../dto/story.dto'
 
 export class StoryController {
   private static readonly StoryService = StoryService
 
-  static readonly getAll = asyncHandler(
+  public static readonly getAll = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: userId } = req.user
       return successResponse(res, {
@@ -17,7 +17,7 @@ export class StoryController {
     },
   )
 
-  static readonly getSingle = asyncHandler(
+  public static readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
       const story = req.story
       return successResponse(res, {
@@ -26,7 +26,7 @@ export class StoryController {
     },
   )
 
-  static readonly create = asyncHandler(
+  public static readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: createdBy } = req.profile
       const attachment = req.cloudFile
@@ -43,16 +43,18 @@ export class StoryController {
     },
   )
 
-  static readonly like = asyncHandler(async (req: IRequest, res: Response) => {
-    const { msg } = await this.StoryService.like({
-      profile: req.profile,
-      story: req.story,
-    })
+  public static readonly like = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { msg } = await this.StoryService.like({
+        profile: req.profile,
+        story: req.story,
+      })
 
-    return successResponse(res, { msg })
-  })
+      return successResponse(res, { msg })
+    },
+  )
 
-  static readonly delete = asyncHandler(
+  public static readonly delete = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const { _id: storyId } = req.story

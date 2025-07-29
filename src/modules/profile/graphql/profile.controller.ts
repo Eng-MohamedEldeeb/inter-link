@@ -23,7 +23,7 @@ export class ProfileController {
   private static readonly ProfileMutationResolver = ProfileMutationResolver
 
   // Queries:
-  static readonly getProfile = (): IQueryController => {
+  public static readonly getProfile = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getProfile',
@@ -36,7 +36,7 @@ export class ProfileController {
     }
   }
 
-  static readonly getFollowers = (): IQueryController => {
+  public static readonly getFollowers = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getFollowers',
@@ -49,7 +49,7 @@ export class ProfileController {
     }
   }
 
-  static readonly getFollowing = (): IQueryController => {
+  public static readonly getFollowing = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getFollowing',
@@ -62,7 +62,7 @@ export class ProfileController {
     }
   }
 
-  static readonly getAllSavedPosts = (): IQueryController => {
+  public static readonly getAllSavedPosts = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getAllSavedPostsQuery',
@@ -77,7 +77,7 @@ export class ProfileController {
   }
 
   // Mutations:
-  static readonly updateProfile = (): IMutationController => {
+  public static readonly updateProfile = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'updateProfile',
@@ -92,7 +92,10 @@ export class ProfileController {
     }
   }
 
-  static readonly changeVisibility = (): Omit<IMutationController, 'args'> => {
+  public static readonly changeVisibility = (): Omit<
+    IMutationController,
+    'args'
+  > => {
     return {
       type: returnedResponseType({
         name: 'changeVisibility',
@@ -104,7 +107,7 @@ export class ProfileController {
     }
   }
 
-  static readonly changeEmail = (): IMutationController => {
+  public static readonly changeEmail = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'changeEmail',
@@ -118,7 +121,7 @@ export class ProfileController {
     }
   }
 
-  static readonly confirmNewEmail = (): IMutationController => {
+  public static readonly confirmNewEmail = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'confirmNewEmail',
@@ -132,7 +135,10 @@ export class ProfileController {
     }
   }
 
-  static readonly deleteProfilePic = (): Omit<IMutationController, 'args'> => {
+  public static readonly deleteProfilePic = (): Omit<
+    IMutationController,
+    'args'
+  > => {
     return {
       type: returnedResponseType({
         name: 'deleteProfilePic',
@@ -144,7 +150,7 @@ export class ProfileController {
     }
   }
 
-  static readonly deactivateAccount = (): IMutationController => {
+  public static readonly deactivateAccount = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deactivateAccount',
@@ -158,7 +164,7 @@ export class ProfileController {
     }
   }
 
-  static readonly deleteAccount = (): IMutationController => {
+  public static readonly deleteAccount = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteAccount',
@@ -172,7 +178,7 @@ export class ProfileController {
     }
   }
 
-  static readonly confirmDeletion = (): IMutationController => {
+  public static readonly confirmDeletion = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'confirmDeletion',

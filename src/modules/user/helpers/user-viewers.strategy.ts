@@ -1,12 +1,12 @@
 import userRepository from '../../../common/repositories/user.repository'
 
 import { throwError } from '../../../common/handlers/error-message.handler'
-import { MongoId } from '../../../common/types/db/db.types'
+import { MongoId } from '../../../common/types/db'
 
 export class UserViewersStrategy {
   private static readonly userRepository = userRepository
 
-  static readonly incUserProfileViewersCount = async ({
+  public static readonly incUserProfileViewersCount = async ({
     profileId,
     userId,
   }: {
@@ -50,7 +50,7 @@ export class UserViewersStrategy {
     )
   }
 
-  static readonly addViewerToProfile = async ({
+  public static readonly addViewerToProfile = async ({
     profileId,
     userId,
   }: {

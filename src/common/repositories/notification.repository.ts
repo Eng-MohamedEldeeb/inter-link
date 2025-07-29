@@ -1,7 +1,7 @@
-import { INotifications } from '../../db/interface/INotification.interface'
+import { INotifications } from '../../db/interfaces/INotification.interface'
 import { Model } from 'mongoose'
 import { DataBaseService } from './db-service.repository'
-import { TNotification } from '../../db/types/document.type'
+import { TNotification } from '../../db/documents'
 import { NotificationModel } from '../../db/models/Notification/Notification.model'
 
 class NotificationRepository extends DataBaseService<

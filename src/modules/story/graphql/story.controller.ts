@@ -16,7 +16,7 @@ import * as validators from '../validators/story.validators'
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
-import storyAuthorizationGuard from '../../../common/guards/story/story-authorization.guard'
+import storyOwnerGuard from '../../../common/guards/story/story-owner.guard'
 import storyViewPermissionGuard from '../../../common/guards/story/story-view-permission.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
@@ -25,7 +25,7 @@ export class StoryController {
   private static readonly StoryMutationResolver = StoryMutationResolver
 
   // Queries:
-  static readonly getAll = (): IQueryController => {
+  public static readonly getAll = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getAllStoriesQuery',
@@ -39,7 +39,7 @@ export class StoryController {
     }
   }
 
-  static readonly getSingle = (): IQueryController => {
+  public static readonly getSingle = (): IQueryController => {
     return {
       type: returnedResponseType({
         name: 'getSingleStoryQuery',
@@ -60,7 +60,7 @@ export class StoryController {
   }
 
   // Mutations:
-  static readonly like = (): IMutationController => {
+  public static readonly like = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'likeStoryMutation',
@@ -68,18 +68,13 @@ export class StoryController {
       args: args.likeStory,
       resolve: applyResolver({
         middlewares: [validate(validators.likeValidator.graphQL())],
-        guards: [
-          isAuthenticatedGuard,
-          isAuthorizedGuard,
-          storyExistenceGuard,
-          storyAuthorizationGuard,
-        ],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, storyExistenceGuard],
         resolver: this.StoryMutationResolver.like,
       }),
     }
   }
 
-  static readonly deleteStory = (): IMutationController => {
+  public static readonly deleteStory = (): IMutationController => {
     return {
       type: returnedResponseType({
         name: 'deleteStoryMutation',
@@ -91,7 +86,7 @@ export class StoryController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           storyExistenceGuard,
-          storyAuthorizationGuard,
+          storyOwnerGuard,
         ],
         resolver: this.StoryMutationResolver.deleteStory,
       }),

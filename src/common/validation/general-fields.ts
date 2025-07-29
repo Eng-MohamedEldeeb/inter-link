@@ -43,7 +43,7 @@ export const generalFields = {
   }),
 
   content: joi.string().trim().messages({
-    'string.empty': "title can't be empty",
+    'string.empty': "content can't be empty",
   }),
   body: joi.string().trim().messages({
     'string.empty': "body can't be empty",

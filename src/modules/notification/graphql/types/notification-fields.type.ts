@@ -3,14 +3,14 @@ import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
 import {
   INotifications,
   INotificationDetails,
-} from '../../../../db/interface/INotification.interface'
+} from '../../../../db/interfaces/INotification.interface'
 
 import {
   DateType,
   ObjFields,
 } from '../../../../common/types/graphql/graphql.types'
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import { IUser } from '../../../../db/interface/IUser.interface'
+import { IUser } from '../../../../db/interfaces/IUser.interface'
 import { cloudFile } from '../../../../common/services/upload/interface/cloud-response.interface'
 
 const notificationFromDetails = returnedType<
@@ -47,11 +47,11 @@ export const notificationFields: ObjFields<Omit<INotifications, '__v'>> = {
 
   belongsTo: { type: GraphQLID },
 
-  received: {
+  missed: {
     type: new GraphQLList(notificationDetailsFields),
   },
 
-  totalReceivedNotifications: { type: GraphQLInt },
+  totalMissedNotifications: { type: GraphQLInt },
 
   seen: {
     type: new GraphQLList(notificationDetailsFields),

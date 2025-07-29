@@ -1,33 +1,19 @@
-import { MongoId } from './../../types/db/db.types'
-import { GuardActivator } from '../can-activate.guard'
+import { MongoId } from '../../types/db'
+import { GuardActivator } from '../class/guard-activator.class'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types/enum/context-type.enum'
+import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
 
-import {
-  GraphQLParams,
-  HttpParams,
-} from '../../decorators/context/types/context-detector.types'
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import userRepository from '../../repositories/user.repository'
 import storyRepository from '../../repositories/story.repository'
 
 class StoryViewPermissionGuard extends GuardActivator {
-  private readonly storyRepository = storyRepository
-  private readonly userRepository = userRepository
+  protected readonly storyRepository = storyRepository
+  protected readonly userRepository = userRepository
   protected profileId!: MongoId
   protected createdBy!: MongoId
-
-  protected readonly updateViewers = async (): Promise<void> => {
-    if (this.createdBy.equals(this.profileId)) return
-
-    await this.storyRepository.findByIdAndUpdate({
-      _id: this.createdBy,
-      data: {
-        $addToSet: { viewers: this.profileId },
-      },
-    })
-  }
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -44,7 +30,7 @@ class StoryViewPermissionGuard extends GuardActivator {
       this.profileId = context.profile._id
     }
 
-    const checkPrivacy = await this.userRepository.findOne({
+    const ownerProfile = await this.userRepository.findOne({
       filter: {
         $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],
       },
@@ -52,7 +38,7 @@ class StoryViewPermissionGuard extends GuardActivator {
       options: { lean: true },
     })
 
-    if (checkPrivacy && checkPrivacy.isPrivateProfile)
+    if (ownerProfile && ownerProfile.isPrivateProfile)
       return throwError({
         msg: 'Story Cannot be Reached due to a Private Profile',
         status: 403,
@@ -61,6 +47,17 @@ class StoryViewPermissionGuard extends GuardActivator {
     await this.updateViewers()
 
     return true
+  }
+
+  protected readonly updateViewers = async (): Promise<void> => {
+    if (this.createdBy.equals(this.profileId)) return
+
+    await this.storyRepository.findByIdAndUpdate({
+      _id: this.createdBy,
+      data: {
+        $addToSet: { viewers: this.profileId },
+      },
+    })
   }
 }
 

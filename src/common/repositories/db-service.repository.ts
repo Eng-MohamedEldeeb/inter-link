@@ -9,7 +9,7 @@ import {
   IFindOneAndDelete,
   IFindOneAndUpdate,
   IUpdateMany,
-} from '../../db/interface/db-service.interface'
+} from '../../db/interfaces/db-service.interface'
 
 export abstract class DataBaseService<Inputs, TDocument> {
   constructor(protected readonly model: Model<TDocument>) {}

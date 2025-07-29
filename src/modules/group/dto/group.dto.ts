@@ -1,5 +1,5 @@
-import { MongoId } from '../../../common/types/db/db.types'
-import { IGroupInputs } from '../../../db/interface/IGroup.interface'
+import { MongoId } from '../../../common/types/db'
+import { IGroupInputs } from '../../../db/interfaces/IGroup.interface'
 import { IPostId } from '../../post/dto/post.dto'
 
 export interface IGetGroup {

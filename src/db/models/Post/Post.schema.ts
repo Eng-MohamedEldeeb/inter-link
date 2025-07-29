@@ -1,6 +1,6 @@
 import { Schema, SchemaTypes } from 'mongoose'
 
-import { IPost } from '../../interface/IPost.interface'
+import { IPost } from '../../interfaces/IPost.interface'
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 import commentRepository from '../../../common/repositories/comment.repository'

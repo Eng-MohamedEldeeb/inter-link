@@ -1,4 +1,4 @@
-import { IUserInputs } from '../../../db/interface/IUser.interface'
+import { IUserInputs } from '../../../db/interfaces/IUser.interface'
 
 export interface IConfirmEmail extends Pick<IUserInputs, 'email'> {}
 

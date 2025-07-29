@@ -8,7 +8,7 @@ import { validate } from '../../../common/middlewares/validation/validation.midd
 import * as validators from './../validators/comment.validators'
 
 import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import commentAuthorizationGuard from '../../../common/guards/comment/comment-authorization.guard'
+import CommentOwnerGuard from '../../../common/guards/comment/comment-owner.guard'
 import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
 import replyRouter from './../../reply/http/reply.module'
 
@@ -19,7 +19,7 @@ router.use('/reply', replyRouter)
 router.get(
   '/:id',
   validate(validators.getSingleCommentValidator.http()),
-  applyGuards([commentExistenceGuard]),
+  applyGuards(commentExistenceGuard),
   CommentController.getSingle,
 )
 
@@ -27,7 +27,7 @@ router.post(
   '/add/:postId',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('attachment'),
   validate(validators.addValidator.http()),
-  applyGuards([postExistenceGuard]),
+  applyGuards(postExistenceGuard),
   commentAttachmentUploader,
   CommentController.addComment,
 )
@@ -35,20 +35,20 @@ router.post(
 router.post(
   '/like',
   validate(validators.likeValidator.http()),
-  applyGuards([commentExistenceGuard]),
+  applyGuards(commentExistenceGuard),
   CommentController.like,
 )
 
 router.patch(
   '/edit',
   validate(validators.editValidator.http()),
-  applyGuards([commentExistenceGuard, commentAuthorizationGuard]),
+  applyGuards(commentExistenceGuard, CommentOwnerGuard),
   CommentController.edit,
 )
 
 router.delete(
   '/:id',
-  applyGuards([commentExistenceGuard, commentAuthorizationGuard]),
+  applyGuards(commentExistenceGuard, CommentOwnerGuard),
   validate(validators.deleteValidator.http()),
   CommentController.deleteComment,
 )

@@ -9,40 +9,37 @@ import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service
 import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
 import { OtpType } from '../../db/models/enums/otp.enum'
 import { IGetAll } from '../post/dto/post.dto'
-import { IUser } from '../../db/interface/IUser.interface'
-import { MongoId } from '../../common/types/db/db.types'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { MongoId } from '../../common/types/db'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
-import {
-  ICloud,
-  ICloudFile,
-} from '../../common/services/upload/interface/cloud-response.interface'
+import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
 
 export class ProfileService {
-  private static readonly userRepository = userRepository
-  private static readonly postRepository = postRepository
-  private static readonly otpRepository = otpRepository
-  private static readonly CloudUploader = CloudUploader
+  protected static readonly userRepository = userRepository
+  protected static readonly postRepository = postRepository
+  protected static readonly otpRepository = otpRepository
+  protected static readonly CloudUploader = CloudUploader
 
-  static readonly getProfile = (profile: IUser) => {
+  public static readonly getProfile = (profile: IUser) => {
     if (profile.phone)
       profile.phone = decryptValue({ encryptedValue: profile.phone })
 
     return profile
   }
 
-  static readonly getFollowers = (profile: IUser) => {
+  public static readonly getFollowers = (profile: IUser) => {
     return {
       followers: profile.followers,
     }
   }
 
-  static readonly getFollowing = (profile: IUser) => {
+  public static readonly getFollowing = (profile: IUser) => {
     return {
       following: profile.following,
     }
   }
 
-  static readonly getAllSavedPosts = async ({
+  public static readonly getAllSavedPosts = async ({
     profileId,
     query,
   }: {
@@ -71,7 +68,7 @@ export class ProfileService {
     }
   }
 
-  static readonly changeAvatar = async ({
+  public static readonly changeAvatar = async ({
     profileId,
     avatar,
     path,
@@ -115,7 +112,7 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteProfilePic = async (userId: MongoId) => {
+  public static readonly deleteProfilePic = async (userId: MongoId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
       projection: { _id: 1, avatar: 1 },
@@ -151,7 +148,7 @@ export class ProfileService {
     })
   }
 
-  static readonly updateProfile = async ({
+  public static readonly updateProfile = async ({
     profileId,
     updateProfile,
   }: {
@@ -192,7 +189,7 @@ export class ProfileService {
     })
   }
 
-  static readonly changeVisibility = async ({
+  public static readonly changeVisibility = async ({
     profileId,
     profileState,
   }: {
@@ -210,7 +207,7 @@ export class ProfileService {
     })
   }
 
-  static readonly changeEmail = async ({
+  public static readonly changeEmail = async ({
     profileId,
     changeEmail,
   }: {
@@ -260,7 +257,7 @@ export class ProfileService {
     ])
   }
 
-  static readonly confirmNewEmail = async (
+  public static readonly confirmNewEmail = async (
     confirmEmail: DTO.IConfirmNewEmail,
   ) => {
     const { originalEmail, otpCode } = confirmEmail
@@ -306,7 +303,7 @@ export class ProfileService {
     ])
   }
 
-  static readonly deactivateAccount = async (
+  public static readonly deactivateAccount = async (
     deleteAccount: DTO.IDeleteAccount,
   ) => {
     const { email, password } = deleteAccount
@@ -345,7 +342,9 @@ export class ProfileService {
     })
   }
 
-  static readonly deleteAccount = async (deleteAccount: DTO.IDeleteAccount) => {
+  public static readonly deleteAccount = async (
+    deleteAccount: DTO.IDeleteAccount,
+  ) => {
     const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },
@@ -382,7 +381,7 @@ export class ProfileService {
     })
   }
 
-  static readonly confirmDeletion = async (
+  public static readonly confirmDeletion = async (
     confirmDeletion: DTO.IConfirmDelete,
   ) => {
     const { email, otpCode } = confirmDeletion

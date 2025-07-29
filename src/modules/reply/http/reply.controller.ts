@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { successResponse } from '../../../common/handlers/http/success-response.handler'
+import { successResponse } from '../../../common/handlers/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 
@@ -10,7 +10,7 @@ import { ReplyService } from '../reply.service'
 export class ReplyController {
   protected static readonly ReplyService = ReplyService
 
-  static readonly getCommentReplies = asyncHandler(
+  public static readonly getCommentReplies = asyncHandler(
     async (req: IRequest<IGetCommentReplies>, res: Response) => {
       const { commentId } = req.params
       return successResponse(res, {
@@ -19,7 +19,7 @@ export class ReplyController {
     },
   )
 
-  static readonly reply = asyncHandler(
+  public static readonly reply = asyncHandler(
     async (
       req: IRequest<Pick<IGetCommentReplies, 'commentId'>>,
       res: Response,
@@ -39,29 +39,33 @@ export class ReplyController {
     },
   )
 
-  static readonly like = asyncHandler(async (req: IRequest, res: Response) => {
-    const { msg } = await this.ReplyService.like({
-      profile: req.profile,
-      reply: req.reply,
-    })
+  public static readonly like = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { msg } = await this.ReplyService.like({
+        profile: req.profile,
+        reply: req.reply,
+      })
 
-    return successResponse(res, { msg })
-  })
+      return successResponse(res, { msg })
+    },
+  )
 
-  static readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
-    const { _id: replyId } = req.reply
-    const { content }: IEditReply = req.body
+  public static readonly edit = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { _id: replyId } = req.reply
+      const { content }: IEditReply = req.body
 
-    return successResponse(res, {
-      msg: 'Comment is Modified Successfully',
-      data: await this.ReplyService.edit({
-        replyId,
-        content,
-      }),
-    })
-  })
+      return successResponse(res, {
+        msg: 'Comment is Modified Successfully',
+        data: await this.ReplyService.edit({
+          replyId,
+          content,
+        }),
+      })
+    },
+  )
 
-  static readonly deleteReply = asyncHandler(
+  public static readonly deleteReply = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: replyId } = req.reply
       return successResponse(res, {

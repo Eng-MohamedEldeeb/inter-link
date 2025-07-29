@@ -6,7 +6,7 @@ import * as DTO from '../dto/auth.dto'
 export class AuthResolver {
   protected static readonly AuthService = AuthService
 
-  static readonly confirmEmail = async (
+  public static readonly confirmEmail = async (
     args: DTO.IConfirmEmail,
     _: any,
   ): Promise<ISuccessResponse> => {
@@ -17,7 +17,7 @@ export class AuthResolver {
     }
   }
 
-  static readonly register = async (
+  public static readonly register = async (
     args: DTO.IRegister,
     _: any,
   ): Promise<ISuccessResponse> => {
@@ -28,7 +28,7 @@ export class AuthResolver {
     }
   }
 
-  static readonly login = async (
+  public static readonly login = async (
     args: DTO.ILogin,
     _: any,
   ): Promise<ISuccessResponse> => {
@@ -39,7 +39,7 @@ export class AuthResolver {
     }
   }
 
-  static readonly forgotPassword = async (
+  public static readonly forgotPassword = async (
     args: DTO.IForgotPassword,
     _: any,
   ) => {
@@ -50,7 +50,7 @@ export class AuthResolver {
     }
   }
 
-  static readonly resetPassword = async (
+  public static readonly resetPassword = async (
     args: DTO.IResetPassword,
     _: any,
   ): Promise<ISuccessResponse> => {

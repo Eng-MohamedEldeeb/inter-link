@@ -1,6 +1,6 @@
 import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
 
-import { IReply } from '../../../../db/interface/IReply.interface'
+import { IReply } from '../../../../db/interfaces/IReply.interface'
 
 import {
   DateType,
