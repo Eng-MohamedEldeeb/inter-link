@@ -14,5 +14,5 @@ export interface IChat extends IMongoDoc {
 
   startedBy: MongoId
 
-  chattingWith: MongoId
+  messaging: MongoId
 }

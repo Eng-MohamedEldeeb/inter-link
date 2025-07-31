@@ -8,7 +8,7 @@ export const getSingleChatValidator = {
   schema: joi
     .object<DTO.IGetSingleChat>()
     .keys({
-      chatId: generalFields.mongoId.required(),
+      currentChatId: generalFields.mongoId.required(),
     })
     .required(),
 
@@ -28,42 +28,10 @@ export const getSingleChatValidator = {
     }
   },
 }
-export const startChatValidator = {
-  query: {
-    userId: generalFields.mongoId.required(),
-  },
-
-  body: {
-    message: generalFields.content.required(),
-  },
-
-  http() {
-    return {
-      query: joi.object<DTO.IStartChat>().keys(this.query).required().messages({
-        'any.required': 'userId query param is required',
-      }),
-      body: joi.object<DTO.IStartChat>().keys(this.body).required().messages({
-        'any.required': 'message is required',
-      }),
-    }
-  },
-
-  graphQL() {
-    return {
-      args: joi
-        .object<DTO.IStartChat>()
-        .keys({ ...this.query, ...this.body })
-        .required()
-        .messages({
-          'any.required': 'message and userId args are required',
-        }),
-    }
-  },
-}
 
 export const likeMessageValidator = {
   params: {
-    chatId: generalFields.mongoId.required(),
+    currentChatId: generalFields.mongoId.required(),
   },
 
   query: {
@@ -73,11 +41,11 @@ export const likeMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
+        .object<Pick<DTO.ILikeMessage, 'currentChatId'>>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'chatId param is required',
+          'any.required': 'currentChatId param is required',
         }),
 
       query: joi
@@ -97,7 +65,7 @@ export const likeMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and chatId args are required',
+          'any.required': 'messageId and currentChatId args are required',
         }),
     }
   },
@@ -105,7 +73,7 @@ export const likeMessageValidator = {
 
 export const deleteMessageValidator = {
   params: {
-    chatId: generalFields.mongoId.required(),
+    currentChatId: generalFields.mongoId.required(),
   },
 
   query: {
@@ -115,11 +83,12 @@ export const deleteMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
+        .object<Pick<DTO.ILikeMessage, 'currentChatId'>>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'chatId param and messageId query param is required',
+          'any.required':
+            'currentChatId param and messageId query param is required',
         }),
 
       query: joi
@@ -127,7 +96,7 @@ export const deleteMessageValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': 'chatId and messageId is required',
+          'any.required': 'currentChatId and messageId is required',
         }),
     }
   },
@@ -139,7 +108,7 @@ export const deleteMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and chatId args are required',
+          'any.required': 'messageId and currentChatId args are required',
         }),
     }
   },
@@ -148,14 +117,14 @@ export const deleteChatValidator = {
   schema: joi
     .object<DTO.IDeleteChat>()
     .keys({
-      chatId: generalFields.mongoId.required(),
+      currentChatId: generalFields.mongoId.required(),
     })
     .required(),
 
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'chatId  param is required',
+        'any.required': 'currentChatId  param is required',
       }),
     }
   },
@@ -163,7 +132,7 @@ export const deleteChatValidator = {
   graphQL() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'chatId arg is required',
+        'any.required': 'currentChatId arg is required',
       }),
     }
   },

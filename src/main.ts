@@ -4,9 +4,9 @@ import express from 'express'
 
 import chalk from 'chalk'
 
-import { bootstrap } from './app.module'
 import { Server } from 'socket.io'
-import { socketIoBootStrap } from './modules/socketIo.module'
+import { bootstrap } from './app.module'
+import { socketIoBootStrap } from './modules/socket.module'
 
 const app: express.Express = express()
 const port: number = Number(process.env.PORT) ?? 3001

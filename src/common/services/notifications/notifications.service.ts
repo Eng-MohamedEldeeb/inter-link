@@ -30,7 +30,7 @@ class NotificationsService {
     this.notificationDetails = notificationDetails
 
     const { socketId, isOnline } = this.onlineUsersController.getStatus(
-      this.userId.toString(),
+      this.userId,
     )
 
     if (!isOnline) return await this.addToMissedNotification()

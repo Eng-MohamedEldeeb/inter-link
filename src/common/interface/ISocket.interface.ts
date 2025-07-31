@@ -5,5 +5,7 @@ import { IUser } from '../../db/interfaces/IUser.interface'
 
 export interface ISocket extends Socket {
   tokenPayload: IPayload
+
   profile: IUser
+  user: IUser
 }

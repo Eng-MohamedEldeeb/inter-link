@@ -14,7 +14,7 @@ import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
 
 class ChatExistence extends GuardActivator {
   protected readonly chatRepository = chatRepository
-  protected chatId!: MongoId
+  protected currentChatId!: MongoId
   protected profileId!: MongoId
   protected userId!: MongoId
 
@@ -24,11 +24,11 @@ class ChatExistence extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleChat>()
 
-      const { chatId } = req.params
+      const { currentChatId } = req.params
       const { _id: profileId } = req.profile
       const { _id: userId } = req.user
 
-      this.chatId = chatId
+      this.currentChatId = currentChatId
       this.profileId = profileId
       this.userId = userId
 
@@ -49,11 +49,11 @@ class ChatExistence extends GuardActivator {
     const isExistedChat = await this.chatRepository.findOne({
       filter: {
         $and: [
-          { _id: this.chatId },
+          { _id: this.currentChatId },
           {
             $or: [
-              { startedBy: this.profileId, chattingWith: this.userId },
-              { startedBy: this.userId, chattingWith: this.profileId },
+              { startedBy: this.profileId, messaging: this.userId },
+              { startedBy: this.userId, messaging: this.profileId },
             ],
           },
         ],
@@ -72,7 +72,7 @@ class ChatExistence extends GuardActivator {
           select,
         },
         {
-          path: 'chattingWith',
+          path: 'messaging',
           select,
         },
       ],

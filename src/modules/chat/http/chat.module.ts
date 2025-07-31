@@ -6,40 +6,35 @@ import { ChatController } from './chat.controller'
 import * as validators from '../validators/chat.validators'
 
 import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
+import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 
 const router: Router = Router()
 
 router.get('/all', ChatController.getAllChats)
 
 router.get(
-  '/:chatId',
+  '/:currentChatId',
   validate(validators.getSingleChatValidator.http()),
   applyGuards(chatExistenceGuard),
   ChatController.getSingleChat,
 )
 
 router.post(
-  '/',
-  validate(validators.startChatValidator.http()),
-  ChatController.startChat,
-)
-
-router.post(
-  '/:chatId/like-message',
+  '/:currentChatId/like-message',
   applyGuards(chatExistenceGuard),
   validate(validators.likeMessageValidator.http()),
   ChatController.likeMessage,
 )
 
 router.delete(
-  '/:chatId',
+  '/:currentChatId',
   applyGuards(chatExistenceGuard),
   validate(validators.deleteChatValidator.http()),
   ChatController.deleteChat,
 )
 
 router.delete(
-  '/:chatId/delete-message',
+  '/:currentChatId/delete-message',
   applyGuards(chatExistenceGuard),
   validate(validators.deleteMessageValidator.http()),
   ChatController.deleteMessage,

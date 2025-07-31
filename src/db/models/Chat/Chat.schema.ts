@@ -6,7 +6,7 @@ export const ChatSchema = new Schema<IChat>(
     messages: {
       type: [
         {
-          msg: String,
+          message: String,
           from: { type: SchemaTypes.ObjectId, ref: 'User' },
           to: { type: SchemaTypes.ObjectId, ref: 'User' },
           sentAt: String,
@@ -15,7 +15,7 @@ export const ChatSchema = new Schema<IChat>(
     },
 
     startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
-    chattingWith: { type: SchemaTypes.ObjectId, ref: 'User' },
+    messaging: { type: SchemaTypes.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

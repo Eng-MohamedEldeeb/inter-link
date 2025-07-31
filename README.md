@@ -1,1 +1,1 @@
-# super-social-app
+# inter-link

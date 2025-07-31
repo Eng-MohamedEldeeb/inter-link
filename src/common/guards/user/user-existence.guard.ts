@@ -1,9 +1,11 @@
 import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
 import { GuardActivator } from '../class/guard-activator.class'
-import { IAddAdmin, IRemoveAdmin } from '../../../modules/group/dto/group.dto'
 import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { MongoId } from '../../types/db'
+
+import { IAddAdmin, IRemoveAdmin } from '../../../modules/group/dto/group.dto'
 
 import {
   GraphQLParams,
@@ -12,7 +14,6 @@ import {
 } from '../../decorators/context/types'
 
 import userRepository from '../../repositories/user.repository'
-import { MongoId } from '../../types/db'
 
 class UserExistenceGuard extends GuardActivator {
   protected readonly userRepository = userRepository
@@ -56,21 +57,26 @@ class UserExistenceGuard extends GuardActivator {
       >()
 
       const { username, id, userId, adminId } = args
-      const { _id: profileId } = context.profile
 
       this.username = username
       this.adminId = adminId
       this.userId = userId
       this.id = id
 
-      const user = await this.checkUserExistence()
+      context.user = await this.checkUserExistence()
+    }
 
-      if (user._id.equals(profileId)) {
-        context.user = user
-        return true
-      }
+    if (Ctx.type === ContextType.socketContext) {
+      const { socket } = Ctx.switchToSocket()
 
-      context.user = user
+      const { id } = socket.handshake.query
+
+      if (!id)
+        return throwError({ msg: 'user id is required in id query param' })
+
+      this.id = id as string
+
+      socket.user = await this.checkUserExistence()
     }
 
     return true

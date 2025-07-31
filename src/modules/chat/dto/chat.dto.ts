@@ -1,11 +1,10 @@
 import { MongoId } from '../../../common/types/db'
-import { IMessageDetails } from '../../../db/interfaces/IChat.interface'
 
 export interface IGetSingleChat {
-  chatId: MongoId
+  currentChatId: MongoId
 }
 
-export interface IStartChat {
+export interface ISendMessage {
   userId: MongoId
   profileId: MongoId
   message: string

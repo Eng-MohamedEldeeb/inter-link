@@ -14,7 +14,9 @@ import {
 export abstract class DataBaseService<Inputs, TDocument> {
   constructor(protected readonly model: Model<TDocument>) {}
 
-  readonly create = async (data: Partial<TDocument>): Promise<TDocument> => {
+  readonly create = async (
+    data: Partial<Omit<Inputs, '_id' | 'createdAt' | 'updatedAt' | '__V'>>,
+  ): Promise<TDocument> => {
     return await this.model.create(data)
   }
   readonly aggregate = async (pipeline: PipelineStage[]) => {

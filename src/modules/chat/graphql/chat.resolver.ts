@@ -4,7 +4,7 @@ import {
 } from '../../../common/interface/IGraphQL.interface'
 
 import { ChatService } from '../chat.service'
-import { IDeleteMessage, ILikeMessage, IStartChat } from '../dto/chat.dto'
+import { IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
 
 export class ChatQueryResolver {
   private static readonly ChatService = ChatService
@@ -37,33 +37,15 @@ export class ChatQueryResolver {
 export class ChatMutationResolver {
   private static readonly ChatService = ChatService
 
-  public static readonly startChat = async (
-    { message }: Pick<IStartChat, 'message'>,
-    context: IContext,
-  ): Promise<ISuccessResponse> => {
-    const { _id: profileId } = context.profile
-    const { _id: userId, username } = context.user
-
-    await this.ChatService.startChat({
-      message,
-      profileId,
-      userId,
-    })
-
-    return {
-      msg: `Message was sent to ${username} successfully`,
-    }
-  }
-
   public static readonly likeMessage = async (
     { messageId }: Pick<ILikeMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: chatId } = context.chat
+    const { _id: currentChatId } = context.chat
 
     await this.ChatService.likeMessage({
       messageId,
-      chatId,
+      currentChatId,
     })
 
     return {
@@ -76,10 +58,10 @@ export class ChatMutationResolver {
     { messageId }: Pick<IDeleteMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: chatId } = context.chat
+    const { _id: currentChatId } = context.chat
 
     await this.ChatService.deleteMessage({
-      chatId,
+      currentChatId,
       messageId,
     })
 
@@ -94,11 +76,11 @@ export class ChatMutationResolver {
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
-    const { _id: chatId } = context.chat
+    const { _id: currentChatId } = context.chat
 
     await this.ChatService.deleteChat({
       profileId,
-      chatId,
+      currentChatId,
     })
 
     return {

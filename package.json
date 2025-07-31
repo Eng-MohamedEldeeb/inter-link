@@ -1,5 +1,5 @@
 {
-  "name": "super-social-app",
+  "name": "inter-link",
   "version": "1.0.0",
   "description": "Inspired By Instagram app",
   "main": "/dist/main.js",
@@ -8,16 +8,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Eng-MohamedEldeeb/super-social-app.git"
+    "url": "git+https://github.com/Eng-MohamedEldeeb/inter-link.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/Eng-MohamedEldeeb/super-social-app/issues"
+    "url": "https://github.com/Eng-MohamedEldeeb/inter-link/issues"
   },
-  "homepage": "https://github.com/Eng-MohamedEldeeb/super-social-app#readme",
+  "homepage": "https://github.com/Eng-MohamedEldeeb/inter-link#readme",
   "devDependencies": {
     "@eslint/js": "^9.28.0",
     "@types/bcrypt": "^5.0.2",

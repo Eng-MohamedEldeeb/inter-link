@@ -1,26 +1,52 @@
+import { MongoId } from '../../types/db'
 import { UserStatus } from './types'
 
 class ConnectedUsers {
   protected readonly users = new Map<string, UserStatus>()
 
-  public readonly getStatus = (userId: string): UserStatus => {
-    return this.users.get(userId.toString())!
+  public readonly getStatus = (profileId: MongoId) => {
+    return this.users.get(profileId.toString())!
   }
 
   public readonly setOnline = ({
-    userId,
+    profileId,
     socketId,
+    chat,
   }: {
-    userId: string
+    profileId: MongoId
     socketId: string
+    chat?: [string, string]
   }) => {
-    this.users.set(userId, { socketId, isOnline: true })
+    return this.users.set(profileId.toString(), {
+      socketId,
+      isOnline: true,
+      chat,
+    })
   }
 
-  public readonly setOffline = (userId: string) => {
-    const { socketId } = this.getStatus(userId)
+  public readonly setOffline = (profileId: MongoId) => {
+    const { socketId } = this.getStatus(profileId)
 
-    this.users.set(userId, { socketId, isOnline: false })
+    return this.users.set(profileId.toString(), {
+      socketId,
+      isOnline: true,
+    })
+  }
+
+  public readonly joinChat = ({
+    profileId,
+    chat,
+  }: {
+    profileId: MongoId
+    chat: [string, string]
+  }) => {
+    const { socketId } = this.getStatus(profileId)
+    return this.setOnline({ profileId, socketId, chat: chat })
+  }
+
+  public readonly leaveChat = (profileId: MongoId) => {
+    const { socketId } = this.getStatus(profileId)
+    return this.setOnline({ profileId, socketId, chat: undefined })
   }
 }
 

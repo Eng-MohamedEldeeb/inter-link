@@ -20,7 +20,5 @@ export class ChatResponse {
     })
   }
 
-  public static readonly getSingleChat = () => {
-    return singleChatFields
-  }
+  public static readonly getSingleChat = () => singleChatFields
 }

@@ -4,7 +4,7 @@ import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { ChatService } from '../chat.service'
 import {
-  IStartChat,
+  ISendMessage,
   IDeleteChat,
   ILikeMessage,
   IDeleteMessage,
@@ -36,9 +36,9 @@ export class ChatController {
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const { _id: userId, username } = req.user
-      const { message }: Pick<IStartChat, 'message'> = req.body
+      const { message }: Pick<ISendMessage, 'message'> = req.body
 
-      await this.ChatService.startChat({ profileId, userId, message })
+      await this.ChatService.sendMessage({ profileId, userId, message })
 
       return successResponse(res, {
         msg: `Message was sent to ${username} successfully`,
@@ -51,11 +51,11 @@ export class ChatController {
       req: IRequest<null, Pick<ILikeMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id: chatId } = req.chat
+      const { _id: currentChatId } = req.chat
       const { messageId } = req.query
 
       await this.ChatService.likeMessage({
-        chatId,
+        currentChatId,
         messageId,
       })
 
@@ -70,11 +70,11 @@ export class ChatController {
       req: IRequest<null, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id: chatId } = req.chat
+      const { _id: currentChatId } = req.chat
       const { messageId } = req.query
 
       await this.ChatService.deleteMessage({
-        chatId,
+        currentChatId,
         messageId,
       })
 
@@ -87,10 +87,10 @@ export class ChatController {
   public static readonly deleteChat = asyncHandler(
     async (req: IRequest<IDeleteChat>, res: Response) => {
       const { _id: profileId } = req.profile
-      const { _id: chatId } = req.chat
+      const { _id: currentChatId } = req.chat
 
       await this.ChatService.deleteChat({
-        chatId,
+        currentChatId,
         profileId,
       })
 

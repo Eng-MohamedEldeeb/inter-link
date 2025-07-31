@@ -5,4 +5,8 @@ export enum refTo {
   Story = 'Story',
 }
 
-export type UserStatus = { socketId: string; isOnline: boolean }
+export type UserStatus = {
+  socketId: string
+  isOnline: boolean
+  chat?: [string, string]
+}

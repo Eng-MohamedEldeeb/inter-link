@@ -19,7 +19,6 @@ export const mutationModule = (() => {
     type: returnedType({
       name: 'chatMutation',
       fields: {
-        startChat: ChatController.startChat(),
         likeMessage: ChatController.likeMessage(),
         deleteMessage: ChatController.deleteMessage(),
         deleteChat: ChatController.deleteChat(),

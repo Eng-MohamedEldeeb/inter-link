@@ -50,20 +50,6 @@ export class ChatController {
   }
 
   // Mutations:
-  public static readonly startChat = (): IMutationController => {
-    return {
-      type: returnedResponseType({
-        name: 'startChat',
-      }),
-      args: args.startChat,
-      resolve: applyResolver({
-        middlewares: [validate(validators.startChatValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
-        resolver: this.ChatMutationResolver.startChat,
-      }),
-    }
-  }
-
   public static readonly likeMessage = (): IMutationController => {
     return {
       type: returnedResponseType({
