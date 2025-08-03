@@ -3,16 +3,11 @@ import { ISocket } from '../../../common/interface/ISocket.interface'
 
 import moment from 'moment'
 import connectedUsers from './../../../common/services/notifications/online-users.controller'
+
 import { EventType } from '../../../common/types/ws/events.enum'
 
 export class ChatController {
-  public static readonly chatRoom = async ({
-    io,
-    mainSocketId,
-  }: {
-    io: Server
-    mainSocketId: string
-  }) => {
+  public static readonly chatRoom = async (io: Server) => {
     return async (socket: ISocket) => {
       const profileId = socket.profile._id
       const userId = socket.user._id
@@ -26,11 +21,13 @@ export class ChatController {
 
       connectedUsers.joinChat({ profileId, chat })
 
-      const user = connectedUsers.getStatus(userId)
-
       socket.on('send-message', async ({ msg }: { msg: string }) => {
+        const toUser = connectedUsers.getStatus(userId)
+
+        console.log({ toUser })
+
         const userInChat =
-          user.chat && user.chat.includes(room1) && user.chat.includes(room2)
+          toUser && toUser.chat.includes(room1) && toUser.chat.includes(room2)
 
         const data = {
           msg,
@@ -38,11 +35,10 @@ export class ChatController {
           from: socket.profile,
         }
 
-        console.log({ user })
         console.log({ userInChat })
 
-        if (!user || !userInChat)
-          return io.to(user.socketId).emit(EventType.notification, data)
+        if (!toUser || !userInChat)
+          return io.to(toUser.socketId).emit(EventType.notification, data)
 
         return socket.to(chat).emit('new-message', data)
       })

@@ -8,5 +8,5 @@ export enum refTo {
 export type UserStatus = {
   socketId: string
   isOnline: boolean
-  chat?: [string, string]
+  chat: string[]
 }

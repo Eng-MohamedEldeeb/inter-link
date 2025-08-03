@@ -29,7 +29,7 @@ class NotificationsService {
     this.userId = toUser
     this.notificationDetails = notificationDetails
 
-    const { socketId, isOnline } = this.onlineUsersController.getStatus(
+    const { socketId, isOnline } = await this.onlineUsersController.getStatus(
       this.userId,
     )
 

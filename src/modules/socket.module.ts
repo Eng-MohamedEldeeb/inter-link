@@ -12,27 +12,27 @@ import connectedUsers from '../common/services/notifications/online-users.contro
 import userExistenceGuard from '../common/guards/user/user-existence.guard'
 
 export const socketIoBootStrap = async (io: Server) => {
-  let mainSocketId: string = ''
-
   io.use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard)).on(
     'connection',
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
 
-      mainSocketId = socket.id
-      console.log(mainSocketId)
+      console.log({ mainSocketId: socket.id })
+      console.log({ profileId })
 
       connectedUsers.setOnline({
         profileId,
         socketId: socket.id,
       })
 
-      // await notificationsService.readMissedNotifications({
+      //  await notificationsService.readMissedNotifications({
       //  profileId,
       //   socketId: mainSocketId,
       // })
 
-      socket.on('disconnect', () => connectedUsers.setOffline(profileId))
+      socket.on('disconnect', async () => {
+        connectedUsers.setOffline(profileId)
+      })
     }),
   )
 
@@ -40,10 +40,7 @@ export const socketIoBootStrap = async (io: Server) => {
     .use(
       applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
     )
-    .on(
-      'connection',
-      asyncHandler(await ChatController.chatRoom({ io, mainSocketId })),
-    )
+    .on('connection', asyncHandler(await ChatController.chatRoom(io)))
 }
 
 // export const socketIoBootStrap = (io: Server) => {
