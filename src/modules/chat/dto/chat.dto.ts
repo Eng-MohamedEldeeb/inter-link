@@ -1,13 +1,14 @@
 import { MongoId } from '../../../common/types/db'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 
 export interface IGetSingleChat {
   currentChatId: MongoId
 }
 
 export interface ISendMessage {
-  userId: MongoId
-  profileId: MongoId
   message: string
+  from: IUser
+  sentAt: string
 }
 
 export interface IDeleteChat extends IGetSingleChat {

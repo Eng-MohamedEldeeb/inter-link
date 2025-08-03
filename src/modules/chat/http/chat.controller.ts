@@ -3,12 +3,8 @@ import { successResponse } from '../../../common/handlers/success-response.handl
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { ChatService } from '../chat.service'
-import {
-  ISendMessage,
-  IDeleteChat,
-  ILikeMessage,
-  IDeleteMessage,
-} from '../dto/chat.dto'
+
+import { IDeleteChat, ILikeMessage, IDeleteMessage } from '../dto/chat.dto'
 
 export class ChatController {
   protected static readonly ChatService = ChatService
@@ -25,23 +21,12 @@ export class ChatController {
   public static readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
       const chat = req.chat
-
+      await this.ChatService.emptyMissedMessages(chat)
       return successResponse(res, {
-        data: chat,
-      })
-    },
-  )
-
-  public static readonly startChat = asyncHandler(
-    async (req: IRequest, res: Response) => {
-      const { _id: profileId } = req.profile
-      const { _id: userId, username } = req.user
-      const { message }: Pick<ISendMessage, 'message'> = req.body
-
-      await this.ChatService.sendMessage({ profileId, userId, message })
-
-      return successResponse(res, {
-        msg: `Message was sent to ${username} successfully`,
+        data: {
+          messaging: chat.messaging,
+          messages: chat.messages,
+        },
       })
     },
   )

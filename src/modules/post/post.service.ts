@@ -1,3 +1,4 @@
+import moment from 'moment'
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
@@ -207,6 +208,7 @@ export class PostService {
       on: { _id: postId, attachments },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Post',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({

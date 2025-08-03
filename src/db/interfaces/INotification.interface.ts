@@ -6,8 +6,7 @@ import { IComment } from './IComment.interface'
 import { IStory } from './IStory.interface'
 import { IMongoDoc } from './IMongo-doc.interface'
 
-export interface INotificationDetails {
-  _id?: MongoId
+export interface INotificationInputs {
   title: string
   from: MongoId | Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   refTo: keyof typeof refTo
@@ -16,41 +15,47 @@ export interface INotificationDetails {
     | Pick<IPost, '_id' | 'attachments'>
     | Pick<IComment, '_id' | 'attachment'>
     | Pick<IStory, '_id' | 'attachment'>
-  createdAt?: Date
+  content?: string
+  sentAt: string
 }
 
-export interface IFollowedUserNotification extends INotificationDetails {
+export interface IFollowedUserNotification extends INotificationInputs {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
 }
 
-export interface ILikedPostNotification extends INotificationDetails {
+export interface ILikedPostNotification extends INotificationInputs {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   on: Pick<IPost, '_id' | 'attachments'>
 }
 
-export interface ILikedCommentNotification extends INotificationDetails {
+export interface ILikedCommentNotification extends INotificationInputs {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   on: Pick<IComment, '_id' | 'attachment'>
 }
 
-export interface ICommentedOnPostNotification extends INotificationDetails {
+export interface ICommentedOnPostNotification extends INotificationInputs {
   from: Pick<IUser, '_id' | 'username' | 'fullName' | 'avatar'>
   content: string
   on: Pick<IPost, '_id' | 'attachments'>
 }
 
-export interface IReplyToCommentNotification extends INotificationDetails {
+export interface IReplyToCommentNotification extends INotificationInputs {
   content: string
   on: Pick<IComment, '_id' | 'attachment'>
 }
 
-export interface ILikedStoryNotification extends INotificationDetails {
+export interface ILikedStoryNotification extends INotificationInputs {
   on: Pick<IStory, '_id' | 'attachment'>
 }
 
+export interface INotificationSlice
+  extends Partial<IMongoDoc>,
+    INotificationInputs {}
+
 export interface INotifications extends IMongoDoc {
-  missed: INotificationDetails[]
-  seen: INotificationDetails[]
+  missed: INotificationSlice[]
+  missedMessages: INotificationSlice[]
+  seen: INotificationSlice[]
   belongsTo: MongoId
   totalMissedNotifications: number
 }

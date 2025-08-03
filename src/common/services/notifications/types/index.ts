@@ -3,6 +3,7 @@ export enum refTo {
   Post = 'Post',
   Comment = 'Comment',
   Story = 'Story',
+  Chat = 'Chat',
 }
 
 export type UserStatus = {

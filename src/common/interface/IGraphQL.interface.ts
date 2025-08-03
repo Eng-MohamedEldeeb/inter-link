@@ -5,7 +5,7 @@ import {
 } from 'graphql'
 
 import {
-  INotificationDetails,
+  INotificationInputs,
   INotifications,
 } from '../../db/interfaces/INotification.interface'
 
@@ -73,6 +73,6 @@ export interface IContext {
   reply: IReply
   group: IGroup
   notifications: INotifications
-  notification: Partial<INotificationDetails>
+  notification: Partial<INotificationInputs>
   chat: IChat
 }

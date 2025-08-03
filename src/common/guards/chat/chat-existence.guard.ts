@@ -12,11 +12,10 @@ import {
 import chatRepository from '../../repositories/chat.repository'
 import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
 
-class ChatExistence extends GuardActivator {
+class ChatExistenceGuard extends GuardActivator {
   protected readonly chatRepository = chatRepository
   protected currentChatId!: MongoId
   protected profileId!: MongoId
-  protected userId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -26,11 +25,9 @@ class ChatExistence extends GuardActivator {
 
       const { currentChatId } = req.params
       const { _id: profileId } = req.profile
-      const { _id: userId } = req.user
 
       this.currentChatId = currentChatId
       this.profileId = profileId
-      this.userId = userId
 
       req.chat = await this.getChatDetails()
     }
@@ -51,29 +48,35 @@ class ChatExistence extends GuardActivator {
         $and: [
           { _id: this.currentChatId },
           {
-            $or: [
-              { startedBy: this.profileId, messaging: this.userId },
-              { startedBy: this.userId, messaging: this.profileId },
-            ],
+            $or: [{ startedBy: this.profileId }, { messaging: this.profileId }],
           },
         ],
       },
+      projection: {
+        messages: {
+          $slice: 5,
+        },
+      },
       populate: [
-        {
-          path: 'to',
-          select,
-        },
-        {
-          path: 'from',
-          select,
-        },
         {
           path: 'startedBy',
           select,
+          options: { lean: true },
         },
         {
           path: 'messaging',
           select,
+          options: { lean: true },
+        },
+        {
+          path: 'messages.to',
+          select,
+          options: { lean: true },
+        },
+        {
+          path: 'messages.from',
+          select,
+          options: { lean: true },
         },
       ],
     })
@@ -88,4 +91,4 @@ class ChatExistence extends GuardActivator {
   }
 }
 
-export default new ChatExistence()
+export default new ChatExistenceGuard()

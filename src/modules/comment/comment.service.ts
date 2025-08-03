@@ -11,6 +11,7 @@ import {
 import { throwError } from '../../common/handlers/error-message.handler'
 import { IUser } from '../../db/interfaces/IUser.interface'
 import { IComment } from '../../db/interfaces/IComment.interface'
+import moment from 'moment'
 
 export class CommentService {
   protected static readonly commentRepository = commentRepository
@@ -38,6 +39,7 @@ export class CommentService {
       from: { _id: profileId, avatar, username, fullName },
       on: { _id: postId, attachments },
       refTo: 'Post',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({
@@ -84,6 +86,7 @@ export class CommentService {
       on: { _id: commentId, attachment },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Comment',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({

@@ -2,7 +2,7 @@ import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
 
 import {
   INotifications,
-  INotificationDetails,
+  INotificationSlice,
 } from '../../../../db/interfaces/INotification.interface'
 
 import {
@@ -28,7 +28,7 @@ const notificationFromDetails = returnedType<
 })
 
 const notificationDetailsFields = returnedType<
-  Omit<INotificationDetails, '__v' | 'updatedAt'>
+  Omit<INotificationSlice, '__v' | 'updatedAt'>
 >({
   name: 'singleNotification',
   fields: {
@@ -36,6 +36,9 @@ const notificationDetailsFields = returnedType<
     from: { type: notificationFromDetails },
     title: { type: GraphQLString },
     refTo: { type: GraphQLString },
+    sentAt: { type: GraphQLString },
+    content: { type: GraphQLString },
+    on: { type: GraphQLID },
     createdAt: { type: DateType },
   },
 })
@@ -52,6 +55,10 @@ export const notificationFields: ObjFields<Omit<INotifications, '__v'>> = {
   },
 
   totalMissedNotifications: { type: GraphQLInt },
+
+  missedMessages: {
+    type: new GraphQLList(notificationDetailsFields),
+  },
 
   seen: {
     type: new GraphQLList(notificationDetailsFields),

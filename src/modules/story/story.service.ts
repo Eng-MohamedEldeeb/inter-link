@@ -1,3 +1,4 @@
+import moment from 'moment'
 import storyRepository from '../../common/repositories/story.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
@@ -81,6 +82,7 @@ export class StoryService {
       on: { _id: storyId, attachment },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Story',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({

@@ -1,3 +1,4 @@
+import moment from 'moment'
 import commentRepository from '../../common/repositories/comment.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
@@ -47,6 +48,7 @@ export class ReplyService {
       from: { _id: profileId, username, fullName, avatar },
       on: { _id: commentId, attachment },
       refTo: 'Comment',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({
@@ -93,6 +95,7 @@ export class ReplyService {
       on: { _id: commentId },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Comment',
+      sentAt: moment().format('h:mm A'),
     }
 
     await this.notificationsService.sendNotification({

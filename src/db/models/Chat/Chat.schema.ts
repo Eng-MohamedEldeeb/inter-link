@@ -14,6 +14,17 @@ export const ChatSchema = new Schema<IChat>(
       ],
     },
 
+    unread: {
+      type: [
+        {
+          message: String,
+          from: { type: SchemaTypes.ObjectId, ref: 'User' },
+          to: { type: SchemaTypes.ObjectId, ref: 'User' },
+          sentAt: String,
+        },
+      ],
+    },
+
     startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
     messaging: { type: SchemaTypes.ObjectId, ref: 'User' },
   },

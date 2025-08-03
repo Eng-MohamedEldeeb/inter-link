@@ -1,4 +1,4 @@
-import { INotificationDetails } from '../../../db/interfaces/INotification.interface'
+import { INotificationSlice } from '../../../db/interfaces/INotification.interface'
 import { IGetNotification } from '../../../modules/notification/dto/notification.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
@@ -44,7 +44,7 @@ class NotificationExistenceGuard extends GuardActivator {
   }
 
   protected readonly getNotificationDetails =
-    async (): Promise<INotificationDetails> => {
+    async (): Promise<INotificationSlice> => {
       const userNotification = await this.notificationRepository.findOne({
         filter: { belongsTo: this.profileId },
         populate: [
@@ -114,11 +114,11 @@ class NotificationExistenceGuard extends GuardActivator {
 
       const { missed, seen } = userNotification
 
-      const inmissed = missed.length && missed.find(this.targetedNotification)!
+      const inMissed = missed.length && missed.find(this.targetedNotification)!
 
-      if (inmissed) return inmissed
+      if (inMissed) return inMissed
 
-      const inSeen = seen.length && seen.find(this.targetedNotification)!
+      const inSeen = seen.length && seen.find(this.targetedNotification)
 
       if (inSeen) return inSeen
 
@@ -129,8 +129,10 @@ class NotificationExistenceGuard extends GuardActivator {
     }
 
   protected readonly targetedNotification = (
-    notification: INotificationDetails,
-  ) => notification._id!.equals(this.notificationId)
+    notification: INotificationSlice,
+    i: number,
+    obj: INotificationSlice[],
+  ) => notification._id?.toString() === this.notificationId.toString()
 }
 
 export default new NotificationExistenceGuard()

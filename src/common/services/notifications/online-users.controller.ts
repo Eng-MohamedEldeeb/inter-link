@@ -1,5 +1,6 @@
 import { MongoId } from '../../types/db'
 import { UserStatus } from './types'
+
 const usersStatus = new Map<string, UserStatus>()
 class ConnectedUsers {
   public readonly getStatus = (profileId: MongoId) => {
@@ -23,7 +24,7 @@ class ConnectedUsers {
   }
 
   public readonly setOffline = (profileId: MongoId) => {
-    const { socketId, isOnline } = this.getStatus(profileId)
+    const { socketId } = this.getStatus(profileId)
 
     usersStatus.set(profileId.toString(), {
       socketId,
@@ -40,7 +41,6 @@ class ConnectedUsers {
     chat: [string, string]
   }) => {
     const user = this.getStatus(profileId)
-
     usersStatus.set(profileId.toString(), { ...user, chat })
   }
 

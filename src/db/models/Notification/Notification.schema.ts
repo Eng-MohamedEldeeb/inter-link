@@ -1,7 +1,7 @@
 import { Schema, SchemaTypes } from 'mongoose'
 
 import { INotifications } from './../../interfaces/INotification.interface'
-import { INotificationDetails } from '../../interfaces/INotification.interface'
+import { INotificationInputs } from '../../interfaces/INotification.interface'
 import { refTo } from '../../../common/services/notifications/types'
 
 export const NotificationSchema = new Schema<INotifications>(
@@ -10,6 +10,25 @@ export const NotificationSchema = new Schema<INotifications>(
       type: SchemaTypes.ObjectId,
       ref: 'User',
       unique: [true, '"belongsTo" Id already exists'],
+    },
+
+    missedMessages: {
+      type: [
+        {
+          title: {
+            type: String,
+          },
+
+          content: String,
+
+          from: {
+            type: SchemaTypes.ObjectId,
+            ref: 'User',
+          },
+
+          sentAt: String,
+        },
+      ],
     },
 
     missed: {
@@ -28,7 +47,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           on: {
             type: SchemaTypes.ObjectId,
-            ref: function (this: INotificationDetails) {
+            ref: function (this: INotificationInputs) {
               return this.refTo
             },
           },
@@ -62,7 +81,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           on: {
             type: SchemaTypes.ObjectId,
-            ref: function (this: INotificationDetails) {
+            ref: function (this: INotificationInputs) {
               return this.refTo
             },
           },
