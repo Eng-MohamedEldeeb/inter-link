@@ -155,16 +155,16 @@ export class PostService {
     })
   }
 
-  public static readonly removeFromGroup = async ({
-    groupId,
+  public static readonly removeFromCommunity = async ({
+    communityId,
     postId,
   }: {
-    groupId: MongoId
+    communityId: MongoId
     postId: MongoId
   }) => {
     return await this.postRepository.findOneAndUpdate({
-      filter: { $and: [{ _id: postId }, { onGroup: groupId }] },
-      data: { $unset: { onGroup: 1 } },
+      filter: { $and: [{ _id: postId }, { onCommunity: communityId }] },
+      data: { $unset: { onCommunity: 1 } },
       options: { lean: true, new: true },
     })
   }

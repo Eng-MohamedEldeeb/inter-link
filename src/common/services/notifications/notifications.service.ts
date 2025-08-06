@@ -40,8 +40,6 @@ class NotificationsService {
       this.userId,
     )
 
-    console.log({ user: this.onlineUsersController.getStatus(this.userId) })
-
     if (!isOnline) return await this.addToMissedNotification()
 
     this.socketId = socketId
@@ -79,8 +77,6 @@ class NotificationsService {
     const includesUserMissedMessages = currentNotifications.missedMessages.some(
       messageDetails => messageDetails.from._id.equals(from._id),
     )
-
-    console.log({ includesUserMissedMessages })
 
     if (includesUserMissedMessages)
       return await this.notificationRepository.findOneAndUpdate({

@@ -5,7 +5,10 @@ import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { MongoId } from '../../types/db'
 
-import { IAddAdmin, IRemoveAdmin } from '../../../modules/group/dto/group.dto'
+import {
+  IAddAdmin,
+  IRemoveAdmin,
+} from '../../../modules/community/dto/community.dto'
 
 import {
   GraphQLParams,

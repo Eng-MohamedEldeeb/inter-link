@@ -31,7 +31,7 @@ export const PostSchema = new Schema<IPost>(
 
     shares: { type: Number },
 
-    onGroup: { type: SchemaTypes.ObjectId, ref: 'Group' },
+    onCommunity: { type: SchemaTypes.ObjectId, ref: 'Community' },
 
     archivedAt: { type: Date },
 

@@ -1,4 +1,4 @@
-import { IMongoDoc } from './IMongo-doc.interface'
+import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
 import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
 import { MongoId } from '../../common/types/db'
 
@@ -49,7 +49,7 @@ export interface IUser
     totalVisits: number
   }[]
 
-  joinedGroups: MongoId[]
+  joinedCommunitys: MongoId[]
 
   blockedUsers: MongoId[]
 

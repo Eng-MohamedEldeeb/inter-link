@@ -28,7 +28,7 @@ export const postFields: ObjFields<
   totalLikes: { type: GraphQLInt },
   likedBy: { type: new GraphQLList(GraphQLID) },
   comments: { type: new GraphQLList(GraphQLID) },
-  onGroup: { type: GraphQLID },
+  onCommunity: { type: GraphQLID },
   totalSaves: { type: GraphQLInt },
   shares: { type: GraphQLInt },
 }

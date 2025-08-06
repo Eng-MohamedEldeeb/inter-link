@@ -1,12 +1,12 @@
 import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
-import { IMongoDoc } from './IMongo-doc.interface'
+import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
 import { MongoId } from '../../common/types/db'
 
 export interface IPostInputs {
   title: string
   content: string
   // tags: MongoId[]
-  onGroup: MongoId
+  onCommunity: MongoId
 }
 
 export interface IPost extends IMongoDoc, IPostInputs {

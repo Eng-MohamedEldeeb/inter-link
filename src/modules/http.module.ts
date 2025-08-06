@@ -11,7 +11,7 @@ import userModule from './user/http/user.module'
 import storyModule from './story/http/story.module'
 import postModule from './post/http/post.module'
 import commentModule from './comment/http/comment.module'
-import groupModule from './group/http/group.module'
+import communityModule from './community/http/community.module'
 import notificationModule from './notification/http/notification.module'
 import chatModule from './chat/http/chat.module'
 
@@ -55,10 +55,10 @@ router.use(
 )
 
 router.use(
-  '/group',
+  '/community',
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
-  groupModule,
+  communityModule,
 )
 
 router.use(

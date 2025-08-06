@@ -56,8 +56,6 @@ export class ChatService {
       socket.on('send-message', async ({ message }: { message: string }) => {
         await this.upsertChatMessage(message)
 
-        console.log({ userStatus: connectedUsers.getStatus(this.userId) })
-
         const data: DTO.ISendMessage = {
           message,
           sentAt: moment().format('h:mm A'),
@@ -83,8 +81,6 @@ export class ChatService {
       socket.on('disconnect', () => {
         socket.leave(communicationType1)
         socket.leave(communicationType2)
-        connectedUsers.leaveChat(this.profileId)
-        console.log({ userStatus: connectedUsers.getStatus(this.userId) })
       })
     }
   }
@@ -108,8 +104,6 @@ export class ChatService {
 
   protected static readonly upsertChatMessage = async (message: string) => {
     const inChat = this.isInChat()
-
-    console.log({ inChat })
 
     const existedChat = await this.chatRepository.findOne({
       filter: {
@@ -142,7 +136,7 @@ export class ChatService {
               ],
             }
           : {
-              unread: [
+              newMessages: [
                 {
                   from: this.profileId,
                   to: this.userId,
@@ -154,7 +148,7 @@ export class ChatService {
       })
 
     if (!inChat)
-      existedChat.unread.unshift({
+      existedChat.newMessages.unshift({
         from: this.profileId,
         to: this.userId,
         message,
@@ -179,7 +173,7 @@ export class ChatService {
         messages: {
           $slice: 1,
         },
-        unread: {
+        newMessages: {
           $slice: 1,
         },
       },
@@ -210,17 +204,17 @@ export class ChatService {
   }
 
   public static readonly getSingle = async (chat: TChat) => {
-    if (chat.unread.length >= 1) await this.emptyMissedMessages(chat)
+    if (chat.newMessages.length >= 1) await this.emptyMissedMessages(chat)
 
     return chat
   }
 
   protected static readonly emptyMissedMessages = async (chat: TChat) => {
-    for (let i = chat.unread.length - 1; i >= 0; i--) {
-      chat.messages.unshift(chat.unread[i])
+    for (let i = chat.newMessages.length - 1; i >= 0; i--) {
+      chat.messages.unshift(chat.newMessages[i])
     }
 
-    chat.unread = []
+    chat.newMessages = []
 
     return await chat.save()
   }
@@ -288,7 +282,9 @@ export class ChatService {
       message._id?.equals(messageId),
     )
 
-    const inUnread = chat.unread.find(message => message._id?.equals(messageId))
+    const inUnread = chat.newMessages.find(message =>
+      message._id?.equals(messageId),
+    )
 
     if (!inMessages && !inUnread)
       return throwError({ msg: 'message not found', status: 404 })
@@ -389,7 +385,7 @@ export class ChatService {
               {
                 $or: [
                   { 'messages._id': messageId },
-                  { 'unread._id': messageId },
+                  { 'newMessages._id': messageId },
                 ],
               },
             ],
@@ -404,8 +400,8 @@ export class ChatService {
               },
               {
                 $and: [
-                  { 'unread.from': profileId },
-                  { 'unread.deletedAt': { $exists: false } },
+                  { 'newMessages.from': profileId },
+                  { 'newMessages.deletedAt': { $exists: false } },
                 ],
               },
             ],

@@ -1,0 +1,74 @@
+import { GuardActivator } from '../class/guard-activator.class'
+import { ContextDetector } from '../../decorators/context/context-detector.decorator'
+import { ContextType } from '../../decorators/context/types'
+import { throwError } from '../../handlers/error-message.handler'
+
+import {
+  IGetCommunity,
+  IRemovePost,
+} from '../../../modules/community/dto/community.dto'
+
+import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+
+import postRepository from '../../repositories/post.repository'
+import { MongoId } from '../../types/db'
+
+class PostExistenceInCommunityGuard extends GuardActivator {
+  protected readonly postRepository = postRepository
+  protected communityName!: string
+  protected communityId!: MongoId
+  protected postId!: MongoId
+
+  async canActivate(...params: HttpParams | GraphQLParams) {
+    const Ctx = ContextDetector.detect(params)
+
+    if (Ctx.type === ContextType.httpContext) {
+      const { req } = Ctx.switchToHTTP<IGetCommunity, IRemovePost>()
+      const { _id: communityId, name } = req.community
+      const { postId } = req.query
+
+      this.communityName = name
+      this.communityId = communityId
+      this.postId = postId
+
+      req.post = await this.getPostFromCommunity()
+    }
+
+    if (Ctx.type === ContextType.graphContext) {
+      const { args, context } = Ctx.switchToGraphQL<
+        IGetCommunity & IRemovePost
+      >()
+      const { _id: communityId, name } = context.community
+      const { postId } = args
+
+      this.communityName = name
+      this.communityId = communityId
+      this.postId = postId
+
+      context.post = await this.getPostFromCommunity()
+    }
+
+    return true
+  }
+
+  protected readonly getPostFromCommunity = async () => {
+    const isExistedInCommunity = await this.postRepository.findOne({
+      filter: {
+        $and: [
+          { _id: this.postId },
+          { onCommunity: this.communityId },
+          { archivedAt: { $exists: false } },
+        ],
+      },
+    })
+
+    if (!isExistedInCommunity)
+      return throwError({
+        msg: `Post Doesn't exist in '${this.communityName}' community`,
+        status: 404,
+      })
+    return isExistedInCommunity
+  }
+}
+
+export default new PostExistenceInCommunityGuard()

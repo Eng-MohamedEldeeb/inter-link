@@ -5,7 +5,7 @@ import { IPost } from '../../db/interfaces/IPost.interface'
 import { IComment } from '../../db/interfaces/IComment.interface'
 import { IReply } from '../../db/interfaces/IReply.interface'
 import { IStory } from '../../db/interfaces/IStory.interface'
-import { IGroup } from '../../db/interfaces/IGroup.interface'
+import { ICommunity } from '../../db/interfaces/ICommunity.interface'
 
 import {
   ICloudFile,
@@ -30,7 +30,7 @@ export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   post: IPost
   comment: IComment
   reply: IReply
-  group: IGroup
+  community: ICommunity
   notifications: INotifications
   notification: INotificationInputs
   chat: TChat

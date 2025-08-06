@@ -10,7 +10,7 @@ import * as post from './post/graphql/post.module'
 import * as comment from './comment/graphql/comment.module'
 import * as reply from './reply/graphql/reply.module'
 import * as story from './story/graphql/story.module'
-import * as group from './group/graphql/group.module'
+import * as community from './community/graphql/community.module'
 import * as chat from './chat/graphql/chat.module'
 
 export const schema = new GraphQLSchema({
@@ -24,7 +24,7 @@ export const schema = new GraphQLSchema({
       comment: comment.queryModule,
       reply: reply.queryModule,
       story: story.queryModule,
-      group: group.queryModule,
+      community: community.queryModule,
       chat: chat.queryModule,
     },
   }),
@@ -40,7 +40,7 @@ export const schema = new GraphQLSchema({
       comment: comment.mutationModule,
       reply: reply.mutationModule,
       story: story.mutationModule,
-      group: group.mutationModule,
+      community: community.mutationModule,
       chat: chat.mutationModule,
     },
   }),

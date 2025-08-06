@@ -59,7 +59,7 @@ export const createValidator = {
     .keys({
       title: generalFields.content.min(1).max(50).required(),
       content: generalFields.content.max(500),
-      onGroup: generalFields.mongoId,
+      onCommunity: generalFields.mongoId,
     })
     .required()
     .messages({

@@ -43,11 +43,9 @@ export class UserService {
   }) => {
     this.profileId = profileId
     this.userId = user._id
-    console.log({ user })
 
     if (user.isPrivateProfile && user.viewers) {
       this.views = user.viewers
-      console.log({ user })
 
       return await this.updateUserViewers()
     }

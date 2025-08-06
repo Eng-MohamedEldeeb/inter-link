@@ -18,9 +18,6 @@ export const socketIoBootStrap = async (io: Server) => {
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
 
-      console.log({ profileId })
-      console.log({ socketId: socket.id })
-
       connectedUsers.setOnline({
         profileId,
         socketId: socket.id,
@@ -43,65 +40,3 @@ export const socketIoBootStrap = async (io: Server) => {
     )
     .on('connection', asyncHandler(await ChatService.sendMessage(io)))
 }
-
-// export const socketIoBootStrap = (io: Server) => {
-//   let socketId: string
-
-//   io.use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard)).on(
-//     'connection',
-//     asyncHandler(async (socket: ISocket) => {
-//       constprofileId = socket.profile._id
-
-//       socketId = socket.id
-
-//       connectedUsers.setOnline({
-//        profileId:profileId,
-//         socketId,
-//       })
-
-//       await notificationsService.readMissedNotifications({
-//        profileId,
-//         socketId,
-//       })
-
-//       socket.on('disconnect', () => connectedUsers.setOffline(userId))
-//     }),
-//   )
-
-//   io.of('/chat')
-//     .use(
-//       applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
-//     )
-//     .on(
-//       'connection',
-//       asyncHandler(async (socket: ISocket) => {
-//         const profileId = socket.profile._id
-//         constprofileId = socket.user._id
-
-//         const chat = [`${profileId}:${userId}`, `${userId}:${profileId}`]
-
-//         console.log({ chat })
-
-//         connectedUsers.setOnline({
-//          profileId: profileId,
-//           socketId,
-//         })
-
-//         socket.join(chat)
-
-//         socket.on('send-message', (data: { msg: string; to: string }) => {
-//           const { msg } = data
-
-//           console.log({ chat })
-
-//           return socket.to(chat).emit('new-message', {
-//             msg,
-//             at: moment().format('h:mm A'),
-//             from: socket.profile,
-//           })
-//         })
-
-//         socket.on('disconnect', () => connectedUsers.setOffline(userId))
-//       }),
-//     )
-// }

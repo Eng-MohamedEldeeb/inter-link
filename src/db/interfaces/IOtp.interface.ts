@@ -1,4 +1,4 @@
-import { IMongoDoc } from './IMongo-doc.interface'
+import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
 
 import * as emailSchemas from '../../common/services/email/schemas/email-schema'
 

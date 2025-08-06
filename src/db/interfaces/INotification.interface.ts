@@ -4,7 +4,7 @@ import { IUser } from './IUser.interface'
 import { IPost } from './IPost.interface'
 import { IComment } from './IComment.interface'
 import { IStory } from './IStory.interface'
-import { IMongoDoc } from './IMongo-doc.interface'
+import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
 
 export type UserDetails = Pick<
   IUser,

@@ -17,7 +17,7 @@ export const ChatSchema = new Schema<IChat>(
       ],
     },
 
-    unread: {
+    newMessages: {
       type: [
         {
           message: String,
@@ -42,5 +42,7 @@ export const ChatSchema = new Schema<IChat>(
 )
 
 ChatSchema.virtual('totalMissedMessages').get(function (this: IChat) {
-  return this.unread && this.unread.length ? this.unread.length : 0
+  return this.newMessages && this.newMessages.length
+    ? this.newMessages.length
+    : 0
 })

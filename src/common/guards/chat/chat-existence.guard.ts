@@ -79,8 +79,6 @@ class ChatExistenceGuard extends GuardActivator {
         },
       ],
     })
-    console.log({ chatId: this.chatId })
-    console.log({ isExistedChat })
 
     if (!isExistedChat)
       return throwError({

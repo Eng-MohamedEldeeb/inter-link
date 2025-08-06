@@ -7,7 +7,7 @@ import { encryptValue } from '../../../common/utils/security/crypto/crypto.servi
 import { CloudUploader } from '../../../common/services/upload/cloud.service'
 
 import postRepository from '../../../common/repositories/post.repository'
-import groupRepository from '../../../common/repositories/group.repository'
+import communityRepository from '../../../common/repositories/community.repository'
 import commentRepository from '../../../common/repositories/comment.repository'
 import otpRepository from '../../../common/repositories/otp.repository'
 
@@ -83,7 +83,7 @@ export const UserSchema = new Schema<IUser>(
 
     likedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
 
-    joinedGroups: [{ type: SchemaTypes.ObjectId, ref: 'Group' }],
+    joinedCommunitys: [{ type: SchemaTypes.ObjectId, ref: 'Community' }],
 
     viewers: [
       {
@@ -177,7 +177,7 @@ UserSchema.post('findOneAndDelete', async function ({ _id, avatar }: IUser) {
   Promise.allSettled([
     postRepository.deleteMany({ createdBy: _id }),
     commentRepository.deleteMany({ createdBy: _id }),
-    groupRepository.deleteMany({ createdBy: _id }),
+    communityRepository.deleteMany({ createdBy: _id }),
     avatar.secure_url != process.env.DEFAULT_PIC &&
       (await CloudUploader.deleteFolder({ fullPath: _id.toString() })),
   ])
