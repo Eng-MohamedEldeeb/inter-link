@@ -4,7 +4,13 @@ import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
 import { ChatService } from '../chat.service'
 
-import { IDeleteChat, ILikeMessage, IDeleteMessage } from '../dto/chat.dto'
+import {
+  IDeleteChat,
+  ILikeMessage,
+  IDeleteMessage,
+  IGetSingleChat,
+  IEditMessage,
+} from '../dto/chat.dto'
 
 export class ChatController {
   protected static readonly ChatService = ChatService
@@ -20,12 +26,14 @@ export class ChatController {
 
   public static readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const chat = req.chat
-      await this.ChatService.emptyMissedMessages(chat)
+      const { participant, messages } = await this.ChatService.getSingle(
+        req.chat,
+      )
+
       return successResponse(res, {
         data: {
-          messaging: chat.messaging,
-          messages: chat.messages,
+          participant,
+          messages,
         },
       })
     },
@@ -36,35 +44,62 @@ export class ChatController {
       req: IRequest<null, Pick<ILikeMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id: currentChatId } = req.chat
+      const chat = req.chat
+      const { _id, username, avatar, fullName } = req.profile
       const { messageId } = req.query
 
       await this.ChatService.likeMessage({
-        currentChatId,
+        profile: { _id, username, avatar, fullName },
+        chat,
         messageId,
       })
 
       return successResponse(res, {
-        msg: 'Liked the Message successfully',
+        msg: 'Liked the Message Successfully',
+      })
+    },
+  )
+
+  public static readonly editMessage = asyncHandler(
+    async (
+      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, 'messageId'>>,
+      res: Response,
+    ) => {
+      const { _id: chatId } = req.chat
+      const { _id: profileId } = req.profile
+      const { messageId } = req.query
+      const { newMessage }: IEditMessage = req.body
+
+      await this.ChatService.editMessage({
+        chatId,
+        profileId,
+        messageId,
+        newMessage,
+      })
+
+      return successResponse(res, {
+        msg: 'Message Has Been Modified Successfully',
       })
     },
   )
 
   public static readonly deleteMessage = asyncHandler(
     async (
-      req: IRequest<null, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id: currentChatId } = req.chat
+      const { _id: chatId } = req.chat
+      const { _id: profileId } = req.profile
       const { messageId } = req.query
 
       await this.ChatService.deleteMessage({
-        currentChatId,
+        chatId,
+        profileId,
         messageId,
       })
 
       return successResponse(res, {
-        msg: 'Message is Deleted successfully',
+        msg: 'Message Has Been Deleted Successfully',
       })
     },
   )
@@ -72,15 +107,15 @@ export class ChatController {
   public static readonly deleteChat = asyncHandler(
     async (req: IRequest<IDeleteChat>, res: Response) => {
       const { _id: profileId } = req.profile
-      const { _id: currentChatId } = req.chat
+      const chat = req.chat
 
       await this.ChatService.deleteChat({
-        currentChatId,
         profileId,
+        chat,
       })
 
       return successResponse(res, {
-        msg: 'Chat is Deleted successfully',
+        msg: 'Chat Has Been Deleted Successfully',
       })
     },
   )

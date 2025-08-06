@@ -4,7 +4,7 @@ import {
 } from '../../../common/interface/IGraphQL.interface'
 
 import { ChatService } from '../chat.service'
-import { IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
+import { IDeleteChat, IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
 
 export class ChatQueryResolver {
   private static readonly ChatService = ChatService
@@ -41,12 +41,12 @@ export class ChatMutationResolver {
     { messageId }: Pick<ILikeMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: currentChatId } = context.chat
+    const { _id: chatId } = context.chat
 
-    await this.ChatService.likeMessage({
-      messageId,
-      currentChatId,
-    })
+    // await this.ChatService.likeMessage({
+    //   messageId,
+    //   chatId,
+    // })
 
     return {
       msg: 'Liked the Message successfully',
@@ -58,10 +58,12 @@ export class ChatMutationResolver {
     { messageId }: Pick<IDeleteMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: currentChatId } = context.chat
+    const { _id: chatId } = context.chat
+    const { _id: profileId } = context.profile
 
     await this.ChatService.deleteMessage({
-      currentChatId,
+      chatId,
+      profileId,
       messageId,
     })
 
@@ -76,11 +78,11 @@ export class ChatMutationResolver {
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
-    const { _id: currentChatId } = context.chat
+    const chat = context.chat
 
     await this.ChatService.deleteChat({
       profileId,
-      currentChatId,
+      chat,
     })
 
     return {

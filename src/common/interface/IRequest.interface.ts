@@ -13,10 +13,10 @@ import {
 } from '../services/upload/interface/cloud-response.interface'
 import {
   INotifications,
-  INotificationSlice,
+  INotificationInputs,
 } from '../../db/interfaces/INotification.interface'
 
-import { IChat } from '../../db/interfaces/IChat.interface'
+import { TChat } from '../../db/documents'
 
 export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   cloudFile: ICloudFile
@@ -32,6 +32,6 @@ export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   reply: IReply
   group: IGroup
   notifications: INotifications
-  notification: INotificationSlice
-  chat: IChat
+  notification: INotificationInputs
+  chat: TChat
 }

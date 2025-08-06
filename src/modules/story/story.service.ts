@@ -78,7 +78,7 @@ export class StoryService {
     })
 
     const notification: ILikedStoryNotification = {
-      title: `${username} Liked Your Story ❤️`,
+      notificationMessage: `${username} Liked Your Story ❤️`,
       on: { _id: storyId, attachment },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Story',
@@ -86,7 +86,7 @@ export class StoryService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: createdBy,
+      userId: createdBy,
       notificationDetails: notification,
     })
 

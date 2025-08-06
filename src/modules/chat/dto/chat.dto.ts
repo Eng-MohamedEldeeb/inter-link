@@ -1,22 +1,31 @@
 import { MongoId } from '../../../common/types/db'
-import { IUser } from '../../../db/interfaces/IUser.interface'
+import { TChat } from '../../../db/documents'
+import { UserDetails } from '../../../db/interfaces/INotification.interface'
 
 export interface IGetSingleChat {
-  currentChatId: MongoId
+  chatId: MongoId
 }
 
 export interface ISendMessage {
   message: string
-  from: IUser
+  from: UserDetails
   sentAt: string
 }
 
 export interface IDeleteChat extends IGetSingleChat {
   profileId: MongoId
+  chat: TChat
 }
 
-export interface IDeleteMessage extends IGetSingleChat {
+export interface IGetSingleMessage extends IGetSingleChat {
   messageId: MongoId
 }
+export interface IDeleteMessage extends IGetSingleChat, IGetSingleMessage {
+  chat: TChat
+}
 
-export interface ILikeMessage extends IDeleteMessage {}
+export interface ILikeMessage extends IGetSingleChat, IGetSingleMessage {}
+
+export interface IEditMessage extends IGetSingleChat, IGetSingleMessage {
+  newMessage: string
+}

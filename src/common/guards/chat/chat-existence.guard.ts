@@ -14,7 +14,7 @@ import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
 
 class ChatExistenceGuard extends GuardActivator {
   protected readonly chatRepository = chatRepository
-  protected currentChatId!: MongoId
+  protected chatId!: MongoId
   protected profileId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -23,10 +23,10 @@ class ChatExistenceGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleChat>()
 
-      const { currentChatId } = req.params
+      const { chatId } = { ...req.params, ...req.query }
       const { _id: profileId } = req.profile
 
-      this.currentChatId = currentChatId
+      this.chatId = chatId
       this.profileId = profileId
 
       req.chat = await this.getChatDetails()
@@ -46,9 +46,12 @@ class ChatExistenceGuard extends GuardActivator {
     const isExistedChat = await this.chatRepository.findOne({
       filter: {
         $and: [
-          { _id: this.currentChatId },
+          { _id: this.chatId },
           {
-            $or: [{ startedBy: this.profileId }, { messaging: this.profileId }],
+            $or: [
+              { startedBy: this.profileId },
+              { participant: this.profileId },
+            ],
           },
         ],
       },
@@ -61,25 +64,23 @@ class ChatExistenceGuard extends GuardActivator {
         {
           path: 'startedBy',
           select,
-          options: { lean: true },
         },
         {
-          path: 'messaging',
+          path: 'participant',
           select,
-          options: { lean: true },
         },
         {
           path: 'messages.to',
           select,
-          options: { lean: true },
         },
         {
           path: 'messages.from',
           select,
-          options: { lean: true },
         },
       ],
     })
+    console.log({ chatId: this.chatId })
+    console.log({ isExistedChat })
 
     if (!isExistedChat)
       return throwError({

@@ -1,4 +1,4 @@
-import { INotificationSlice } from '../../../db/interfaces/INotification.interface'
+import { INotificationInputs } from '../../../db/interfaces/INotification.interface'
 import { IGetNotification } from '../../../modules/notification/dto/notification.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
@@ -44,12 +44,12 @@ class NotificationExistenceGuard extends GuardActivator {
   }
 
   protected readonly getNotificationDetails =
-    async (): Promise<INotificationSlice> => {
+    async (): Promise<INotificationInputs> => {
       const userNotification = await this.notificationRepository.findOne({
         filter: { belongsTo: this.profileId },
         populate: [
           {
-            path: 'missed.from',
+            path: 'missedNotifications.from',
             select: {
               _id: 1,
               username: 1,
@@ -62,7 +62,7 @@ class NotificationExistenceGuard extends GuardActivator {
             options: { lean: true },
           },
           {
-            path: 'missed.on',
+            path: 'missedNotifications.on',
             select: {
               _id: 1,
               username: 1,
@@ -112,9 +112,11 @@ class NotificationExistenceGuard extends GuardActivator {
           status: 404,
         })
 
-      const { missed, seen } = userNotification
+      const { missedNotifications, seen } = userNotification
 
-      const inMissed = missed.length && missed.find(this.targetedNotification)!
+      const inMissed =
+        missedNotifications.length &&
+        missedNotifications.find(this.targetedNotification)!
 
       if (inMissed) return inMissed
 
@@ -129,9 +131,9 @@ class NotificationExistenceGuard extends GuardActivator {
     }
 
   protected readonly targetedNotification = (
-    notification: INotificationSlice,
+    notification: INotificationInputs,
     i: number,
-    obj: INotificationSlice[],
+    obj: INotificationInputs[],
   ) => notification._id?.toString() === this.notificationId.toString()
 }
 

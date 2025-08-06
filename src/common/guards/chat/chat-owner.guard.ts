@@ -13,7 +13,7 @@ import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
 
 class ChatOwnerGuard extends GuardActivator {
   protected chatStartedById!: MongoId
-  protected messaging!: MongoId
+  protected participant!: MongoId
   protected profileId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
@@ -22,11 +22,11 @@ class ChatOwnerGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleChat>()
 
-      const { startedBy, messaging } = req.chat
+      const { startedBy, participant } = req.chat
       const { _id: profileId } = req.profile
 
       this.chatStartedById = startedBy
-      this.messaging = messaging
+      this.participant = participant
       this.profileId = profileId
     }
 
@@ -37,7 +37,7 @@ class ChatOwnerGuard extends GuardActivator {
     const isTheOwner = this.chatStartedById._id.equals(
       this.profileId.toString(),
     )
-    const isTheParticipant = this.messaging._id.equals(
+    const isTheParticipant = this.participant._id.equals(
       this.profileId.toString(),
     )
 

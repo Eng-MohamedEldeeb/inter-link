@@ -34,7 +34,7 @@ export class CommentService {
     })
 
     const notification: ICommentedOnPostNotification = {
-      title: `${username} Commented On Your Post! 💬`,
+      notificationMessage: `${username} Commented On Your Post! 💬`,
       content,
       from: { _id: profileId, avatar, username, fullName },
       on: { _id: postId, attachments },
@@ -43,7 +43,7 @@ export class CommentService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: createdBy,
+      userId: createdBy,
       notificationDetails: notification,
     })
   }
@@ -82,7 +82,7 @@ export class CommentService {
     })
 
     const notification: ILikedCommentNotification = {
-      title: `${username} Liked Your Comment 💚`,
+      notificationMessage: `${username} Liked Your Comment 💚`,
       on: { _id: commentId, attachment },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Comment',
@@ -90,7 +90,7 @@ export class CommentService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: createdBy,
+      userId: createdBy,
       notificationDetails: notification,
     })
 

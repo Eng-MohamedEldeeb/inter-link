@@ -26,7 +26,7 @@ export const singleChatFields = returnedType<Omit<IChat, '__v' | 'updatedAt'>>({
     unread: { type: new GraphQLList(messageDetails) },
 
     startedBy: { type: GraphQLID },
-    messaging: { type: GraphQLID },
+    participant: { type: GraphQLID },
 
     createdAt: { type: DateType },
   },

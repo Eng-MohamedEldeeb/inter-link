@@ -43,7 +43,7 @@ export class ReplyService {
     })
 
     const notification: IReplyToCommentNotification = {
-      title: `${username} Replied To Your Comment 💬`,
+      notificationMessage: `${username} Replied To Your Comment 💬`,
       content,
       from: { _id: profileId, username, fullName, avatar },
       on: { _id: commentId, attachment },
@@ -52,7 +52,7 @@ export class ReplyService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: commentCreator,
+      userId: commentCreator,
       notificationDetails: notification,
     })
   }
@@ -91,7 +91,7 @@ export class ReplyService {
     })
 
     const notification: ILikedCommentNotification = {
-      title: `${username} Liked Your Reply 💚`,
+      notificationMessage: `${username} Liked Your Reply 💚`,
       on: { _id: commentId },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Comment',
@@ -99,7 +99,7 @@ export class ReplyService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: createdBy,
+      userId: createdBy,
       notificationDetails: notification,
     })
 

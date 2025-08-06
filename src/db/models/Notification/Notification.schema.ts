@@ -15,26 +15,30 @@ export const NotificationSchema = new Schema<INotifications>(
     missedMessages: {
       type: [
         {
-          title: {
-            type: String,
-          },
-
-          content: String,
-
           from: {
             type: SchemaTypes.ObjectId,
             ref: 'User',
           },
 
-          sentAt: String,
+          messages: {
+            type: [
+              {
+                notificationMessage: {
+                  type: String,
+                },
+                sentAt: String,
+                updatedAt: Date,
+              },
+            ],
+          },
         },
       ],
     },
 
-    missed: {
+    missedNotifications: {
       type: [
         {
-          title: {
+          notificationMessage: {
             type: String,
           },
 
@@ -68,7 +72,7 @@ export const NotificationSchema = new Schema<INotifications>(
     seen: {
       type: [
         {
-          title: {
+          notificationMessage: {
             type: String,
           },
 
@@ -109,5 +113,15 @@ export const NotificationSchema = new Schema<INotifications>(
 NotificationSchema.virtual('totalMissedNotifications').get(function (
   this: INotifications,
 ) {
-  return this.missed && this.missed.length ? this.missed.length : 0
+  return this.missedNotifications && this.missedNotifications.length
+    ? this.missedNotifications.length
+    : 0
+})
+
+NotificationSchema.virtual('totalMissedMessages').get(function (
+  this: INotifications,
+) {
+  return this.missedNotifications && this.missedNotifications.length
+    ? this.missedNotifications.length
+    : 0
 })

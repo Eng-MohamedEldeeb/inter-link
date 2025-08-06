@@ -8,7 +8,7 @@ export const getSingleChatValidator = {
   schema: joi
     .object<DTO.IGetSingleChat>()
     .keys({
-      currentChatId: generalFields.mongoId.required(),
+      chatId: generalFields.mongoId.required(),
     })
     .required(),
 
@@ -31,7 +31,7 @@ export const getSingleChatValidator = {
 
 export const likeMessageValidator = {
   params: {
-    currentChatId: generalFields.mongoId.required(),
+    chatId: generalFields.mongoId.required(),
   },
 
   query: {
@@ -41,11 +41,11 @@ export const likeMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'currentChatId'>>()
+        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'currentChatId param is required',
+          'any.required': 'chatId param is required',
         }),
 
       query: joi
@@ -65,7 +65,61 @@ export const likeMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and currentChatId args are required',
+          'any.required': 'messageId and chatId args are required',
+        }),
+    }
+  },
+}
+
+export const editMessageValidator = {
+  params: {
+    chatId: generalFields.mongoId.required(),
+  },
+
+  query: {
+    messageId: generalFields.mongoId.required(),
+  },
+
+  body: {
+    newMessage: joi.string().max(700).required(),
+  },
+
+  http() {
+    return {
+      params: joi
+        .object<Pick<DTO.IEditMessage, 'chatId'>>()
+        .keys(this.params)
+        .required()
+        .messages({
+          'any.required': 'chatId param and messageId query param is required',
+        }),
+
+      query: joi
+        .object<Pick<DTO.IEditMessage, 'messageId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': 'chatId and messageId is required',
+        }),
+
+      body: joi
+        .object<Pick<DTO.IEditMessage, 'newMessage'>>()
+        .keys(this.body)
+        .required()
+        .messages({
+          'any.required': 'newMessage is required in body',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<DTO.ILikeMessage>()
+        .keys({ ...this.query, ...this.params, ...this.body })
+        .required()
+        .messages({
+          'any.required': 'messageId, chatId  and newMessage args are required',
         }),
     }
   },
@@ -73,7 +127,7 @@ export const likeMessageValidator = {
 
 export const deleteMessageValidator = {
   params: {
-    currentChatId: generalFields.mongoId.required(),
+    chatId: generalFields.mongoId.required(),
   },
 
   query: {
@@ -83,12 +137,11 @@ export const deleteMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'currentChatId'>>()
+        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required':
-            'currentChatId param and messageId query param is required',
+          'any.required': 'chatId param and messageId query param is required',
         }),
 
       query: joi
@@ -96,7 +149,7 @@ export const deleteMessageValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': 'currentChatId and messageId is required',
+          'any.required': 'chatId and messageId is required',
         }),
     }
   },
@@ -108,23 +161,24 @@ export const deleteMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and currentChatId args are required',
+          'any.required': 'messageId and chatId args are required',
         }),
     }
   },
 }
+
 export const deleteChatValidator = {
   schema: joi
     .object<DTO.IDeleteChat>()
     .keys({
-      currentChatId: generalFields.mongoId.required(),
+      chatId: generalFields.mongoId.required(),
     })
     .required(),
 
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'currentChatId  param is required',
+        'any.required': 'chatId query param is required',
       }),
     }
   },
@@ -132,7 +186,7 @@ export const deleteChatValidator = {
   graphQL() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'currentChatId arg is required',
+        'any.required': 'chatId arg is required',
       }),
     }
   },

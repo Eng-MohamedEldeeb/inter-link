@@ -7,9 +7,12 @@ export const ChatSchema = new Schema<IChat>(
       type: [
         {
           message: String,
+          sentAt: String,
           from: { type: SchemaTypes.ObjectId, ref: 'User' },
           to: { type: SchemaTypes.ObjectId, ref: 'User' },
-          sentAt: String,
+          likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+          updatedAt: Date,
+          deletedAt: Date,
         },
       ],
     },
@@ -18,15 +21,18 @@ export const ChatSchema = new Schema<IChat>(
       type: [
         {
           message: String,
+          sentAt: String,
           from: { type: SchemaTypes.ObjectId, ref: 'User' },
           to: { type: SchemaTypes.ObjectId, ref: 'User' },
-          sentAt: String,
+          likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+          updatedAt: Date,
+          deletedAt: Date,
         },
       ],
     },
 
     startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
-    messaging: { type: SchemaTypes.ObjectId, ref: 'User' },
+    participant: { type: SchemaTypes.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

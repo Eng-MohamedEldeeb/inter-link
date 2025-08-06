@@ -21,7 +21,7 @@ export class NotificationService {
 
     return {
       notifications: {
-        missed: notifications.missed,
+        missedNotifications: notifications.missedNotifications,
         seen: notifications.seen,
       },
       totalMissedNotifications: notifications.totalMissedNotifications,

@@ -204,7 +204,7 @@ export class PostService {
     })
 
     const notification: ILikedPostNotification = {
-      title: `${username} Liked Your Post ❤️`,
+      notificationMessage: `${username} Liked Your Post ❤️`,
       on: { _id: postId, attachments },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Post',
@@ -212,7 +212,7 @@ export class PostService {
     }
 
     await this.notificationsService.sendNotification({
-      toUser: createdBy,
+      userId: createdBy,
       notificationDetails: notification,
     })
 
