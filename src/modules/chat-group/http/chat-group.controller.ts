@@ -2,7 +2,7 @@ import { Response } from 'express'
 import { successResponse } from '../../../common/handlers/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { ChatService } from '../chat-group.service'
+import { ChatGroupService } from '../chat-group.service'
 
 import {
   IDeleteChat,
@@ -13,20 +13,20 @@ import {
 } from '../dto/chat-group.dto'
 
 export class ChatController {
-  protected static readonly ChatService = ChatService
+  protected static readonly ChatGroupService = ChatGroupService
 
   public static readonly getAllChats = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.ChatService.getAllChats(profileId),
+        data: await this.ChatGroupService.getAllChats(profileId),
       })
     },
   )
 
   public static readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { participant, messages } = await this.ChatService.getSingle(
+      const { participant, messages } = await this.ChatGroupService.getSingle(
         req.chat,
       )
 
@@ -48,7 +48,7 @@ export class ChatController {
       const { _id, username, avatar, fullName } = req.profile
       const { messageId } = req.query
 
-      await this.ChatService.likeMessage({
+      await this.ChatGroupService.likeMessage({
         profile: { _id, username, avatar, fullName },
         chat,
         messageId,
@@ -70,7 +70,7 @@ export class ChatController {
       const { messageId } = req.query
       const { newMessage }: IEditMessage = req.body
 
-      await this.ChatService.editMessage({
+      await this.ChatGroupService.editMessage({
         chatId,
         profileId,
         messageId,
@@ -92,7 +92,7 @@ export class ChatController {
       const { _id: profileId } = req.profile
       const { messageId } = req.query
 
-      await this.ChatService.deleteMessage({
+      await this.ChatGroupService.deleteMessage({
         chatId,
         profileId,
         messageId,
@@ -109,7 +109,7 @@ export class ChatController {
       const { _id: profileId } = req.profile
       const chat = req.chat
 
-      await this.ChatService.deleteChat({
+      await this.ChatGroupService.deleteChat({
         profileId,
         chat,
       })

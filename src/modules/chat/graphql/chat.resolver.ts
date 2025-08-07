@@ -4,7 +4,7 @@ import {
 } from '../../../common/interface/IGraphQL.interface'
 
 import { ChatService } from '../chat.service'
-import { IDeleteChat, IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
+import { IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
 
 export class ChatQueryResolver {
   private static readonly ChatService = ChatService
@@ -25,7 +25,6 @@ export class ChatQueryResolver {
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: profileId } = context.profile
     return {
       msg: 'done',
       status: 200,
@@ -41,12 +40,14 @@ export class ChatMutationResolver {
     { messageId }: Pick<ILikeMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: chatId } = context.chat
+    const profile = context.profile
+    const chat = context.chat
 
-    // await this.ChatService.likeMessage({
-    //   messageId,
-    //   chatId,
-    // })
+    await this.ChatService.likeMessage({
+      messageId,
+      chat,
+      profile,
+    })
 
     return {
       msg: 'Liked the Message successfully',

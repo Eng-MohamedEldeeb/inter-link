@@ -3,15 +3,12 @@ import {
   ISuccessResponse,
 } from '../../../common/interface/IGraphQL.interface'
 
-import { ChatService } from '../chat-group.service'
-import {
-  IDeleteChat,
-  IDeleteMessage,
-  ILikeMessage,
-} from '../dto/chat-group.dto'
+import { ChatGroupService } from '../chat-group.service'
+
+import { IDeleteMessage, ILikeMessage } from '../dto/chat-group.dto'
 
 export class ChatQueryResolver {
-  private static readonly ChatService = ChatService
+  private static readonly ChatGroupService = ChatGroupService
 
   public static readonly getAllChats = async (
     _: any,
@@ -21,7 +18,7 @@ export class ChatQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: await this.ChatService.getAllChats(profileId),
+      data: await this.ChatGroupService.getAllChats(profileId),
     }
   }
 
@@ -39,7 +36,7 @@ export class ChatQueryResolver {
 }
 
 export class ChatMutationResolver {
-  private static readonly ChatService = ChatService
+  private static readonly ChatGroupService = ChatGroupService
 
   public static readonly likeMessage = async (
     { messageId }: Pick<ILikeMessage, 'messageId'>,
@@ -47,7 +44,7 @@ export class ChatMutationResolver {
   ): Promise<ISuccessResponse> => {
     const { _id: chatId } = context.chat
 
-    // await this.ChatService.likeMessage({
+    // await this.ChatGroupService.likeMessage({
     //   messageId,
     //   chatId,
     // })
@@ -65,7 +62,7 @@ export class ChatMutationResolver {
     const { _id: chatId } = context.chat
     const { _id: profileId } = context.profile
 
-    await this.ChatService.deleteMessage({
+    await this.ChatGroupService.deleteMessage({
       chatId,
       profileId,
       messageId,
@@ -84,7 +81,7 @@ export class ChatMutationResolver {
     const { _id: profileId } = context.profile
     const chat = context.chat
 
-    await this.ChatService.deleteChat({
+    await this.ChatGroupService.deleteChat({
       profileId,
       chat,
     })

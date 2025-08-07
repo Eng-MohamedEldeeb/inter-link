@@ -31,27 +31,27 @@ export class ChatService {
   protected static userSocketId: string
   protected static userStatus: UserStatus
 
-  protected static chat: [string, string]
+  protected static rooms: [string, string]
 
   public static readonly sendMessage = async (io: Server) => {
     return async (socket: ISocket) => {
       const { _id: profileId } = socket.profile
       const { _id: userId } = socket.user
 
-      const communicationType1 = `${profileId}:${userId}`
-      const communicationType2 = `${userId}:${profileId}`
+      const room1 = `${profileId}:${userId}`
+      const room2 = `${userId}:${profileId}`
 
       this.profileId = profileId
       this.userId = userId
-      this.chat = [communicationType1, communicationType2]
+      this.rooms = [room1, room2]
 
       const userStatus = connectedUsers.getStatus(this.userId)
 
       this.userStatus = userStatus
 
-      connectedUsers.joinChat({ profileId, chat: this.chat })
+      connectedUsers.joinChat({ profileId, inRooms: this.rooms })
 
-      socket.join(this.chat)
+      socket.join(this.rooms)
 
       socket.on('send-message', async ({ message }: { message: string }) => {
         await this.upsertChatMessage(message)
@@ -75,24 +75,24 @@ export class ChatService {
           return io.to(this.userSocketId).emit(EventType.notification, data)
         }
 
-        return socket.to(this.chat).emit('new-message', data)
+        return socket.to(this.rooms).emit('new-message', data)
       })
 
       socket.on('disconnect', () => {
-        socket.leave(communicationType1)
-        socket.leave(communicationType2)
+        socket.leave(room1)
+        socket.leave(room2)
       })
     }
   }
 
   protected static readonly isInChat = (): boolean => {
-    const [communicationType1, communicationType2] = this.chat
+    const [communicationType1, communicationType2] = this.rooms
 
-    if (!this.userStatus || this.userStatus.chat.length == 0) return false
+    if (!this.userStatus || this.userStatus.inRooms.length == 0) return false
 
     const inChat =
-      this.userStatus.chat.includes(communicationType1) &&
-      this.userStatus.chat.includes(communicationType2)
+      this.userStatus.inRooms.includes(communicationType1) &&
+      this.userStatus.inRooms.includes(communicationType2)
 
     if (!inChat) {
       this.userSocketId = this.userStatus.socketId

@@ -10,16 +10,16 @@ class ConnectedUsers {
   public readonly setOnline = ({
     profileId,
     socketId,
-    chat = [],
+    inRooms = [],
   }: {
     profileId: MongoId
     socketId: string
-    chat?: [string, string] | []
+    inRooms?: string[] | []
   }) => {
     usersStatus.set(profileId.toString(), {
       isOnline: true,
       socketId,
-      chat,
+      inRooms,
     })
   }
 
@@ -29,24 +29,24 @@ class ConnectedUsers {
     usersStatus.set(profileId.toString(), {
       socketId,
       isOnline: false,
-      chat: [],
+      inRooms: [],
     })
   }
 
   public readonly joinChat = ({
     profileId,
-    chat,
+    inRooms,
   }: {
     profileId: MongoId
-    chat: [string, string]
+    inRooms: string[]
   }) => {
     const user = this.getStatus(profileId)
-    usersStatus.set(profileId.toString(), { ...user, chat })
+    usersStatus.set(profileId.toString(), { ...user, inRooms })
   }
 
   public readonly leaveChat = (profileId: MongoId) => {
     const user = this.getStatus(profileId)
-    usersStatus.set(profileId.toString(), { ...user, chat: [] })
+    usersStatus.set(profileId.toString(), { ...user, inRooms: [] })
   }
 }
 

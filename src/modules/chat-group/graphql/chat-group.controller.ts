@@ -16,7 +16,7 @@ import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.g
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
 
-export class ChatController {
+export class ChatGroupController {
   protected static readonly ChatQueryResolver = resolvers.ChatQueryResolver
   protected static readonly ChatMutationResolver =
     resolvers.ChatMutationResolver

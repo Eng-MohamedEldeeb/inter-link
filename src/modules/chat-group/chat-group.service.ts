@@ -26,74 +26,82 @@ export class ChatGroupService {
   protected static readonly notificationService = notificationsService
 
   protected static profileId: MongoId
-
   protected static userId: MongoId
   protected static userSocketId: string
   protected static userStatus: UserStatus
 
-  protected static chat: [string, string]
+  protected static rooms: [string, string]
 
   public static readonly sendMessage = async (io: Server) => {
     return async (socket: ISocket) => {
-      const { _id: profileId } = socket.profile
-      const { _id: userId } = socket.user
+      const profileId = socket.profile._id
+      const userId = socket.user._id
 
-      const communicationType1 = `${profileId}:${userId}`
-      const communicationType2 = `${userId}:${profileId}`
+      const profileRoom = profileId.toString()
+      const userRoom = userId.toString()
 
       this.profileId = profileId
       this.userId = userId
-      this.chat = [communicationType1, communicationType2]
 
-      const userStatus = connectedUsers.getStatus(this.userId)
+      this.rooms = [profileRoom, userRoom]
 
-      this.userStatus = userStatus
+      this.userStatus = connectedUsers.getStatus(this.userId)
 
-      connectedUsers.joinChat({ profileId, chat: this.chat })
+      // connectedUsers.joinChat({ profileId, inRooms: this.rooms })
 
-      socket.join(this.chat)
+      await socket.join(this.rooms)
 
-      socket.on('send-message', async ({ message }: { message: string }) => {
-        await this.upsertChatMessage(message)
+      socket.on('send-message', this.send)
 
-        const data: DTO.ISendMessage = {
-          message,
-          sentAt: moment().format('h:mm A'),
-          from: socket.profile,
-        }
-
-        if (!this.isInChat()) {
-          await this.notificationService.sendNotification({
-            userId: this.userId,
-            notificationDetails: {
-              from: socket.profile,
-              notificationMessage: message,
-              refTo: 'Chat',
-              sentAt: moment().format('h:mm A'),
-            },
-          })
-          return io.to(this.userSocketId).emit(EventType.notification, data)
-        }
-
-        return socket.to(this.chat).emit('new-message', data)
-      })
-
-      socket.on('disconnect', () => {
-        socket.leave(communicationType1)
-        socket.leave(communicationType2)
+      socket.on('disconnect', async () => {
+        await socket.leave(profileRoom)
+        await socket.leave(userRoom)
         connectedUsers.leaveChat(this.profileId)
       })
     }
   }
 
-  protected static readonly isInChat = (): boolean => {
-    const [communicationType1, communicationType2] = this.chat
+  protected static readonly send = ({
+    socket,
+    io,
+  }: {
+    socket: ISocket
+    io: Server
+  }) => {
+    return async ({ message }: { message: string }) => {
+      await this.upsertChatMessage(message)
 
-    if (!this.userStatus || this.userStatus.chat.length == 0) return false
+      const data: DTO.ISendMessage = {
+        message,
+        sentAt: moment().format('h:mm A'),
+        from: socket.profile,
+      }
+
+      if (!this.isInChat()) {
+        await this.notificationService.sendNotification({
+          userId: this.userId,
+          notificationDetails: {
+            from: socket.profile,
+            notificationMessage: message,
+            refTo: 'Chat',
+            sentAt: moment().format('h:mm A'),
+          },
+        })
+        return io.to(this.userSocketId).emit(EventType.notification, data)
+      }
+
+      return socket.to(this.rooms).emit('new-message', data)
+    }
+  }
+
+  protected static readonly isInChat = (): boolean => {
+    const [communicationType1, communicationType2] = this.rooms
+
+    if (!this.userStatus || this.userStatus.inRooms.length == 0) return false
 
     const inChat =
-      this.userStatus.chat.includes(communicationType1) &&
-      this.userStatus.chat.includes(communicationType2)
+      this.userStatus.inRooms.includes(communicationType1) &&
+      this.userStatus.inRooms.includes(communicationType2)
 
     if (!inChat) {
       this.userSocketId = this.userStatus.socketId
