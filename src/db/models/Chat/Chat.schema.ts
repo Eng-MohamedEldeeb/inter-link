@@ -33,6 +33,13 @@ export const ChatSchema = new Schema<IChat>(
 
     startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
     participant: { type: SchemaTypes.ObjectId, ref: 'User' },
+
+    roomId: {
+      type: String,
+      default: function (this: IChat) {
+        return `${this.startedBy.toString()} ${this.participant.toString()}`
+      },
+    },
   },
   {
     timestamps: true,

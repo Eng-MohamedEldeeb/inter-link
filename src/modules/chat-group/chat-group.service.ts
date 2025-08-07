@@ -6,6 +6,8 @@ import { UserStatus } from '../../common/services/notifications/types'
 import { IMessageDetails } from '../../db/interfaces/IChat.interface'
 import { TChat } from '../../db/documents'
 import { throwError } from '../../common/handlers/error-message.handler'
+import connectedUserController from '../../common/controllers/online-users.controller'
+import roomMembersController from '../../common/controllers/room-members.controller'
 
 import {
   INotifications,
@@ -16,7 +18,6 @@ import * as DTO from './dto/chat-group.dto'
 
 import moment from 'moment'
 import chatRepository from '../../common/repositories/chat.repository'
-import connectedUsers from '../../common/services/notifications/online-users.controller'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import notificationRepository from '../../common/repositories/notification.repository'
 
@@ -26,87 +27,69 @@ export class ChatGroupService {
   protected static readonly notificationService = notificationsService
 
   protected static profileId: MongoId
+
   protected static userId: MongoId
   protected static userSocketId: string
-  protected static userStatus: UserStatus
 
-  protected static rooms: [string, string]
+  protected static roomId: string
 
   public static readonly sendMessage = async (io: Server) => {
     return async (socket: ISocket) => {
-      const profileId = socket.profile._id
-      const userId = socket.user._id
-
-      const profileRoom = profileId.toString()
-      const userRoom = userId.toString()
+      const { _id: profileId } = socket.profile
+      const { _id: userId } = socket.user
 
       this.profileId = profileId
       this.userId = userId
+      this.roomId = `${profileId} ${userId}`
 
-      this.rooms = [profileRoom, userRoom]
+      this.userSocketId = connectedUserController.getUserStatus(
+        this.userId,
+      ).socketId
 
-      this.userStatus = connectedUsers.getStatus(this.userId)
+      roomMembersController.joinChat({ profileId, roomId: this.roomId })
 
-      // connectedUsers.joinChat({ profileId, inRooms: this.rooms })
+      socket.join(this.roomId)
 
-      await socket.join(this.rooms)
+      socket.on('send-message', async ({ message }: { message: string }) => {
+        await this.upsertChatMessage(message)
 
-      socket.on('send-message', this.send)
+        const data: DTO.ISendMessage = {
+          message,
+          sentAt: moment().format('h:mm A'),
+          from: socket.profile,
+        }
 
-      socket.on('disconnect', async () => {
-        await socket.leave(profileRoom)
-        await socket.leave(userRoom)
-        connectedUsers.leaveChat(this.profileId)
+        if (!this.isInChat()) {
+          await this.notificationService.sendNotification({
+            userId: this.userId,
+            notificationDetails: {
+              from: socket.profile,
+              notificationMessage: message,
+              refTo: 'Chat',
+              sentAt: moment().format('h:mm A'),
+            },
+          })
+          return io.to(this.userSocketId).emit(EventType.notification, data)
+        }
+
+        return socket.to(this.roomId).emit('new-message', data)
+      })
+
+      socket.on('disconnect', () => {
+        socket.leave(this.roomId)
+        roomMembersController.leaveChat({ profileId, roomId: this.roomId })
       })
     }
   }
 
-  protected static readonly send = ({
-    socket,
-    io,
-  }: {
-    socket: ISocket
-    io: Server
-  }) => {
-    return async ({ message }: { message: string }) => {
-      await this.upsertChatMessage(message)
-
-      const data: DTO.ISendMessage = {
-        message,
-        sentAt: moment().format('h:mm A'),
-        from: socket.profile,
-      }
-
-      if (!this.isInChat()) {
-        await this.notificationService.sendNotification({
-          userId: this.userId,
-          notificationDetails: {
-            from: socket.profile,
-            notificationMessage: message,
-            refTo: 'Chat',
-            sentAt: moment().format('h:mm A'),
-          },
-        })
-        return io.to(this.userSocketId).emit(EventType.notification, data)
-      }
-
-      return socket.to(this.rooms).emit('new-message', data)
-    }
-  }
-
   protected static readonly isInChat = (): boolean => {
-    const [communicationType1, communicationType2] = this.rooms
+    const roomMembers = roomMembersController.getRoomMembers(this.roomId)
 
-    if (!this.userStatus || this.userStatus.inRooms.length == 0) return false
+    if (roomMembers.length == 0) return false
 
-    const inChat =
-      this.userStatus.inRooms.includes(communicationType1) &&
-      this.userStatus.inRooms.includes(communicationType2)
+    const inChat = roomMembers.includes(this.userId.toString())
 
-    if (!inChat) {
-      this.userSocketId = this.userStatus.socketId
-      return false
-    }
+    if (!inChat) return false
 
     return true
   }

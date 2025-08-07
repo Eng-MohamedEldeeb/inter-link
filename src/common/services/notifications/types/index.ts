@@ -9,5 +9,6 @@ export enum refTo {
 export type UserStatus = {
   socketId: string
   isOnline: boolean
-  inRooms: string[]
 }
+
+export type RoomMembers = string[]

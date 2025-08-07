@@ -11,12 +11,12 @@ import {
   UserDetails,
 } from '../../../db/interfaces/INotification.interface'
 
-import onlineUsersController from './online-users.controller'
+import connectedUserController from '../../controllers/online-users.controller'
 import notificationRepository from '../../repositories/notification.repository'
 import moment from 'moment'
 
 class NotificationsService {
-  protected readonly onlineUsersController = onlineUsersController
+  protected readonly connectedUserController = connectedUserController
   private readonly notificationRepository = notificationRepository
   private readonly eventType = EventType
 
@@ -36,7 +36,7 @@ class NotificationsService {
     this.userId = userId
     this.notificationDetails = notificationDetails
 
-    const { socketId, isOnline } = this.onlineUsersController.getStatus(
+    const { socketId, isOnline } = this.connectedUserController.getUserStatus(
       this.userId,
     )
 

@@ -4,11 +4,11 @@ import { asyncHandler } from '../common/decorators/async-handler/async-handler.d
 import { ISocket } from '../common/interface/ISocket.interface'
 import { applyGuards } from '../common/decorators/guard/apply-guards.decorator'
 import { ChatService } from './chat/chat.service'
+import connectedUserController from '../common/controllers/online-users.controller'
 
 import isAuthenticatedGuard from '../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../common/guards/auth/is-authorized.guard'
 
-import connectedUsers from '../common/services/notifications/online-users.controller'
 import userExistenceGuard from '../common/guards/user/user-existence.guard'
 import notificationsService from '../common/services/notifications/notifications.service'
 
@@ -18,7 +18,7 @@ export const socketIoBootStrap = async (io: Server) => {
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
 
-      connectedUsers.setOnline({
+      connectedUserController.setOnline({
         profileId,
         socketId: socket.id,
       })
@@ -29,7 +29,7 @@ export const socketIoBootStrap = async (io: Server) => {
       })
 
       socket.on('disconnect', async () => {
-        connectedUsers.setOffline(profileId)
+        connectedUserController.setOffline(profileId)
       })
     }),
   )
@@ -38,5 +38,5 @@ export const socketIoBootStrap = async (io: Server) => {
     .use(
       applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
     )
-    .on('connection', asyncHandler(await ChatService.sendMessage(io)))
+    .on('connection', asyncHandler(ChatService.sendMessage))
 }

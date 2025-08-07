@@ -22,4 +22,6 @@ export interface IChat extends IMongoDoc {
   startedBy: MongoId
 
   participant: MongoId
+
+  roomId: string
 }
