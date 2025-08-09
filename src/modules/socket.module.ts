@@ -13,6 +13,9 @@ import userExistenceGuard from '../common/guards/user/user-existence.guard'
 
 import connectedUserController from '../common/controllers/connected-users.controller'
 import notificationsService from '../common/services/notifications/notifications.service'
+import groupExistenceGuard from '../common/guards/group/group-existence.guard'
+import { sendGroupMessage } from './group/socket/group-interactions.service'
+import groupMembersGuard from '../common/guards/group/group-members.guard'
 
 export const socketIoBootStrap = async (io: Server) => {
   io.use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard)).on(
@@ -37,6 +40,8 @@ export const socketIoBootStrap = async (io: Server) => {
       if (groups.length) {
         rooms = groups.map(group => group._id.toString())
 
+        console.log({ rooms })
+
         socket.join(rooms)
       }
 
@@ -54,5 +59,14 @@ export const socketIoBootStrap = async (io: Server) => {
 
   io.of('/chats').on('connection', asyncHandler(sendMessage))
 
-  io.of('/groups').use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard))
+  io.of('/groups').use(
+    applyGuards(
+      isAuthenticatedGuard,
+      isAuthorizedGuard,
+      groupExistenceGuard,
+      groupMembersGuard,
+    ),
+  )
+
+  io.of('/groups').on('connection', asyncHandler(sendGroupMessage(io)))
 }

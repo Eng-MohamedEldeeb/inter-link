@@ -8,10 +8,10 @@ import {
   IDeleteChat,
   ILikeMessage,
   IDeleteMessage,
-  IGetSingle,
+  IGetSingleGroup,
   IEditMessage,
   ICreateGroup,
-} from '../dto/chat-group.dto'
+} from '../dto/group.dto'
 
 export class GroupController {
   protected static readonly GroupService = GroupService
@@ -27,6 +27,8 @@ export class GroupController {
 
   public static readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
+      console.log(req.group)
+
       return successResponse(res, {
         data: await this.GroupService.getSingle(req.group),
       })
@@ -44,7 +46,7 @@ export class GroupController {
       })
 
       return successResponse(res, {
-        msg: 'done',
+        msg: `Your Group was Created Successfully`,
       })
     },
   )
@@ -73,7 +75,7 @@ export class GroupController {
 
   public static readonly editMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingle, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
       const { _id: chatId } = req.chat
@@ -96,7 +98,7 @@ export class GroupController {
 
   public static readonly deleteMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingle, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
       const { _id: chatId } = req.chat

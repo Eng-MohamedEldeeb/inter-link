@@ -5,7 +5,7 @@ import {
 
 import { GroupService } from '../group.service'
 
-import { IDeleteMessage, ILikeMessage } from '../dto/chat-group.dto'
+import { IDeleteMessage, ILikeMessage } from '../dto/group.dto'
 
 export class ChatQueryResolver {
   private static readonly GroupService = GroupService

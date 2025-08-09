@@ -1,26 +1,22 @@
-import { ISocket } from '../../common/interface/ISocket.interface'
 import { MongoId } from '../../common/types/db'
+import { TGroup } from '../../db/documents'
+import { throwError } from '../../common/handlers/error-message.handler'
+
 import {
   IGroup,
   IGroupMessageDetails,
 } from '../../db/interfaces/IGroup.interface'
-import { TGroup } from '../../db/documents'
-import { throwError } from '../../common/handlers/error-message.handler'
 
 import {
   INotifications,
   UserDetails,
 } from '../../db/interfaces/INotification.interface'
 
-import * as DTO from './dto/chat-group.dto'
+import * as DTO from './dto/group.dto'
 
-import moment from 'moment'
 import groupRepository from '../../common/repositories/group.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import notificationRepository from '../../common/repositories/notification.repository'
-import connectedUserController from '../../common/controllers/connected-users.controller'
-import { Types } from 'mongoose'
-import { Server } from 'socket.io'
 
 export class GroupService {
   protected static readonly groupRepository = groupRepository
@@ -29,7 +25,7 @@ export class GroupService {
 
   protected static profileId: MongoId
 
-  protected static groupId: MongoId
+  protected static id: MongoId
   protected static userSocketId: string
 
   public static readonly getAllChats = async (
@@ -73,73 +69,28 @@ export class GroupService {
     // return await group.save()
   }
 
-  public static readonly create = async (createGroupDto: DTO.ICreateGroup) => {
-    return await this.groupRepository.create(createGroupDto)
-  }
-
-  public static readonly sendMessage = (io: Server) => {
-    return async (socket: ISocket) => {
-      const { _id: profileId } = socket.profile
-      // const { _id: groupId } = socket.group
-
-      this.profileId = profileId
-
-      this.userSocketId =
-        connectedUserController.getUserStatus(profileId).socketId
-
-      this.groupId = Types.ObjectId.createFromHexString(
-        socket.handshake.query.id as string,
-      )
-
-      socket.on('send-message', async ({ message }: { message: string }) => {
-        // await this.upsertChatMessage(message)
-
-        const data: DTO.ISendMessage = {
-          message,
-          sentAt: moment().format('h:mm A'),
-          from: socket.profile,
-        }
-        console.log(socket.handshake.query.id)
-
-        return io
-          .to([socket.handshake.query.id as string])
-          .except(this.userSocketId)
-          .emit('new-group-message', data)
-      })
-    }
-  }
-  protected static readonly isOnline = (): boolean => {
-    const { isOnline, socketId } = connectedUserController.getUserStatus(
-      this.groupId,
-    )
-
-    if (isOnline) this.userSocketId = socketId
-
-    return isOnline
-  }
-
-  protected static readonly upsertChatMessage = async (message: string) => {
-    const isOnline = this.isOnline()
-
-    const existedGroup = await this.groupRepository.findOne({
+  public static readonly create = async ({
+    createdBy,
+    members,
+    description,
+    groupName,
+  }: DTO.ICreateGroup) => {
+    const isExistedGroupName = await this.groupRepository.findOne({
       filter: {
-        $or: [
-          { members: this.profileId, participant: this.groupId },
-          { participant: this.profileId, members: this.groupId },
-        ],
+        groupName,
       },
+      projection: { _id: 1 },
     })
 
-    if (!existedGroup)
-      return throwError({ msg: 'group not found', status: 404 })
+    if (isExistedGroupName)
+      return throwError({ msg: 'In-valid Group Name', status: 400 })
 
-    existedGroup.messages.unshift({
-      from: this.profileId,
-      message,
-      sentAt: moment().format('h:mm A'),
+    return await this.groupRepository.create({
+      createdBy,
+      members: [createdBy, ...members],
+      description,
+      groupName,
     })
-
-    return await existedGroup.save()
   }
 
   public static readonly likeMessage = async ({
@@ -238,11 +189,11 @@ export class GroupService {
     //   inMessages.message = newMessage
     //   inMessages.updatedAt = new Date(Date.now())
     // }
-    // const groupId = group.createdBy.equals(profileId)
+    // const id = group.createdBy.equals(profileId)
     //   ? group.participant
     //   : group.members
     // const relatedNotification = await this.findRelatedNotification({
-    //   belongsTo: groupId,
+    //   belongsTo: id,
     //   messageFrom: profileId,
     //   searchedMessage,
     // })
@@ -389,7 +340,7 @@ export class GroupService {
   public static readonly deleteChat = async ({
     profileId,
     group,
-  }: Omit<DTO.IDeleteChat, 'chat' | 'groupId'>) => {
+  }: Omit<DTO.IDeleteChat, 'chat' | 'id'>) => {
     await group.updateOne({ $pull: { members: profileId } })
   }
 }

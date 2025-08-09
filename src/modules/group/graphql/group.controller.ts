@@ -15,6 +15,8 @@ import * as validators from '../validators/group.validators'
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
+import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
+import groupMembersGuard from '../../../common/guards/group/group-members.guard'
 
 export class GroupController {
   protected static readonly ChatQueryResolver = resolvers.ChatQueryResolver
@@ -43,7 +45,12 @@ export class GroupController {
       }),
       resolve: applyResolver({
         middlewares: [validate(validators.getSingleChatValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          groupExistenceGuard,
+          groupMembersGuard,
+        ],
         resolver: this.ChatQueryResolver.getSingleChat,
       }),
     }
@@ -58,7 +65,7 @@ export class GroupController {
       args: args.likeMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.likeMessageValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.likeMessage,
       }),
     }
@@ -72,7 +79,7 @@ export class GroupController {
       args: args.deleteMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteMessageValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.deleteMessage,
       }),
     }
@@ -86,7 +93,7 @@ export class GroupController {
       args: args.deleteChat,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteChatValidator.graphQL())],
-        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.deleteChat,
       }),
     }

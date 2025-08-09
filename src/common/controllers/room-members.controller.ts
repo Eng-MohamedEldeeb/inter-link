@@ -4,21 +4,26 @@ import { RoomMembers } from '../services/notifications/types'
 const roomStatus = new Map<string, RoomMembers>()
 class RoomMembersController {
   public readonly getRoomMembers = (roomId: string) => {
-    return roomStatus.get(roomId) ?? []
+    return roomStatus.get(roomId.toString()) ?? []
   }
   public readonly joinChat = ({
     profileId,
     roomId,
   }: {
     profileId: MongoId
-    roomId: string
+    roomId: string | MongoId
   }) => {
-    const members = this.getRoomMembers(roomId)
+    const room = roomId.toString()
+
+    const members = this.getRoomMembers(room)
 
     const user = profileId.toString()
+
     members.push(user)
 
-    roomStatus.set(roomId, members)
+    console.log({ members })
+
+    roomStatus.set(room, members)
   }
 
   public readonly leaveChat = ({
@@ -26,13 +31,15 @@ class RoomMembersController {
     roomId,
   }: {
     profileId: MongoId
-    roomId: string
+    roomId: string | MongoId
   }) => {
-    const members = this.getRoomMembers(roomId)
+    const room = roomId.toString()
+    const members = this.getRoomMembers(room)
 
     const filteredMembers = members.filter(member => !profileId.equals(member))
+    console.log({ members })
 
-    roomStatus.set(roomId, filteredMembers)
+    roomStatus.set(room, filteredMembers)
   }
 }
 export default new RoomMembersController()

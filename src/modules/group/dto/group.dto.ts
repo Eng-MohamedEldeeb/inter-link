@@ -3,19 +3,19 @@ import { TGroup } from '../../../db/documents'
 import { IGroupInputs } from '../../../db/interfaces/IGroup.interface'
 import { UserDetails } from '../../../db/interfaces/INotification.interface'
 
-export interface IGetSingle {
-  groupId: MongoId
+export interface IGetSingleGroup {
+  id: MongoId
 }
 
 export interface ICreateGroup extends IGroupInputs {}
 
 export interface IAddMember {
-  groupId: MongoId
+  id: MongoId
   memberId: MongoId
 }
 
 export interface IRemoveMember {
-  groupId: MongoId
+  id: MongoId
   memberId: MongoId
 }
 
@@ -25,25 +25,25 @@ export interface ISendMessage {
   sentAt: string
 }
 
-export interface IDeleteChat extends IGetSingle {
+export interface IDeleteChat extends IGetSingleGroup {
   profileId: MongoId
   group: TGroup
 }
 
-export interface ILeaveChat extends IGetSingle {
+export interface ILeaveChat extends IGetSingleGroup {
   profileId: MongoId
   group: TGroup
 }
 
-export interface IGetSingleMessage extends IGetSingle {
+export interface IGetSingleMessage extends IGetSingleGroup {
   messageId: MongoId
 }
-export interface IDeleteMessage extends IGetSingle, IGetSingleMessage {
+export interface IDeleteMessage extends IGetSingleGroup, IGetSingleMessage {
   group: TGroup
 }
 
-export interface ILikeMessage extends IGetSingle, IGetSingleMessage {}
+export interface ILikeMessage extends IGetSingleGroup, IGetSingleMessage {}
 
-export interface IEditMessage extends IGetSingle, IGetSingleMessage {
+export interface IEditMessage extends IGetSingleGroup, IGetSingleMessage {
   newMessage: string
 }
