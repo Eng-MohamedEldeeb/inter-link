@@ -31,15 +31,15 @@ export const ChatSchema = new Schema<IChat>(
       ],
     },
 
-    startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
-    participant: { type: SchemaTypes.ObjectId, ref: 'User' },
-
     roomId: {
       type: String,
       default: function (this: IChat) {
-        return `${this.startedBy.toString()} ${this.participant.toString()}`
+        return `${this.startedBy} ${this.participant}`
       },
     },
+
+    startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
+    participant: { type: SchemaTypes.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

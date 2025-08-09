@@ -1,13 +1,13 @@
 import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ChatGroupController } from './chat-group.controller'
+import { GroupController } from './group.controller'
 
 export const queryModule = (() => {
   return {
     type: returnedType({
       name: 'chatQuery',
       fields: {
-        getAllChats: ChatGroupController.getAllChats(),
-        getSingleChat: ChatGroupController.getSingleChat(),
+        getAllChats: GroupController.getAllChats(),
+        getSingleChat: GroupController.getSingleChat(),
       },
     }),
     resolve: () => true,
@@ -19,9 +19,9 @@ export const mutationModule = (() => {
     type: returnedType({
       name: 'chatMutation',
       fields: {
-        likeMessage: ChatGroupController.likeMessage(),
-        deleteMessage: ChatGroupController.deleteMessage(),
-        deleteChat: ChatGroupController.deleteChat(),
+        likeMessage: GroupController.likeMessage(),
+        deleteMessage: GroupController.deleteMessage(),
+        deleteChat: GroupController.deleteChat(),
       },
     }),
     resolve: () => true,

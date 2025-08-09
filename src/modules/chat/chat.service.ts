@@ -1,12 +1,7 @@
-import { Server } from 'socket.io'
-import { ISocket } from '../../common/interface/ISocket.interface'
-import { EventType } from '../../common/types/ws/events.enum'
 import { MongoId } from '../../common/types/db'
 import { IMessageDetails } from '../../db/interfaces/IChat.interface'
 import { TChat } from '../../db/documents'
 import { throwError } from '../../common/handlers/error-message.handler'
-import connectedUserController from '../../common/controllers/online-users.controller'
-import roomMembersController from '../../common/controllers/room-members.controller'
 
 import {
   INotifications,
@@ -25,150 +20,25 @@ export class ChatService {
   protected static readonly notificationRepository = notificationRepository
   protected static readonly notificationService = notificationsService
 
+  protected static roomId: string
+  protected static userId: MongoId
   protected static profileId: MongoId
 
-  protected static userId: MongoId
   protected static userSocketId: string
 
-  protected static roomId: string
-
-  public static readonly sendMessage = async (socket: ISocket) => {
-    const { _id: profileId } = socket.profile
-    const { _id: userId } = socket.user
-
-    this.profileId = profileId
+  public static set setUserId(userId: MongoId) {
     this.userId = userId
-
-    this.roomId = `${profileId} ${userId}`
-
-    const existedChat = await this.chatRepository.findOne({
-      filter: {
-        $or: [
-          { startedBy: this.profileId, participant: this.userId },
-          { participant: this.profileId, startedBy: this.userId },
-        ],
-      },
-      projection: { roomId: 1 },
-    })
-
-    if (existedChat) this.roomId = existedChat.roomId
-
-    this.userSocketId = connectedUserController.getUserStatus(
-      this.userId,
-    ).socketId
-
-    roomMembersController.joinChat({ profileId, roomId: this.roomId })
-
-    socket.join(this.roomId)
-
-    socket.on('send-message', async ({ message }: { message: string }) => {
-      await this.upsertChatMessage(message)
-
-      const data: DTO.ISendMessage = {
-        message,
-        sentAt: moment().format('h:mm A'),
-        from: socket.profile,
-      }
-
-      if (!this.isInChat()) {
-        console.log('not in')
-
-        return await this.notificationService.sendNotification({
-          userId: this.userId,
-          notificationDetails: {
-            from: socket.profile,
-            notificationMessage: message,
-            refTo: 'Chat',
-            sentAt: moment().format('h:mm A'),
-          },
-        })
-      }
-
-      console.log({ profileId: this.profileId })
-      console.log({ userId: this.userId })
-      console.log({
-        inChat: roomMembersController.getRoomMembers(this.roomId),
-      })
-      console.log({ inChat: this.isInChat() })
-      console.log(' in')
-
-      return socket.to(this.roomId).emit('new-message', data)
-    })
-    socket.on('disconnect', () => {
-      roomMembersController.leaveChat({ profileId, roomId: this.roomId })
-
-      console.log({ room: roomMembersController.getRoomMembers(this.roomId) })
-
-      socket.leave(this.roomId)
-    })
+  }
+  public static set setProfileId(profileId: MongoId) {
+    this.profileId = profileId
   }
 
-  protected static readonly isInChat = (): boolean => {
-    const roomMembers = roomMembersController.getRoomMembers(this.roomId)
-
-    if (roomMembers.length == 0) return false
-
-    const inChat = roomMembers.includes(this.userId.toString())
-
-    if (!inChat) return false
-
-    return true
+  public static set setRoomId(roomId: string) {
+    this.roomId = roomId
   }
 
-  protected static readonly upsertChatMessage = async (message: string) => {
-    const inChat = this.isInChat()
-
-    const existedChat = await this.chatRepository.findOne({
-      filter: {
-        roomId: this.roomId,
-      },
-    })
-
-    if (!existedChat)
-      return await this.chatRepository.create({
-        startedBy: this.profileId,
-        participant: this.userId,
-        ...(inChat
-          ? {
-              messages: [
-                {
-                  from: this.profileId,
-                  to: this.userId,
-                  message,
-                  sentAt: moment().format('h:mm A'),
-                },
-              ],
-            }
-          : {
-              newMessages: [
-                {
-                  from: this.profileId,
-                  to: this.userId,
-                  message,
-                  sentAt: moment().format('h:mm A'),
-                },
-              ],
-            }),
-      })
-
-    if (!inChat) {
-      existedChat.newMessages.unshift({
-        from: this.profileId,
-        to: this.userId,
-        message,
-        sentAt: moment().format('h:mm A'),
-      })
-      return await existedChat.save()
-    }
-    if (inChat) {
-      existedChat.messages.unshift({
-        from: this.profileId,
-        to: this.userId,
-        message,
-        sentAt: moment().format('h:mm A'),
-      })
-      return await existedChat.save()
-    }
+  public static get getCurrentRoomId(): string {
+    return this.roomId
   }
 
   public static readonly getAllChats = async (profileId: MongoId) => {

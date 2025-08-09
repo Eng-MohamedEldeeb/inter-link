@@ -2,39 +2,49 @@ import { Response } from 'express'
 import { successResponse } from '../../../common/handlers/success-response.handler'
 import { IRequest } from '../../../common/interface/IRequest.interface'
 import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { ChatGroupService } from '../chat-group.service'
+import { GroupService } from '../group.service'
 
 import {
   IDeleteChat,
   ILikeMessage,
   IDeleteMessage,
-  IGetSingleChat,
+  IGetSingle,
   IEditMessage,
+  ICreateGroup,
 } from '../dto/chat-group.dto'
 
-export class ChatController {
-  protected static readonly ChatGroupService = ChatGroupService
+export class GroupController {
+  protected static readonly GroupService = GroupService
 
-  public static readonly getAllChats = asyncHandler(
+  public static readonly getAllGroups = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.ChatGroupService.getAllChats(profileId),
+        data: await this.GroupService.getAllChats(profileId),
       })
     },
   )
 
-  public static readonly getSingleChat = asyncHandler(
+  public static readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { participant, messages } = await this.ChatGroupService.getSingle(
-        req.chat,
-      )
+      return successResponse(res, {
+        data: await this.GroupService.getSingle(req.group),
+      })
+    },
+  )
+
+  public static readonly create = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { _id: profileId } = req.profile
+      const createGroupDto: Omit<ICreateGroup, 'createdBy'> = req.body
+
+      await this.GroupService.create({
+        ...createGroupDto,
+        createdBy: profileId,
+      })
 
       return successResponse(res, {
-        data: {
-          participant,
-          messages,
-        },
+        msg: 'done',
       })
     },
   )
@@ -44,13 +54,14 @@ export class ChatController {
       req: IRequest<null, Pick<ILikeMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const chat = req.chat
+      const group = req.group
+
       const { _id, username, avatar, fullName } = req.profile
       const { messageId } = req.query
 
-      await this.ChatGroupService.likeMessage({
+      await this.GroupService.likeMessage({
         profile: { _id, username, avatar, fullName },
-        chat,
+        group,
         messageId,
       })
 
@@ -62,7 +73,7 @@ export class ChatController {
 
   public static readonly editMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingle, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
       const { _id: chatId } = req.chat
@@ -70,7 +81,7 @@ export class ChatController {
       const { messageId } = req.query
       const { newMessage }: IEditMessage = req.body
 
-      await this.ChatGroupService.editMessage({
+      await this.GroupService.editMessage({
         chatId,
         profileId,
         messageId,
@@ -85,14 +96,14 @@ export class ChatController {
 
   public static readonly deleteMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingle, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
       const { _id: chatId } = req.chat
       const { _id: profileId } = req.profile
       const { messageId } = req.query
 
-      await this.ChatGroupService.deleteMessage({
+      await this.GroupService.deleteMessage({
         chatId,
         profileId,
         messageId,
@@ -107,12 +118,12 @@ export class ChatController {
   public static readonly deleteChat = asyncHandler(
     async (req: IRequest<IDeleteChat>, res: Response) => {
       const { _id: profileId } = req.profile
-      const chat = req.chat
+      const group = req.chat
 
-      await this.ChatGroupService.deleteChat({
-        profileId,
-        chat,
-      })
+      // await this.GroupService.deleteChat({
+      //   profileId,
+      //   group,
+      // })
 
       return successResponse(res, {
         msg: 'Chat Has Been Deleted Successfully',

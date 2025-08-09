@@ -1,10 +1,10 @@
 import { MongoId } from '../types/db'
 import { UserStatus } from '../services/notifications/types'
 
+const usersStatus = new Map<string, UserStatus>()
 class ConnectedUserController {
-  protected readonly usersStatus = new Map<string, UserStatus>()
   public readonly getUserStatus = (profileId: MongoId) => {
-    return this.usersStatus.get(profileId.toString())!
+    return usersStatus.get(profileId.toString())!
   }
 
   public readonly setOnline = ({
@@ -14,7 +14,7 @@ class ConnectedUserController {
     profileId: MongoId
     socketId: string
   }) => {
-    this.usersStatus.set(profileId.toString(), {
+    usersStatus.set(profileId.toString(), {
       isOnline: true,
       socketId,
     })
@@ -23,7 +23,7 @@ class ConnectedUserController {
   public readonly setOffline = (profileId: MongoId) => {
     const { socketId } = this.getUserStatus(profileId)
 
-    this.usersStatus.set(profileId.toString(), {
+    usersStatus.set(profileId.toString(), {
       socketId,
       isOnline: false,
     })

@@ -14,6 +14,7 @@ import commentModule from './comment/http/comment.module'
 import communityModule from './community/http/community.module'
 import notificationModule from './notification/http/notification.module'
 import chatModule from './chat/http/chat.module'
+import groupModule from './group/http/group.module'
 
 const router: Router = Router()
 
@@ -73,6 +74,13 @@ router.use(
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   chatModule,
+)
+
+router.use(
+  '/groups',
+  applyRateLimiter({ skipSuccessfulRequests: false }),
+  applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
+  groupModule,
 )
 
 export default router

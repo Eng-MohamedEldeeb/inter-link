@@ -11,7 +11,7 @@ import {
   UserDetails,
 } from '../../../db/interfaces/INotification.interface'
 
-import connectedUserController from '../../controllers/online-users.controller'
+import connectedUserController from '../../controllers/connected-users.controller'
 import notificationRepository from '../../repositories/notification.repository'
 import moment from 'moment'
 

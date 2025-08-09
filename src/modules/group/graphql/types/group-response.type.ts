@@ -3,7 +3,7 @@ import {
   returnedType,
 } from '../../../../common/decorators/resolver/returned-type.decorator'
 
-import { allChats, singleChatFields } from './chat-group-fields.type'
+import { allChats, singleChatFields } from './group-fields.type'
 
 export class ChatResponse {
   public static readonly getAllChats = () => {

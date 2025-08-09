@@ -16,7 +16,7 @@ import {
   INotificationInputs,
 } from '../../db/interfaces/INotification.interface'
 
-import { TChat } from '../../db/documents'
+import { TChat, TGroup } from '../../db/documents'
 
 export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   cloudFile: ICloudFile
@@ -34,4 +34,5 @@ export interface IRequest<P = any, Q = any> extends Request<P, any, any, Q> {
   notifications: INotifications
   notification: INotificationInputs
   chat: TChat
+  group: TGroup
 }

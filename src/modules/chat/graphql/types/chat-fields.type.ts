@@ -29,8 +29,7 @@ export const singleChatFields = returnedType<Omit<IChat, '__v' | 'updatedAt'>>({
     participant: { type: GraphQLID },
 
     createdAt: { type: DateType },
-
-    roomId: { type: GraphQLID },
+    roomId: { type: GraphQLString },
   },
 })
 

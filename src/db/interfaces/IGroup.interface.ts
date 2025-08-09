@@ -7,7 +7,7 @@ export interface IMessageInputs {
   replyingTo?: MongoId
 }
 
-export interface IChatGroupMessageDetails extends IMessageInputs {
+export interface IGroupMessageDetails extends IMessageInputs {
   _id?: MongoId
   from: MongoId
   sentAt: string
@@ -16,15 +16,15 @@ export interface IChatGroupMessageDetails extends IMessageInputs {
   updatedAt?: Date
 }
 
-export interface IChatGroupInputs {
-  name: string
+export interface IGroupInputs {
+  groupName: string
   description: string
+  members: MongoId[]
   createdBy: MongoId
 }
 
-export interface IChatGroup extends IMongoDoc, IChatGroupInputs {
+export interface IGroup extends IMongoDoc, IGroupInputs {
   cover: ICloudFile
-  members: MongoId[]
   totalMembers: number
-  messages: IChatGroupMessageDetails[]
+  messages: IGroupMessageDetails[]
 }

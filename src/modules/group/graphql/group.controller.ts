@@ -5,18 +5,18 @@ import {
 
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ChatResponse } from './types/chat-group-response.type'
+import { ChatResponse } from './types/group-response.type'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 
-import * as resolvers from './chat-group.resolver'
-import * as args from './types/chat-group-args.type'
-import * as validators from '../validators/chat-group.validators'
+import * as resolvers from './group.resolver'
+import * as args from './types/group-args.type'
+import * as validators from '../validators/group.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
 
-export class ChatGroupController {
+export class GroupController {
   protected static readonly ChatQueryResolver = resolvers.ChatQueryResolver
   protected static readonly ChatMutationResolver =
     resolvers.ChatMutationResolver

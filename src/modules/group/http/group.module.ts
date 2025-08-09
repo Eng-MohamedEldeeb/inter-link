@@ -1,9 +1,9 @@
 import { Router } from 'express'
 import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { ChatController } from './chat-group.controller'
+import { GroupController } from './group.controller'
 
-import * as validators from '../validators/chat-group.validators'
+import * as validators from '../validators/group.validators'
 
 import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
 import chatOwnerGuard from '../../../common/guards/chat/chat-owner.guard'
@@ -11,41 +11,47 @@ import messageExistenceGuard from '../../../common/guards/chat/message-existence
 
 const router: Router = Router()
 
-router.get('/all', ChatController.getAllChats)
+router.get('/all', GroupController.getAllGroups)
 
 router.get(
-  '/:chatId',
+  '/:groupId',
   validate(validators.getSingleChatValidator.http()),
   applyGuards(chatExistenceGuard, chatOwnerGuard),
-  ChatController.getSingleChat,
+  GroupController.getSingle,
 )
 
 router.post(
-  '/:chatId/like',
+  '/create',
+  validate(validators.createGroupValidator.http()),
+  GroupController.create,
+)
+
+router.post(
+  '/:groupId/like',
   applyGuards(chatExistenceGuard, chatOwnerGuard, messageExistenceGuard),
   validate(validators.likeMessageValidator.http()),
-  ChatController.likeMessage,
+  GroupController.likeMessage,
 )
 
 router.patch(
-  '/:chatId/edit',
+  '/:groupId/edit',
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.editMessageValidator.http()),
-  ChatController.editMessage,
+  GroupController.editMessage,
 )
 
 router.delete(
-  '/:chatId/delete',
+  '/:groupId/delete',
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.deleteMessageValidator.http()),
-  ChatController.deleteMessage,
+  GroupController.deleteMessage,
 )
 
 router.delete(
   '/delete',
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.deleteChatValidator.http()),
-  ChatController.deleteChat,
+  GroupController.deleteChat,
 )
 
 export default router
