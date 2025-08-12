@@ -24,7 +24,11 @@ export const isInChat = ({
 }
 
 export const isOnline = (userId: MongoId): boolean => {
-  const { isOnline } = connectedUsersController.getUserStatus(userId)
+  const userStatus = connectedUsersController.getUserStatus(userId)
+
+  if (!userStatus) return false
+
+  const { isOnline } = userStatus
 
   return isOnline
 }
@@ -82,7 +86,7 @@ export const upsertChatMessage = async ({
       message,
       sentAt: moment().format('h:mm A'),
     })
-    return await existedChat.save()
+    await existedChat.save()
   }
   if (inChat) {
     existedChat.messages.unshift({
@@ -91,6 +95,7 @@ export const upsertChatMessage = async ({
       message,
       sentAt: moment().format('h:mm A'),
     })
-    return await existedChat.save()
+    await existedChat.save()
   }
+  return existedChat
 }

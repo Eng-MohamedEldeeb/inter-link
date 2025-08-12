@@ -22,6 +22,7 @@ export const socketIoBootStrap = async (io: Server) => {
     'connection',
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
+      const groups = await GroupService.getAllGroups(profileId)
 
       connectedUserController.setOnline({
         profileId,
@@ -35,12 +36,8 @@ export const socketIoBootStrap = async (io: Server) => {
 
       let rooms: string[] = []
 
-      const groups = await GroupService.getAllChats(profileId)
-
       if (groups.length) {
         rooms = groups.map(group => group._id.toString())
-
-        console.log({ rooms })
 
         socket.join(rooms)
       }

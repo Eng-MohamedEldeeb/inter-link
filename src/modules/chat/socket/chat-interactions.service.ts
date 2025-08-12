@@ -36,7 +36,12 @@ export const sendMessage = async (socket: ISocket) => {
   socket.join(roomId)
 
   socket.on('send-message', async ({ message }: { message: string }) => {
-    await upsertChatMessage({ roomId, message, profileId, userId })
+    const updatedChat = await upsertChatMessage({
+      roomId,
+      message,
+      profileId,
+      userId,
+    })
     const inChat = isInChat({ roomId, userId })
 
     const data: ISendMessage = {
@@ -50,8 +55,10 @@ export const sendMessage = async (socket: ISocket) => {
         userId: userId,
         notificationDetails: {
           from: socket.profile,
-          notificationMessage: message,
+          message,
+          messageId: updatedChat.messages[0]._id,
           refTo: 'Chat',
+          on: { _id: updatedChat._id },
           sentAt: moment().format('h:mm A'),
         },
       })

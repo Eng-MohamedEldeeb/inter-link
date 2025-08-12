@@ -152,7 +152,7 @@ export class UserService {
       })
 
       const notification: IFollowedUserNotification = {
-        notificationMessage: `${username} Requested To Follow You 💛`,
+        message: `${username} Requested To Follow You 💛`,
         from: { _id: profileId, avatar, fullName, username },
         refTo: 'User',
         sentAt: moment().format('h:mm A'),
@@ -177,7 +177,7 @@ export class UserService {
     })
 
     const notification: IFollowedUserNotification = {
-      notificationMessage: `${username} Started Following You 💚`,
+      message: `${username} Started Following You 💚`,
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'User',
       sentAt: moment().format('h:mm A'),
@@ -229,7 +229,7 @@ export class UserService {
     })
 
     const notification: IFollowedUserNotification = {
-      notificationMessage: `${username} Accepted Your Follow Request 🩵`,
+      message: `${username} Accepted Your Follow Request 🩵`,
       from: { _id: profileId, username, fullName, avatar },
       refTo: 'User',
       sentAt: moment().format('h:mm A'),

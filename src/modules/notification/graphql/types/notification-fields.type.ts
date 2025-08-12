@@ -34,7 +34,7 @@ const notificationDetailsFields = returnedType<
   fields: {
     _id: { type: GraphQLID },
     from: { type: notificationFromDetails },
-    notificationMessage: { type: GraphQLString },
+    message: { type: GraphQLString },
     refTo: { type: GraphQLString },
     sentAt: { type: GraphQLString },
     on: { type: GraphQLID },

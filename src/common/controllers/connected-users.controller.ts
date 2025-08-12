@@ -3,8 +3,12 @@ import { UserStatus } from '../services/notifications/types'
 
 const usersStatus = new Map<string, UserStatus>()
 class ConnectedUserController {
-  public readonly getUserStatus = (profileId: MongoId) => {
-    return usersStatus.get(profileId.toString())!
+  public readonly getUserStatus = (profileId: MongoId): UserStatus => {
+    const userStatus = usersStatus.get(profileId.toString())
+
+    if (userStatus) return userStatus
+
+    return { socketId: '', isOnline: false }
   }
 
   public readonly setOnline = ({
@@ -21,7 +25,11 @@ class ConnectedUserController {
   }
 
   public readonly setOffline = (profileId: MongoId) => {
-    const { socketId } = this.getUserStatus(profileId)
+    const userStatus = this.getUserStatus(profileId)
+
+    if (!userStatus) return
+
+    const { socketId } = userStatus
 
     usersStatus.set(profileId.toString(), {
       socketId,

@@ -31,6 +31,8 @@ export interface IUser
   oldPasswords: string[]
 
   posts: MongoId[]
+  groups: MongoId[]
+
   totalPosts: number
 
   savedPosts: MongoId[]
@@ -49,7 +51,7 @@ export interface IUser
     totalVisits: number
   }[]
 
-  joinedCommunitys: MongoId[]
+  joinedCommunities: MongoId[]
 
   blockedUsers: MongoId[]
 

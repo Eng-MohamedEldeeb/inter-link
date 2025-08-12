@@ -70,7 +70,11 @@ class IsAuthorizedGuard implements GuardActivator {
         'avatar.public_id': 0,
         'avatar.folderPath': 0,
       },
-      populate: [{ path: 'posts' }],
+      populate: [
+        {
+          path: 'posts',
+        },
+      ],
     })
 
     if (!isExistedUser)

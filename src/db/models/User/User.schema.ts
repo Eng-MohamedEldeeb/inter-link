@@ -83,7 +83,7 @@ export const UserSchema = new Schema<IUser>(
 
     likedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
 
-    joinedCommunitys: [{ type: SchemaTypes.ObjectId, ref: 'Community' }],
+    joinedCommunities: [{ type: SchemaTypes.ObjectId, ref: 'Community' }],
 
     viewers: [
       {
@@ -116,18 +116,24 @@ UserSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
   foreignField: 'createdBy',
+  options: {
+    lean: true,
+    projection: {
+      'attachments.paths.secure_url': 1,
+    },
+  },
 })
 
 UserSchema.virtual('totalPosts').get(function () {
-  return this.posts?.length ?? 0
+  return this.posts.length ?? 0
 })
 
 UserSchema.virtual('totalFollowing').get(function () {
-  return this.following?.length ?? 0
+  return this.following.length ?? 0
 })
 
 UserSchema.virtual('totalFollowers').get(function () {
-  return this.followers?.length ?? 0
+  return this.followers.length ?? 0
 })
 
 UserSchema.virtual('birthDate').set(function (v) {

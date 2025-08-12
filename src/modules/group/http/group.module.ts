@@ -5,9 +5,6 @@ import { GroupController } from './group.controller'
 
 import * as validators from '../validators/group.validators'
 
-import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
-import chatOwnerGuard from '../../../common/guards/chat/chat-owner.guard'
-import messageExistenceGuard from '../../../common/guards/chat/message-existence.guard'
 import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
 import groupMembersGuard from '../../../common/guards/group/group-members.guard'
 
@@ -30,30 +27,37 @@ router.post(
 
 router.post(
   '/:id/like',
-  applyGuards(chatExistenceGuard, chatOwnerGuard, messageExistenceGuard),
+  applyGuards(groupExistenceGuard),
   validate(validators.likeMessageValidator.http()),
   GroupController.likeMessage,
 )
 
 router.patch(
-  '/:id/edit',
-  applyGuards(chatExistenceGuard, chatOwnerGuard),
+  '/:id/edit-message',
+  applyGuards(groupExistenceGuard),
   validate(validators.editMessageValidator.http()),
   GroupController.editMessage,
 )
 
 router.delete(
-  '/:id/delete',
-  applyGuards(chatExistenceGuard, chatOwnerGuard),
+  '/:id/delete-message',
+  applyGuards(groupExistenceGuard),
   validate(validators.deleteMessageValidator.http()),
   GroupController.deleteMessage,
 )
 
-router.delete(
-  '/delete',
-  applyGuards(chatExistenceGuard, chatOwnerGuard),
-  validate(validators.deleteChatValidator.http()),
-  GroupController.deleteChat,
-)
+// router.patch(
+//   '/edit',
+//   applyGuards(groupExistenceGuard),
+//   validate(validators.deleteChatValidator.http()),
+//   GroupController.editMessage,
+// )
+
+// router.delete(
+//   '/delete',
+//   applyGuards(groupExistenceGuard),
+//   validate(validators.deleteChatValidator.http()),
+//   GroupController.deleteChat,
+// )
 
 export default router

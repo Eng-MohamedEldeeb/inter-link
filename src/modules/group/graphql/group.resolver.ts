@@ -18,7 +18,7 @@ export class ChatQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: await this.GroupService.getAllChats(profileId),
+      data: await this.GroupService.getAllGroups(profileId),
     }
   }
 
@@ -30,7 +30,7 @@ export class ChatQueryResolver {
     return {
       msg: 'done',
       status: 200,
-      data: context.chat,
+      data: context.group,
     }
   }
 }
@@ -42,11 +42,11 @@ export class ChatMutationResolver {
     { messageId }: Pick<ILikeMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: chatId } = context.chat
+    const { _id: groupId } = context.group
 
     // await this.GroupService.likeMessage({
     //   messageId,
-    //   chatId,
+    //   groupId,
     // })
 
     return {
@@ -59,11 +59,11 @@ export class ChatMutationResolver {
     { messageId }: Pick<IDeleteMessage, 'messageId'>,
     context: IContext,
   ): Promise<ISuccessResponse> => {
-    const { _id: chatId } = context.chat
+    const { _id: groupId } = context.group
     const { _id: profileId } = context.profile
 
     await this.GroupService.deleteMessage({
-      chatId,
+      groupId,
       profileId,
       messageId,
     })

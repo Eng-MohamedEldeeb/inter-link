@@ -21,8 +21,6 @@ class RoomMembersController {
 
     members.push(user)
 
-    console.log({ members })
-
     roomStatus.set(room, members)
   }
 
@@ -37,7 +35,6 @@ class RoomMembersController {
     const members = this.getRoomMembers(room)
 
     const filteredMembers = members.filter(member => !profileId.equals(member))
-    console.log({ members })
 
     roomStatus.set(room, filteredMembers)
   }

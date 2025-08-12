@@ -136,7 +136,8 @@ export class ChatService {
       userId: message.from._id,
       notificationDetails: {
         from: profile,
-        notificationMessage: `${profile.username} Liked Your Message 🧡`,
+        message: `${profile.username} Liked Your Message 🧡`,
+        messageId,
         refTo: 'Chat',
         sentAt: moment().format('h:mm A'),
       },
@@ -227,16 +228,16 @@ export class ChatService {
       searchedMessage,
     })
 
-    if (!relatedNotification) return chat
+    if (!relatedNotification) return await chat.save()
 
     const relatedMissedMessages = this.hasRelatedNotification({
       relatedNotification,
-      searchedMessage,
+      messageId,
     })
 
     if (!relatedMissedMessages) return chat
 
-    relatedMissedMessages.notificationMessage = newMessage
+    relatedMissedMessages.message = newMessage
     relatedMissedMessages.updatedAt = new Date(Date.now())
 
     return await Promise.all([chat.save(), relatedNotification.save()])
@@ -305,7 +306,7 @@ export class ChatService {
           {
             $and: [
               {
-                'missedMessages.messages.notificationMessage': {
+                'missedMessages.messages.message': {
                   $regex: searchedMessage,
                 },
               },
@@ -319,18 +320,14 @@ export class ChatService {
 
   protected static readonly hasRelatedNotification = ({
     relatedNotification,
-    searchedMessage,
+    messageId,
   }: {
     relatedNotification: INotifications
-    searchedMessage: string
+    messageId: MongoId
   }) => {
-    return relatedNotification.missedMessages
-      .find(missed =>
-        missed.messages.some(
-          message => message.notificationMessage == searchedMessage,
-        ),
-      )
-      ?.messages.find(message => message.notificationMessage == searchedMessage)
+    return relatedNotification.missedMessages.find(message =>
+      message._id?.equals(messageId),
+    )
   }
 
   public static readonly deleteMessage = async ({

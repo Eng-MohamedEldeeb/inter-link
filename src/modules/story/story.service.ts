@@ -78,7 +78,7 @@ export class StoryService {
     })
 
     const notification: ILikedStoryNotification = {
-      notificationMessage: `${username} Liked Your Story ❤️`,
+      message: `${username} Liked Your Story ❤️`,
       on: { _id: storyId, attachment },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Story',

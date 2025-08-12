@@ -43,7 +43,7 @@ export class ReplyService {
     })
 
     const notification: IReplyToCommentNotification = {
-      notificationMessage: `${username} Replied To Your Comment 💬`,
+      message: `${username} Replied To Your Comment 💬`,
       content,
       from: { _id: profileId, username, fullName, avatar },
       on: { _id: commentId, attachment },
@@ -91,7 +91,7 @@ export class ReplyService {
     })
 
     const notification: ILikedCommentNotification = {
-      notificationMessage: `${username} Liked Your Reply 💚`,
+      message: `${username} Liked Your Reply 💚`,
       on: { _id: commentId },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Comment',

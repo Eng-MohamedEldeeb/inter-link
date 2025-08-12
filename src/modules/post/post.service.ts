@@ -204,7 +204,7 @@ export class PostService {
     })
 
     const notification: ILikedPostNotification = {
-      notificationMessage: `${username} Liked Your Post ❤️`,
+      message: `${username} Liked Your Post ❤️`,
       on: { _id: postId, attachments },
       from: { _id: profileId, avatar, fullName, username },
       refTo: 'Post',

@@ -26,15 +26,12 @@ export class ContextDetector {
   }
 
   private static readonly hasSocketServerParams = (): boolean => {
-    return (
-      (this.params.length === 2 &&
-        this.params[this.params.length - 1] instanceof Function) ||
-      (this.params.length === 1 && 'handshake' in this.params[0])
-    )
+    return this.params.length === 1 && 'handshake' in this.params[0]
   }
+
   public static readonly hasSocketMiddlewareParams = (): boolean => {
     return (
-      typeof this.params[0][0] === 'string' &&
+      this.params.length === 2 &&
       this.params[this.params.length - 1] instanceof Function
     )
   }
@@ -51,7 +48,7 @@ export class ContextDetector {
       return this
     }
 
-    if (this.hasSocketServerParams()) {
+    if (this.hasSocketServerParams() || this.hasSocketMiddlewareParams()) {
       this.type = ContextType.socketContext
       return this
     }

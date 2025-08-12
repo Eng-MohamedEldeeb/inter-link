@@ -2,7 +2,7 @@ import { Schema, SchemaTypes } from 'mongoose'
 
 import { INotifications } from './../../interfaces/INotification.interface'
 import { INotificationInputs } from '../../interfaces/INotification.interface'
-import { refTo } from '../../../common/services/notifications/types'
+import { RefTypes } from '../../../common/services/notifications/types'
 
 export const NotificationSchema = new Schema<INotifications>(
   {
@@ -19,18 +19,22 @@ export const NotificationSchema = new Schema<INotifications>(
             type: SchemaTypes.ObjectId,
             ref: 'User',
           },
-
-          messages: {
-            type: [
-              {
-                notificationMessage: {
-                  type: String,
-                },
-                sentAt: String,
-                updatedAt: Date,
-              },
-            ],
+          message: {
+            type: String,
           },
+          messageId: {
+            type: SchemaTypes.ObjectId,
+            ref: function (this: INotificationInputs) {
+              return this.refTo
+            },
+          },
+
+          refTo: {
+            type: String,
+            enum: [RefTypes.Chat, RefTypes.Group],
+          },
+          sentAt: String,
+          updatedAt: Date,
         },
       ],
     },
@@ -38,7 +42,7 @@ export const NotificationSchema = new Schema<INotifications>(
     missedNotifications: {
       type: [
         {
-          notificationMessage: {
+          message: {
             type: String,
           },
 
@@ -58,7 +62,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           refTo: {
             type: String,
-            enum: refTo,
+            enum: RefTypes,
           },
 
           createdAt: {
@@ -72,7 +76,7 @@ export const NotificationSchema = new Schema<INotifications>(
     seen: {
       type: [
         {
-          notificationMessage: {
+          message: {
             type: String,
           },
 
@@ -92,7 +96,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           refTo: {
             type: String,
-            enum: refTo,
+            enum: RefTypes,
           },
 
           createdAt: {

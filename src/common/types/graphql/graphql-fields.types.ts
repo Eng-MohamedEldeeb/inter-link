@@ -43,7 +43,7 @@ export const userFields = {
   likedPosts: new GraphQLList(GraphQLID),
   following: new GraphQLList(GraphQLID),
   followers: new GraphQLList(GraphQLID),
-  joinedCommunitys: new GraphQLList(GraphQLID),
+  joinedCommunities: new GraphQLList(GraphQLID),
   blockedUsers: new GraphQLList(GraphQLID),
   oldPasswords: new GraphQLList(GraphQLString),
   changedCredentialsAt: DateType,
@@ -88,6 +88,10 @@ export const userProfileFields: ObjFields<
     type: userFields.posts,
   },
 
+  groups: {
+    type: userFields.posts,
+  },
+
   totalPosts: {
     type: userFields.totalPosts,
   },
@@ -120,8 +124,8 @@ export const userProfileFields: ObjFields<
     type: userFields.totalFollowers,
   },
 
-  joinedCommunitys: {
-    type: userFields.joinedCommunitys,
+  joinedCommunities: {
+    type: userFields.joinedCommunities,
   },
 
   blockedUsers: {

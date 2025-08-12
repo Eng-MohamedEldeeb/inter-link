@@ -1,5 +1,5 @@
 import { MongoId } from '../../common/types/db'
-import { TGroup } from '../../db/documents'
+import { TGroup, TNotification } from '../../db/documents'
 import { throwError } from '../../common/handlers/error-message.handler'
 
 import {
@@ -8,6 +8,7 @@ import {
 } from '../../db/interfaces/IGroup.interface'
 
 import {
+  IMissedMessages,
   INotifications,
   UserDetails,
 } from '../../db/interfaces/INotification.interface'
@@ -17,6 +18,7 @@ import * as DTO from './dto/group.dto'
 import groupRepository from '../../common/repositories/group.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import notificationRepository from '../../common/repositories/notification.repository'
+import moment from 'moment'
 
 export class GroupService {
   protected static readonly groupRepository = groupRepository
@@ -28,7 +30,7 @@ export class GroupService {
   protected static id: MongoId
   protected static userSocketId: string
 
-  public static readonly getAllChats = async (
+  public static readonly getAllGroups = async (
     profileId: MongoId,
   ): Promise<IGroup[]> => {
     const chats = await this.groupRepository.find({
@@ -56,8 +58,6 @@ export class GroupService {
   }
 
   public static readonly getSingle = async (group: TGroup) => {
-    // if (group.newMessages.length >= 1) await this.emptyMissedMessages(group)
-
     return group
   }
 
@@ -83,7 +83,7 @@ export class GroupService {
     })
 
     if (isExistedGroupName)
-      return throwError({ msg: 'In-valid Group Name', status: 400 })
+      return throwError({ msg: 'Group Name Is Already Used', status: 400 })
 
     return await this.groupRepository.create({
       createdBy,
@@ -102,7 +102,9 @@ export class GroupService {
     messageId: MongoId
     group: TGroup
   }) => {
-    const { inMessages } = this.findMessage({ group, messageId })
+    const { inMessages } = this.findMessage({ group, messageId }) as {
+      inMessages: IGroupMessageDetails
+    }
 
     const isLiked = this.checkLikes({ message: inMessages, profile })
 
@@ -128,23 +130,51 @@ export class GroupService {
         },
       },
     })
+
+    await this.notificationService.sendNotification({
+      userId: inMessages.from,
+      notificationDetails: {
+        from: profile,
+        message: `${profile.username} Liked Your Message 🧡`,
+        refTo: 'Chat',
+        sentAt: moment().format('h:mm A'),
+      },
+    })
   }
 
   protected static readonly findMessage = ({
     group,
+    notifications,
     messageId,
   }: {
-    group: TGroup
+    group?: TGroup
+    notifications?: TNotification[]
     messageId: MongoId
   }): {
-    inMessages: IGroupMessageDetails
+    inMessages: IGroupMessageDetails | IMissedMessages[] | undefined
   } => {
-    const inMessages = group.messages.find(message =>
-      message._id?.equals(messageId),
-    )
+    let inMessages: IGroupMessageDetails | IMissedMessages[] | undefined
+
+    if (group) {
+      inMessages = group.messages.find(message =>
+        message._id?.equals(messageId),
+      )
+    }
+
+    if (notifications && notifications.length) {
+      const messages: IMissedMessages[] = []
+
+      notifications.forEach(notification => {
+        const message = notification.missedMessages.find(missedMessage =>
+          missedMessage.messageId?.equals(messageId),
+        )
+        if (message) messages.push(message)
+        inMessages = messages
+      })
+    }
 
     if (!inMessages)
-      return throwError({ msg: 'message not found', status: 404 })
+      return throwError({ msg: 'message was not found', status: 404 })
 
     return { inMessages }
   }
@@ -166,116 +196,103 @@ export class GroupService {
   public static readonly editMessage = async ({
     profileId,
     messageId,
-    chatId,
+    groupId,
     newMessage,
   }: {
     profileId: MongoId
     messageId: MongoId
-    chatId: MongoId
+    groupId: MongoId
     newMessage: string
   }) => {
-    // const group = await this.findUserMessageInChat({
-    //   chatId,
-    //   messageId,
-    //   profileId,
-    // })
-    // let searchedMessage: string = ''
-    // const { inMessages } = this.findMessage({
-    //   group,
-    //   messageId,
-    // })
-    // if (inMessages) {
-    //   searchedMessage = inMessages.message
-    //   inMessages.message = newMessage
-    //   inMessages.updatedAt = new Date(Date.now())
-    // }
-    // const id = group.createdBy.equals(profileId)
-    //   ? group.participant
-    //   : group.members
-    // const relatedNotification = await this.findRelatedNotification({
-    //   belongsTo: id,
-    //   messageFrom: profileId,
-    //   searchedMessage,
-    // })
-    // if (!relatedNotification) return chat
-    // const relatedMissedMessages = this.hasRelatedNotification({
-    //   relatedNotification,
-    //   searchedMessage,
-    // })
-    // if (!relatedMissedMessages) return chat
-    // relatedMissedMessages.notificationMessage = newMessage
-    // relatedMissedMessages.updatedAt = new Date(Date.now())
-    // return await Promise.all([group.save(), relatedNotification.save()])
+    const group = await this.findUserMessageInGroup({
+      groupId,
+      messageId,
+      profileId,
+    })
+
+    const groupMessage = this.findMessage({
+      group,
+      messageId,
+    }).inMessages as IGroupMessageDetails
+
+    const relatedNotification = await this.findRelatedNotification({
+      messageFrom: profileId,
+      searchedMessage: groupMessage.message,
+    })
+
+    groupMessage.message = newMessage
+    groupMessage.updatedAt = new Date(Date.now())
+
+    const notificationMessage = this.findMessage({
+      notifications: relatedNotification,
+      messageId,
+    }).inMessages as IMissedMessages[]
+
+    notificationMessage.map(missedMessage => {
+      missedMessage.message = newMessage
+      missedMessage.updatedAt = new Date(Date.now())
+      return missedMessage
+    })
+
+    if (relatedNotification.length)
+      return await Promise.all([
+        group.save(),
+        relatedNotification.forEach(doc => doc.save()),
+      ])
+
+    return group.save()
   }
 
-  protected static readonly findUserMessageInChat = async ({
-    chatId,
+  protected static readonly findUserMessageInGroup = async ({
+    groupId,
     messageId,
     profileId,
   }: {
-    chatId: MongoId
+    groupId: MongoId
     messageId: MongoId
     profileId: MongoId
   }) => {
-    const chat = await this.groupRepository.findOne({
+    const group = await this.groupRepository.findOne({
       filter: {
         $and: [
+          { _id: groupId },
           {
             $and: [
-              { _id: chatId },
-              {
-                $or: [
-                  { 'messages._id': messageId },
-                  { 'newMessages._id': messageId },
-                ],
-              },
-            ],
-          },
-          {
-            $or: [
-              {
-                $and: [
-                  { 'messages.from': profileId },
-                  { 'messages.deletedAt': { $exists: false } },
-                ],
-              },
-              {
-                $and: [
-                  { 'newMessages.from': profileId },
-                  { 'newMessages.deletedAt': { $exists: false } },
-                ],
-              },
+              { 'messages._id': messageId },
+              { 'messages.from': profileId },
             ],
           },
         ],
       },
     })
-    return chat!
+
+    return group
+      ? group
+      : throwError({ msg: 'message was not found', status: 404 })
   }
 
   protected static readonly findRelatedNotification = async ({
-    belongsTo,
     messageFrom,
     searchedMessage,
   }: {
-    belongsTo: MongoId
     messageFrom: MongoId
     searchedMessage: string
   }) => {
-    return await this.notificationRepository.findOne({
+    return await this.notificationRepository.find({
       filter: {
+        // 'missedMessages.from': messageFrom,
         $and: [
           {
-            $and: [{ belongsTo }, { 'missedMessages.from': messageFrom }],
+            'missedMessages.from': messageFrom,
           },
           {
             $and: [
               {
-                'missedMessages.messages.notificationMessage': {
+                'missedMessages.message': {
                   $regex: searchedMessage,
                 },
               },
-              { 'missedMessages.messages.deletedAt': { $exists: false } },
+              { 'missedMessages.deletedAt': { $exists: false } },
             ],
           },
         ],
@@ -285,34 +302,30 @@ export class GroupService {
 
   protected static readonly hasRelatedNotification = ({
     relatedNotification,
-    searchedMessage,
+    messageId,
   }: {
     relatedNotification: INotifications
-    searchedMessage: string
+    messageId: MongoId
   }) => {
-    return relatedNotification.missedMessages
-      .find(missed =>
-        missed.messages.some(
-          message => message.notificationMessage == searchedMessage,
-        ),
-      )
-      ?.messages.find(message => message.notificationMessage == searchedMessage)
+    return relatedNotification.missedMessages.find(message =>
+      message._id?.equals(messageId),
+    )
   }
 
   public static readonly deleteMessage = async ({
     profileId,
     messageId,
-    chatId,
+    groupId,
   }: {
     profileId: MongoId
     messageId: MongoId
-    chatId: MongoId
+    groupId: MongoId
   }) => {
     const deletedMessage = await this.groupRepository.findOneAndUpdate({
       filter: {
         $and: [
           {
-            $and: [{ _id: chatId }, { 'messages._id': messageId }],
+            $and: [{ _id: groupId }, { 'messages._id': messageId }],
           },
           {
             $and: [

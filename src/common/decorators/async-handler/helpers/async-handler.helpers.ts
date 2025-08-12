@@ -74,8 +74,10 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
       }
 
       if (ctx.type === ContextType.socketContext) {
-        console.log({ error })
-        return socketServerNext(new Error(error.msg || error.message))
+        // console.log({ error })
+        return socketServerNext
+          ? socketServerNext(new Error(error.msg || error.message))
+          : console.log({ error })
       }
   }
 }

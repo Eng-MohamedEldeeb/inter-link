@@ -1,10 +1,12 @@
-import { refTo } from '../../common/services/notifications/types'
+import { ReftTo } from '../../common/services/notifications/types'
 import { MongoId } from '../../common/types/db'
 import { IUser } from './IUser.interface'
 import { IPost } from './IPost.interface'
 import { IComment } from './IComment.interface'
 import { IStory } from './IStory.interface'
 import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
+import { IChat } from './IChat.interface'
+import { IGroup } from './IGroup.interface'
 
 export type UserDetails = Pick<
   IUser,
@@ -13,13 +15,22 @@ export type UserDetails = Pick<
 type PostDetails = Pick<IPost, '_id' | 'attachments'>
 type CommentDetails = Pick<IComment, '_id' | 'attachment'>
 type StoryDetails = Pick<IStory, '_id' | 'attachment'>
+type ChatDetails = Pick<IChat, '_id'>
+type GroupDetails = Pick<IGroup, '_id'>
 
 export interface INotificationInputs {
   _id?: MongoId
-  notificationMessage: string
+  message: string
+  messageId?: MongoId
   from: MongoId | UserDetails
-  refTo: keyof typeof refTo
-  on?: MongoId | PostDetails | CommentDetails | StoryDetails
+  refTo: ReftTo
+  on?:
+    | MongoId
+    | PostDetails
+    | CommentDetails
+    | StoryDetails
+    | ChatDetails
+    | GroupDetails
   content?: string
   sentAt: string
   updatedAt?: Date
@@ -56,13 +67,10 @@ export interface ILikedStoryNotification extends INotificationInputs {
 
 export type MessageDetails = Pick<
   INotificationInputs,
-  'notificationMessage' | 'sentAt' | 'from' | 'updatedAt'
+  'message' | 'sentAt' | 'from' | 'updatedAt' | 'messageId' | 'refTo'
 >
 
-export interface IMissedMessages {
-  from: MongoId | UserDetails
-  messages: Omit<MessageDetails, 'from'>[]
-}
+export interface IMissedMessages extends MessageDetails, Partial<IMongoDoc> {}
 export interface INotifications extends IMongoDoc {
   missedNotifications: INotificationInputs[]
   missedMessages: IMissedMessages[]

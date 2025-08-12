@@ -6,16 +6,21 @@ import { throwError } from '../../../common/handlers/error-message.handler'
 import groupRepository from '../../../common/repositories/group.repository'
 import { MongoId } from '../../../common/types/db'
 import roomMembersController from '../../../common/controllers/room-members.controller'
+import { UserDetails } from '../../../db/interfaces/INotification.interface'
+import notificationsService from '../../../common/services/notifications/notifications.service'
 
 export const upsertGroupMessage = async ({
+  from,
   groupId,
   message,
-  profileId,
+  sentAt,
 }: {
-  groupId: MongoId
-  profileId: MongoId
   message: string
+  from: UserDetails
+  sentAt: string
+  groupId: MongoId
 }) => {
+  const { _id: profileId } = from
   const existedChat = await groupRepository.findOne({
     filter: {
       $and: [
@@ -27,12 +32,15 @@ export const upsertGroupMessage = async ({
         },
       ],
     },
+    projection: { messages: 1 },
   })
 
   if (!existedChat)
     return throwError({ msg: 'group was not found', status: 404 })
 
-  console.log({ existedChat })
+  existedChat.messages.unshift({ from: profileId, message, sentAt })
+
+  return await existedChat.save()
 }
 
 export const sendGroupMessage = (io: Server) => {
@@ -40,17 +48,42 @@ export const sendGroupMessage = (io: Server) => {
     const profileId = socket.profile._id
     const groupId = socket.group._id
 
+    const members = socket.group.members.map(member => member._id)
+
     roomMembersController.joinChat({ profileId, roomId: groupId })
 
     socket.join(groupId.toString())
 
     socket.on('send-message', async ({ message }: { message: string }) => {
-      await upsertGroupMessage({ profileId, groupId, message })
-
       const data: ISendMessage = {
         message,
         sentAt: moment().format('h:mm A'),
         from: socket.profile,
+      }
+
+      const updatedGroup = await upsertGroupMessage({ ...data, groupId })
+
+      const onlineMembers = roomMembersController.getRoomMembers(
+        groupId.toString(),
+      )
+
+      const offlineMembers = members.filter(member => {
+        if (!onlineMembers.includes(member._id.toString()))
+          return member._id.toString()
+      })
+
+      if (offlineMembers.length) {
+        for (const userId of offlineMembers) {
+          await notificationsService.sendNotification({
+            userId,
+            notificationDetails: {
+              ...data,
+              refTo: 'Group',
+              on: groupId,
+              messageId: updatedGroup.messages[0]._id,
+            },
+          })
+        }
       }
 
       return socket.to(groupId.toString()).emit('new-group-message', data)
