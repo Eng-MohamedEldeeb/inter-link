@@ -18,7 +18,6 @@ export const getAllSavedPosts = argsType<IGetAll>({
 
 export const updateProfile = argsType<IUpdateProfile>({
   username: { type: userFields.username },
-  fullName: { type: userFields.fullName },
   bio: { type: userFields.bio },
   birthDate: { type: userFields.birthDate },
   phone: { type: userFields.phone },

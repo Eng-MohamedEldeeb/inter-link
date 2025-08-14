@@ -48,8 +48,7 @@ export class AuthService {
       'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
     >,
   ) => {
-    const { fullName, username, email, password, phone, birthDate, otpCode } =
-      register
+    const { username, email, password, phone, birthDate, otpCode } = register
 
     const isConflicted = await this.userRepository.findOne({
       filter: {
@@ -79,7 +78,6 @@ export class AuthService {
     if (!validOtp) return throwError({ msg: 'in-valid code', status: 400 })
 
     await this.userRepository.create({
-      fullName,
       username,
       email,
       password,

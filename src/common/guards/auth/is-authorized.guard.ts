@@ -132,7 +132,6 @@ class IsAuthorizedGuard implements GuardActivator {
         _id: 1,
         username: 1,
         'avatar.secure_url': 1,
-        fullName: 1,
       },
       options: { lean: true },
     })

@@ -1,9 +1,9 @@
-import moment from 'moment'
 import connectedUsersController from '../../../../common/controllers/connected-users.controller'
 import roomMembersController from '../../../../common/controllers/room-members.controller'
 import chatRepository from '../../../../common/repositories/chat.repository'
 
 import { MongoId } from '../../../../common/types/db'
+import { getNowMoment } from '../../../../common/decorators/moment/moment'
 
 export const isInChat = ({
   roomId,
@@ -63,7 +63,7 @@ export const upsertChatMessage = async ({
                 from: profileId,
                 to: userId,
                 message,
-                sentAt: moment().format('h:mm A'),
+                sentAt: getNowMoment(),
               },
             ],
           }
@@ -73,7 +73,7 @@ export const upsertChatMessage = async ({
                 from: profileId,
                 to: userId,
                 message,
-                sentAt: moment().format('h:mm A'),
+                sentAt: getNowMoment(),
               },
             ],
           }),
@@ -84,7 +84,7 @@ export const upsertChatMessage = async ({
       from: profileId,
       to: userId,
       message,
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     })
     await existedChat.save()
   }
@@ -93,7 +93,7 @@ export const upsertChatMessage = async ({
       from: profileId,
       to: userId,
       message,
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     })
     await existedChat.save()
   }

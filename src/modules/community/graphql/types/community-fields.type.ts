@@ -27,6 +27,7 @@ export const communityFields: ObjFields<Omit<ICommunity, '__v'>> = {
   description: { type: GraphQLString },
   admins: { type: new GraphQLList(GraphQLID) },
   members: { type: new GraphQLList(GraphQLID) },
+  requests: { type: new GraphQLList(GraphQLID) },
   totalMembers: { type: GraphQLInt },
   posts: { type: new GraphQLList(singlePost) },
   isPrivateCommunity: { type: GraphQLBoolean },

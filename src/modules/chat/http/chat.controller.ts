@@ -45,11 +45,11 @@ export class ChatController {
       res: Response,
     ) => {
       const chat = req.chat
-      const { _id, username, avatar, fullName } = req.profile
+      const { _id, username, avatar } = req.profile
       const { messageId } = req.query
 
       await this.ChatService.likeMessage({
-        profile: { _id, username, avatar, fullName },
+        profile: { _id, username, avatar },
         chat,
         messageId,
       })

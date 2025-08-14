@@ -3,7 +3,6 @@ import joi from 'joi'
 import * as DTO from '../dto/group.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
-import { isValidMongoId } from '../../../common/validation/is-valid'
 
 export const getSingleChatValidator = {
   schema: joi
@@ -34,7 +33,7 @@ export const createGroupValidator = {
   schema: joi
     .object<DTO.ICreateGroup>()
     .keys({
-      groupName: joi.string().required(),
+      name: joi.string().required(),
       description: joi.string().required(),
       members: joi.array().items(generalFields.mongoId).required(),
     })
@@ -44,7 +43,7 @@ export const createGroupValidator = {
     return {
       body: this.schema.required().messages({
         'any.required':
-          '[groupName, description(optional), members]  param is required',
+          '[name, description(optional), members]  param is required',
       }),
     }
   },
@@ -53,7 +52,7 @@ export const createGroupValidator = {
     return {
       args: this.schema.required().messages({
         'any.required':
-          '[groupName, description(optional), members] arg is required',
+          '[name, description(optional), members] arg is required',
       }),
     }
   },
@@ -169,6 +168,82 @@ export const likeMessageValidator = {
   },
 }
 
+export const editGroupValidator = {
+  query: {
+    id: generalFields.mongoId.required(),
+  },
+
+  body: {
+    newMessage: joi.string().max(700).required(),
+  },
+
+  http() {
+    return {
+      params: joi
+        .object<Pick<DTO.IDeleteMessage, 'id'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': 'expected [?id=groupId] but got none',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<DTO.ILikeMessage>()
+        .keys({ ...this.query })
+        .required()
+        .messages({
+          'any.required': 'expected group id in [id] arg but got none',
+        }),
+    }
+  },
+}
+
+export const deleteMessageValidator = {
+  params: {
+    id: generalFields.mongoId.required(),
+  },
+
+  query: {
+    messageId: generalFields.mongoId.required(),
+  },
+
+  http() {
+    return {
+      params: joi
+        .object<Pick<DTO.ILikeMessage, 'id'>>()
+        .keys(this.params)
+        .required()
+        .messages({
+          'any.required': 'id param and messageId query param is required',
+        }),
+
+      query: joi
+        .object<Pick<DTO.ILikeMessage, 'messageId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': 'id and messageId is required',
+        }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<DTO.ILikeMessage>()
+        .keys({ ...this.query, ...this.params })
+        .required()
+        .messages({
+          'any.required': 'messageId and id args are required',
+        }),
+    }
+  },
+}
+
 export const editMessageValidator = {
   params: {
     id: generalFields.mongoId.required(),
@@ -223,50 +298,9 @@ export const editMessageValidator = {
   },
 }
 
-export const deleteMessageValidator = {
-  params: {
-    id: generalFields.mongoId.required(),
-  },
-
-  query: {
-    messageId: generalFields.mongoId.required(),
-  },
-
-  http() {
-    return {
-      params: joi
-        .object<Pick<DTO.ILikeMessage, 'id'>>()
-        .keys(this.params)
-        .required()
-        .messages({
-          'any.required': 'id param and messageId query param is required',
-        }),
-
-      query: joi
-        .object<Pick<DTO.ILikeMessage, 'messageId'>>()
-        .keys(this.query)
-        .required()
-        .messages({
-          'any.required': 'id and messageId is required',
-        }),
-    }
-  },
-
-  graphQL() {
-    return {
-      args: joi
-        .object<DTO.ILikeMessage>()
-        .keys({ ...this.query, ...this.params })
-        .required()
-        .messages({
-          'any.required': 'messageId and id args are required',
-        }),
-    }
-  },
-}
-export const leaveChatValidator = {
+export const leaveGroupValidator = {
   schema: joi
-    .object<DTO.ILeaveChat>()
+    .object<DTO.ILeaveGroup>()
     .keys({
       id: generalFields.mongoId.required(),
       profileId: generalFields.mongoId.required(),
@@ -290,9 +324,48 @@ export const leaveChatValidator = {
   },
 }
 
-export const deleteChatValidator = {
+export const updateGroupValidator = {
+  query: {
+    id: generalFields.mongoId.required(),
+  },
+
+  body: {
+    name: joi.string().required(),
+    description: joi.string().required(),
+  },
+
+  http() {
+    return {
+      query: joi
+        .object<Pick<DTO.IUpdateGroup, 'id'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': 'id query param is required',
+        }),
+
+      body: joi.object<DTO.IUpdateGroup>().keys(this.body).required().messages({
+        'any.required': '[name, description] is required to update group',
+      }),
+    }
+  },
+
+  graphQL() {
+    return {
+      args: joi
+        .object<DTO.ILikeMessage>()
+        .keys({ ...this.query, ...this.body })
+        .required()
+        .messages({
+          'any.required': '[name or description] and id are required in args',
+        }),
+    }
+  },
+}
+
+export const deleteGroupValidator = {
   schema: joi
-    .object<DTO.IDeleteChat>()
+    .object<DTO.IDeleteGroup>()
     .keys({
       id: generalFields.mongoId.required(),
     })

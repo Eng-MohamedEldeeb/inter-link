@@ -1,22 +1,28 @@
 import userRepository from '../../common/repositories/user.repository'
 import communityRepository from '../../common/repositories/community.repository'
 
-import { ICreateCommunity, IEditCommunity } from './dto/community.dto'
+import {
+  ICreateCommunity,
+  IEditCommunity,
+  IJoinCommunity,
+} from './dto/community.dto'
 
 import { ICommunity } from '../../db/interfaces/ICommunity.interface'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { throwError } from '../../common/handlers/error-message.handler'
-import { IUser } from '../../db/interfaces/IUser.interface'
 import { MongoId } from '../../common/types/db'
+import notificationsService from '../../common/services/notifications/notifications.service'
+import { IUser } from '../../db/interfaces/IUser.interface'
+import { IJoinedCommunityNotification } from '../../db/interfaces/INotification.interface'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class CommunityService {
   protected static readonly userRepository = userRepository
   protected static readonly communityRepository = communityRepository
+  protected static readonly notificationsService = notificationsService
   protected static readonly CloudUploader = CloudUploader
-  protected static userId: MongoId
-  protected static user: IUser
-  protected static community: ICommunity
+
+  protected static profileId: MongoId
 
   public static readonly getCommunity = ({
     community,
@@ -51,23 +57,130 @@ export class CommunityService {
     })
   }
 
-  protected static readonly isExistedUser = async (): Promise<void> => {
-    const isExistedUser = await this.userRepository.findOne({
-      filter: {
-        $and: [{ _id: this.userId }, { deactivatedAt: { $exists: false } }],
-      },
-      projection: { _id: 1, username: 1 },
-      options: { lean: true },
-    })
+  public static readonly join = async ({
+    profile,
+    community,
+  }: {
+    profile: IUser
+    community: ICommunity
+  }) => {
+    const { _id: profileId, username, avatar } = profile
+    const {
+      _id: communityId,
+      isPrivateCommunity,
+      createdBy,
+      cover,
+      name,
+    } = community
 
-    if (!isExistedUser)
-      return throwError({ msg: 'In-valid userId', status: 400 })
+    const notificationDetails: IJoinedCommunityNotification = {
+      from: { _id: profileId, username, avatar },
+      message: isPrivateCommunity
+        ? `${username} Requested to join your community`
+        : `${username} Joined your community`,
 
-    this.user = isExistedUser
+      refTo: 'Community',
+      on: { _id: communityId, cover, name },
+      sentAt: getNowMoment(),
+    }
+
+    if (!isPrivateCommunity) {
+      return await Promise.all([
+        this.communityRepository.findOneAndUpdate({
+          filter: {
+            $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+          },
+          data: {
+            $push: { members: profileId },
+          },
+        }),
+        this.notificationsService.sendNotification({
+          userId: createdBy,
+          notificationDetails,
+        }),
+      ])
+    }
+
+    return await Promise.all([
+      this.communityRepository.findOneAndUpdate({
+        filter: {
+          $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+        },
+        data: {
+          $push: { requests: profileId },
+        },
+      }),
+      this.notificationsService.sendNotification({
+        userId: createdBy,
+        notificationDetails,
+      }),
+    ])
   }
 
-  protected static readonly isAdmin = (): boolean => {
-    return this.community.admins.some(adminId => adminId.equals(this.user._id))
+  public static readonly acceptJoinRequest = async ({
+    profile,
+    community,
+  }: {
+    profile: IUser
+    community: ICommunity
+  }) => {
+    this.profileId = profile._id
+
+    const {
+      _id: communityId,
+      isPrivateCommunity,
+      createdBy,
+      cover,
+      name,
+      requests,
+    } = community
+
+    const notificationDetails: IJoinedCommunityNotification = {
+      from: { _id: communityId, name, cover: cover },
+      message: `You are accepted to join ${name} community`,
+      refTo: 'Community',
+      on: { _id: communityId, cover, name },
+      sentAt: getNowMoment(),
+    }
+
+    if (!isPrivateCommunity) {
+      return await Promise.all([
+        this.communityRepository.findOneAndUpdate({
+          filter: {
+            $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+          },
+          data: {
+            $push: { members: this.profileId },
+          },
+        }),
+        this.notificationsService.sendNotification({
+          userId: createdBy,
+          notificationDetails,
+        }),
+      ])
+    }
+
+    return await Promise.all([
+      this.communityRepository.findOneAndUpdate({
+        filter: {
+          $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+        },
+        data: {
+          $set: { requests: this.filterJoinRequests(requests) },
+          $push: { members: this.profileId },
+        },
+      }),
+      this.notificationsService.sendNotification({
+        userId: createdBy,
+        notificationDetails,
+      }),
+    ])
+  }
+
+  protected static filterJoinRequests = (requests: MongoId[]) => {
+    return requests.filter(
+      requestedUser => !requestedUser.equals(this.profileId),
+    )
   }
 
   public static readonly addAdmin = async ({
@@ -77,20 +190,10 @@ export class CommunityService {
     community: ICommunity
     userId: MongoId
   }) => {
-    this.community = community
-    this.userId = userId
-
-    await this.isExistedUser()
-
-    if (this.isAdmin())
-      return throwError({
-        msg: `user '${this.user.username}' is admin already`,
-      })
-
     await this.communityRepository.findByIdAndUpdate({
-      _id: this.community._id,
+      _id: community._id,
       data: {
-        $addToSet: { admins: this.userId },
+        $addToSet: { admins: userId },
       },
     })
   }
@@ -102,21 +205,11 @@ export class CommunityService {
     community: ICommunity
     userId: MongoId
   }) => {
-    this.community = community
-    this.userId = userId
-
-    await this.isExistedUser()
-
-    if (!this.isAdmin())
-      return throwError({
-        msg: `user ${this.user.username} is not an admin`,
-      })
-
     await this.communityRepository.findByIdAndUpdate({
-      _id: this.community._id,
+      _id: community._id,
       data: {
-        $pull: { admins: this.userId },
-        $addToSet: { members: this.userId },
+        $pull: { admins: userId },
+        $addToSet: { members: userId },
       },
     })
   }
@@ -148,7 +241,7 @@ export class CommunityService {
 
     const { secure_url, public_id } = await this.CloudUploader.upload({
       path,
-      folderName: `${process.env.APP_NAME}/${community.createdBy.toString()}/communitys/${community.slug}`,
+      folderName: `${process.env.APP_NAME}/${community.createdBy.toString()}/communities/${community.slug}`,
     })
 
     return await this.communityRepository.findByIdAndUpdate({
@@ -171,7 +264,7 @@ export class CommunityService {
     communityId: MongoId
     state: boolean
   }) => {
-    const isExistedUser = await this.communityRepository.findOneAndUpdate({
+    return await this.communityRepository.findOneAndUpdate({
       filter: {
         _id: communityId,
       },
@@ -184,7 +277,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly edit = async ({
+  public static readonly editCommunity = async ({
     communityId,
     editCommunity,
   }: {
@@ -204,7 +297,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly delete = async (communityId: MongoId) => {
+  public static readonly deleteCommunity = async (communityId: MongoId) => {
     await this.communityRepository.findOneAndDelete({
       filter: {
         _id: communityId,

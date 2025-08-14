@@ -12,6 +12,7 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { IUser } from '../../db/interfaces/IUser.interface'
 import { IComment } from '../../db/interfaces/IComment.interface'
 import moment from 'moment'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class CommentService {
   protected static readonly commentRepository = commentRepository
@@ -23,7 +24,7 @@ export class CommentService {
     post,
     profile,
   }: DTO.IAddComment) => {
-    const { _id: profileId, avatar, username, fullName } = profile
+    const { _id: profileId, avatar, username } = profile
     const { _id: postId, createdBy, attachments } = post
 
     await this.commentRepository.create({
@@ -36,10 +37,10 @@ export class CommentService {
     const notification: ICommentedOnPostNotification = {
       message: `${username} Commented On Your Post! 💬`,
       content,
-      from: { _id: profileId, avatar, username, fullName },
+      from: { _id: profileId, avatar, username },
       on: { _id: postId, attachments },
       refTo: 'Post',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({
@@ -56,7 +57,7 @@ export class CommentService {
     comment: IComment
   }) => {
     const { _id: commentId, likedBy, createdBy, attachment } = comment
-    const { _id: profileId, username, avatar, fullName } = profile
+    const { _id: profileId, username, avatar } = profile
 
     const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
 
@@ -84,9 +85,9 @@ export class CommentService {
     const notification: ILikedCommentNotification = {
       message: `${username} Liked Your Comment 💚`,
       on: { _id: commentId, attachment },
-      from: { _id: profileId, avatar, fullName, username },
+      from: { _id: profileId, avatar, username },
       refTo: 'Comment',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({

@@ -39,7 +39,7 @@ class ChatExistenceGuard extends GuardActivator {
     const select = {
       _id: 1,
       username: 1,
-      fullName: 1,
+
       'avatar.secure_url': 1,
     }
 

@@ -32,7 +32,7 @@ export const GroupSchema = new Schema<IGroup>(
       },
     },
 
-    groupName: {
+    name: {
       type: String,
       minlength: [2, "Group's name can't be less than 2 characters at least"],
       maxlength: [50, "Group's name can't be more than 50 characters"],

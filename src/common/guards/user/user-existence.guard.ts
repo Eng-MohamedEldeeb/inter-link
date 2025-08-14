@@ -90,24 +90,11 @@ class UserExistenceGuard extends GuardActivator {
       filter: {
         ...(this.username
           ? {
-              $or: [
-                {
-                  $and: [
-                    { username: { $regex: this.username } },
+              $and: [
+                { username: { $regex: this.username } },
 
-                    {
-                      deactivatedAt: { $exists: false },
-                    },
-                  ],
-                },
                 {
-                  $and: [
-                    { fullName: { $regex: this.username } },
-
-                    {
-                      deactivatedAt: { $exists: false },
-                    },
-                  ],
+                  deactivatedAt: { $exists: false },
                 },
               ],
             }

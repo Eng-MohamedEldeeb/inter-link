@@ -25,12 +25,13 @@ export interface ISendMessage {
   sentAt: string
 }
 
-export interface IDeleteChat extends IGetSingleGroup {
+export interface IUpdateGroup extends IGetSingleGroup, IGroupInputs {}
+
+export interface IDeleteGroup extends IGetSingleGroup {
   profileId: MongoId
-  group: TGroup
 }
 
-export interface ILeaveChat extends IGetSingleGroup {
+export interface ILeaveGroup extends IGetSingleGroup {
   profileId: MongoId
   group: TGroup
 }

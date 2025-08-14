@@ -12,7 +12,7 @@ export const likeMessage = argsType<Omit<DTO.ILikeMessage, 'chat'>>({
   id: { type: new GraphQLNonNull(GraphQLID) },
   messageId: { type: new GraphQLNonNull(GraphQLID) },
 })
-export const deleteChat = argsType<Pick<DTO.IDeleteChat, 'id'>>({
+export const deleteChat = argsType<Pick<DTO.IDeleteGroup, 'id'>>({
   id: { type: new GraphQLNonNull(GraphQLID) },
 })
 

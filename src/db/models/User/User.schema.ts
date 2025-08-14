@@ -22,12 +22,6 @@ export const UserSchema = new Schema<IUser>(
       public_id: String,
     },
 
-    fullName: {
-      type: String,
-      required: [true, 'fullName is required'],
-      trim: true,
-    },
-
     bio: {
       type: String,
       maxlength: [700, 'bio limit is reached [700 char only allowed]'],

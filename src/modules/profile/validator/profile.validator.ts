@@ -11,7 +11,6 @@ export const updateProfileSchema = {
   schema: joi
     .object<DTO.IUpdateProfile>()
     .keys({
-      fullName: generalFields.fullName,
       username: generalFields.username,
       birthDate: generalFields.birthDate,
       phone: generalFields.phone,

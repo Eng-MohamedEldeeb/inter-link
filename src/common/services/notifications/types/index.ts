@@ -8,6 +8,7 @@ export enum RefTypes {
   User = 'User',
   Post = 'Post',
   Comment = 'Comment',
+  Community = 'Community',
   Story = 'Story',
   Chat = 'Chat',
   Group = 'Group',

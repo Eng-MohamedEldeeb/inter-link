@@ -1,4 +1,3 @@
-import moment from 'moment'
 import postRepository from '../../common/repositories/post.repository'
 import userRepository from '../../common/repositories/user.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
@@ -11,6 +10,7 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { IUser } from '../../db/interfaces/IUser.interface'
 import { IPost } from '../../db/interfaces/IPost.interface'
 import { ILikedPostNotification } from '../../db/interfaces/INotification.interface'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class PostService {
   protected static readonly postRepository = postRepository
@@ -177,7 +177,7 @@ export class PostService {
     post: IPost
   }) => {
     const { _id: postId, likedBy, createdBy, attachments } = post
-    const { _id: profileId, username, avatar, fullName } = profile
+    const { _id: profileId, username, avatar } = profile
 
     const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
 
@@ -206,9 +206,9 @@ export class PostService {
     const notification: ILikedPostNotification = {
       message: `${username} Liked Your Post ❤️`,
       on: { _id: postId, attachments },
-      from: { _id: profileId, avatar, fullName, username },
+      from: { _id: profileId, avatar, username },
       refTo: 'Post',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({

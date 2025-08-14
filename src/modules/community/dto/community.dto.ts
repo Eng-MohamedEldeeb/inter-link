@@ -12,6 +12,10 @@ export interface IAddAdmin extends IGetCommunity {
   userId: MongoId
 }
 
+export interface IJoinCommunity extends IAddAdmin {}
+
+export interface ILeaveCommunity extends IAddAdmin {}
+
 export interface IRemoveAdmin extends IGetCommunity {
   adminId: MongoId
 }

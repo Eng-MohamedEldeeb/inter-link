@@ -7,13 +7,15 @@ export interface ICommunityInputs {
   description: string
   isPrivateCommunity: boolean
   createdBy: MongoId
+  cover: ICloudFile
 }
 
 export interface ICommunity extends IMongoDoc, ICommunityInputs {
   slug: string
-  cover: ICloudFile
   posts: MongoId[]
   members: MongoId[]
   totalMembers: number
   admins: MongoId[]
+
+  requests: MongoId[]
 }

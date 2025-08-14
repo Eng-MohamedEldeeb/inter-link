@@ -1,4 +1,3 @@
-import moment from 'moment'
 import commentRepository from '../../common/repositories/comment.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
@@ -13,6 +12,7 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoId } from '../../common/types/db'
 import { IUser } from '../../db/interfaces/IUser.interface'
 import { IReply } from '../../db/interfaces/IReply.interface'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class ReplyService {
   protected static readonly commentRepository = commentRepository
@@ -33,7 +33,7 @@ export class ReplyService {
     profile,
     comment,
   }: DTO.IAddReply) => {
-    const { _id: profileId, username, fullName, avatar } = profile
+    const { _id: profileId, username, avatar } = profile
     const { _id: commentId, attachment, createdBy: commentCreator } = comment
 
     await this.commentRepository.create({
@@ -45,10 +45,10 @@ export class ReplyService {
     const notification: IReplyToCommentNotification = {
       message: `${username} Replied To Your Comment 💬`,
       content,
-      from: { _id: profileId, username, fullName, avatar },
+      from: { _id: profileId, username, avatar },
       on: { _id: commentId, attachment },
       refTo: 'Comment',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({
@@ -65,7 +65,7 @@ export class ReplyService {
     reply: IReply
   }) => {
     const { _id: commentId, likedBy, createdBy } = reply
-    const { _id: profileId, username, avatar, fullName } = profile
+    const { _id: profileId, username, avatar } = profile
 
     const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
 
@@ -93,9 +93,9 @@ export class ReplyService {
     const notification: ILikedCommentNotification = {
       message: `${username} Liked Your Reply 💚`,
       on: { _id: commentId },
-      from: { _id: profileId, avatar, fullName, username },
+      from: { _id: profileId, avatar, username },
       refTo: 'Comment',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({

@@ -17,14 +17,14 @@ export interface IGroupMessageDetails extends IMessageInputs {
 }
 
 export interface IGroupInputs {
-  groupName: string
+  name: string
   description: string
   members: MongoId[]
   createdBy: MongoId
+  cover: ICloudFile
 }
 
 export interface IGroup extends IMongoDoc, IGroupInputs {
-  cover: ICloudFile
   totalMembers: number
   messages: IGroupMessageDetails[]
 }

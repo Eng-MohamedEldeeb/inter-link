@@ -14,7 +14,7 @@ import { IUser } from '../../../../db/interfaces/IUser.interface'
 import { cloudFile } from '../../../../common/services/upload/interface/cloud-response.interface'
 
 const notificationFromDetails = returnedType<
-  Pick<IUser, 'avatar' | 'fullName' | 'username' | '_id'>
+  Pick<IUser, 'avatar' | 'username' | '_id'>
 >({
   name: 'notificationFromDetails',
   fields: {
@@ -22,7 +22,6 @@ const notificationFromDetails = returnedType<
     avatar: {
       type: cloudFile,
     },
-    fullName: { type: GraphQLString },
     username: { type: GraphQLString },
   },
 })

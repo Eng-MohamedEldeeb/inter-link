@@ -32,7 +32,6 @@ export const registerSchema = {
   schema: joi
     .object<DTO.IRegister>()
     .keys({
-      fullName: generalFields.fullName.required(),
       username: generalFields.username.required(),
       email: generalFields.email.required(),
       password: generalFields.password.required(),

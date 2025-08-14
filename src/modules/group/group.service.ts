@@ -18,7 +18,7 @@ import * as DTO from './dto/group.dto'
 import groupRepository from '../../common/repositories/group.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import notificationRepository from '../../common/repositories/notification.repository'
-import moment from 'moment'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class GroupService {
   protected static readonly groupRepository = groupRepository
@@ -27,7 +27,6 @@ export class GroupService {
 
   protected static profileId: MongoId
 
-  protected static id: MongoId
   protected static userSocketId: string
 
   public static readonly getAllGroups = async (
@@ -47,7 +46,7 @@ export class GroupService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             'avatar.secure_url': 1,
           },
         },
@@ -61,23 +60,16 @@ export class GroupService {
     return group
   }
 
-  protected static readonly emptyMissedMessages = async (group: TGroup) => {
-    // for (let i = group.newMessages.length - 1; i >= 0; i--) {
-    //   group.messages.unshift(group.newMessages[i])
-    // }
-    // group.newMessages = []
-    // return await group.save()
-  }
-
   public static readonly create = async ({
     createdBy,
     members,
     description,
-    groupName,
+    name,
+    cover,
   }: DTO.ICreateGroup) => {
     const isExistedGroupName = await this.groupRepository.findOne({
       filter: {
-        groupName,
+        name,
       },
       projection: { _id: 1 },
     })
@@ -89,7 +81,8 @@ export class GroupService {
       createdBy,
       members: [createdBy, ...members],
       description,
-      groupName,
+      name,
+      cover,
     })
   }
 
@@ -137,7 +130,7 @@ export class GroupService {
         from: profile,
         message: `${profile.username} Liked Your Message 🧡`,
         refTo: 'Chat',
-        sentAt: moment().format('h:mm A'),
+        sentAt: getNowMoment(),
       },
     })
   }
@@ -280,7 +273,6 @@ export class GroupService {
   }) => {
     return await this.notificationRepository.find({
       filter: {
-        // 'missedMessages.from': messageFrom,
         $and: [
           {
             'missedMessages.from': messageFrom,
@@ -350,10 +342,29 @@ export class GroupService {
     )
   }
 
-  public static readonly deleteChat = async ({
+  public static readonly editGroup = async (
+    updateGroupDTO: Omit<DTO.IUpdateGroup, 'cover' | 'members'>,
+  ) => {
+    return await this.groupRepository.findOneAndUpdate({
+      filter: {
+        $and: [
+          { _id: updateGroupDTO.id },
+          { createdBy: updateGroupDTO.createdBy },
+        ],
+      },
+      data: {
+        ...updateGroupDTO,
+      },
+    })
+  }
+  public static readonly deleteGroup = async ({
     profileId,
-    group,
-  }: Omit<DTO.IDeleteChat, 'chat' | 'id'>) => {
-    await group.updateOne({ $pull: { members: profileId } })
+    id,
+  }: DTO.IDeleteGroup) => {
+    return await this.groupRepository.findOneAndDelete({
+      filter: {
+        $and: [{ _id: id }, { createdBy: profileId }],
+      },
+    })
   }
 }

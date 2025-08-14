@@ -26,7 +26,6 @@ export const userFields = {
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
   avatar: singleFile,
-  fullName: GraphQLString,
   username: GraphQLString,
   email: GraphQLString,
   password: GraphQLString,
@@ -65,10 +64,6 @@ export const userProfileFields: ObjFields<
   createdAt: { type: DateType },
 
   updatedAt: { type: DateType },
-
-  fullName: {
-    type: userFields.fullName,
-  },
 
   username: {
     type: userFields.username,

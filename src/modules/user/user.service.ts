@@ -7,6 +7,7 @@ import { throwError } from '../../common/handlers/error-message.handler'
 import { MongoId } from '../../common/types/db'
 import { UserViewersStrategy } from './helpers/user-viewers.strategy'
 import { IFollowedUserNotification } from '../../db/interfaces/INotification.interface'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class UserService {
   protected static readonly userRepository = userRepository
@@ -137,7 +138,7 @@ export class UserService {
     profile: IUser
   }) => {
     const { _id: userId, isPrivateProfile, requests } = user
-    const { _id: profileId, avatar, fullName, username, following } = profile
+    const { _id: profileId, avatar, username, following } = profile
 
     const alreadyFollowed = following.some(userId => userId.equals(userId))
     const alreadyRequested = requests.some(userId => userId.equals(profileId))
@@ -153,9 +154,9 @@ export class UserService {
 
       const notification: IFollowedUserNotification = {
         message: `${username} Requested To Follow You 💛`,
-        from: { _id: profileId, avatar, fullName, username },
+        from: { _id: profileId, avatar, username },
         refTo: 'User',
-        sentAt: moment().format('h:mm A'),
+        sentAt: getNowMoment(),
       }
 
       await this.notificationsService.sendNotification({
@@ -178,9 +179,9 @@ export class UserService {
 
     const notification: IFollowedUserNotification = {
       message: `${username} Started Following You 💚`,
-      from: { _id: profileId, avatar, fullName, username },
+      from: { _id: profileId, avatar, username },
       refTo: 'User',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({
@@ -204,7 +205,6 @@ export class UserService {
       requests,
       avatar,
       username,
-      fullName,
     } = profile
     const { _id: userId } = user
 
@@ -230,9 +230,9 @@ export class UserService {
 
     const notification: IFollowedUserNotification = {
       message: `${username} Accepted Your Follow Request 🩵`,
-      from: { _id: profileId, username, fullName, avatar },
+      from: { _id: profileId, username, avatar },
       refTo: 'User',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({

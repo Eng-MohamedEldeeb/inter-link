@@ -6,7 +6,7 @@ import { CloudUploader } from '../../../common/services/upload/cloud.service'
 import postRepository from '../../../common/repositories/post.repository'
 import slugify from 'slugify'
 
-export const CommunitySchema = new Schema<ICommunity>(
+export const communitieschema = new Schema<ICommunity>(
   {
     cover: {
       fullPath: String,
@@ -52,6 +52,8 @@ export const CommunitySchema = new Schema<ICommunity>(
 
     members: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
 
+    requests: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+
     isPrivateCommunity: { type: Boolean, default: false },
 
     createdBy: {
@@ -67,18 +69,18 @@ export const CommunitySchema = new Schema<ICommunity>(
   },
 )
 
-CommunitySchema.virtual('posts', {
+communitieschema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
   foreignField: 'onCommunity',
 })
 
-CommunitySchema.virtual('totalMembers').get(function (this: ICommunity) {
+communitieschema.virtual('totalMembers').get(function (this: ICommunity) {
   if (this.members) return this.members.length
   return 0
 })
 
-CommunitySchema.post('findOneAndDelete', async function (res: ICommunity) {
+communitieschema.post('findOneAndDelete', async function (res: ICommunity) {
   const { _id, cover } = res
 
   await postRepository.deleteMany({ onCommunity: _id })

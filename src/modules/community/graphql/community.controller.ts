@@ -3,7 +3,7 @@ import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 import communityAuthorizationGuard from '../../../common/guards/community/community-owner-authorization.guard'
 import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
-import communityAdminsAuthorizationGuard from '../../../common/guards/community/community-admins-authorization.guard'
+import communityAdminsAuthorizationGuard from '../../../common/guards/community/is-community-admin-.guard'
 import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
 
 import * as args from './types/community-args.type'

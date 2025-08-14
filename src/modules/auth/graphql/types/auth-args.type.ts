@@ -10,7 +10,6 @@ export const confirmEmail = argsType<DTO.IConfirmEmail>({
 })
 
 export const register = argsType<DTO.IRegister>({
-  fullName: { type: new GraphQLNonNull(userFields.fullName) },
   username: { type: new GraphQLNonNull(userFields.username) },
   email: { type: new GraphQLNonNull(userFields.email) },
   password: { type: new GraphQLNonNull(userFields.password) },

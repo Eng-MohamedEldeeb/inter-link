@@ -79,11 +79,11 @@ export class ChatMutationResolver {
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
-    const group = context.group
+    const { _id: id } = context.group
 
-    await this.GroupService.deleteChat({
+    await this.GroupService.deleteGroup({
+      id,
       profileId,
-      group,
     })
 
     return {

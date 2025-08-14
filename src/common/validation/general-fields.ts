@@ -21,9 +21,6 @@ export const generalFields = {
 
   files: joi.array().items(file).min(1).max(10),
 
-  fullName: joi.string().trim().messages({
-    'string.empty': "fullName can't be empty",
-  }),
   bio: joi.string().trim().max(700),
   username: joi.string().trim().min(2).max(16),
   email: joi.string().email().trim().lowercase().messages({

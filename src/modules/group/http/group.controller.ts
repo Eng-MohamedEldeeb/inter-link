@@ -5,12 +5,13 @@ import { asyncHandler } from '../../../common/decorators/async-handler/async-han
 import { GroupService } from '../group.service'
 
 import {
-  IDeleteChat,
+  IDeleteGroup,
   ILikeMessage,
   IDeleteMessage,
   IGetSingleGroup,
   IEditMessage,
   ICreateGroup,
+  IUpdateGroup,
 } from '../dto/group.dto'
 
 export class GroupController {
@@ -36,11 +37,13 @@ export class GroupController {
   public static readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
+      const cover = req.cloudFile
       const createGroupDto: Omit<ICreateGroup, 'createdBy'> = req.body
 
       await this.GroupService.create({
         ...createGroupDto,
         createdBy: profileId,
+        cover,
       })
 
       return successResponse(res, {
@@ -54,13 +57,13 @@ export class GroupController {
       req: IRequest<null, Pick<ILikeMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id, username, avatar, fullName } = req.profile
+      const { _id, username, avatar } = req.profile
       const { messageId } = req.query
 
       const group = req.group
 
       await this.GroupService.likeMessage({
-        profile: { _id, username, avatar, fullName },
+        profile: { _id, username, avatar },
         group,
         messageId,
       })
@@ -99,7 +102,7 @@ export class GroupController {
       req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, 'messageId'>>,
       res: Response,
     ) => {
-      const { _id: groupId } = req.chat
+      const { _id: groupId } = req.group
       const { _id: profileId } = req.profile
       const { messageId } = req.query
 
@@ -115,8 +118,8 @@ export class GroupController {
     },
   )
 
-  public static readonly deleteChat = asyncHandler(
-    async (req: IRequest<IDeleteChat>, res: Response) => {
+  public static readonly deleteGroup = asyncHandler(
+    async (req: IRequest<IDeleteGroup>, res: Response) => {
       const { _id: profileId } = req.profile
       const group = req.chat
 
@@ -126,7 +129,20 @@ export class GroupController {
       // })
 
       return successResponse(res, {
-        msg: 'Chat Has Been Deleted Successfully',
+        msg: 'Group Has Been Deleted Successfully',
+      })
+    },
+  )
+
+  public static readonly editGroup = asyncHandler(
+    async (req: IRequest<null, Pick<IUpdateGroup, 'id'>>, res: Response) => {
+      const { _id: id } = req.group
+      const { _id: createdBy } = req.profile
+      const updateGroupDTO: IUpdateGroup = req.body
+      await this.GroupService.editGroup({ ...updateGroupDTO, id, createdBy })
+
+      return successResponse(res, {
+        msg: 'Group Has Been Deleted Successfully',
       })
     },
   )

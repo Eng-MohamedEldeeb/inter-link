@@ -10,10 +10,10 @@ import {
 
 import * as DTO from './dto/chat.dto'
 
-import moment from 'moment'
 import chatRepository from '../../common/repositories/chat.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import notificationRepository from '../../common/repositories/notification.repository'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class ChatService {
   protected static readonly chatRepository = chatRepository
@@ -59,7 +59,7 @@ export class ChatService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             'avatar.secure_url': 1,
           },
         },
@@ -68,7 +68,7 @@ export class ChatService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             'avatar.secure_url': 1,
           },
         },
@@ -139,7 +139,7 @@ export class ChatService {
         message: `${profile.username} Liked Your Message 🧡`,
         messageId,
         refTo: 'Chat',
-        sentAt: moment().format('h:mm A'),
+        sentAt: getNowMoment(),
       },
     })
   }

@@ -92,7 +92,7 @@ export class GroupController {
       }),
       args: args.deleteChat,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteChatValidator.graphQL())],
+        middlewares: [validate(validators.deleteGroupValidator.graphQL())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.deleteChat,
       }),

@@ -7,6 +7,8 @@ import * as validators from '../validators/group.validators'
 
 import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
 import groupMembersGuard from '../../../common/guards/group/group-members.guard'
+import { fileReader } from '../../../common/utils/multer/file-reader'
+import { groupCoverUploader } from '../../../common/middlewares/upload/group-cover-uploader.middleware'
 
 const router: Router = Router()
 
@@ -21,37 +23,39 @@ router.get(
 
 router.post(
   '/create',
+  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.createGroupValidator.http()),
+  groupCoverUploader,
   GroupController.create,
 )
 
 router.post(
   '/:id/like',
-  applyGuards(groupExistenceGuard),
+  applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.likeMessageValidator.http()),
   GroupController.likeMessage,
 )
 
 router.patch(
   '/:id/edit-message',
-  applyGuards(groupExistenceGuard),
+  applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.editMessageValidator.http()),
   GroupController.editMessage,
 )
 
 router.delete(
   '/:id/delete-message',
-  applyGuards(groupExistenceGuard),
+  applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.deleteMessageValidator.http()),
   GroupController.deleteMessage,
 )
 
-// router.patch(
-//   '/edit',
-//   applyGuards(groupExistenceGuard),
-//   validate(validators.deleteChatValidator.http()),
-//   GroupController.editMessage,
-// )
+router.patch(
+  '/edit',
+  applyGuards(groupExistenceGuard),
+  validate(validators.editGroupValidator.http()),
+  GroupController.editGroup,
+)
 
 // router.delete(
 //   '/delete',

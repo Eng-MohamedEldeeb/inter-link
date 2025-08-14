@@ -39,6 +39,21 @@ export class CommunityController {
     },
   )
 
+  public static join = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const profile = req.profile
+      const community = req.community
+
+      return successResponse(res, {
+        msg: `You Joined ${name} Community Successfully`,
+        data: await this.CommunityService.join({
+          profile,
+          community,
+        }),
+      })
+    },
+  )
+
   public static readonly addPost = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const { _id } = req.profile
@@ -110,14 +125,17 @@ export class CommunityController {
     },
   )
 
-  public static readonly edit = asyncHandler(
+  public static readonly editCommunity = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: communityId } = req.community
       const editCommunity: DTO.IEditCommunity = req.body
 
       return successResponse(res, {
         msg: 'Community is modified successfully',
-        data: await this.CommunityService.edit({ communityId, editCommunity }),
+        data: await this.CommunityService.editCommunity({
+          communityId,
+          editCommunity,
+        }),
       })
     },
   )
@@ -147,10 +165,10 @@ export class CommunityController {
     },
   )
 
-  public static readonly delete = asyncHandler(
+  public static readonly deleteCommunity = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: communityId } = req.community
-      await this.CommunityService.delete(communityId)
+      await this.CommunityService.deleteCommunity(communityId)
       return successResponse(res, {
         msg: 'Community is deleted successfully',
       })

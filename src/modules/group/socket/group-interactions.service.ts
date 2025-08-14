@@ -1,6 +1,5 @@
 import { Server } from 'socket.io'
 import { ISocket } from '../../../common/interface/ISocket.interface'
-import moment from 'moment'
 import { ISendMessage } from '../dto/group.dto'
 import { throwError } from '../../../common/handlers/error-message.handler'
 import groupRepository from '../../../common/repositories/group.repository'
@@ -8,6 +7,7 @@ import { MongoId } from '../../../common/types/db'
 import roomMembersController from '../../../common/controllers/room-members.controller'
 import { UserDetails } from '../../../db/interfaces/INotification.interface'
 import notificationsService from '../../../common/services/notifications/notifications.service'
+import { getNowMoment } from '../../../common/decorators/moment/moment'
 
 export const upsertGroupMessage = async ({
   from,
@@ -57,7 +57,7 @@ export const sendGroupMessage = (io: Server) => {
     socket.on('send-message', async ({ message }: { message: string }) => {
       const data: ISendMessage = {
         message,
-        sentAt: moment().format('h:mm A'),
+        sentAt: getNowMoment(),
         from: socket.profile,
       }
 

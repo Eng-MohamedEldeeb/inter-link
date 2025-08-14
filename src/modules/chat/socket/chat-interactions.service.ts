@@ -1,4 +1,3 @@
-import moment from 'moment'
 import notificationsService from '../../../common/services/notifications/notifications.service'
 import chatRepository from '../../../common/repositories/chat.repository'
 import roomMembersController from '../../../common/controllers/room-members.controller'
@@ -7,6 +6,7 @@ import { ISocket } from '../../../common/interface/ISocket.interface'
 import { ChatService } from '../chat.service'
 import { ISendMessage } from '../dto/chat.dto'
 import { isInChat, upsertChatMessage } from './helpers/chat-helpers'
+import { getNowMoment } from '../../../common/decorators/moment/moment'
 
 export const sendMessage = async (socket: ISocket) => {
   const { _id: profileId } = socket.profile._id
@@ -46,7 +46,7 @@ export const sendMessage = async (socket: ISocket) => {
 
     const data: ISendMessage = {
       message,
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
       from: socket.profile,
     }
 
@@ -59,7 +59,7 @@ export const sendMessage = async (socket: ISocket) => {
           messageId: updatedChat.messages[0]._id,
           refTo: 'Chat',
           on: { _id: updatedChat._id },
-          sentAt: moment().format('h:mm A'),
+          sentAt: getNowMoment(),
         },
       })
     }

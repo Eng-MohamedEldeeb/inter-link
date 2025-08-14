@@ -192,7 +192,7 @@ class NotificationsService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             content: 1,
             'avatar.secure_url': 1,
             'attachments.paths.secure_url': 1,
@@ -205,7 +205,7 @@ class NotificationsService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             content: 1,
             'avatar.secure_url': 1,
             'attachments.paths.secure_url': 1,
@@ -218,7 +218,7 @@ class NotificationsService {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             content: 1,
             'avatar.secure_url': 1,
             'attachments.paths.secure_url': 1,
@@ -289,15 +289,6 @@ class NotificationsService {
     const newMessage = this.notificationType.newMessage
 
     for (const messageDetails of missedMessages) {
-      // if (messages.length > 1) {
-      //   const message: MessageDetails = {
-      //     from,
-      //     message: `${userDetails.username} sent you ${messageDetails..length} messages`,
-      //     sentAt: moment().format('h:mm A'),
-      //   }
-      //   return io.to(this.socketId).emit(newMessage, message)
-      // }
-
       const notificationMessage: Pick<
         INotificationInputs,
         'from' | 'message' | 'sentAt' | 'messageId'

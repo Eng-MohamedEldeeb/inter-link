@@ -58,7 +58,6 @@ export class ProfileResponse {
       name: 'updatedData',
       fields: {
         username: { type: graphQlFields.userFields.username },
-        fullName: { type: graphQlFields.userFields.fullName },
         bio: { type: graphQlFields.userFields.bio },
         birthDate: { type: graphQlFields.userFields.birthDate },
         phone: { type: graphQlFields.userFields.phone },

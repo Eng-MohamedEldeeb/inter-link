@@ -5,7 +5,7 @@ import { MongoId } from '../../types/db'
 
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
-class CommunityOwnerAuthorizationGuard extends GuardActivator {
+class CommunityOwnerGuard extends GuardActivator {
   protected profileId!: MongoId
   protected createdBy!: MongoId
 
@@ -34,4 +34,4 @@ class CommunityOwnerAuthorizationGuard extends GuardActivator {
   }
 }
 
-export default new CommunityOwnerAuthorizationGuard()
+export default new CommunityOwnerGuard()

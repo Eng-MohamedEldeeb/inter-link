@@ -9,10 +9,10 @@ import { applyGuards } from '../../../common/decorators/guard/apply-guards.decor
 import * as validators from '../validators/community.validators'
 
 import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
-import CommunityOwnerAuthorizationGuard from '../../../common/guards/community/community-owner-authorization.guard'
+import communityOwnerGuard from '../../../common/guards/community/community-owner-authorization.guard'
 import PostInCommunityPermissionGuardGuard from '../../../common/guards/community/post-in-community-permission.guard'
 import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
-import communityAdminsAuthorizationGuard from '../../../common/guards/community/community-admins-authorization.guard'
+import communityAdminGuard from '../../../common/guards/community/is-community-admin-.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 import communityConflictedNameGuard from '../../../common/guards/community/community-conflicted-name.guard'
 
@@ -35,24 +35,34 @@ router.post(
 )
 
 router.post(
+  '/join',
+  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
+  validate(validators.createValidator),
+  applyGuards(communityExistenceGuard),
+  communityCoverUploader,
+  CommunityController.join,
+)
+
+router.post(
+  '/accept-join-request',
+  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
+  validate(validators.createValidator),
+  applyGuards(communityExistenceGuard),
+  communityCoverUploader,
+  CommunityController.join,
+)
+
+router.post(
   '/:communityId/add-admin',
   validate(validators.addAdminValidator.http()),
-  applyGuards(
-    communityExistenceGuard,
-    CommunityOwnerAuthorizationGuard,
-    userExistenceGuard,
-  ),
+  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
   CommunityController.addAdmin,
 )
 
 router.patch(
   '/:communityId/remove-admin',
   validate(validators.removeAdminValidator.http()),
-  applyGuards(
-    communityExistenceGuard,
-    CommunityOwnerAuthorizationGuard,
-    userExistenceGuard,
-  ),
+  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
   CommunityController.removeAdmin,
 )
 
@@ -70,7 +80,7 @@ router.delete(
   validate(validators.removePostValidator.http()),
   applyGuards(
     communityExistenceGuard,
-    communityAdminsAuthorizationGuard,
+    communityAdminGuard,
     postExistenceInCommunityGuard,
   ),
   CommunityController.removePost,
@@ -80,29 +90,29 @@ router.patch(
   '/change-cover',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.changeCoverValidator),
-  applyGuards(communityExistenceGuard, communityAdminsAuthorizationGuard),
+  applyGuards(communityExistenceGuard, communityAdminGuard),
   CommunityController.changeCover,
 )
 
 router.patch(
-  '/edit',
+  '/edit-community',
   validate(validators.editValidator.http()),
-  applyGuards(communityExistenceGuard, communityAdminsAuthorizationGuard),
-  CommunityController.edit,
+  applyGuards(communityExistenceGuard, communityAdminGuard),
+  CommunityController.editCommunity,
 )
 
 router.patch(
   '/change-visibility',
   validate(validators.changeVisibilityValidator.http()),
-  applyGuards(communityExistenceGuard, CommunityOwnerAuthorizationGuard),
+  applyGuards(communityExistenceGuard, communityOwnerGuard),
   CommunityController.changeVisibility,
 )
 
 router.delete(
   '/:communityId',
   validate(validators.deleteCommunityValidator.http()),
-  applyGuards(communityExistenceGuard, CommunityOwnerAuthorizationGuard),
-  CommunityController.delete,
+  applyGuards(communityExistenceGuard, communityOwnerGuard),
+  CommunityController.deleteCommunity,
 )
 
 export default router

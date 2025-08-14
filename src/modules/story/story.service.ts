@@ -1,4 +1,3 @@
-import moment from 'moment'
 import storyRepository from '../../common/repositories/story.repository'
 import notificationsService from '../../common/services/notifications/notifications.service'
 
@@ -8,6 +7,7 @@ import { ICreateStory } from './dto/story.dto'
 import { IStory } from '../../db/interfaces/IStory.interface'
 import { ILikedStoryNotification } from '../../db/interfaces/INotification.interface'
 import { IUser } from '../../db/interfaces/IUser.interface'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 
 export class StoryService {
   protected static readonly storyRepository = storyRepository
@@ -51,7 +51,7 @@ export class StoryService {
     story: IStory
   }) => {
     const { _id: storyId, likedBy, createdBy, attachment } = story
-    const { _id: profileId, username, avatar, fullName } = profile
+    const { _id: profileId, username, avatar } = profile
 
     const isAlreadyLiked = likedBy.some(userId => userId.equals(profileId))
 
@@ -80,9 +80,9 @@ export class StoryService {
     const notification: ILikedStoryNotification = {
       message: `${username} Liked Your Story ❤️`,
       on: { _id: storyId, attachment },
-      from: { _id: profileId, avatar, fullName, username },
+      from: { _id: profileId, avatar, username },
       refTo: 'Story',
-      sentAt: moment().format('h:mm A'),
+      sentAt: getNowMoment(),
     }
 
     await this.notificationsService.sendNotification({

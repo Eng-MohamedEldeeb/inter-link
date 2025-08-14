@@ -60,7 +60,7 @@ export class CommunityMutationResolver {
     return {
       msg: 'Community is modified successfully',
       status: 200,
-      data: await this.CommunityService.edit({
+      data: await this.CommunityService.editCommunity({
         communityId,
         editCommunity: args,
       }),
@@ -90,7 +90,7 @@ export class CommunityMutationResolver {
   ) => {
     const { _id: communityId } = context.community
 
-    await this.CommunityService.delete(communityId)
+    await this.CommunityService.deleteCommunity(communityId)
 
     return {
       msg: 'Community is deleted successfully',

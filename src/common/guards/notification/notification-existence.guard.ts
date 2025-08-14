@@ -53,7 +53,7 @@ class NotificationExistenceGuard extends GuardActivator {
             select: {
               _id: 1,
               username: 1,
-              fullName: 1,
+
               content: 1,
               'avatar.secure_url': 1,
               'attachments.paths.secure_url': 1,
@@ -66,7 +66,7 @@ class NotificationExistenceGuard extends GuardActivator {
             select: {
               _id: 1,
               username: 1,
-              fullName: 1,
+
               content: 1,
               'avatar.secure_url': 1,
               'attachments.paths.secure_url': 1,
@@ -80,7 +80,7 @@ class NotificationExistenceGuard extends GuardActivator {
             select: {
               _id: 1,
               username: 1,
-              fullName: 1,
+
               content: 1,
               'avatar.secure_url': 1,
               'attachments.paths.secure_url': 1,
@@ -93,7 +93,7 @@ class NotificationExistenceGuard extends GuardActivator {
             select: {
               _id: 1,
               username: 1,
-              fullName: 1,
+
               content: 1,
               'avatar.secure_url': 1,
               'attachments.paths.secure_url': 1,

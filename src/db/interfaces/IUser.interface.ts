@@ -3,7 +3,6 @@ import { ICloud } from '../../common/services/upload/interface/cloud-response.in
 import { MongoId } from '../../common/types/db'
 
 export interface IUserInputs {
-  fullName: string
   username: string
 
   email: string

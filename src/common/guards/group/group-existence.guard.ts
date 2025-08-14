@@ -69,7 +69,7 @@ class GroupExistenceGuard extends GuardActivator {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             'avatar.secure_url': 1,
           },
           options: { lean: true },
@@ -79,7 +79,7 @@ class GroupExistenceGuard extends GuardActivator {
           select: {
             _id: 1,
             username: 1,
-            fullName: 1,
+
             'avatar.secure_url': 1,
           },
           options: { lean: true },
