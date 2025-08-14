@@ -1,6 +1,6 @@
 {
   "name": "inter-link",
-  "version": "3.21.6",
+  "version": "3.22.8",
   "description": "Inspired By Instagram",
   "main": "/dist/main.js",
   "scripts": {
