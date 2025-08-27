@@ -1,24 +1,20 @@
-import userRepository from '../../common/repositories/user.repository'
-import communityRepository from '../../common/repositories/community.repository'
-
-import {
-  ICreateCommunity,
-  IEditCommunity,
-  IJoinCommunity,
-} from './dto/community.dto'
-
 import { ICommunity } from '../../db/interfaces/ICommunity.interface'
 import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
 import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { MongoId } from '../../common/types/db'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import { getNowMoment } from '../../common/decorators/moment/moment'
 import { IUser } from '../../db/interfaces/IUser.interface'
+
+import { ICreateCommunity, IEditCommunity } from './dto/community.dto'
 import {
   IJoinedCommunityNotification,
   INotificationInputs,
 } from '../../db/interfaces/INotification.interface'
-import { getNowMoment } from '../../common/decorators/moment/moment'
-import moment from 'moment'
+
+import userRepository from '../../common/repositories/user.repository'
+import communityRepository from '../../common/repositories/community.repository'
+import notificationsService from '../../common/services/notifications/notifications.service'
+import { throwError } from '../../common/handlers/error-message.handler'
 
 export class CommunityService {
   protected static readonly userRepository = userRepository
@@ -26,8 +22,16 @@ export class CommunityService {
   protected static readonly notificationsService = notificationsService
   protected static readonly CloudUploader = CloudUploader
 
-  protected static profileId: MongoId
+  protected static userId: MongoId
+  protected static members: MongoId[]
+  protected static requests: MongoId[]
 
+  public static readonly getAllCommunities = async () => {
+    return await this.communityRepository.findOne({
+      filter: {},
+      projection: { 'cover.path.secure_url': 1, name: 1, totalMembers: 1 },
+    })
+  }
   public static readonly getCommunity = ({
     community,
     profileId,
@@ -41,6 +45,24 @@ export class CommunityService {
       }
 
     return community
+  }
+
+  public static readonly getCommunityMembers = ({
+    community,
+    profileId,
+  }: {
+    community: ICommunity
+    profileId: MongoId
+  }) => {
+    if (community.isPrivateCommunity && !profileId.equals(community.createdBy))
+      return {
+        totalMembers: community.totalMembers,
+      }
+
+    return {
+      totalMembers: community.totalMembers,
+      members: community.members,
+    }
   }
 
   public static readonly create = async ({
@@ -75,7 +97,13 @@ export class CommunityService {
       createdBy,
       cover,
       name,
+      members,
     } = community
+
+    this.userId = profileId
+    this.members = members
+
+    if (this.isExistedMember()) return
 
     const notificationDetails: INotificationInputs = {
       from: { _id: profileId, username, avatar },
@@ -119,16 +147,31 @@ export class CommunityService {
     })
   }
 
+  protected static readonly isExistedMember = () => {
+    return this.members.some(requestedUserId =>
+      requestedUserId.equals(this.userId),
+    )
+  }
+
   public static readonly leave = async ({
     profileId,
-    communityId,
+    community,
   }: {
     profileId: MongoId
-    communityId: MongoId
+    community: ICommunity
   }) => {
+    this.userId = profileId
+    this.members = community.members
+
+    if (!this.isExistedMember())
+      return throwError({
+        msg: 'You are not a member of this Community',
+        status: 400,
+      })
+
     return await this.communityRepository.findOneAndUpdate({
       filter: {
-        $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+        $and: [{ _id: community._id }, { isPrivateCommunity: true }],
       },
       data: {
         $pull: { members: profileId },
@@ -137,26 +180,20 @@ export class CommunityService {
   }
 
   public static readonly acceptJoinRequest = async ({
-    profile,
+    user,
     community,
   }: {
-    profile: IUser
+    user: IUser
     community: ICommunity
   }) => {
-    this.profileId = profile._id
+    const { _id: communityId, createdBy, cover, name, requests } = community
 
-    const {
-      _id: communityId,
-      isPrivateCommunity,
-      createdBy,
-      cover,
-      name,
-      requests,
-    } = community
+    this.userId = user._id
+    this.requests = requests
 
     const notificationDetails: IJoinedCommunityNotification = {
       from: { _id: communityId, name, cover: cover },
-      message: `You are accepted to join ${name} community`,
+      message: `${community.name} Accepted Your Join Request`,
       refTo: 'Community',
       on: { _id: communityId, cover, name },
       sentAt: getNowMoment(),
@@ -168,8 +205,8 @@ export class CommunityService {
           $and: [{ _id: communityId }, { isPrivateCommunity: true }],
         },
         data: {
-          $set: { requests: this.filterJoinRequests(requests) },
-          $push: { members: this.profileId },
+          $set: { requests: this.filterJoinRequests() },
+          $push: { members: this.userId },
         },
       }),
       this.notificationsService.sendNotification({
@@ -179,9 +216,32 @@ export class CommunityService {
     ])
   }
 
-  protected static filterJoinRequests = (requests: MongoId[]) => {
-    return requests.filter(
-      requestedUser => !requestedUser.equals(this.profileId),
+  public static readonly rejectJoinRequest = async ({
+    user,
+    community,
+  }: {
+    user: IUser
+    community: ICommunity
+  }) => {
+    const { _id: communityId, requests } = community
+
+    this.requests = requests
+    this.userId = user._id
+
+    return await this.communityRepository.findOneAndUpdate({
+      filter: {
+        $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+      },
+      data: {
+        $set: { requests: this.filterJoinRequests() },
+        $pull: { members: this.userId },
+      },
+    })
+  }
+
+  protected static filterJoinRequests = () => {
+    return this.requests.filter(
+      requestedUser => !requestedUser.equals(this.userId),
     )
   }
 

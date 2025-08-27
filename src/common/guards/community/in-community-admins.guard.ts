@@ -5,9 +5,11 @@ import { MongoId } from '../../types/db'
 
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
-class StoryOwnerGuard extends GuardActivator {
+import communityOwnerAuthorizationGuard from './community-owner-authorization.guard'
+
+class CommunityAdminsGuard extends GuardActivator {
   protected profileId!: MongoId
-  protected createdBy!: MongoId
+  protected admins!: MongoId[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -15,23 +17,30 @@ class StoryOwnerGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
 
-      this.createdBy = req.story.createdBy
+      const { admins } = req.community
+
+      this.admins = admins
       this.profileId = req.profile._id
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
 
-      this.createdBy = context.story.createdBy
+      const { admins } = context.community
+
+      this.admins = admins
       this.profileId = context.profile._id
     }
 
-    return this.isTheOwner()
+    return (
+      this.isAdmin() ||
+      (await communityOwnerAuthorizationGuard.canActivate(...params))
+    )
   }
 
-  protected readonly isTheOwner = async () => {
-    return this.createdBy.equals(this.profileId)
+  protected readonly isAdmin = () => {
+    return this.admins.some(adminId => adminId.equals(this.profileId))
   }
 }
 
-export default new StoryOwnerGuard()
+export default new CommunityAdminsGuard()

@@ -9,7 +9,7 @@ import {
   INotifications,
 } from '../../db/interfaces/INotification.interface'
 
-import { GuardActivator } from '../guards/class/guard-activator.class'
+import { GuardActivator } from '../decorators/guard/guard-activator.guard'
 import { IPayload } from '../utils/security/token/interface/token.interface'
 import { IUser } from '../../db/interfaces/IUser.interface'
 import { IPost } from '../../db/interfaces/IPost.interface'

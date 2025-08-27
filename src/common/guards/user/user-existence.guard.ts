@@ -1,6 +1,6 @@
 import { ContextType } from '../../decorators/context/types'
 import { throwError } from '../../handlers/error-message.handler'
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { MongoId } from '../../types/db'

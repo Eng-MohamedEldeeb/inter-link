@@ -1,5 +1,5 @@
 import { model, models } from 'mongoose'
-import { communitieschema } from './Community.schema'
+import { communitySchema } from './Community.schema'
 
 export const CommunityModel =
-  models.Community ?? model('Community', communitieschema)
+  models.Community ?? model('Community', communitySchema)

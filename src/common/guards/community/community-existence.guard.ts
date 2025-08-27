@@ -1,4 +1,4 @@
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
 import { IGetCommunity } from '../../../modules/community/dto/community.dto'
@@ -42,7 +42,17 @@ class CommunityExistenceGuard extends GuardActivator {
   protected readonly getCommunityInformation = async () => {
     const isExistedCommunity = await this.communityRepository.findOne({
       filter: { _id: this.communityId },
-      populate: [{ path: 'posts', options: { sort: { createdAt: -1 } } }],
+      populate: [
+        { path: 'posts', options: { sort: { createdAt: -1 } } },
+        {
+          path: 'members',
+          select: {
+            username: 1,
+            'avatar.secure_url': 1,
+          },
+          options: { lean: true },
+        },
+      ],
     })
 
     if (!isExistedCommunity)

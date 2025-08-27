@@ -1,7 +1,7 @@
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
 import { MongoId } from '../../types/db'
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 import { IUser } from '../../../db/interfaces/IUser.interface'
 
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'

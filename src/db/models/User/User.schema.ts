@@ -119,15 +119,18 @@ UserSchema.virtual('posts', {
 })
 
 UserSchema.virtual('totalPosts').get(function () {
-  return this.posts.length ?? 0
+  if (this.posts) return this.posts.length
+  return 0
 })
 
 UserSchema.virtual('totalFollowing').get(function () {
-  return this.following.length ?? 0
+  if (this.following) return this.following.length
+  return 0
 })
 
 UserSchema.virtual('totalFollowers').get(function () {
-  return this.followers.length ?? 0
+  if (this.followers) return this.followers.length
+  return 0
 })
 
 UserSchema.virtual('birthDate').set(function (v) {

@@ -1,4 +1,4 @@
-import { GuardActivator } from '../../../guards/class/guard-activator.class'
+import { GuardActivator } from '../guard-activator.guard'
 import { throwError } from '../../../handlers/error-message.handler'
 import { ContextDetector } from '../../context/context-detector.decorator'
 

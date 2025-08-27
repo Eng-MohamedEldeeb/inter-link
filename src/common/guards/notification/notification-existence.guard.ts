@@ -8,7 +8,7 @@ import { MongoId } from '../../types/db'
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import notificationRepository from '../../repositories/notification.repository'
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 
 class NotificationExistenceGuard extends GuardActivator {
   protected readonly notificationRepository = notificationRepository

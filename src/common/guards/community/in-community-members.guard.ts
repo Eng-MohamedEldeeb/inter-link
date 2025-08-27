@@ -1,4 +1,4 @@
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
 import { MongoId } from '../../types/db'
@@ -7,9 +7,9 @@ import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import communityOwnerAuthorizationGuard from './community-owner-authorization.guard'
 
-class CommunityAdminGuard extends GuardActivator {
-  protected profileId!: MongoId
-  protected admins!: MongoId[]
+class CommunityMembersGuard extends GuardActivator {
+  protected userId!: MongoId
+  protected members!: MongoId[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -17,30 +17,29 @@ class CommunityAdminGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
 
-      const { admins } = req.community
+      const { members } = req.community
+      const { _id: userId } = req.user
 
-      this.admins = admins
-      this.profileId = req.profile._id
+      this.members = members
+      this.userId = userId
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
 
-      const { admins } = context.community
+      const { members } = context.community
+      const { _id: userId } = context.user
 
-      this.admins = admins
-      this.profileId = context.profile._id
+      this.members = members
+      this.userId = userId
     }
 
-    return (
-      this.isAdmin() ||
-      (await communityOwnerAuthorizationGuard.canActivate(...params))
-    )
+    return this.isExistedMember()
   }
 
-  protected readonly isAdmin = () => {
-    return this.admins.some(adminId => adminId.equals(this.profileId))
+  protected readonly isExistedMember = () => {
+    return this.members.some(userId => userId.equals(this.userId))
   }
 }
 
-export default new CommunityAdminGuard()
+export default new CommunityMembersGuard()

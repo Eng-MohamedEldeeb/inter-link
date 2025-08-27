@@ -1,6 +1,6 @@
 import { asyncHandler } from '../async-handler/async-handler.decorator'
 import { ContextDetector } from '../context/context-detector.decorator'
-import { GuardActivator } from '../../guards/class/guard-activator.class'
+import { GuardActivator } from './guard-activator.guard'
 import { ContextType } from '../context/types'
 
 import {

@@ -1,10 +1,6 @@
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
-import communityAuthorizationGuard from '../../../common/guards/community/community-owner-authorization.guard'
-import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
-import communityAdminsAuthorizationGuard from '../../../common/guards/community/is-community-admin-.guard'
-import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
 
 import * as args from './types/community-args.type'
 import * as validators from '../validators/community.validators'
@@ -23,6 +19,10 @@ import { returnedResponseType } from '../../../common/decorators/resolver/return
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { CommunityResponse } from './types/community-response.type'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
+import communityOwnerAuthorizationGuard from '../../../common/guards/community/community-owner-authorization.guard'
+import inCommunityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
+import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
 
 export class CommunityController {
   private static readonly CommunityQueryResolver = CommunityQueryResolver
@@ -61,8 +61,8 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAuthorizationGuard,
           userExistenceGuard,
+          communityOwnerAuthorizationGuard,
         ],
         resolver: this.CommunityMutationResolver.addAdmin,
       }),
@@ -81,8 +81,8 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAuthorizationGuard,
           userExistenceGuard,
+          inCommunityAdminsGuard,
         ],
         resolver: this.CommunityMutationResolver.removeAdmin,
       }),
@@ -101,7 +101,7 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAuthorizationGuard,
+          inCommunityAdminsGuard,
         ],
         resolver: this.CommunityMutationResolver.edit,
       }),
@@ -120,7 +120,7 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAuthorizationGuard,
+          communityOwnerAuthorizationGuard,
         ],
         resolver: this.CommunityMutationResolver.changeVisibility,
       }),
@@ -139,7 +139,7 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAuthorizationGuard,
+          communityOwnerAuthorizationGuard,
         ],
         resolver: this.CommunityMutationResolver.deleteCommunity,
       }),
@@ -158,7 +158,7 @@ export class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityAdminsAuthorizationGuard,
+          inCommunityAdminsGuard,
           postExistenceInCommunityGuard,
         ],
         resolver: this.CommunityMutationResolver.removePostFromCommunity,

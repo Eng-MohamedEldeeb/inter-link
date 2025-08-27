@@ -55,7 +55,7 @@ export const joinCommunityValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] query param is required',
+          'any.required': '( communityId ) query param is required',
         }),
     }
   },
@@ -67,14 +67,17 @@ export const joinCommunityValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] arg is required',
+          'any.required': '( communityId ) arg is required',
         }),
     }
   },
 }
 
 export const acceptJoinRequestValidator = {
-  query: { communityId: generalFields.mongoId.required() },
+  query: {
+    communityId: generalFields.mongoId.required(),
+    userId: generalFields.mongoId.required(),
+  },
 
   http() {
     return {
@@ -83,7 +86,7 @@ export const acceptJoinRequestValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] query param is required',
+          'any.required': '( communityId, userId ) query param is required',
         }),
     }
   },
@@ -95,7 +98,7 @@ export const acceptJoinRequestValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] arg is required',
+          'any.required': '( communityId, userId ) arg is required',
         }),
     }
   },
@@ -111,7 +114,7 @@ export const leaveCommunityValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] query param is required',
+          'any.required': '( communityId ) query param is required',
         }),
     }
   },
@@ -123,7 +126,7 @@ export const leaveCommunityValidator = {
         .keys(this.query)
         .required()
         .messages({
-          'any.required': '[ communityId ] arg is required',
+          'any.required': '( communityId ) arg is required',
         }),
     }
   },

@@ -10,19 +10,31 @@ import * as validators from '../validators/community.validators'
 
 import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
 import communityOwnerGuard from '../../../common/guards/community/community-owner-authorization.guard'
-import PostInCommunityPermissionGuardGuard from '../../../common/guards/community/post-in-community-permission.guard'
+import communityPublishPermissionGuard from '../../../common/guards/community/community-publish-permission.guard'
 import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
-import communityAdminGuard from '../../../common/guards/community/is-community-admin-.guard'
+import communityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 import communityConflictedNameGuard from '../../../common/guards/community/community-conflicted-name.guard'
+import inCommunityRequestsGuard from '../../../common/guards/community/in-community-requests.guard'
+import communityPostDeletionGuard from '../../../common/guards/community/community-post-deletion.guard'
+import inCommunityMembersGuard from '../../../common/guards/community/in-community-members.guard'
 
 const router: Router = Router()
+
+router.get('/', CommunityController.getAllCommunities)
 
 router.get(
   '/:communityId',
   validate(validators.getCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   CommunityController.getCommunity,
+)
+
+router.get(
+  '/:communityId/members',
+  validate(validators.getCommunityValidator.http()),
+  applyGuards(communityExistenceGuard),
+  CommunityController.getCommunityMembers,
 )
 
 router.post(
@@ -38,24 +50,50 @@ router.post(
   '/join',
   validate(validators.joinCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
-  communityCoverUploader,
   CommunityController.join,
-)
-
-router.post(
-  '/leave',
-  validate(validators.leaveCommunityValidator.http()),
-  applyGuards(communityExistenceGuard),
-  communityCoverUploader,
-  CommunityController.leave,
 )
 
 router.post(
   '/accept-join-request',
   validate(validators.acceptJoinRequestValidator.http()),
-  applyGuards(communityExistenceGuard),
-  communityCoverUploader,
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityRequestsGuard,
+    communityAdminsGuard,
+  ),
   CommunityController.acceptJoinRequest,
+)
+
+router.delete(
+  '/reject-join-request',
+  validate(validators.acceptJoinRequestValidator.http()),
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityRequestsGuard,
+    communityAdminsGuard,
+  ),
+  CommunityController.rejectJoinRequest,
+)
+
+router.patch(
+  '/leave',
+  validate(validators.leaveCommunityValidator.http()),
+  applyGuards(communityExistenceGuard),
+  CommunityController.leave,
+)
+
+router.patch(
+  '/kick-out',
+  validate(validators.leaveCommunityValidator.http()),
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityMembersGuard,
+    communityAdminsGuard,
+  ),
+  CommunityController.leave, //TODO: Implement The kickOut Service
 )
 
 router.post(
@@ -76,7 +114,7 @@ router.post(
   '/add-post',
   fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
   validate(validators.addPostValidator),
-  applyGuards(communityExistenceGuard, PostInCommunityPermissionGuardGuard),
+  applyGuards(communityExistenceGuard, communityPublishPermissionGuard),
   communityAttachmentsUploader,
   CommunityController.addPost,
 )
@@ -86,8 +124,8 @@ router.delete(
   validate(validators.removePostValidator.http()),
   applyGuards(
     communityExistenceGuard,
-    communityAdminGuard,
     postExistenceInCommunityGuard,
+    communityPostDeletionGuard,
   ),
   CommunityController.removePost,
 )
@@ -96,14 +134,14 @@ router.patch(
   '/change-cover',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.changeCoverValidator),
-  applyGuards(communityExistenceGuard, communityAdminGuard),
+  applyGuards(communityExistenceGuard, communityAdminsGuard),
   CommunityController.changeCover,
 )
 
 router.patch(
   '/edit-community',
   validate(validators.editValidator.http()),
-  applyGuards(communityExistenceGuard, communityAdminGuard),
+  applyGuards(communityExistenceGuard, communityAdminsGuard),
   CommunityController.editCommunity,
 )
 

@@ -1,4 +1,4 @@
-import { GuardActivator } from '../class/guard-activator.class'
+import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
 import { ContextDetector } from '../../decorators/context/context-detector.decorator'
 import { ContextType } from '../../decorators/context/types'
 import { MongoId } from '../../types/db'
@@ -6,8 +6,9 @@ import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 import { throwError } from '../../handlers/error-message.handler'
 
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { IUser } from '../../../db/interfaces/IUser.interface'
 
-class PostInCommunityPermissionGuard extends GuardActivator {
+class CommunityPublishPermissionGuard extends GuardActivator {
   protected createdBy!: MongoId
   protected profileId!: MongoId
   protected members!: MongoId[]
@@ -44,19 +45,13 @@ class PostInCommunityPermissionGuard extends GuardActivator {
       this.isPrivateCommunity = isPrivateCommunity
     }
 
-    if (this.isPrivateCommunity)
-      return throwError({
-        msg: 'only members are allowed to share posts in this private community',
-        status: 403,
-      })
-
     return this.publishPermission()
   }
 
   protected readonly publishPermission = async () => {
     if (this.profileId.equals(this.createdBy)) return true
 
-    if (!this.userInCommunityMembers() || !this.userInCommunityAdmins())
+    if (!this.userInCommunityMembers() && !this.userInCommunityAdmins())
       return throwError({
         msg: 'only members are allowed to share posts in the community',
         status: 403,
@@ -66,16 +61,12 @@ class PostInCommunityPermissionGuard extends GuardActivator {
   }
 
   protected readonly userInCommunityMembers = (): boolean => {
-    return this.members.some((memberId: MongoId) =>
-      memberId.equals(this.profileId),
-    )
+    return this.members.some(member => member._id.equals(this.profileId))
   }
 
   protected readonly userInCommunityAdmins = (): boolean => {
-    return this.admins.some((adminId: MongoId) =>
-      adminId.equals(this.profileId),
-    )
+    return this.admins.some(admin => admin._id.equals(this.profileId))
   }
 }
 
-export default new PostInCommunityPermissionGuard()
+export default new CommunityPublishPermissionGuard()

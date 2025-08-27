@@ -1,8 +1,4 @@
-import {
-  GraphQLParams,
-  HttpParams,
-  SocketServerParams,
-} from '../../decorators/context/types'
+import { GraphQLParams, HttpParams, SocketServerParams } from '../context/types'
 
 export abstract class GuardActivator {
   abstract canActivate(
