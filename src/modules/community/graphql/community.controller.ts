@@ -37,7 +37,7 @@ export class CommunityController {
       }),
       args: args.getCommunity,
       resolve: applyResolver({
-        middlewares: [validate(validators.getCommunityValidator.graphQL())],
+        middlewares: [validate(validators.getCommunityValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -56,7 +56,7 @@ export class CommunityController {
       }),
       args: args.addAdmin,
       resolve: applyResolver({
-        middlewares: [validate(validators.addAdminValidator.graphQL())],
+        middlewares: [validate(validators.addAdminValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -76,7 +76,7 @@ export class CommunityController {
       }),
       args: args.removeAdmin,
       resolve: applyResolver({
-        middlewares: [validate(validators.removeAdminValidator.graphQL())],
+        middlewares: [validate(validators.removeAdminValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -96,7 +96,7 @@ export class CommunityController {
       }),
       args: args.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphQL())],
+        middlewares: [validate(validators.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -115,7 +115,7 @@ export class CommunityController {
       }),
       args: args.changeVisibility,
       resolve: applyResolver({
-        middlewares: [validate(validators.changeVisibilityValidator.graphQL())],
+        middlewares: [validate(validators.changeVisibilityValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -134,7 +134,7 @@ export class CommunityController {
       }),
       args: args.deleteCommunity,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteCommunityValidator.graphQL())],
+        middlewares: [validate(validators.deleteCommunityValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -153,7 +153,7 @@ export class CommunityController {
       }),
       args: args.removePost,
       resolve: applyResolver({
-        middlewares: [validate(validators.removePostValidator.graphQL())],
+        middlewares: [validate(validators.removePostValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

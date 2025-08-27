@@ -17,7 +17,7 @@ export class AuthController {
       }),
       args: args.confirmEmail,
       resolve: applyResolver({
-        middlewares: [validate(validators.confirmEmailSchema.graphQL())],
+        middlewares: [validate(validators.confirmEmailSchema.graphql())],
         resolver: this.AuthResolver.confirmEmail,
       }),
     }
@@ -30,7 +30,7 @@ export class AuthController {
       }),
       args: args.register,
       resolve: applyResolver({
-        middlewares: [validate(validators.registerSchema.graphQL())],
+        middlewares: [validate(validators.registerSchema.graphql())],
         resolver: this.AuthResolver.register,
       }),
     }
@@ -43,7 +43,7 @@ export class AuthController {
       }),
       args: args.login,
       resolve: applyResolver({
-        middlewares: [validate(validators.loginSchema.graphQL())],
+        middlewares: [validate(validators.loginSchema.graphql())],
         resolver: this.AuthResolver.login,
       }),
     }
@@ -56,7 +56,7 @@ export class AuthController {
       }),
       args: args.forgotPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.forgotPasswordSchema.graphQL())],
+        middlewares: [validate(validators.forgotPasswordSchema.graphql())],
         resolver: this.AuthResolver.forgotPassword,
       }),
     }
@@ -69,7 +69,7 @@ export class AuthController {
       }),
       args: args.resetPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.resetPasswordSchema.graphQL())],
+        middlewares: [validate(validators.resetPasswordSchema.graphql())],
         resolver: this.AuthResolver.resetPassword,
       }),
     }

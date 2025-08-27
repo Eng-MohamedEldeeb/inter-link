@@ -33,7 +33,7 @@ export class StoryController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.getAllValidator.graphQL())],
+        middlewares: [validate(validators.getAllValidator.graphql())],
         resolver: this.StoryQueryResolver.getAll,
       }),
     }
@@ -47,7 +47,7 @@ export class StoryController {
       }),
       args: args.getSingle,
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleValidator.graphQL())],
+        middlewares: [validate(validators.getSingleValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -67,7 +67,7 @@ export class StoryController {
       }),
       args: args.likeStory,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeValidator.graphQL())],
+        middlewares: [validate(validators.likeValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, storyExistenceGuard],
         resolver: this.StoryMutationResolver.like,
       }),
@@ -81,7 +81,7 @@ export class StoryController {
       }),
       args: args.deleteStory,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphQL())],
+        middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

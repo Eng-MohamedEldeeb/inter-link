@@ -23,7 +23,7 @@ export const getSingleCommentValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'commentId arg is required',
@@ -58,7 +58,7 @@ export const addValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.IAddComment>()
@@ -96,7 +96,7 @@ export const editValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.IEditComment>()
@@ -129,7 +129,7 @@ export const deleteValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.IDeleteComment>()
@@ -161,7 +161,7 @@ export const likeValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.IDeleteComment>()

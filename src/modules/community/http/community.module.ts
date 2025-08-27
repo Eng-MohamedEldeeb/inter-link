@@ -36,20 +36,26 @@ router.post(
 
 router.post(
   '/join',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
-  validate(validators.createValidator),
+  validate(validators.joinCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityCoverUploader,
   CommunityController.join,
 )
 
 router.post(
-  '/accept-join-request',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
-  validate(validators.createValidator),
+  '/leave',
+  validate(validators.leaveCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityCoverUploader,
-  CommunityController.join,
+  CommunityController.leave,
+)
+
+router.post(
+  '/accept-join-request',
+  validate(validators.acceptJoinRequestValidator.http()),
+  applyGuards(communityExistenceGuard),
+  communityCoverUploader,
+  CommunityController.acceptJoinRequest,
 )
 
 router.post(

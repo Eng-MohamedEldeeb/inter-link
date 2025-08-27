@@ -20,7 +20,7 @@ export const getSingleChatValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'userId arg is required',
@@ -58,7 +58,7 @@ export const likeMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -112,7 +112,7 @@ export const editMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -154,7 +154,7 @@ export const deleteMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -183,7 +183,7 @@ export const deleteChatValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'chatId arg is required',

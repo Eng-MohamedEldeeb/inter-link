@@ -2,7 +2,6 @@ import { ObjectSchema } from 'joi'
 import { ContextDetector } from '../../../decorators/context/context-detector.decorator'
 import { IRequest } from '../../../interface/IRequest.interface'
 import { throwError } from '../../../handlers/error-message.handler'
-import { GraphQLError } from 'graphql'
 
 export const validateHttpInputs = async (
   ctx: typeof ContextDetector,

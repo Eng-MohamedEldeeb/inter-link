@@ -37,11 +37,6 @@ class NotificationsService {
 
     this.notificationDetails = notificationDetails
 
-    console.log({
-      userId,
-      userStatus: this.connectedUserController.getUserStatus(this.userId),
-    })
-
     const { socketId, isOnline } = this.connectedUserController.getUserStatus(
       this.userId,
     )
@@ -84,7 +79,6 @@ class NotificationsService {
 
   protected readonly upsertMissedMessages = async () => {
     const currentNotifications = await this.getUserNotifications()
-    console.log({ currentNotifications })
 
     const { from, message, sentAt, messageId, refTo } = this.notificationDetails
 
@@ -146,8 +140,6 @@ class NotificationsService {
       this.notificationDetails.refTo === 'Chat' ||
       this.notificationDetails.refTo === 'Group'
 
-    console.log({ refToChat })
-
     if (refToChat) return
 
     if (!currentNotifications)
@@ -161,7 +153,7 @@ class NotificationsService {
     const { message, from, refTo, on, sentAt } = this.notificationDetails
 
     return await this.notificationRepository.findByIdAndUpdate({
-      _id: this.currentNotifications._id,
+      _id: currentNotifications._id,
       data: {
         seen: [
           {
@@ -169,9 +161,9 @@ class NotificationsService {
             from,
             refTo,
             ...(on && { on }),
+            sentAt,
           },
           ...(seen && seen.length > 0 ? seen : []),
-          sentAt,
         ],
       },
     })

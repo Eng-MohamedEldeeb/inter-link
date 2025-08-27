@@ -44,12 +44,47 @@ export class CommunityController {
       const profile = req.profile
       const community = req.community
 
+      await this.CommunityService.acceptJoinRequest({
+        profile,
+        community,
+      })
+
       return successResponse(res, {
-        msg: `You Joined ${name} Community Successfully`,
-        data: await this.CommunityService.join({
-          profile,
-          community,
-        }),
+        msg: `${community.name} Accepted Your Join Request`,
+      })
+    },
+  )
+
+  public static acceptJoinRequest = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const profile = req.profile
+      const community = req.community
+
+      await this.CommunityService.join({
+        profile,
+        community,
+      })
+
+      return successResponse(res, {
+        msg: community.isPrivateCommunity
+          ? `Join request was sent to ${community.name}'s Creator`
+          : `You Joined ${community.name} Community Successfully`,
+      })
+    },
+  )
+
+  public static leave = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const { _id: profileId } = req.profile
+      const { _id: communityId, name } = req.community
+
+      await this.CommunityService.leave({
+        profileId,
+        communityId,
+      })
+
+      return successResponse(res, {
+        msg: `We are sorry to See you leaving "${name}" Community `,
       })
     },
   )

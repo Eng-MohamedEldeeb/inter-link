@@ -16,6 +16,8 @@ export interface IJoinCommunity extends IAddAdmin {}
 
 export interface ILeaveCommunity extends IAddAdmin {}
 
+export interface IAcceptJoinRequest extends IAddAdmin {}
+
 export interface IRemoveAdmin extends IGetCommunity {
   adminId: MongoId
 }
@@ -29,7 +31,3 @@ export interface IEditCommunity
 export interface IDeleteCommunity extends IGetCommunity {}
 
 export interface IChangeCommunityVisibility extends IGetCommunity {}
-
-export interface IJoinCommunity extends IGetCommunity {}
-
-export interface ILeaveCommunity extends IGetCommunity {}

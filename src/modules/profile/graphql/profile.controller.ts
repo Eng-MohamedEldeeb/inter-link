@@ -86,7 +86,7 @@ export class ProfileController {
       args: args.updateProfile,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.updateProfileSchema.graphQL())],
+        middlewares: [validate(validators.updateProfileSchema.graphql())],
         resolver: this.ProfileMutationResolver.updateProfile,
       }),
     }
@@ -115,7 +115,7 @@ export class ProfileController {
       args: args.changeEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.changeEmailSchema.graphQL())],
+        middlewares: [validate(validators.changeEmailSchema.graphql())],
         resolver: this.ProfileMutationResolver.changeEmail,
       }),
     }
@@ -129,7 +129,7 @@ export class ProfileController {
       args: args.confirmNewEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmNewEmailSchema.graphQL())],
+        middlewares: [validate(validators.confirmNewEmailSchema.graphql())],
         resolver: this.ProfileMutationResolver.confirmNewEmail,
       }),
     }
@@ -158,7 +158,7 @@ export class ProfileController {
       args: args.deactivateAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema.graphQL())],
+        middlewares: [validate(validators.deleteAccountSchema.graphql())],
         resolver: this.ProfileMutationResolver.deactivateAccount,
       }),
     }
@@ -172,7 +172,7 @@ export class ProfileController {
       args: args.deleteAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema.graphQL())],
+        middlewares: [validate(validators.deleteAccountSchema.graphql())],
         resolver: this.ProfileMutationResolver.deleteAccount,
       }),
     }
@@ -186,7 +186,7 @@ export class ProfileController {
       args: args.confirmDeletion,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmDeletionSchema.graphQL())],
+        middlewares: [validate(validators.confirmDeletionSchema.graphql())],
         resolver: this.ProfileMutationResolver.confirmDeletion,
       }),
     }

@@ -69,6 +69,8 @@ export const NotificationSchema = new Schema<INotifications>(
             type: Date,
             default: Date.now(),
           },
+
+          sentAt: String,
         },
       ],
     },
@@ -103,6 +105,7 @@ export const NotificationSchema = new Schema<INotifications>(
             type: Date,
             default: Date.now(),
           },
+          sentAt: String,
         },
       ],
     },

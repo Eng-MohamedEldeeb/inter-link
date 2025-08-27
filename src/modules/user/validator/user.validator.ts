@@ -26,7 +26,7 @@ export const getUserProfileSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'one of [ id , username ] args is required',
@@ -48,7 +48,7 @@ export const blockUserSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -69,7 +69,7 @@ export const unblockUserSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -90,7 +90,7 @@ export const followUserSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -111,7 +111,7 @@ export const unfollowUserSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -132,7 +132,7 @@ export const acceptFollowRequestSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -153,7 +153,7 @@ export const rejectFollowRequestSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',

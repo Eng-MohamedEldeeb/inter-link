@@ -26,7 +26,7 @@ export const getAllValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'user id arg is required',
@@ -51,7 +51,7 @@ export const getSingleValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'editPost id arg is required',
@@ -95,7 +95,7 @@ export const deleteValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'deletePost id arg is required',
@@ -119,7 +119,7 @@ export const likeValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'deletePost id arg is required',

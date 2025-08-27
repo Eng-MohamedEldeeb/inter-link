@@ -45,7 +45,7 @@ export class ReplyController {
       }),
       args: args.like,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeValidator.graphQL())],
+        middlewares: [validate(validators.likeValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, replyExistenceGuard],
         resolver: this.ReplyMutationResolver.like,
       }),
@@ -59,7 +59,7 @@ export class ReplyController {
       }),
       args: args.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphQL())],
+        middlewares: [validate(validators.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -78,7 +78,7 @@ export class ReplyController {
       }),
       args: args.deleteReply,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphQL())],
+        middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

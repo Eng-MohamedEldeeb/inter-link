@@ -32,7 +32,7 @@ export class CommentController {
       }),
       args: args.getPostComments,
       resolve: applyResolver({
-        middlewares: [validate(validators.addValidator.graphQL())],
+        middlewares: [validate(validators.addValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         resolver: this.CommentQueryResolver.getSingleComment,
       }),
@@ -47,7 +47,7 @@ export class CommentController {
       }),
       args: args.like,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphQL())],
+        middlewares: [validate(validators.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -65,7 +65,7 @@ export class CommentController {
       }),
       args: args.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphQL())],
+        middlewares: [validate(validators.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -84,7 +84,7 @@ export class CommentController {
       }),
       args: args.deleteComment,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphQL())],
+        middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

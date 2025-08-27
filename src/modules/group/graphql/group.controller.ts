@@ -44,7 +44,7 @@ export class GroupController {
         data: ChatResponse.getSingleChat(),
       }),
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleChatValidator.graphQL())],
+        middlewares: [validate(validators.getSingleChatValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -64,7 +64,7 @@ export class GroupController {
       }),
       args: args.likeMessage,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeMessageValidator.graphQL())],
+        middlewares: [validate(validators.likeMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.likeMessage,
       }),
@@ -78,7 +78,7 @@ export class GroupController {
       }),
       args: args.deleteMessage,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteMessageValidator.graphQL())],
+        middlewares: [validate(validators.deleteMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.deleteMessage,
       }),
@@ -92,7 +92,7 @@ export class GroupController {
       }),
       args: args.deleteChat,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteGroupValidator.graphQL())],
+        middlewares: [validate(validators.deleteGroupValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
         resolver: this.ChatMutationResolver.deleteChat,
       }),

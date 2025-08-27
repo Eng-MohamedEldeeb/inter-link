@@ -21,7 +21,7 @@ export const getAllValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema,
     }
@@ -44,7 +44,7 @@ export const getSingleValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'editPost id arg is required',
@@ -103,7 +103,7 @@ export const editValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.IEditPost>()
@@ -133,7 +133,7 @@ export const saveValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'savePost id arg is required',
@@ -159,7 +159,7 @@ export const sharedValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -185,7 +185,7 @@ export const likeValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': '[id] arg is required',
@@ -211,7 +211,7 @@ export const archiveValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'archivePost id arg is required',
@@ -237,7 +237,7 @@ export const restoreValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'restorePost id arg is required',
@@ -261,7 +261,7 @@ export const deleteValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'deletePost id arg is required',

@@ -42,7 +42,7 @@ export class ChatController {
         data: ChatResponse.getSingleChat(),
       }),
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleChatValidator.graphQL())],
+        middlewares: [validate(validators.getSingleChatValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
         resolver: this.ChatQueryResolver.getSingleChat,
       }),
@@ -57,7 +57,7 @@ export class ChatController {
       }),
       args: args.likeMessage,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeMessageValidator.graphQL())],
+        middlewares: [validate(validators.likeMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
         resolver: this.ChatMutationResolver.likeMessage,
       }),
@@ -71,7 +71,7 @@ export class ChatController {
       }),
       args: args.deleteMessage,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteMessageValidator.graphQL())],
+        middlewares: [validate(validators.deleteMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
         resolver: this.ChatMutationResolver.deleteMessage,
       }),
@@ -85,7 +85,7 @@ export class ChatController {
       }),
       args: args.deleteChat,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteChatValidator.graphQL())],
+        middlewares: [validate(validators.deleteChatValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
         resolver: this.ChatMutationResolver.deleteChat,
       }),

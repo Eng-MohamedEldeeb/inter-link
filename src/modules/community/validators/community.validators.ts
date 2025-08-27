@@ -22,7 +22,7 @@ export const getCommunityValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'getCommunity id arg is required',
@@ -43,6 +43,90 @@ export const createValidator = {
     .messages({
       'any.required': 'createCommunity body is required',
     }),
+}
+
+export const joinCommunityValidator = {
+  query: { communityId: generalFields.mongoId.required() },
+
+  http() {
+    return {
+      query: joi
+        .object<Pick<CommunityDTO.IJoinCommunity, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] query param is required',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<Pick<CommunityDTO.IJoinCommunity, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] arg is required',
+        }),
+    }
+  },
+}
+
+export const acceptJoinRequestValidator = {
+  query: { communityId: generalFields.mongoId.required() },
+
+  http() {
+    return {
+      query: joi
+        .object<Pick<CommunityDTO.IAcceptJoinRequest, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] query param is required',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<Pick<CommunityDTO.IAcceptJoinRequest, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] arg is required',
+        }),
+    }
+  },
+}
+
+export const leaveCommunityValidator = {
+  query: { communityId: generalFields.mongoId.required() },
+
+  http() {
+    return {
+      query: joi
+        .object<Pick<CommunityDTO.ILeaveCommunity, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] query param is required',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<Pick<CommunityDTO.IJoinCommunity, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '[ communityId ] arg is required',
+        }),
+    }
+  },
 }
 
 export const addAdminValidator = {
@@ -74,7 +158,7 @@ export const addAdminValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<CommunityDTO.IAddAdmin>()
@@ -117,7 +201,7 @@ export const removeAdminValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<CommunityDTO.IRemoveAdmin>()
@@ -178,7 +262,7 @@ export const removePostValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<CommunityDTO.IGetCommunity>()
@@ -225,7 +309,7 @@ export const editValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<CommunityDTO.IEditCommunity>()
@@ -280,7 +364,7 @@ export const changeVisibilityValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<CommunityDTO.IChangeCommunityVisibility>()
@@ -308,7 +392,7 @@ export const deleteCommunityValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'deleteCommunity id arg is required',

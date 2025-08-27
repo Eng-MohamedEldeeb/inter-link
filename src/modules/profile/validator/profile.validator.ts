@@ -24,7 +24,7 @@ export const updateProfileSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'updateProfile args is required',
@@ -58,7 +58,7 @@ export const changeEmailSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'changeEmail args is required',
@@ -82,7 +82,7 @@ export const confirmNewEmailSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'confirmNewEmail args is required',
@@ -110,7 +110,7 @@ export const deleteAccountSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'deleteAccount args is required',
@@ -138,7 +138,7 @@ export const confirmDeletionSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'confirmDeletion args is required',

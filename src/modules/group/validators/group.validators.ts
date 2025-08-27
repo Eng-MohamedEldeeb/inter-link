@@ -20,7 +20,7 @@ export const getSingleChatValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'userId arg is required',
@@ -48,7 +48,7 @@ export const createGroupValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required':
@@ -83,7 +83,7 @@ export const addMemberValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi.object<DTO.IAddMember>().keys(this.schema).required().messages({
         'any.required': 'members array arg is required',
@@ -117,7 +117,7 @@ export const removeMemberValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi.object<DTO.IAddMember>().keys(this.schema).required().messages({
         'any.required': 'members array arg is required',
@@ -155,7 +155,7 @@ export const likeMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -189,7 +189,7 @@ export const editGroupValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -231,7 +231,7 @@ export const deleteMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -285,7 +285,7 @@ export const editMessageValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -315,7 +315,7 @@ export const leaveGroupValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'id arg is required',
@@ -350,7 +350,7 @@ export const updateGroupValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: joi
         .object<DTO.ILikeMessage>()
@@ -379,7 +379,7 @@ export const deleteGroupValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'id arg is required',

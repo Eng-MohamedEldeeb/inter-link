@@ -19,7 +19,7 @@ export const confirmEmailSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'confirmEmail args is required',
@@ -51,7 +51,7 @@ export const registerSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'sign-up args is required',
@@ -71,14 +71,14 @@ export const loginSchema = {
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'login args is required',
+        'any.required': 'login body is required',
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'login body is required',
+        'any.required': 'login args is required',
       }),
     }
   },
@@ -98,7 +98,7 @@ export const forgotPasswordSchema = {
       }),
     }
   },
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'forgotPassword args is required',
@@ -128,7 +128,7 @@ export const resetPasswordSchema = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'resetPassword args is required',

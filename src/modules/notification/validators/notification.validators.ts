@@ -20,7 +20,7 @@ export const getAllNotificationsValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'notification id arg is required',
@@ -45,7 +45,7 @@ export const deleteNotificationValidator = {
     }
   },
 
-  graphQL() {
+  graphql() {
     return {
       args: this.schema.required().messages({
         'any.required': 'notification id arg is required',

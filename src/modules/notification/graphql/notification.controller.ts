@@ -50,7 +50,7 @@ export class NotificationController {
       args: args.deleteNotification,
       resolve: applyResolver({
         middlewares: [
-          validate(validators.deleteNotificationValidator.graphQL()),
+          validate(validators.deleteNotificationValidator.graphql()),
         ],
         guards: [
           isAuthenticatedGuard,

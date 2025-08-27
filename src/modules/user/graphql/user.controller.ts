@@ -27,7 +27,7 @@ export class UserQueryController {
       }),
       args: args.getUserProfile,
       resolve: applyResolver({
-        middlewares: [validate(validators.getUserProfileSchema.graphQL())],
+        middlewares: [validate(validators.getUserProfileSchema.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
         resolver: this.UserQueryResolver.getUserProfile,
       }),
@@ -74,7 +74,7 @@ export class UserMutationController {
       args: args.blockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema.graphQL())],
+        middlewares: [validate(validators.blockUserSchema.graphql())],
         resolver: this.UserMutationResolver.blockUser,
       }),
     }
@@ -88,7 +88,7 @@ export class UserMutationController {
       args: args.unblockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema.graphQL())],
+        middlewares: [validate(validators.blockUserSchema.graphql())],
         resolver: this.UserMutationResolver.unblockUser,
       }),
     }

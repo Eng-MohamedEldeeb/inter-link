@@ -13,8 +13,12 @@ import { CloudUploader } from '../../common/services/upload/cloud.service'
 import { MongoId } from '../../common/types/db'
 import notificationsService from '../../common/services/notifications/notifications.service'
 import { IUser } from '../../db/interfaces/IUser.interface'
-import { IJoinedCommunityNotification } from '../../db/interfaces/INotification.interface'
+import {
+  IJoinedCommunityNotification,
+  INotificationInputs,
+} from '../../db/interfaces/INotification.interface'
 import { getNowMoment } from '../../common/decorators/moment/moment'
+import moment from 'moment'
 
 export class CommunityService {
   protected static readonly userRepository = userRepository
@@ -73,7 +77,7 @@ export class CommunityService {
       name,
     } = community
 
-    const notificationDetails: IJoinedCommunityNotification = {
+    const notificationDetails: INotificationInputs = {
       from: { _id: profileId, username, avatar },
       message: isPrivateCommunity
         ? `${username} Requested to join your community`
@@ -85,36 +89,51 @@ export class CommunityService {
     }
 
     if (!isPrivateCommunity) {
-      return await Promise.all([
-        this.communityRepository.findOneAndUpdate({
-          filter: {
-            $and: [{ _id: communityId }, { isPrivateCommunity: true }],
-          },
-          data: {
-            $push: { members: profileId },
-          },
-        }),
-        this.notificationsService.sendNotification({
-          userId: createdBy,
-          notificationDetails,
-        }),
-      ])
-    }
-
-    return await Promise.all([
-      this.communityRepository.findOneAndUpdate({
+      await this.communityRepository.findOneAndUpdate({
         filter: {
-          $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+          $and: [{ _id: communityId }, { isPrivateCommunity: false }],
         },
         data: {
-          $push: { requests: profileId },
+          $addToSet: { members: profileId },
         },
-      }),
-      this.notificationsService.sendNotification({
+      })
+
+      return await this.notificationsService.sendNotification({
         userId: createdBy,
         notificationDetails,
-      }),
-    ])
+      })
+    }
+
+    await this.communityRepository.findOneAndUpdate({
+      filter: {
+        $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+      },
+      data: {
+        $addToSet: { requests: profileId },
+      },
+    })
+
+    return await this.notificationsService.sendNotification({
+      userId: createdBy,
+      notificationDetails,
+    })
+  }
+
+  public static readonly leave = async ({
+    profileId,
+    communityId,
+  }: {
+    profileId: MongoId
+    communityId: MongoId
+  }) => {
+    return await this.communityRepository.findOneAndUpdate({
+      filter: {
+        $and: [{ _id: communityId }, { isPrivateCommunity: true }],
+      },
+      data: {
+        $pull: { members: profileId },
+      },
+    })
   }
 
   public static readonly acceptJoinRequest = async ({
@@ -141,23 +160,6 @@ export class CommunityService {
       refTo: 'Community',
       on: { _id: communityId, cover, name },
       sentAt: getNowMoment(),
-    }
-
-    if (!isPrivateCommunity) {
-      return await Promise.all([
-        this.communityRepository.findOneAndUpdate({
-          filter: {
-            $and: [{ _id: communityId }, { isPrivateCommunity: true }],
-          },
-          data: {
-            $push: { members: this.profileId },
-          },
-        }),
-        this.notificationsService.sendNotification({
-          userId: createdBy,
-          notificationDetails,
-        }),
-      ])
     }
 
     return await Promise.all([
