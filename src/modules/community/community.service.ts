@@ -27,7 +27,7 @@ export class CommunityService {
   protected static requests: MongoId[]
 
   public static readonly getAllCommunities = async () => {
-    return await this.communityRepository.findOne({
+    return await this.communityRepository.find({
       filter: {},
       projection: { 'cover.path.secure_url': 1, name: 1, totalMembers: 1 },
     })
@@ -42,6 +42,8 @@ export class CommunityService {
     if (community.isPrivateCommunity && !profileId.equals(community.createdBy))
       return {
         totalMembers: community.totalMembers,
+        name: community.name,
+        cover: community.cover,
       }
 
     return community
@@ -72,14 +74,106 @@ export class CommunityService {
   }: {
     createdBy: MongoId
     createCommunityDTO: ICreateCommunity
-    cover: ICloudFile
+    cover?: ICloudFile
   }) => {
     return await this.communityRepository.create({
       ...createCommunityDTO,
-      ...(cover.folderId && {
-        cover,
-      }),
+      ...(cover &&
+        cover.folderId && {
+          cover,
+        }),
       createdBy,
+    })
+  }
+
+  public static readonly changeCover = async ({
+    community,
+    path,
+  }: {
+    community: ICommunity
+    path: string
+  }) => {
+    const hasDefaultCover =
+      community.cover.path.secure_url == process.env.DEFAULT_PIC
+
+    if (!hasDefaultCover) {
+      const { secure_url, public_id } = await this.CloudUploader.upload({
+        path,
+        public_id: community.cover.path.public_id,
+      })
+
+      return await this.communityRepository.findByIdAndUpdate({
+        _id: community._id,
+        data: {
+          cover: { path: { secure_url, public_id } },
+        },
+        options: { new: true, lean: true, projection: { cover: 1 } },
+      })
+    }
+
+    const { secure_url, public_id } = await this.CloudUploader.upload({
+      path,
+      folderName: `${process.env.APP_NAME}/${community.createdBy.toString()}/communities/${community.slug}`,
+    })
+
+    return await this.communityRepository.findByIdAndUpdate({
+      _id: community._id,
+      data: {
+        cover: { secure_url, public_id },
+      },
+      options: {
+        new: true,
+        lean: true,
+        projection: { 'cover.secure_url': 1 },
+      },
+    })
+  }
+
+  public static readonly changeVisibility = async ({
+    communityId,
+    state,
+  }: {
+    communityId: MongoId
+    state: boolean
+  }) => {
+    return await this.communityRepository.findOneAndUpdate({
+      filter: {
+        _id: communityId,
+      },
+      data: { isPrivateCommunity: !state },
+      options: {
+        lean: true,
+        new: true,
+        projection: { isPrivateCommunity: 1 },
+      },
+    })
+  }
+
+  public static readonly editCommunity = async ({
+    communityId,
+    editCommunity,
+  }: {
+    communityId: MongoId
+    editCommunity: IEditCommunity
+  }) => {
+    return await this.communityRepository.findOneAndUpdate({
+      filter: {
+        _id: communityId,
+      },
+      data: editCommunity,
+      options: {
+        new: true,
+        projection: Object.keys(editCommunity).join(' '),
+        lean: true,
+      },
+    })
+  }
+
+  public static readonly deleteCommunity = async (communityId: MongoId) => {
+    await this.communityRepository.findOneAndDelete({
+      filter: {
+        _id: communityId,
+      },
     })
   }
 
@@ -103,7 +197,10 @@ export class CommunityService {
     this.userId = profileId
     this.members = members
 
-    if (this.isExistedMember()) return
+    if (profileId.equals(createdBy))
+      return 'You are Already Joined as The Creator of This Community'
+
+    if (this.isExistedMember()) return 'You are Already Joined as a Member'
 
     const notificationDetails: INotificationInputs = {
       from: { _id: profileId, username, avatar },
@@ -126,10 +223,12 @@ export class CommunityService {
         },
       })
 
-      return await this.notificationsService.sendNotification({
+      await this.notificationsService.sendNotification({
         userId: createdBy,
         notificationDetails,
       })
+
+      return `Join request was sent to ${name}'s Creator`
     }
 
     await this.communityRepository.findOneAndUpdate({
@@ -141,10 +240,12 @@ export class CommunityService {
       },
     })
 
-    return await this.notificationsService.sendNotification({
+    await this.notificationsService.sendNotification({
       userId: createdBy,
       notificationDetails,
     })
+
+    return `You Joined ${name} Community Successfully`
   }
 
   protected static readonly isExistedMember = () => {
@@ -246,14 +347,14 @@ export class CommunityService {
   }
 
   public static readonly addAdmin = async ({
-    community,
+    communityId,
     userId,
   }: {
-    community: ICommunity
+    communityId: MongoId
     userId: MongoId
   }) => {
     await this.communityRepository.findByIdAndUpdate({
-      _id: community._id,
+      _id: communityId,
       data: {
         $addToSet: { admins: userId },
       },
@@ -262,107 +363,43 @@ export class CommunityService {
 
   public static readonly removeAdmin = async ({
     community,
-    userId,
+    admin,
   }: {
     community: ICommunity
-    userId: MongoId
+    admin: IUser
   }) => {
+    const { username } = admin
+    const { members } = community
+
+    if (!members.some(adminId => adminId.equals(adminId)))
+      return throwError({ msg: `${username} Doesn't exist in thi community` })
+
     await this.communityRepository.findByIdAndUpdate({
       _id: community._id,
       data: {
-        $pull: { admins: userId },
-        $addToSet: { members: userId },
+        $pull: { admins: admin._id },
+        $addToSet: { members: admin._id },
       },
     })
   }
 
-  public static readonly changeCover = async ({
+  public static readonly kickOut = async ({
     community,
-    path,
+    user,
   }: {
     community: ICommunity
-    path: string
+    user: IUser
   }) => {
-    const hasDefaultCover =
-      community.cover.path.secure_url == process.env.DEFAULT_PIC
+    const { username } = user
+    const { members } = community
 
-    if (!hasDefaultCover) {
-      const { secure_url, public_id } = await this.CloudUploader.upload({
-        path,
-        public_id: community.cover.path.public_id,
-      })
+    if (!members.some(userId => userId.equals(userId)))
+      return throwError({ msg: `${username} Doesn't exist in thi community` })
 
-      return await this.communityRepository.findByIdAndUpdate({
-        _id: community._id,
-        data: {
-          cover: { path: { secure_url, public_id } },
-        },
-        options: { new: true, lean: true, projection: { cover: 1 } },
-      })
-    }
-
-    const { secure_url, public_id } = await this.CloudUploader.upload({
-      path,
-      folderName: `${process.env.APP_NAME}/${community.createdBy.toString()}/communities/${community.slug}`,
-    })
-
-    return await this.communityRepository.findByIdAndUpdate({
+    await this.communityRepository.findByIdAndUpdate({
       _id: community._id,
       data: {
-        cover: { secure_url, public_id },
-      },
-      options: {
-        new: true,
-        lean: true,
-        projection: { 'cover.secure_url': 1 },
-      },
-    })
-  }
-
-  public static readonly changeVisibility = async ({
-    communityId,
-    state,
-  }: {
-    communityId: MongoId
-    state: boolean
-  }) => {
-    return await this.communityRepository.findOneAndUpdate({
-      filter: {
-        _id: communityId,
-      },
-      data: { isPrivateCommunity: !state },
-      options: {
-        lean: true,
-        new: true,
-        projection: { isPrivateCommunity: 1 },
-      },
-    })
-  }
-
-  public static readonly editCommunity = async ({
-    communityId,
-    editCommunity,
-  }: {
-    communityId: MongoId
-    editCommunity: IEditCommunity
-  }) => {
-    return await this.communityRepository.findOneAndUpdate({
-      filter: {
-        _id: communityId,
-      },
-      data: editCommunity,
-      options: {
-        new: true,
-        projection: Object.keys(editCommunity).join(' '),
-        lean: true,
-      },
-    })
-  }
-
-  public static readonly deleteCommunity = async (communityId: MongoId) => {
-    await this.communityRepository.findOneAndDelete({
-      filter: {
-        _id: communityId,
+        $pull: { members: user._id },
       },
     })
   }

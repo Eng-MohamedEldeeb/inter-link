@@ -16,7 +16,7 @@ router.get('/all', GroupController.getAllGroups)
 
 router.get(
   '/:id',
-  validate(validators.getSingleChatValidator.http()),
+  validate(validators.getSingleGroupChatValidator.http()),
   applyGuards(groupExistenceGuard, groupMembersGuard),
   GroupController.getSingle,
 )

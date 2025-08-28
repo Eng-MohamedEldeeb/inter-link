@@ -7,6 +7,8 @@ export const queryModule = (() => {
       name: 'communityQuery',
       fields: {
         getCommunity: CommunityController.getCommunity(),
+        getAllCommunities: CommunityController.getAllCommunities(),
+        getCommunityMembers: CommunityController.getCommunityMembers(),
       },
     }),
     resolve: () => true,
@@ -18,12 +20,18 @@ export const mutationModule = (() => {
     type: returnedType({
       name: 'communityMutation',
       fields: {
+        create: CommunityController.create(),
+        edit: CommunityController.edit(),
         addAdmin: CommunityController.addAdmin(),
         removeAdmin: CommunityController.removeAdmin(),
-        edit: CommunityController.edit(),
         changeVisibility: CommunityController.changeVisibility(),
         deleteCommunity: CommunityController.deleteCommunity(),
         removePostFromCommunity: CommunityController.removePostFromCommunity(),
+        join: CommunityController.join(),
+        leave: CommunityController.leave(),
+        acceptJoinRequest: CommunityController.acceptJoinRequest(),
+        rejectJoinRequest: CommunityController.rejectJoinRequest(),
+        kickOut: CommunityController.kickOut(),
       },
     }),
     resolve: () => true,

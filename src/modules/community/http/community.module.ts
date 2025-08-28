@@ -12,12 +12,11 @@ import communityExistenceGuard from '../../../common/guards/community/community-
 import communityOwnerGuard from '../../../common/guards/community/community-owner-authorization.guard'
 import communityPublishPermissionGuard from '../../../common/guards/community/community-publish-permission.guard'
 import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
-import communityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
 import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
 import communityConflictedNameGuard from '../../../common/guards/community/community-conflicted-name.guard'
-import inCommunityRequestsGuard from '../../../common/guards/community/in-community-requests.guard'
 import communityPostDeletionGuard from '../../../common/guards/community/community-post-deletion.guard'
-import inCommunityMembersGuard from '../../../common/guards/community/in-community-members.guard'
+import inCommunityRequestsGuard from '../../../common/guards/community/in-community-requests.guard'
+import inCommunityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
 
 const router: Router = Router()
 
@@ -40,74 +39,10 @@ router.get(
 router.post(
   '/',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
-  validate(validators.createValidator),
+  validate(validators.createValidator.http()),
   applyGuards(communityConflictedNameGuard),
   communityCoverUploader,
   CommunityController.create,
-)
-
-router.post(
-  '/join',
-  validate(validators.joinCommunityValidator.http()),
-  applyGuards(communityExistenceGuard),
-  CommunityController.join,
-)
-
-router.post(
-  '/accept-join-request',
-  validate(validators.acceptJoinRequestValidator.http()),
-  applyGuards(
-    communityExistenceGuard,
-    userExistenceGuard,
-    inCommunityRequestsGuard,
-    communityAdminsGuard,
-  ),
-  CommunityController.acceptJoinRequest,
-)
-
-router.delete(
-  '/reject-join-request',
-  validate(validators.acceptJoinRequestValidator.http()),
-  applyGuards(
-    communityExistenceGuard,
-    userExistenceGuard,
-    inCommunityRequestsGuard,
-    communityAdminsGuard,
-  ),
-  CommunityController.rejectJoinRequest,
-)
-
-router.patch(
-  '/leave',
-  validate(validators.leaveCommunityValidator.http()),
-  applyGuards(communityExistenceGuard),
-  CommunityController.leave,
-)
-
-router.patch(
-  '/kick-out',
-  validate(validators.leaveCommunityValidator.http()),
-  applyGuards(
-    communityExistenceGuard,
-    userExistenceGuard,
-    inCommunityMembersGuard,
-    communityAdminsGuard,
-  ),
-  CommunityController.leave, //TODO: Implement The kickOut Service
-)
-
-router.post(
-  '/:communityId/add-admin',
-  validate(validators.addAdminValidator.http()),
-  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
-  CommunityController.addAdmin,
-)
-
-router.patch(
-  '/:communityId/remove-admin',
-  validate(validators.removeAdminValidator.http()),
-  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
-  CommunityController.removeAdmin,
 )
 
 router.post(
@@ -134,14 +69,14 @@ router.patch(
   '/change-cover',
   fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
   validate(validators.changeCoverValidator),
-  applyGuards(communityExistenceGuard, communityAdminsGuard),
+  applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
   CommunityController.changeCover,
 )
 
 router.patch(
   '/edit-community',
   validate(validators.editValidator.http()),
-  applyGuards(communityExistenceGuard, communityAdminsGuard),
+  applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
   CommunityController.editCommunity,
 )
 
@@ -157,6 +92,69 @@ router.delete(
   validate(validators.deleteCommunityValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard),
   CommunityController.deleteCommunity,
+)
+
+router.post(
+  '/join',
+  validate(validators.joinCommunityValidator.http()),
+  applyGuards(communityExistenceGuard),
+  CommunityController.join,
+)
+
+router.post(
+  '/accept-join-request',
+  validate(validators.acceptJoinRequestValidator.http()),
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityRequestsGuard,
+    inCommunityAdminsGuard,
+  ),
+  CommunityController.acceptJoinRequest,
+)
+
+router.delete(
+  '/reject-join-request',
+  validate(validators.rejectJoinRequestValidator.http()),
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityRequestsGuard,
+    inCommunityAdminsGuard,
+  ),
+  CommunityController.rejectJoinRequest,
+)
+
+router.patch(
+  '/leave',
+  validate(validators.leaveCommunityValidator.http()),
+  applyGuards(communityExistenceGuard),
+  CommunityController.leave,
+)
+
+router.patch(
+  '/:communityId/kick-out',
+  validate(validators.kickOutValidator.http()),
+  applyGuards(
+    communityExistenceGuard,
+    userExistenceGuard,
+    inCommunityAdminsGuard,
+  ),
+  CommunityController.kickOut,
+)
+
+router.post(
+  '/:communityId/add-admin',
+  validate(validators.addAdminValidator.http()),
+  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
+  CommunityController.addAdmin,
+)
+
+router.patch(
+  '/:communityId/remove-admin',
+  validate(validators.removeAdminValidator.http()),
+  applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
+  CommunityController.removeAdmin,
 )
 
 export default router

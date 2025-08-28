@@ -65,71 +65,6 @@ export class CommunityController {
     },
   )
 
-  public static join = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const profile = req.profile
-      const community = req.community
-
-      await this.CommunityService.join({
-        profile,
-        community,
-      })
-
-      return successResponse(res, {
-        msg: community.isPrivateCommunity
-          ? `Join request was sent to ${community.name}'s Creator`
-          : `You Joined ${community.name} Community Successfully`,
-      })
-    },
-  )
-
-  public static acceptJoinRequest = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const user = req.user
-      const community = req.community
-
-      await this.CommunityService.acceptJoinRequest({
-        user,
-        community,
-      })
-
-      return successResponse(res, {
-        msg: 'Join Request Has Been Accepted Successfully',
-      })
-    },
-  )
-
-  public static rejectJoinRequest = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const user = req.user
-      const community = req.community
-
-      await this.CommunityService.rejectJoinRequest({
-        user,
-        community,
-      })
-
-      return successResponse(res, {
-        msg: 'Join Request Has Been Rejected Successfully',
-      })
-    },
-  )
-
-  public static leave = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const { _id: profileId } = req.profile
-
-      await this.CommunityService.leave({
-        profileId,
-        community: req.community,
-      })
-
-      return successResponse(res, {
-        msg: `We are sorry to See you leaving "${name}" Community `,
-      })
-    },
-  )
-
   public static readonly addPost = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const { _id } = req.profile
@@ -165,38 +100,6 @@ export class CommunityController {
 
       return successResponse(res, {
         msg: `Post is deleted from ${name} Community Successfully`,
-      })
-    },
-  )
-
-  public static readonly addAdmin = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const { _id: userId, username } = req.user
-      const { community } = req
-
-      await this.CommunityService.addAdmin({
-        community,
-        userId,
-      })
-
-      return successResponse(res, {
-        msg: `User '${username}' is now a Community Admin`,
-      })
-    },
-  )
-
-  public static readonly removeAdmin = asyncHandler(
-    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
-      const { _id: userId, username } = req.user
-      const { community } = req
-
-      await this.CommunityService.removeAdmin({
-        community,
-        userId,
-      })
-
-      return successResponse(res, {
-        msg: `User '${username}' is not a Community Admin anymore`,
       })
     },
   )
@@ -247,6 +150,116 @@ export class CommunityController {
       await this.CommunityService.deleteCommunity(communityId)
       return successResponse(res, {
         msg: 'Community is deleted successfully',
+      })
+    },
+  )
+
+  public static join = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const profile = req.profile
+      const community = req.community
+
+      return successResponse(res, {
+        msg: await this.CommunityService.join({
+          profile,
+          community,
+        }),
+      })
+    },
+  )
+
+  public static acceptJoinRequest = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const user = req.user
+      const community = req.community
+
+      await this.CommunityService.acceptJoinRequest({
+        user,
+        community,
+      })
+
+      return successResponse(res, {
+        msg: 'Join Request Has Been Accepted Successfully',
+      })
+    },
+  )
+
+  public static rejectJoinRequest = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const user = req.user
+      const community = req.community
+
+      await this.CommunityService.rejectJoinRequest({
+        user,
+        community,
+      })
+
+      return successResponse(res, {
+        msg: 'Join Request Has Been Rejected Successfully',
+      })
+    },
+  )
+
+  public static leave = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const { _id: profileId } = req.profile
+      const { name } = req.community
+
+      await this.CommunityService.leave({
+        profileId,
+        community: req.community,
+      })
+
+      return successResponse(res, {
+        msg: `We are sorry to See you leaving "${name}" Community `,
+      })
+    },
+  )
+
+  public static readonly addAdmin = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const { _id: userId, username } = req.user
+      const { _id: communityId } = req.community
+
+      await this.CommunityService.addAdmin({
+        communityId,
+        userId,
+      })
+
+      return successResponse(res, {
+        msg: `User '${username}' is now a Community Admin`,
+      })
+    },
+  )
+
+  public static readonly removeAdmin = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const admin = req.user
+      const community = req.community
+
+      await this.CommunityService.removeAdmin({
+        community,
+        admin,
+      })
+
+      return successResponse(res, {
+        msg: `User '${admin.username}' is not a Community Admin anymore`,
+      })
+    },
+  )
+
+  public static kickOut = asyncHandler(
+    async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
+      const community = req.community
+      const user = req.user
+
+      await this.CommunityService.kickOut({
+        user,
+        community,
+      })
+
+      return successResponse(res, {
+        msg: `User ${user.username} has been kicked out successfully`,
       })
     },
   )

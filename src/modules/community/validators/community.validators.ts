@@ -32,17 +32,39 @@ export const getCommunityValidator = {
 }
 
 export const createValidator = {
-  body: joi
-    .object<CommunityDTO.ICreateCommunity>()
-    .keys({
-      name: generalFields.content.min(1).max(28).required(),
-      description: generalFields.content.max(500),
-      isPrivateCommunity: joi.bool(),
-    })
-    .required()
-    .messages({
-      'any.required': 'createCommunity body is required',
-    }),
+  schema: {
+    name: generalFields.content.min(1).max(28).required(),
+    description: generalFields.content.max(500),
+    isPrivateCommunity: joi.bool(),
+  },
+
+  http() {
+    return {
+      body: joi
+        .object<CommunityDTO.ICreateCommunity>()
+        .keys({
+          name: generalFields.content.min(1).max(28).required(),
+          description: generalFields.content.max(500),
+          isPrivateCommunity: joi.bool(),
+        })
+        .required()
+        .messages({
+          'any.required': 'createCommunity body is required',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<Omit<CommunityDTO.ICreateCommunity, 'cover'>>()
+        .keys(this.schema)
+        .required()
+        .messages({
+          'any.required': '( communityId ) query param is required',
+        }),
+    }
+  },
 }
 
 export const joinCommunityValidator = {
@@ -74,6 +96,36 @@ export const joinCommunityValidator = {
 }
 
 export const acceptJoinRequestValidator = {
+  query: {
+    communityId: generalFields.mongoId.required(),
+    userId: generalFields.mongoId.required(),
+  },
+
+  http() {
+    return {
+      query: joi
+        .object<Pick<CommunityDTO.IAcceptJoinRequest, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '( communityId, userId ) query param is required',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<Pick<CommunityDTO.IAcceptJoinRequest, 'communityId'>>()
+        .keys(this.query)
+        .required()
+        .messages({
+          'any.required': '( communityId, userId ) arg is required',
+        }),
+    }
+  },
+}
+export const rejectJoinRequestValidator = {
   query: {
     communityId: generalFields.mongoId.required(),
     userId: generalFields.mongoId.required(),
@@ -213,6 +265,49 @@ export const removeAdminValidator = {
         .messages({
           'any.required':
             'expected community "id" and admin "Id" args but got none',
+        }),
+    }
+  },
+}
+
+export const kickOutValidator = {
+  schema: {
+    query: {
+      userId: generalFields.mongoId.required(),
+    },
+    params: {
+      communityId: generalFields.mongoId.required(),
+    },
+  },
+  http() {
+    return {
+      query: joi
+        .object<CommunityDTO.IKickOut>()
+        .keys(this.schema.query)
+        .required()
+        .messages({
+          'any.required': 'expected "userId" but got none',
+        }),
+
+      params: joi
+        .object<CommunityDTO.IGetCommunity>()
+        .keys(this.schema.params)
+        .required()
+        .messages({
+          'any.required': 'expected "id" param but got none',
+        }),
+    }
+  },
+
+  graphql() {
+    return {
+      args: joi
+        .object<CommunityDTO.IAddAdmin>()
+        .keys({ ...this.schema.params, ...this.schema.query })
+        .required()
+        .messages({
+          'any.required':
+            'expected community "id" and "userId" args but got none',
         }),
     }
   },

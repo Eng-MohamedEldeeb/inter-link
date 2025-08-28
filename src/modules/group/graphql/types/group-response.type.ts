@@ -3,22 +3,22 @@ import {
   returnedType,
 } from '../../../../common/decorators/resolver/returned-type.decorator'
 
-import { allChats, singleChatFields } from './group-fields.type'
+import { allGroupChats, singleGroupChatFields } from './group-fields.type'
 
-export class ChatResponse {
-  public static readonly getAllChats = () => {
+export class GroupResponse {
+  public static readonly getAllGroups = () => {
     return returnedResponseType({
-      name: 'getAllChatsResponse',
+      name: 'getAllGroupResponse',
       data: returnedType({
-        name: 'chatsDataResponse',
+        name: 'groupsDataResponse',
         fields: {
           chats: {
-            type: allChats,
+            type: allGroupChats,
           },
         },
       }),
     })
   }
 
-  public static readonly getSingleChat = () => singleChatFields
+  public static readonly getSingleGroup = () => singleGroupChatFields
 }

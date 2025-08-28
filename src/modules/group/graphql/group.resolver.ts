@@ -7,10 +7,10 @@ import { GroupService } from '../group.service'
 
 import { IDeleteMessage, ILikeMessage } from '../dto/group.dto'
 
-export class ChatQueryResolver {
+export class GroupQueryResolver {
   private static readonly GroupService = GroupService
 
-  public static readonly getAllChats = async (
+  public static readonly getAllGroups = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -22,7 +22,7 @@ export class ChatQueryResolver {
     }
   }
 
-  public static readonly getSingleChat = async (
+  public static readonly getSingleGroup = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -35,7 +35,7 @@ export class ChatQueryResolver {
   }
 }
 
-export class ChatMutationResolver {
+export class GroupMutationResolver {
   private static readonly GroupService = GroupService
 
   public static readonly likeMessage = async (
@@ -74,7 +74,7 @@ export class ChatMutationResolver {
     }
   }
 
-  public static readonly deleteChat = async (
+  public static readonly deleteGroup = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -87,7 +87,7 @@ export class ChatMutationResolver {
     })
 
     return {
-      msg: 'Chat is deleted successfully',
+      msg: 'Group is deleted successfully',
       status: 200,
     }
   }

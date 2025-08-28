@@ -20,3 +20,8 @@ export const deleteMessage = argsType<Omit<DTO.IDeleteMessage, 'group'>>({
   id: { type: new GraphQLNonNull(GraphQLID) },
   messageId: { type: new GraphQLNonNull(GraphQLID) },
 })
+
+export const deleteGroup = argsType<Omit<DTO.IDeleteGroup, 'group'>>({
+  id: { type: new GraphQLNonNull(GraphQLID) },
+  profileId: { type: new GraphQLNonNull(GraphQLID) },
+})

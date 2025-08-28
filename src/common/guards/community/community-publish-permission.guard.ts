@@ -6,7 +6,9 @@ import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
 import { throwError } from '../../handlers/error-message.handler'
 
 import { GraphQLParams, HttpParams } from '../../decorators/context/types'
-import { IUser } from '../../../db/interfaces/IUser.interface'
+
+import inCommunityAdminsGuard from './in-community-admins.guard'
+import inCommunityMembersGuard from './in-community-members.guard'
 
 class CommunityPublishPermissionGuard extends GuardActivator {
   protected createdBy!: MongoId
@@ -14,9 +16,11 @@ class CommunityPublishPermissionGuard extends GuardActivator {
   protected members!: MongoId[]
   protected admins!: MongoId[]
   protected isPrivateCommunity!: boolean
+  protected params!: HttpParams | GraphQLParams
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
+    this.params = params
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSinglePost, IGetSinglePost>()
@@ -51,21 +55,16 @@ class CommunityPublishPermissionGuard extends GuardActivator {
   protected readonly publishPermission = async () => {
     if (this.profileId.equals(this.createdBy)) return true
 
-    if (!this.userInCommunityMembers() && !this.userInCommunityAdmins())
+    if (
+      !inCommunityAdminsGuard.canActivate(...this.params) &&
+      !inCommunityMembersGuard.canActivate(...this.params)
+    )
       return throwError({
         msg: 'only members are allowed to share posts in the community',
         status: 403,
       })
 
     return true
-  }
-
-  protected readonly userInCommunityMembers = (): boolean => {
-    return this.members.some(member => member._id.equals(this.profileId))
-  }
-
-  protected readonly userInCommunityAdmins = (): boolean => {
-    return this.admins.some(admin => admin._id.equals(this.profileId))
   }
 }
 

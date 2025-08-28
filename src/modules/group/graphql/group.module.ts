@@ -4,10 +4,10 @@ import { GroupController } from './group.controller'
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'chatQuery',
+      name: 'groupQuery',
       fields: {
-        getAllChats: GroupController.getAllChats(),
-        getSingleChat: GroupController.getSingleChat(),
+        getAllGroups: GroupController.getAllGroups(),
+        getSingleGroup: GroupController.getSingleGroup(),
       },
     }),
     resolve: () => true,
@@ -17,11 +17,11 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'chatMutation',
+      name: 'groupMutation',
       fields: {
-        likeMessage: GroupController.likeMessage(),
-        deleteMessage: GroupController.deleteMessage(),
-        deleteChat: GroupController.deleteChat(),
+        likeGroupMessage: GroupController.likeGroupMessage(),
+        deleteGroupMessage: GroupController.deleteGroupMessage(),
+        deleteGroup: GroupController.deleteGroup(),
       },
     }),
     resolve: () => true,

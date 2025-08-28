@@ -27,6 +27,14 @@ class CommunityConflictedNameGuard extends GuardActivator {
 
       return await this.isValidCommunityName()
     }
+    if (Ctx.type === ContextType.graphContext) {
+      const { args } = Ctx.switchToGraphQL()
+      const { name }: ICreateCommunity = args
+
+      this.name = name
+
+      return await this.isValidCommunityName()
+    }
   }
 
   protected readonly isValidCommunityName = async (): Promise<boolean> => {
@@ -35,6 +43,7 @@ class CommunityConflictedNameGuard extends GuardActivator {
       projection: { _id: 1 },
       options: { lean: true },
     })
+
     if (existedCommunity)
       return throwError({
         msg: `'${this.name}' is and In-valid community name`,

@@ -1,4 +1,4 @@
-import { GraphQLID, GraphQLList, GraphQLString } from 'graphql'
+import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
 
 import {
   IChat,
@@ -7,9 +7,15 @@ import {
 
 import { DateType } from '../../../../common/types/graphql/graphql.types'
 import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
+import { IGroup } from '../../../../db/interfaces/IGroup.interface'
+import {
+  userFields,
+  userProfileFields,
+} from '../../../../common/types/graphql/graphql-fields.types'
+import { singleFile } from '../../../../common/services/upload/interface/cloud-response.interface'
 
-const messageDetails = returnedType<IMessageDetails>({
-  name: 'messageDetails',
+const groupMessageDetails = returnedType<IMessageDetails>({
+  name: 'groupMessageDetails',
   fields: {
     from: { type: GraphQLID },
     to: { type: GraphQLID },
@@ -18,20 +24,27 @@ const messageDetails = returnedType<IMessageDetails>({
   },
 })
 
-export const singleChatFields = returnedType<Omit<IChat, '__v' | 'updatedAt'>>({
-  name: 'singleChat',
+export const singleGroupChatFields = returnedType<
+  Omit<IGroup, '__v' | 'updatedAt'>
+>({
+  name: 'singleGroupChat',
   fields: {
     _id: { type: GraphQLID },
-    messages: { type: new GraphQLList(messageDetails) },
-    newMessages: { type: new GraphQLList(messageDetails) },
+    name: { type: GraphQLString },
+    cover: { type: singleFile },
+    description: { type: GraphQLString },
 
-    startedBy: { type: GraphQLID },
-    participant: { type: GraphQLID },
+    totalMembers: { type: GraphQLInt },
+    members: {
+      type: new GraphQLList(
+        returnedType({ name: 'groupChatMembers', fields: userProfileFields }),
+      ),
+    },
 
+    messages: { type: new GraphQLList(groupMessageDetails) },
+    createdBy: { type: GraphQLID },
     createdAt: { type: DateType },
-
-    roomId: { type: GraphQLString },
   },
 })
 
-export const allChats = new GraphQLList(singleChatFields)
+export const allGroupChats = new GraphQLList(singleGroupChatFields)

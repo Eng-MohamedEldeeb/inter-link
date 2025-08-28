@@ -7,7 +7,7 @@ import { GraphQLParams, HttpParams } from '../../decorators/context/types'
 
 import communityOwnerAuthorizationGuard from './community-owner-authorization.guard'
 
-class CommunityAdminsGuard extends GuardActivator {
+class InCommunityAdminsGuard extends GuardActivator {
   protected profileId!: MongoId
   protected admins!: MongoId[]
 
@@ -33,8 +33,7 @@ class CommunityAdminsGuard extends GuardActivator {
     }
 
     return (
-      this.isAdmin() ||
-      (await communityOwnerAuthorizationGuard.canActivate(...params))
+      this.isAdmin() || communityOwnerAuthorizationGuard.canActivate(...params)
     )
   }
 
@@ -43,4 +42,4 @@ class CommunityAdminsGuard extends GuardActivator {
   }
 }
 
-export default new CommunityAdminsGuard()
+export default new InCommunityAdminsGuard()

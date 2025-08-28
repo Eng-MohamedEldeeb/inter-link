@@ -4,7 +4,7 @@ import * as DTO from '../dto/group.dto'
 
 import { generalFields } from '../../../common/validation/general-fields'
 
-export const getSingleChatValidator = {
+export const getSingleGroupChatValidator = {
   schema: joi
     .object<DTO.IGetSingleGroup>()
     .keys({

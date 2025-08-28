@@ -5,7 +5,7 @@ import {
 
 import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
 import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ChatResponse } from './types/group-response.type'
+import { GroupResponse } from './types/group-response.type'
 import { validate } from '../../../common/middlewares/validation/validation.middleware'
 
 import * as resolvers from './group.resolver'
@@ -14,87 +14,88 @@ import * as validators from '../validators/group.validators'
 
 import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
 import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
 import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
 import groupMembersGuard from '../../../common/guards/group/group-members.guard'
 
 export class GroupController {
-  protected static readonly ChatQueryResolver = resolvers.ChatQueryResolver
-  protected static readonly ChatMutationResolver =
-    resolvers.ChatMutationResolver
+  protected static readonly GroupQueryResolver = resolvers.GroupQueryResolver
+  protected static readonly GroupMutationResolver =
+    resolvers.GroupMutationResolver
 
   // Queries:
-  public static readonly getAllChats = (): IQueryController => {
+  public static readonly getAllGroups = (): IQueryController => {
     return {
       type: returnedResponseType({
-        name: 'getAllChats',
-        data: ChatResponse.getAllChats(),
+        name: 'getAllGroups',
+        data: GroupResponse.getAllGroups(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ChatQueryResolver.getAllChats,
+        resolver: this.GroupQueryResolver.getAllGroups,
       }),
     }
   }
 
-  public static readonly getSingleChat = (): IQueryController => {
+  public static readonly getSingleGroup = (): IQueryController => {
     return {
       type: returnedResponseType({
-        name: 'getSingleChat',
-        data: ChatResponse.getSingleChat(),
+        name: 'getSingleGroup',
+        data: GroupResponse.getSingleGroup(),
       }),
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleChatValidator.graphql())],
+        middlewares: [
+          validate(validators.getSingleGroupChatValidator.graphql()),
+        ],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
           groupExistenceGuard,
           groupMembersGuard,
         ],
-        resolver: this.ChatQueryResolver.getSingleChat,
+        resolver: this.GroupQueryResolver.getSingleGroup,
       }),
     }
   }
 
   // Mutations:
-  public static readonly likeMessage = (): IMutationController => {
+  public static readonly likeGroupMessage = (): IMutationController => {
     return {
       type: returnedResponseType({
-        name: 'likeMessage',
+        name: 'likeGroupMessage',
       }),
       args: args.likeMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.likeMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.ChatMutationResolver.likeMessage,
+        resolver: this.GroupMutationResolver.likeMessage,
       }),
     }
   }
 
-  public static readonly deleteMessage = (): IMutationController => {
+  public static readonly deleteGroupMessage = (): IMutationController => {
     return {
       type: returnedResponseType({
-        name: 'deleteMessage',
+        name: 'deleteGroupMessage',
       }),
       args: args.deleteMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.ChatMutationResolver.deleteMessage,
+        resolver: this.GroupMutationResolver.deleteMessage,
       }),
     }
   }
 
-  public static readonly deleteChat = (): IMutationController => {
+  public static readonly deleteGroup = (): IMutationController => {
     return {
       type: returnedResponseType({
-        name: 'deleteChat',
+        name: 'deleteGroup',
       }),
-      args: args.deleteChat,
+      args: args.deleteGroup,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteGroupValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.ChatMutationResolver.deleteChat,
+        resolver: this.GroupMutationResolver.deleteGroup,
       }),
     }
   }

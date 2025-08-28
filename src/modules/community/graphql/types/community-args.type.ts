@@ -13,6 +13,37 @@ export const getCommunity = argsType<DTO.IGetCommunity>({
   communityId: { type: new GraphQLNonNull(GraphQLID) },
 })
 
+export const create = argsType<
+  Omit<DTO.ICreateCommunity, 'cover' | 'createdBy'>
+>({
+  name: { type: new GraphQLNonNull(GraphQLString) },
+  description: { type: new GraphQLNonNull(GraphQLString) },
+  isPrivateCommunity: { type: GraphQLBoolean },
+})
+
+export const join = argsType<Pick<DTO.IJoinCommunity, 'communityId'>>({
+  communityId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
+export const leave = argsType<Pick<DTO.IJoinCommunity, 'communityId'>>({
+  communityId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
+export const acceptJoinRequest = argsType<DTO.IAcceptJoinRequest>({
+  communityId: { type: new GraphQLNonNull(GraphQLID) },
+  userId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
+export const rejectJoinRequest = argsType<DTO.IRejectJoinRequest>({
+  communityId: { type: new GraphQLNonNull(GraphQLID) },
+  userId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
+export const kickOut = argsType<DTO.IRejectJoinRequest>({
+  communityId: { type: new GraphQLNonNull(GraphQLID) },
+  userId: { type: new GraphQLNonNull(GraphQLID) },
+})
+
 export const edit = argsType<DTO.IEditCommunity>({
   communityId: { type: new GraphQLNonNull(GraphQLID) },
   name: { type: GraphQLString },

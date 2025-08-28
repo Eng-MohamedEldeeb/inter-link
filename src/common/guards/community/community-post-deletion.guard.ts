@@ -47,19 +47,22 @@ class CommunityPostDeletionGuard extends GuardActivator {
       this.admins = admins
     }
 
-    return this.isTheCreatorOrAdmin()
+    return this.isAllowedToDelete()
   }
 
-  protected readonly isTheCreatorOrAdmin = () => {
+  protected readonly isAllowedToDelete = () => {
     const isTheCreator = this.profileId.equals(this.postCreator)
+
     if (isTheCreator) return true
 
     const isTheCommunityOwner = this.profileId.equals(this.communityCreator)
+
     if (isTheCommunityOwner) return true
 
     const isCommunityAdmin = this.admins.some(adminId =>
       adminId.equals(this.profileId),
     )
+
     if (isCommunityAdmin) return true
 
     return false
