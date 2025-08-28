@@ -1,5 +1,4 @@
 import { io } from '../../../main'
-
 import { NotificationType } from './types'
 import { MongoId } from '../../types/db'
 import { TNotification } from '../../../db/documents'
@@ -7,13 +6,10 @@ import { TNotification } from '../../../db/documents'
 import {
   IMissedMessages,
   INotificationInputs,
-  MessageDetails,
-  UserDetails,
 } from '../../../db/interfaces/INotification.interface'
 
 import connectedUserController from '../../controllers/connected-users.controller'
 import notificationRepository from '../../repositories/notification.repository'
-import moment from 'moment'
 
 class NotificationsService {
   protected readonly connectedUserController = connectedUserController
