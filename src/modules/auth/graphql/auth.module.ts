@@ -1,16 +1,16 @@
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { AuthController } from './auth.controller'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
+import authController from "./auth.controller"
 
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'authMutation',
+      name: "authMutation",
       fields: {
-        confirmEmail: AuthController.confirmEmail(),
-        register: AuthController.register(),
-        login: AuthController.login(),
-        forgotPassword: AuthController.forgotPassword(),
-        resetPassword: AuthController.resetPassword(),
+        confirmEmail: authController.confirmEmail(),
+        register: authController.register(),
+        login: authController.login(),
+        forgotPassword: authController.forgotPassword(),
+        resetPassword: authController.resetPassword(),
       },
     }),
     resolve: () => true,

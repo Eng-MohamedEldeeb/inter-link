@@ -1,9 +1,9 @@
-import notificationRepository from '../../common/repositories/notification.repository'
+import notificationRepository from "../../common/repositories/notification.repository"
 
-import * as DTO from './dto/notification.dto'
+import * as DTO from "./dto/notification.dto"
 
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db'
+import { throwError } from "../../common/handlers/error-message.handler"
+import { MongoId } from "../../common/types/db"
 
 export class NotificationService {
   protected static readonly notificationRepository = notificationRepository
@@ -42,7 +42,7 @@ export class NotificationService {
     return (
       isDeleted ??
       throwError({
-        msg: "In-valid Notification id or Notification doesn't exist",
+        msg: "Invalid Notification id or Notification doesn't exist",
         status: 404,
       })
     )

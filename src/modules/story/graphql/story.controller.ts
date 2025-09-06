@@ -1,24 +1,24 @@
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { StoryResponse } from './types/story-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { StoryResponse } from "./types/story-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { StoryQueryResolver, StoryMutationResolver } from './story.resolver'
+import { StoryQueryResolver, StoryMutationResolver } from "./story.resolver"
 
-import * as args from './types/story-args.type'
-import * as validators from '../validators/story.validators'
+import * as args from "./types/story-args.type"
+import * as validators from "../validators/story.validators"
 
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import storyExistenceGuard from '../../../common/guards/story/story-existence.guard'
-import storyOwnerGuard from '../../../common/guards/story/story-owner.guard'
-import storyViewPermissionGuard from '../../../common/guards/story/story-view-permission.guard'
-import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import storyExistenceGuard from "../../../common/guards/story/story-existence.guard"
+import storyOwnerGuard from "../../../common/guards/story/story-owner.guard"
+import storyViewPermissionGuard from "../../../common/guards/story/story-view-permission.guard"
+import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
 
 export class StoryController {
   private static readonly StoryQueryResolver = StoryQueryResolver
@@ -27,8 +27,8 @@ export class StoryController {
   // Queries:
   public static readonly getAll = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getAllStoriesQuery',
+      type: graphResponseType({
+        name: "getAllStoriesQuery",
         data: StoryResponse.getAll(),
       }),
       resolve: applyResolver({
@@ -41,8 +41,8 @@ export class StoryController {
 
   public static readonly getSingle = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getSingleStoryQuery',
+      type: graphResponseType({
+        name: "getSingleStoryQuery",
         data: StoryResponse.getSingle(),
       }),
       args: args.getSingle,
@@ -62,8 +62,8 @@ export class StoryController {
   // Mutations:
   public static readonly like = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'likeStoryMutation',
+      type: graphResponseType({
+        name: "likeStoryMutation",
       }),
       args: args.likeStory,
       resolve: applyResolver({
@@ -76,8 +76,8 @@ export class StoryController {
 
   public static readonly deleteStory = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteStoryMutation',
+      type: graphResponseType({
+        name: "deleteStoryMutation",
       }),
       args: args.deleteStory,
       resolve: applyResolver({

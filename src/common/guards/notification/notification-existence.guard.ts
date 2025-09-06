@@ -1,14 +1,14 @@
-import { INotificationInputs } from '../../../db/interfaces/INotification.interface'
-import { IGetNotification } from '../../../modules/notification/dto/notification.dto'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
-import { MongoId } from '../../types/db'
+import { INotificationInputs } from "../../../db/interfaces/INotification.interface"
+import { IGetNotification } from "../../../modules/notification/dto/notification.dto"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import notificationRepository from '../../repositories/notification.repository'
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
+import notificationRepository from "../../repositories/notification.repository"
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 
 class NotificationExistenceGuard extends GuardActivator {
   protected readonly notificationRepository = notificationRepository
@@ -49,55 +49,55 @@ class NotificationExistenceGuard extends GuardActivator {
         filter: { belongsTo: this.profileId },
         populate: [
           {
-            path: 'missedNotifications.from',
+            path: "missedNotifications.from",
             select: {
               _id: 1,
               username: 1,
 
               content: 1,
-              'avatar.secure_url': 1,
-              'attachments.paths.secure_url': 1,
-              'attachment.path.secure_url': 1,
+              "avatar.secure_url": 1,
+              "attachments.paths.secure_url": 1,
+              "attachment.path.secure_url": 1,
             },
             options: { lean: true },
           },
           {
-            path: 'missedNotifications.on',
+            path: "missedNotifications.on",
             select: {
               _id: 1,
               username: 1,
 
               content: 1,
-              'avatar.secure_url': 1,
-              'attachments.paths.secure_url': 1,
-              'attachment.path.secure_url': 1,
+              "avatar.secure_url": 1,
+              "attachments.paths.secure_url": 1,
+              "attachment.path.secure_url": 1,
             },
 
             options: { lean: true },
           },
           {
-            path: 'seen.from',
+            path: "seen.from",
             select: {
               _id: 1,
               username: 1,
 
               content: 1,
-              'avatar.secure_url': 1,
-              'attachments.paths.secure_url': 1,
-              'attachment.path.secure_url': 1,
+              "avatar.secure_url": 1,
+              "attachments.paths.secure_url": 1,
+              "attachment.path.secure_url": 1,
             },
             options: { lean: true },
           },
           {
-            path: 'seen.on',
+            path: "seen.on",
             select: {
               _id: 1,
               username: 1,
 
               content: 1,
-              'avatar.secure_url': 1,
-              'attachments.paths.secure_url': 1,
-              'attachment.path.secure_url': 1,
+              "avatar.secure_url": 1,
+              "attachments.paths.secure_url": 1,
+              "attachment.path.secure_url": 1,
             },
 
             options: { lean: true },
@@ -108,7 +108,7 @@ class NotificationExistenceGuard extends GuardActivator {
 
       if (!userNotification)
         return throwError({
-          msg: 'Un-Existed Notification or In-valid Id',
+          msg: "Un-Existed Notification or Invalid Id",
           status: 404,
         })
 
@@ -125,7 +125,7 @@ class NotificationExistenceGuard extends GuardActivator {
       if (inSeen) return inSeen
 
       return throwError({
-        msg: 'Un-Existed Notification or In-valid Id',
+        msg: "Un-Existed Notification or Invalid Id",
         status: 404,
       })
     }

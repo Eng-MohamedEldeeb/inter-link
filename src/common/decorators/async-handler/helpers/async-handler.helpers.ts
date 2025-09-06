@@ -1,11 +1,11 @@
-import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken'
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken"
 
-import { GraphQLError } from 'graphql'
-import { IRequest } from '../../../interface/IRequest.interface'
-import { CloudUploader } from '../../../services/upload/cloud.service'
-import { ContextDetector } from '../../context/context-detector.decorator'
-import { ContextType } from '../../context/types'
-import { IError } from '../../../handlers/global-error.handler'
+import { GraphQLError } from "graphql"
+import { IRequest } from "../../../interface/IRequest.interface"
+import { CloudUploader } from "../../../services/upload/cloud.service"
+import { ContextDetector } from "../../context/context-detector.decorator"
+import { ContextType } from "../../context/types"
+import { IError } from "../../../handlers/global-error.handler"
 
 const deleteFiles = async (req: IRequest) => {
   if (req.cloudFile?.folderId) {
@@ -26,40 +26,40 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
   switch (true) {
     case error instanceof TokenExpiredError:
       if (ctx.type === ContextType.httpContext)
-        return next({ msg: 'Token is expired', status: 400 })
+        return next({ msg: "Token is expired", status: 400 })
 
       if (ctx.type === ContextType.graphContext)
-        throw new GraphQLError('Token Error', {
-          extensions: { msg: 'Token is expired', status: 400 },
+        throw new GraphQLError("Token Error", {
+          extensions: { msg: "Token is expired", status: 400 },
         })
 
       if (ctx.type === ContextType.socketContext)
-        return socketServerNext(new Error('Token is expired'))
+        return socketServerNext(new Error("Token is expired"))
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext)
-        return next({ msg: 'in-valid token', status: 400 })
+        return next({ msg: "Invalid token", status: 400 })
 
       if (ctx.type === ContextType.graphContext)
-        throw new GraphQLError('Token Error', {
-          extensions: { msg: 'in-valid token', status: 400 },
+        throw new GraphQLError("Token Error", {
+          extensions: { msg: "Invalid token", status: 400 },
         })
 
       if (ctx.type === ContextType.socketContext)
         if (ctx.hasSocketMiddlewareParams())
-          return socketServerNext(new Error('in-valid token'))
+          return socketServerNext(new Error("Invalid token"))
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext) return next(error)
 
       if (ctx.type === ContextType.graphContext)
-        throw new GraphQLError('Token Error', {
+        throw new GraphQLError("Token Error", {
           extensions: { msg: error.message, status: 400 },
         })
 
       if (ctx.type === ContextType.socketContext)
         if (ctx.hasSocketMiddlewareParams())
-          return socketServerNext(new Error('Token Error'))
+          return socketServerNext(new Error("Token Error"))
 
     default:
       if (ctx.type === ContextType.httpContext) return next(error)
@@ -74,7 +74,6 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
       }
 
       if (ctx.type === ContextType.socketContext) {
-        // console.log({ error })
         return socketServerNext
           ? socketServerNext(new Error(error.msg || error.message))
           : console.log({ error })

@@ -1,18 +1,18 @@
-import commentRepository from '../../common/repositories/comment.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import commentRepository from "../../common/repositories/comment.repository"
+import notificationsService from "../../common/services/notifications/notifications.service"
 
-import * as DTO from './dto/comment.dto'
+import * as DTO from "./dto/comment.dto"
 
 import {
   ICommentedOnPostNotification,
   ILikedCommentNotification,
-} from '../../db/interfaces/INotification.interface'
+} from "../../db/interfaces/INotification.interface"
 
-import { throwError } from '../../common/handlers/error-message.handler'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { IComment } from '../../db/interfaces/IComment.interface'
-import moment from 'moment'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import { throwError } from "../../common/handlers/error-message.handler"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { IComment } from "../../db/interfaces/IComment.interface"
+import moment from "moment"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
 export class CommentService {
   protected static readonly commentRepository = commentRepository
@@ -39,7 +39,7 @@ export class CommentService {
       content,
       from: { _id: profileId, avatar, username },
       on: { _id: postId, attachments },
-      refTo: 'Post',
+      refTo: "Post",
       sentAt: getNowMoment(),
     }
 
@@ -70,7 +70,7 @@ export class CommentService {
           new: true,
         },
       })
-      return { msg: 'Done' }
+      return { msg: "Done" }
     }
 
     await this.commentRepository.findByIdAndUpdate({
@@ -86,7 +86,7 @@ export class CommentService {
       message: `${username} Liked Your Comment 💚`,
       on: { _id: commentId, attachment },
       from: { _id: profileId, avatar, username },
-      refTo: 'Comment',
+      refTo: "Comment",
       sentAt: getNowMoment(),
     }
 
@@ -95,7 +95,7 @@ export class CommentService {
       notificationDetails: notification,
     })
 
-    return { msg: 'comment is liked successfully' }
+    return { msg: "comment is liked successfully" }
   }
 
   public static readonly edit = async ({ id, content }: DTO.IEditComment) => {
@@ -107,7 +107,7 @@ export class CommentService {
     return (
       updatedComment ??
       throwError({
-        msg: "In-valid Comment id or comment doesn't exist",
+        msg: "Invalid Comment id or comment doesn't exist",
         status: 404,
       })
     )
@@ -120,7 +120,7 @@ export class CommentService {
     return (
       isDeletedComment ??
       throwError({
-        msg: "In-valid Comment id or comment doesn't exist",
+        msg: "Invalid Comment id or comment doesn't exist",
         status: 404,
       })
     )

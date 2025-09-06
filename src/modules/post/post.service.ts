@@ -1,16 +1,16 @@
-import postRepository from '../../common/repositories/post.repository'
-import userRepository from '../../common/repositories/user.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import postRepository from "../../common/repositories/post.repository"
+import userRepository from "../../common/repositories/user.repository"
+import notificationsService from "../../common/services/notifications/notifications.service"
 
-import * as DTO from './dto/post.dto'
+import * as DTO from "./dto/post.dto"
 
-import { MongoId } from '../../common/types/db'
-import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
-import { throwError } from '../../common/handlers/error-message.handler'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { IPost } from '../../db/interfaces/IPost.interface'
-import { ILikedPostNotification } from '../../db/interfaces/INotification.interface'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import { MongoId } from "../../common/types/db"
+import { ICloudFiles } from "../../common/services/upload/interface/cloud-response.interface"
+import { throwError } from "../../common/handlers/error-message.handler"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { IPost } from "../../db/interfaces/IPost.interface"
+import { ILikedPostNotification } from "../../db/interfaces/INotification.interface"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
 export class PostService {
   protected static readonly postRepository = postRepository
@@ -68,7 +68,7 @@ export class PostService {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: editPost,
-      options: { new: true, projection: Object.keys(editPost).join(' ') },
+      options: { new: true, projection: Object.keys(editPost).join(" ") },
     })
   }
 
@@ -111,7 +111,7 @@ export class PostService {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: { archivedAt: Date.now() },
-      options: { new: true, projection: 'archivedAt' },
+      options: { new: true, projection: "archivedAt" },
     })
   }
 
@@ -129,7 +129,7 @@ export class PostService {
     return isRestored
       ? isRestored
       : throwError({
-          msg: 'Un-Existed Post or In-valid Id',
+          msg: "Un-Existed Post or Invalid Id",
           status: 404,
         })
   }
@@ -190,7 +190,7 @@ export class PostService {
           new: true,
         },
       })
-      return { msg: 'Done' }
+      return { msg: "Done" }
     }
 
     await this.postRepository.findByIdAndUpdate({
@@ -207,7 +207,7 @@ export class PostService {
       message: `${username} Liked Your Post ❤️`,
       on: { _id: postId, attachments },
       from: { _id: profileId, avatar, username },
-      refTo: 'Post',
+      refTo: "Post",
       sentAt: getNowMoment(),
     }
 
@@ -216,7 +216,7 @@ export class PostService {
       notificationDetails: notification,
     })
 
-    return { msg: 'Post is liked successfully' }
+    return { msg: "Post is liked successfully" }
   }
 
   public static readonly unlike = async ({

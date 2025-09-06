@@ -1,12 +1,12 @@
-import otpRepository from '../../common/repositories/otp.repository'
-import userRepository from '../../common/repositories/user.repository'
+import otpRepository from "../../common/repositories/otp.repository"
+import userRepository from "../../common/repositories/user.repository"
 
-import * as DTO from './dto/auth.dto'
+import * as DTO from "./dto/auth.dto"
 
-import { throwError } from '../../common/handlers/error-message.handler'
-import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
-import { signToken } from '../../common/utils/security/token/token.service'
-import { OtpType } from '../../db/models/enums/otp.enum'
+import { throwError } from "../../common/handlers/error-message.handler"
+import { compareValues } from "../../common/utils/security/bcrypt/bcrypt.service"
+import { signToken } from "../../common/utils/security/token/token.service"
+import { OtpType } from "../../db/models/enums/otp.enum"
 
 export class AuthService {
   private static readonly userRepository = userRepository
@@ -17,12 +17,15 @@ export class AuthService {
   ) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { email: confirmEmail.email },
-      projection: { email: 1 },
+      projection: { _id: 1 },
       options: { lean: true },
     })
 
     if (isExistedUser)
-      return throwError({ msg: 'user already exists', status: 409 })
+      return throwError({
+        msg: "This E-mail already registered, Try to login instead",
+        status: 409,
+      })
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email: confirmEmail.email },
@@ -32,7 +35,7 @@ export class AuthService {
 
     if (isExistedOtp)
       return throwError({
-        msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
+        msg: "Confirmation code was already sent to you E-mail, check your e-mail or wait for 15m to request another code",
         status: 409,
       })
 
@@ -45,20 +48,25 @@ export class AuthService {
   public static readonly register = async (
     register: Omit<
       DTO.IRegister,
-      'avatar' | 'confirmPassword' | 'bio' | 'isPrivateProfile'
+      "avatar" | "confirmPassword" | "bio" | "isPrivateProfile"
     >,
   ) => {
     const { username, email, password, phone, birthDate, otpCode } = register
 
-    const isConflicted = await this.userRepository.findOne({
+    const isAlreadyExisted = await this.userRepository.findOne({
       filter: {
         $or: [{ email }, { username }],
       },
+      projection: { email: 1, username: 1 },
+      options: { lean: true },
     })
 
-    if (isConflicted)
+    // if (isAlreadyExisted && isAlreadyExisted.username.match(username))
+    //   return true
+
+    if (isAlreadyExisted)
       return throwError({
-        msg: 'e-mail and username must be unique',
+        msg: "User with the same E-mail or Username already exists",
         status: 400,
       })
 
@@ -68,14 +76,19 @@ export class AuthService {
       options: { lean: true },
     })
 
-    if (!isExistedOtp) return throwError({ msg: 'in-valid code', status: 400 })
+    if (!isExistedOtp)
+      return throwError({
+        msg: "Confirmation code has been expired",
+        status: 400,
+      })
 
-    const validOtp = compareValues({
+    const isMatchedOtp = compareValues({
       value: otpCode,
       hashedValue: isExistedOtp.otpCode,
     })
 
-    if (!validOtp) return throwError({ msg: 'in-valid code', status: 400 })
+    if (!isMatchedOtp)
+      return throwError({ msg: "Invalid confirmation code", status: 400 })
 
     await this.userRepository.create({
       username,
@@ -99,7 +112,7 @@ export class AuthService {
 
     if (!isExistedUser)
       return throwError({
-        msg: 'in-valid username or password',
+        msg: "Incorrect username or password",
         status: 400,
       })
 
@@ -110,7 +123,7 @@ export class AuthService {
 
     if (!isMatchedPasswords)
       return throwError({
-        msg: 'in-valid username or password',
+        msg: "Incorrect username or password",
         status: 400,
       })
 
@@ -127,7 +140,7 @@ export class AuthService {
         _id: isExistedUser._id,
       },
       options: {
-        expiresIn: '7d',
+        expiresIn: "7d",
       },
     })
 
@@ -143,7 +156,7 @@ export class AuthService {
       options: { lean: true },
     })
 
-    if (!isExistedUser) throw { msg: 'in-valid email', status: 400 }
+    if (!isExistedUser) throw { msg: "Invalid email", status: 400 }
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email: forgotPassword.email, type: OtpType.forgotPassword },
@@ -153,7 +166,7 @@ export class AuthService {
 
     if (isExistedOtp)
       return throwError({
-        msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
+        msg: "code was already sent, check your e-mail or wait for 15m to request another code",
         status: 409,
       })
 
@@ -174,7 +187,7 @@ export class AuthService {
       options: { lean: true },
     })
 
-    if (!isExistedUser) throw { msg: 'in-valid email', status: 400 }
+    if (!isExistedUser) throw { msg: "Invalid email", status: 400 }
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email, type: OtpType.forgotPassword },
@@ -183,7 +196,7 @@ export class AuthService {
     })
 
     if (!isExistedOtp)
-      return throwError({ msg: 'code is expired', status: 400 })
+      return throwError({ msg: "code is expired", status: 400 })
 
     const isMatchedOtp = compareValues({
       value: otpCode,
@@ -191,7 +204,7 @@ export class AuthService {
     })
 
     if (!isMatchedOtp)
-      return throwError({ msg: 'code is in-valid', status: 400 })
+      return throwError({ msg: "code is Invalid", status: 400 })
 
     await this.userRepository.findByIdAndUpdate({
       _id: isExistedUser._id,

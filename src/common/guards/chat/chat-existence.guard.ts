@@ -1,16 +1,16 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { MongoId } from '../../types/db'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { MongoId } from "../../types/db"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   ContextType,
   GraphQLParams,
   HttpParams,
-} from '../../decorators/context/types'
+} from "../../decorators/context/types"
 
-import chatRepository from '../../repositories/chat.repository'
-import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
+import chatRepository from "../../repositories/chat.repository"
+import { IGetSingleChat } from "../../../modules/chat/dto/chat.dto"
 
 class ChatExistenceGuard extends GuardActivator {
   protected readonly chatRepository = chatRepository
@@ -40,7 +40,7 @@ class ChatExistenceGuard extends GuardActivator {
       _id: 1,
       username: 1,
 
-      'avatar.secure_url': 1,
+      "avatar.secure_url": 1,
     }
 
     const isExistedChat = await this.chatRepository.findOne({
@@ -62,19 +62,19 @@ class ChatExistenceGuard extends GuardActivator {
       },
       populate: [
         {
-          path: 'startedBy',
+          path: "startedBy",
           select,
         },
         {
-          path: 'participant',
+          path: "participant",
           select,
         },
         {
-          path: 'messages.to',
+          path: "messages.to",
           select,
         },
         {
-          path: 'messages.from',
+          path: "messages.from",
           select,
         },
       ],
@@ -82,7 +82,7 @@ class ChatExistenceGuard extends GuardActivator {
 
     if (!isExistedChat)
       return throwError({
-        msg: 'Un-Existed Chat or In-valid Id',
+        msg: "Un-Existed Chat or Invalid Id",
         status: 404,
       })
 

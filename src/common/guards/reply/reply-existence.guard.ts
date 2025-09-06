@@ -1,13 +1,13 @@
-import { MongoId } from '../../types/db'
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { IReplyId } from '../../../modules/reply/dto/reply.dto'
-import { throwError } from '../../handlers/error-message.handler'
+import { MongoId } from "../../types/db"
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { IReplyId } from "../../../modules/reply/dto/reply.dto"
+import { throwError } from "../../handlers/error-message.handler"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import commentRepository from '../../repositories/comment.repository'
+import commentRepository from "../../repositories/comment.repository"
 
 class ReplyExistenceGuard extends GuardActivator {
   protected readonly commentRepository = commentRepository
@@ -45,7 +45,7 @@ class ReplyExistenceGuard extends GuardActivator {
 
     if (!isExistedReply)
       return throwError({
-        msg: 'Un-Existed Reply or In-valid Id',
+        msg: "Un-Existed Reply or Invalid Id",
         status: 404,
       })
 

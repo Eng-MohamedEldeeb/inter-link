@@ -1,30 +1,30 @@
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { CommunityResponse } from './types/community-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { CommunityResponse } from "./types/community-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
 import {
   CommunityMutationResolver,
   CommunityQueryResolver,
-} from './community.resolver'
+} from "./community.resolver"
 
-import * as args from './types/community-args.type'
-import * as validators from '../validators/community.validators'
+import * as args from "./types/community-args.type"
+import * as validators from "../validators/community.validators"
 
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
-import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
-import communityOwnerAuthorizationGuard from '../../../common/guards/community/community-owner-authorization.guard'
-import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
-import communityConflictedNameGuard from '../../../common/guards/community/community-conflicted-name.guard'
-import inCommunityRequestsGuard from '../../../common/guards/community/in-community-requests.guard'
-import inCommunityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
+import communityExistenceGuard from "../../../common/guards/community/community-existence.guard"
+import communityOwnerAuthorizationGuard from "../../../common/guards/community/community-owner-authorization.guard"
+import postExistenceInCommunityGuard from "../../../common/guards/community/post-existence-in-community.guard"
+import communityConflictedNameGuard from "../../../common/guards/community/community-conflicted-name.guard"
+import inCommunityRequestsGuard from "../../../common/guards/community/in-community-requests.guard"
+import inCommunityAdminsGuard from "../../../common/guards/community/in-community-admins.guard"
 
 export class CommunityController {
   private static readonly CommunityQueryResolver = CommunityQueryResolver
@@ -33,8 +33,8 @@ export class CommunityController {
   // Queries:
   public static readonly getAllCommunities = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getAllCommunitiesQuery',
+      type: graphResponseType({
+        name: "getAllCommunitiesQuery",
         data: CommunityResponse.getAllCommunities(),
       }),
       resolve: applyResolver({
@@ -46,8 +46,8 @@ export class CommunityController {
 
   public static readonly getCommunity = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getSingleCommunityQuery',
+      type: graphResponseType({
+        name: "getSingleCommunityQuery",
         data: CommunityResponse.getCommunity(),
       }),
       args: args.getCommunity,
@@ -65,8 +65,8 @@ export class CommunityController {
 
   public static readonly getCommunityMembers = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getCommunityMembersQuery',
+      type: graphResponseType({
+        name: "getCommunityMembersQuery",
         data: CommunityResponse.getCommunityMembers(),
       }),
       resolve: applyResolver({
@@ -83,8 +83,8 @@ export class CommunityController {
   // Mutations:
   public static readonly create = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'createCommunityMutation',
+      type: graphResponseType({
+        name: "createCommunityMutation",
       }),
       args: args.create,
       resolve: applyResolver({
@@ -101,8 +101,8 @@ export class CommunityController {
 
   public static readonly edit = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'editCommunityMutation',
+      type: graphResponseType({
+        name: "editCommunityMutation",
       }),
       args: args.edit,
       resolve: applyResolver({
@@ -120,8 +120,8 @@ export class CommunityController {
 
   public static readonly changeVisibility = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'changeCommunityVisibilityMutation',
+      type: graphResponseType({
+        name: "changeCommunityVisibilityMutation",
       }),
       args: args.changeVisibility,
       resolve: applyResolver({
@@ -139,8 +139,8 @@ export class CommunityController {
 
   public static readonly deleteCommunity = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteCommunityMutation',
+      type: graphResponseType({
+        name: "deleteCommunityMutation",
       }),
       args: args.deleteCommunity,
       resolve: applyResolver({
@@ -158,8 +158,8 @@ export class CommunityController {
 
   public static readonly removePostFromCommunity = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'removePostFromCommunityMutation',
+      type: graphResponseType({
+        name: "removePostFromCommunityMutation",
       }),
       args: args.removePost,
       resolve: applyResolver({
@@ -178,8 +178,8 @@ export class CommunityController {
 
   public static readonly addAdmin = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'addAdminMutation',
+      type: graphResponseType({
+        name: "addAdminMutation",
       }),
       args: args.addAdmin,
       resolve: applyResolver({
@@ -198,8 +198,8 @@ export class CommunityController {
 
   public static readonly removeAdmin = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'removeAdminMutation',
+      type: graphResponseType({
+        name: "removeAdminMutation",
       }),
       args: args.removeAdmin,
       resolve: applyResolver({
@@ -218,8 +218,8 @@ export class CommunityController {
 
   public static readonly join = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'joinMutation',
+      type: graphResponseType({
+        name: "joinMutation",
       }),
       args: args.join,
       resolve: applyResolver({
@@ -236,8 +236,8 @@ export class CommunityController {
 
   public static readonly leave = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'leaveMutation',
+      type: graphResponseType({
+        name: "leaveMutation",
       }),
       args: args.leave,
       resolve: applyResolver({
@@ -254,8 +254,8 @@ export class CommunityController {
 
   public static readonly acceptJoinRequest = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'acceptJoinRequestMutation',
+      type: graphResponseType({
+        name: "acceptJoinRequestMutation",
       }),
       args: args.acceptJoinRequest,
       resolve: applyResolver({
@@ -277,8 +277,8 @@ export class CommunityController {
 
   public static readonly rejectJoinRequest = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'rejectJoinRequestMutation',
+      type: graphResponseType({
+        name: "rejectJoinRequestMutation",
       }),
       args: args.rejectJoinRequest,
       resolve: applyResolver({
@@ -300,8 +300,8 @@ export class CommunityController {
 
   public static readonly kickOut = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'kickOutMutation',
+      type: graphResponseType({
+        name: "kickOutMutation",
       }),
       args: args.kickOut,
       resolve: applyResolver({

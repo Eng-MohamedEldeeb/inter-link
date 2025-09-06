@@ -1,20 +1,20 @@
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ChatResponse } from './types/chat-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { ChatResponse } from "./types/chat-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as resolvers from './chat.resolver'
-import * as args from './types/chat-args.type'
-import * as validators from '../validators/chat.validators'
+import * as resolvers from "./chat.resolver"
+import * as args from "./types/chat-args.type"
+import * as validators from "../validators/chat.validators"
 
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import chatExistenceGuard from "../../../common/guards/chat/chat-existence.guard"
 
 export class ChatController {
   protected static readonly ChatQueryResolver = resolvers.ChatQueryResolver
@@ -24,8 +24,8 @@ export class ChatController {
   // Queries:
   public static readonly getAllChats = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getAllChats',
+      type: graphResponseType({
+        name: "getAllChats",
         data: ChatResponse.getAllChats(),
       }),
       resolve: applyResolver({
@@ -37,8 +37,8 @@ export class ChatController {
 
   public static readonly getSingleChat = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getSingleChat',
+      type: graphResponseType({
+        name: "getSingleChat",
         data: ChatResponse.getSingleChat(),
       }),
       resolve: applyResolver({
@@ -52,8 +52,8 @@ export class ChatController {
   // Mutations:
   public static readonly likeMessage = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'likeMessage',
+      type: graphResponseType({
+        name: "likeMessage",
       }),
       args: args.likeMessage,
       resolve: applyResolver({
@@ -66,8 +66,8 @@ export class ChatController {
 
   public static readonly deleteMessage = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteMessage',
+      type: graphResponseType({
+        name: "deleteMessage",
       }),
       args: args.deleteMessage,
       resolve: applyResolver({
@@ -80,8 +80,8 @@ export class ChatController {
 
   public static readonly deleteChat = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteChat',
+      type: graphResponseType({
+        name: "deleteChat",
       }),
       args: args.deleteChat,
       resolve: applyResolver({

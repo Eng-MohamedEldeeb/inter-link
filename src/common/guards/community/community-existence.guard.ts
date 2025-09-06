@@ -1,13 +1,13 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { IGetCommunity } from '../../../modules/community/dto/community.dto'
-import { throwError } from '../../handlers/error-message.handler'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { IGetCommunity } from "../../../modules/community/dto/community.dto"
+import { throwError } from "../../handlers/error-message.handler"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from '../../repositories/community.repository'
+import communityRepository from "../../repositories/community.repository"
 
 class CommunityExistenceGuard extends GuardActivator {
   protected readonly communityRepository = communityRepository
@@ -43,12 +43,12 @@ class CommunityExistenceGuard extends GuardActivator {
     const isExistedCommunity = await this.communityRepository.findOne({
       filter: { _id: this.communityId },
       populate: [
-        { path: 'posts', options: { sort: { createdAt: -1 } } },
+        { path: "posts", options: { sort: { createdAt: -1 } } },
         {
-          path: 'members',
+          path: "members",
           select: {
             username: 1,
-            'avatar.secure_url': 1,
+            "avatar.secure_url": 1,
           },
           options: { lean: true },
         },
@@ -57,7 +57,7 @@ class CommunityExistenceGuard extends GuardActivator {
 
     if (!isExistedCommunity)
       return throwError({
-        msg: 'Un-Existed Community or In-valid Id',
+        msg: "Un-Existed Community or Invalid Id",
         status: 404,
       })
 

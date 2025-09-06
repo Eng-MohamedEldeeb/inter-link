@@ -1,194 +1,189 @@
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import profileResponse from "./types/profile-response"
 
-import * as args from './types/profile-args.type'
-import * as validators from '../validator/profile.validator'
+import ProfileArgs from "./types/profile-args"
+import * as validators from "../validator/profile.validator"
 
 import {
-  ProfileQueryResolver,
-  ProfileMutationResolver,
-} from './profile.resolver'
+  profileQueryResolver,
+  profileMutationResolver,
+} from "./profile.resolver"
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ProfileResponse } from './types/profile-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
 export class ProfileController {
-  private static readonly ProfileQueryResolver = ProfileQueryResolver
-  private static readonly ProfileMutationResolver = ProfileMutationResolver
+  private readonly profileQueryResolver = profileQueryResolver
+  private readonly profileMutationResolver = profileMutationResolver
 
   // Queries:
-  public static readonly getProfile = (): IQueryController => {
+  public readonly getProfile = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getProfile',
-        data: ProfileResponse.getProfile(),
+      type: graphResponseType({
+        name: "getProfile",
+        data: profileResponse.getProfile(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileQueryResolver.getProfile,
+        resolver: this.profileQueryResolver.getProfile,
       }),
     }
   }
 
-  public static readonly getFollowers = (): IQueryController => {
+  public readonly getFollowers = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getFollowers',
-        data: ProfileResponse.getFollowers(),
+      type: graphResponseType({
+        name: "getFollowers",
+        data: profileResponse.getFollowers(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileQueryResolver.getFollowers,
+        resolver: this.profileQueryResolver.getFollowers,
       }),
     }
   }
 
-  public static readonly getFollowing = (): IQueryController => {
+  public readonly getFollowing = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getFollowing',
-        data: ProfileResponse.getFollowing(),
+      type: graphResponseType({
+        name: "getFollowing",
+        data: profileResponse.getFollowing(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileQueryResolver.getFollowing,
+        resolver: this.profileQueryResolver.getFollowing,
       }),
     }
   }
 
-  public static readonly getAllSavedPosts = (): IQueryController => {
+  public readonly getAllSavedPosts = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getAllSavedPostsQuery',
-        data: ProfileResponse.getAllSavedPosts(),
+      type: graphResponseType({
+        name: "getAllSavedPostsQuery",
+        data: profileResponse.getAllSavedPosts(),
       }),
-      args: args.getAllSavedPosts,
+      args: ProfileArgs.getAllSavedPosts,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileQueryResolver.getAllSavedPosts,
+        resolver: this.profileQueryResolver.getAllSavedPosts,
       }),
     }
   }
 
   // Mutations:
-  public static readonly updateProfile = (): IMutationController => {
+  public readonly updateProfile = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'updateProfile',
-        data: ProfileResponse.updateProfileResponse(),
+      type: graphResponseType({
+        name: "updateProfile",
+        data: profileResponse.updateProfileResponse(),
       }),
-      args: args.updateProfile,
+      args: ProfileArgs.updateProfile,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.updateProfileSchema.graphql())],
-        resolver: this.ProfileMutationResolver.updateProfile,
+        resolver: this.profileMutationResolver.updateProfile,
       }),
     }
   }
 
-  public static readonly changeVisibility = (): Omit<
-    IMutationController,
-    'args'
-  > => {
+  public readonly changeVisibility = (): Omit<IMutationController, "args"> => {
     return {
-      type: returnedResponseType({
-        name: 'changeVisibility',
+      type: graphResponseType({
+        name: "changeVisibility",
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileMutationResolver.changeVisibility,
+        resolver: this.profileMutationResolver.changeVisibility,
       }),
     }
   }
 
-  public static readonly changeEmail = (): IMutationController => {
+  public readonly changeEmail = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'changeEmail',
+      type: graphResponseType({
+        name: "changeEmail",
       }),
-      args: args.changeEmail,
+      args: ProfileArgs.changeEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.changeEmailSchema.graphql())],
-        resolver: this.ProfileMutationResolver.changeEmail,
+        resolver: this.profileMutationResolver.changeEmail,
       }),
     }
   }
 
-  public static readonly confirmNewEmail = (): IMutationController => {
+  public readonly confirmNewEmail = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'confirmNewEmail',
+      type: graphResponseType({
+        name: "confirmNewEmail",
       }),
-      args: args.confirmNewEmail,
+      args: ProfileArgs.confirmNewEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.confirmNewEmailSchema.graphql())],
-        resolver: this.ProfileMutationResolver.confirmNewEmail,
+        resolver: this.profileMutationResolver.confirmNewEmail,
       }),
     }
   }
 
-  public static readonly deleteProfilePic = (): Omit<
-    IMutationController,
-    'args'
-  > => {
+  public readonly deleteProfilePic = (): Omit<IMutationController, "args"> => {
     return {
-      type: returnedResponseType({
-        name: 'deleteProfilePic',
+      type: graphResponseType({
+        name: "deleteProfilePic",
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ProfileMutationResolver.deleteProfilePic,
+        resolver: this.profileMutationResolver.deleteProfilePic,
       }),
     }
   }
 
-  public static readonly deactivateAccount = (): IMutationController => {
+  public readonly deactivateAccount = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deactivateAccount',
+      type: graphResponseType({
+        name: "deactivateAccount",
       }),
-      args: args.deactivateAccount,
+      args: ProfileArgs.deactivateAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.deleteAccountSchema.graphql())],
-        resolver: this.ProfileMutationResolver.deactivateAccount,
+        resolver: this.profileMutationResolver.deactivateAccount,
       }),
     }
   }
 
-  public static readonly deleteAccount = (): IMutationController => {
+  public readonly deleteAccount = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteAccount',
+      type: graphResponseType({
+        name: "deleteAccount",
       }),
-      args: args.deleteAccount,
+      args: ProfileArgs.deleteAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.deleteAccountSchema.graphql())],
-        resolver: this.ProfileMutationResolver.deleteAccount,
+        resolver: this.profileMutationResolver.deleteAccount,
       }),
     }
   }
 
-  public static readonly confirmDeletion = (): IMutationController => {
+  public readonly confirmDeletion = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'confirmDeletion',
+      type: graphResponseType({
+        name: "confirmDeletion",
       }),
-      args: args.confirmDeletion,
+      args: ProfileArgs.confirmDeletion,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         middlewares: [validate(validators.confirmDeletionSchema.graphql())],
-        resolver: this.ProfileMutationResolver.confirmDeletion,
+        resolver: this.profileMutationResolver.confirmDeletion,
       }),
     }
   }
 }
+export default new ProfileController()

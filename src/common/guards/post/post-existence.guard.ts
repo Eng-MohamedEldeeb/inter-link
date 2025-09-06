@@ -1,14 +1,14 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
 
-import { IGetSinglePost, IPostId } from '../../../modules/post/dto/post.dto'
+import { IGetSinglePost, IPostId } from "../../../modules/post/dto/post.dto"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from '../../repositories/post.repository'
-import { MongoId } from '../../types/db'
+import postRepository from "../../repositories/post.repository"
+import { MongoId } from "../../types/db"
 
 class PostExistenceGuard extends GuardActivator {
   protected readonly postRepository = postRepository
@@ -53,12 +53,12 @@ class PostExistenceGuard extends GuardActivator {
         ],
       },
       projection: { savedBy: 0 },
-      populate: [{ path: 'comments' }],
+      populate: [{ path: "comments" }],
     })
 
     if (!isExistedPost)
       return throwError({
-        msg: 'Un-Existed Post or In-valid Id',
+        msg: "Un-Existed Post or Invalid Id",
         status: 404,
       })
     return isExistedPost

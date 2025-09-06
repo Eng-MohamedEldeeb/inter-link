@@ -1,63 +1,54 @@
-import { ISuccessResponse } from '../../../common/interface/IGraphQL.interface'
-import { AuthService } from '../auth.service'
+import { ISuccessResponse } from "../../../common/interface/IGraphQL.interface"
+import { AuthService } from "../auth.service"
 
-import * as DTO from '../dto/auth.dto'
+import * as DTO from "../dto/auth.dto"
 
-export class AuthResolver {
-  protected static readonly AuthService = AuthService
+class AuthResolver {
+  protected readonly AuthService = AuthService
 
-  public static readonly confirmEmail = async (
+  public readonly confirmEmail = async (
     args: DTO.IConfirmEmail,
     _: any,
   ): Promise<ISuccessResponse> => {
     await this.AuthService.confirmEmail(args)
-    return {
-      msg: 'check your e-mail to confirm',
-      status: 200,
-    }
+    return { msg: "Check your E-mail for a confirmation code" }
   }
 
-  public static readonly register = async (
+  public readonly register = async (
     args: DTO.IRegister,
     _: any,
   ): Promise<ISuccessResponse> => {
     return {
-      msg: 'user created successfully',
+      msg: `Registered Successfully, Welcome ${args.username}`,
       status: 201,
-      data: await this.AuthService.register(args),
+      data: { accessToken: await this.AuthService.register(args) },
     }
   }
 
-  public static readonly login = async (
+  public readonly login = async (
     args: DTO.ILogin,
     _: any,
   ): Promise<ISuccessResponse> => {
     return {
-      msg: 'logged in successfully',
-      status: 200,
-      data: await this.AuthService.login(args),
+      msg: `Welcome Back ${args.username}`,
+      data: { accessToken: await this.AuthService.login(args) },
     }
   }
 
-  public static readonly forgotPassword = async (
+  public readonly forgotPassword = async (
     args: DTO.IForgotPassword,
     _: any,
   ) => {
-    return {
-      msg: 'check your e-mail to confirm',
-      status: 200,
-      data: await this.AuthService.forgotPassword(args),
-    }
+    await this.AuthService.forgotPassword(args)
+    return { msg: "Check your E-mail to confirm" }
   }
 
-  public static readonly resetPassword = async (
+  public readonly resetPassword = async (
     args: DTO.IResetPassword,
     _: any,
   ): Promise<ISuccessResponse> => {
-    return {
-      msg: 'password is reset successfully',
-      status: 200,
-      data: await this.AuthService.resetPassword(args),
-    }
+    await this.AuthService.resetPassword(args)
+    return { msg: "Password has been reset successfully" }
   }
 }
+export default new AuthResolver()

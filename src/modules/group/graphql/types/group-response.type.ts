@@ -1,16 +1,16 @@
 import {
-  returnedResponseType,
+  graphResponseType,
   returnedType,
-} from '../../../../common/decorators/resolver/returned-type.decorator'
+} from "../../../../common/decorators/resolver/returned-type.decorator"
 
-import { allGroupChats, singleGroupChatFields } from './group-fields.type'
+import { allGroupChats, singleGroupChatFields } from "./group-fields.type"
 
 export class GroupResponse {
   public static readonly getAllGroups = () => {
-    return returnedResponseType({
-      name: 'getAllGroupResponse',
+    return graphResponseType({
+      name: "getAllGroupResponse",
       data: returnedType({
-        name: 'groupsDataResponse',
+        name: "groupsDataResponse",
         fields: {
           chats: {
             type: allGroupChats,

@@ -1,17 +1,17 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
 import {
   ICommentId,
   IGetSingleComment,
-} from '../../../modules/comment/dto/comment.dto'
+} from "../../../modules/comment/dto/comment.dto"
 
-import commentRepository from '../../repositories/comment.repository'
+import commentRepository from "../../repositories/comment.repository"
 
 class CommentExistenceGuard extends GuardActivator {
   protected readonly commentRepository = commentRepository
@@ -50,12 +50,12 @@ class CommentExistenceGuard extends GuardActivator {
   protected readonly getCommentDetails = async () => {
     const isExistedComment = await this.commentRepository.findOne({
       filter: { $or: [{ _id: this.id }, { _id: this.commentId }] },
-      populate: [{ path: 'replies' }],
+      populate: [{ path: "replies" }],
     })
 
     if (!isExistedComment)
       return throwError({
-        msg: 'Un-Existed Comment or In-valid Id',
+        msg: "Un-Existed Comment or Invalid Id",
         status: 404,
       })
 

@@ -1,7 +1,8 @@
-import { ObjectSchema } from 'joi'
-import { ContextDetector } from '../../../decorators/context/context-detector.decorator'
-import { IRequest } from '../../../interface/IRequest.interface'
-import { throwError } from '../../../handlers/error-message.handler'
+import { ObjectSchema } from "joi"
+import { ContextDetector } from "../../../decorators/context/context-detector.decorator"
+import { IRequest } from "../../../interface/IRequest.interface"
+import { throwError } from "../../../handlers/error-message.handler"
+import { GraphQLError } from "graphql"
 
 export const validateHttpInputs = async (
   ctx: typeof ContextDetector,
@@ -29,7 +30,7 @@ export const validateHttpInputs = async (
 
   if (errors.length)
     return throwError({
-      msg: 'validation error',
+      msg: "validation error",
       details: errors,
       status: 400,
     })
@@ -61,5 +62,5 @@ export const validateGraphQLInputs = async (
   }
 
   if (errors.length)
-    throw { msg: 'validation error', extensions: { details: errors } }
+    throw new GraphQLError("validation error", { extensions: { errors } })
 }

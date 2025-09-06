@@ -1,14 +1,14 @@
-import { IEmailServiceArgs } from './interface/email-args.interface'
-import { IEmailSchemaArgs } from './interface/email-schema.interface'
+import { IEmailServiceArgs } from "./interface/email-args.interface"
+import { IEmailSchemaArgs } from "./interface/email-schema.interface"
 
 export const confirmRegistration = ({
   to,
   otpCode,
 }: IEmailSchemaArgs): IEmailServiceArgs => {
   return {
-    from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
+    from: `"${process.env.APP_NAME!.toUpperCase()}" <${process.env.EMAIL}>`,
     to,
-    subject: 'Confirm E-mail',
+    subject: "Confirm E-mail",
     html: `
           <div style="text-align: center;">
               <h1>Welcome to our $process.env.APP_NAMEs Application</h1>
@@ -26,7 +26,7 @@ export const confirmNewEmail = ({
   return {
     from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
-    subject: 'Verify E-mail',
+    subject: "Verify E-mail",
     html: `
           <div style="text-align: center;">
               <h1>Hello</h1>
@@ -44,7 +44,7 @@ export const forgotPassword = ({
   return {
     from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
-    subject: 'Verify E-mail',
+    subject: "Verify E-mail",
     html: `
           <div style="text-align: center;">
               <h1>Hello</h1>
@@ -62,7 +62,7 @@ export const verifyDeletion = ({
   return {
     from: `"${process.env.APP_NAME}" <${process.env.EMAIL}>`,
     to,
-    subject: 'Verify E-mail',
+    subject: "Verify E-mail",
     html: `
           <div style="text-align: center;">
               <h1>Hello</h1>

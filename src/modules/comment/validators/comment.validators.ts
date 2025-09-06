@@ -1,9 +1,9 @@
-import joi from 'joi'
+import joi from "joi"
 
-import * as DTO from '../dto/comment.dto'
+import * as DTO from "../dto/comment.dto"
 
-import { generalFields } from '../../../common/validation/general-fields'
-import { isValidMongoId } from '../../../common/validation/is-valid'
+import { generalFields } from "../../../common/validation/general-fields"
+import { isValidMongoId } from "../../../common/validation/is-valid"
 
 export const getSingleCommentValidator = {
   schema: joi
@@ -11,14 +11,14 @@ export const getSingleCommentValidator = {
     .keys({
       id: generalFields.mongoId
         .required()
-        .messages({ 'string.base': 'In-valid commentId' }),
+        .messages({ "string.base": "Invalid commentId" }),
     })
     .required(),
 
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'commentId param is required',
+        "any.required": "commentId param is required",
       }),
     }
   },
@@ -26,7 +26,7 @@ export const getSingleCommentValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'commentId arg is required',
+        "any.required": "commentId arg is required",
       }),
     }
   },
@@ -45,7 +45,7 @@ export const addValidator = {
   http() {
     return {
       params: joi.object().keys(this.schema.params).required().messages({
-        'any.required':
+        "any.required":
           '[/postId/comments] "postId" is Expected but got nothing',
       }),
       body: joi
@@ -53,7 +53,7 @@ export const addValidator = {
         .keys(this.schema.body)
         .required()
         .messages({
-          'any.required': 'addComment body is required',
+          "any.required": "addComment body is required",
         }),
     }
   },
@@ -65,7 +65,7 @@ export const addValidator = {
         .keys({ ...this.schema.body, ...this.schema.params })
         .required()
         .messages({
-          'any.required': 'addComment args is required',
+          "any.required": "addComment args is required",
         }),
     }
   },
@@ -87,11 +87,11 @@ export const editValidator = {
         .keys(this.schema.query)
         .required()
         .messages({
-          'any.required':
+          "any.required":
             '[/edit?id=id] "commentId" is Expected but got nothing',
         }),
       body: joi.object().keys(this.schema.body).required().messages({
-        'any.required': 'addComment body is required',
+        "any.required": "addComment body is required",
       }),
     }
   },
@@ -103,7 +103,7 @@ export const editValidator = {
         .keys({ ...this.schema.body, ...this.schema.query })
         .required()
         .messages({
-          'any.required': 'editComment args is required',
+          "any.required": "editComment args is required",
         }),
     }
   },
@@ -123,7 +123,7 @@ export const deleteValidator = {
         .keys(this.schema.params)
         .required()
         .messages({
-          'any.required':
+          "any.required":
             '[/comments/commentId] "commentId" is Expected but got nothing',
         }),
     }
@@ -136,7 +136,7 @@ export const deleteValidator = {
         .keys(this.schema.params)
         .required()
         .messages({
-          'any.required': 'commentId is Expected but Got Nothing',
+          "any.required": "commentId is Expected but Got Nothing",
         }),
     }
   },
@@ -156,7 +156,7 @@ export const likeValidator = {
         .keys(this.schema.query)
         .required()
         .messages({
-          'any.required': '[/comments?id=id] "id" is Expected but got nothing',
+          "any.required": '[/comments?id=id] "id" is Expected but got nothing',
         }),
     }
   },
@@ -168,7 +168,7 @@ export const likeValidator = {
         .keys(this.schema.query)
         .required()
         .messages({
-          'any.required': 'commentId is Expected but Got Nothing',
+          "any.required": "commentId is Expected but Got Nothing",
         }),
     }
   },

@@ -1,14 +1,14 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
+import { MongoId } from "../../types/db"
 
-import { IGetSingleStory, IStoryId } from '../../../modules/story/dto/story.dto'
+import { IGetSingleStory, IStoryId } from "../../../modules/story/dto/story.dto"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import storyRepository from '../../repositories/story.repository'
+import storyRepository from "../../repositories/story.repository"
 
 class StoryExistenceGuard extends GuardActivator {
   protected readonly storyRepository = storyRepository
@@ -47,7 +47,7 @@ class StoryExistenceGuard extends GuardActivator {
 
     if (!isExistedStory)
       return throwError({
-        msg: 'Un-Existed Story or In-valid Id',
+        msg: "Un-Existed Story or Invalid Id",
         status: 404,
       })
 

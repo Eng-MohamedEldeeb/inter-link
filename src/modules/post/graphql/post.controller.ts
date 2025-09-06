@@ -1,22 +1,22 @@
-import PostSharePermissionGuardGuard from '../../../common/guards/post/post-share-permission.guard'
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
-import PostOwnerGuard from '../../../common/guards/post/post-owner.guard'
+import PostSharePermissionGuardGuard from "../../../common/guards/post/post-share-permission.guard"
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import postExistenceGuard from "../../../common/guards/post/post-existence.guard"
+import PostOwnerGuard from "../../../common/guards/post/post-owner.guard"
 
-import * as args from './types/post-args.type'
-import * as validators from './../validators/post.validators'
+import * as args from "./types/post-args.type"
+import * as validators from "./../validators/post.validators"
 
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { PostMutationResolver, PostQueryResolver } from './post.resolver'
-import { PostResponse } from './types/post-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
+import { PostMutationResolver, PostQueryResolver } from "./post.resolver"
+import { PostResponse } from "./types/post-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 
 export class PostController {
   private static readonly PostQueryResolver = PostQueryResolver
@@ -25,8 +25,8 @@ export class PostController {
   // Queries:
   public static readonly getAll = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getAllPostsQuery',
+      type: graphResponseType({
+        name: "getAllPostsQuery",
         data: PostResponse.getAll(),
       }),
       args: args.getAll,
@@ -40,8 +40,8 @@ export class PostController {
 
   public static readonly getSingle = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getSinglePostQuery',
+      type: graphResponseType({
+        name: "getSinglePostQuery",
         data: PostResponse.getSingle(),
       }),
       args: args.getSingle,
@@ -57,8 +57,8 @@ export class PostController {
 
   public static readonly edit = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'editPostMutation',
+      type: graphResponseType({
+        name: "editPostMutation",
       }),
       args: args.edit,
       resolve: applyResolver({
@@ -76,8 +76,8 @@ export class PostController {
 
   public static readonly save = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'savePostMutation',
+      type: graphResponseType({
+        name: "savePostMutation",
       }),
       args: args.save,
       resolve: applyResolver({
@@ -90,8 +90,8 @@ export class PostController {
 
   public static readonly shared = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'sharedPostMutation',
+      type: graphResponseType({
+        name: "sharedPostMutation",
       }),
       args: args.shared,
       resolve: applyResolver({
@@ -109,8 +109,8 @@ export class PostController {
 
   public static readonly archive = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'archivePostMutation',
+      type: graphResponseType({
+        name: "archivePostMutation",
       }),
       args: args.archive,
       resolve: applyResolver({
@@ -123,8 +123,8 @@ export class PostController {
 
   public static readonly restore = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'restorePostMutation',
+      type: graphResponseType({
+        name: "restorePostMutation",
       }),
       args: args.restore,
       resolve: applyResolver({
@@ -137,8 +137,8 @@ export class PostController {
 
   public static readonly deletePost = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deletePostMutation',
+      type: graphResponseType({
+        name: "deletePostMutation",
       }),
       args: args.deletePost,
       resolve: applyResolver({

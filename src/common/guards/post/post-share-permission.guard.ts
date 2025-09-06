@@ -1,13 +1,13 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
-import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
+import { IGetSinglePost } from "../../../modules/post/dto/post.dto"
+import { throwError } from "../../handlers/error-message.handler"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import userRepository from '../../repositories/user.repository'
+import userRepository from "../../repositories/user.repository"
 
 class PostSharePermissionGuard extends GuardActivator {
   protected readonly userRepository = userRepository
@@ -42,14 +42,14 @@ class PostSharePermissionGuard extends GuardActivator {
       projection: { isPrivateProfile: 1 },
     })
 
-    if (!ownerProfile) return throwError({ msg: 'In-valid Post Id' })
+    if (!ownerProfile) return throwError({ msg: "Invalid Post Id" })
 
     if (
       ownerProfile.isPrivateProfile &&
       !ownerProfile._id.equals(this.profileId)
     )
       return throwError({
-        msg: 'Only Followers can share their own posts of this Private Profile',
+        msg: "Only Followers can share their own posts of this Private Profile",
         status: 403,
       })
 

@@ -32,9 +32,9 @@ export type ResolverParams = (
 ) => Promise<any> | any
 
 export interface IResolveArgs {
-  resolver: ControllerParams
   guards?: GuardActivator[]
   middlewares?: ResolverParams[]
+  resolver: ControllerParams
 }
 
 export interface IResolver {

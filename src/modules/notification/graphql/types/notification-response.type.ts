@@ -1,20 +1,20 @@
 import {
-  returnedResponseType,
+  graphResponseType,
   returnedType,
-} from '../../../../common/decorators/resolver/returned-type.decorator'
+} from "../../../../common/decorators/resolver/returned-type.decorator"
 
-import { notificationFields } from './notification-fields.type'
+import { notificationFields } from "./notification-fields.type"
 
 export class NotificationResponse {
   public static readonly getAllNotifications = () => {
-    return returnedResponseType({
-      name: 'getAllNotificationsResponse',
+    return graphResponseType({
+      name: "getAllNotificationsResponse",
       data: returnedType({
-        name: 'notificationsDataResponse',
+        name: "notificationsDataResponse",
         fields: {
           notifications: {
             type: returnedType({
-              name: 'notificationDetailsResponse',
+              name: "notificationDetailsResponse",
               fields: notificationFields,
             }),
           },

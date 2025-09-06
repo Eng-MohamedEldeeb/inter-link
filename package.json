@@ -4,7 +4,7 @@
   "description": "Inspired By Instagram",
   "main": "/dist/main.js",
   "scripts": {
-    "start": "nodemon"
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",

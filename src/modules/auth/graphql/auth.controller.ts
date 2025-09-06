@@ -1,77 +1,89 @@
-import { IMutationController } from '../../../common/interface/IGraphQL.interface'
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { AuthResolver } from './auth.resolver'
+import { GraphQLObjectType, GraphQLString } from "graphql"
 
-import * as args from './types/auth-args.type'
-import * as validators from './../validator/auth.validator'
+import authArgs from "./types/auth-args"
+import authResolver from "./auth.resolver"
 
-export class AuthController {
-  private static readonly AuthResolver = AuthResolver
+import * as validators from "./../validator/auth.validator"
 
-  public static readonly confirmEmail = (): IMutationController => {
+import { IMutationController } from "../../../common/interface/IGraphQL.interface"
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+
+class AuthController {
+  private readonly authResolver = authResolver
+
+  public readonly confirmEmail = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'confirmEmail',
+      type: graphResponseType({
+        name: "confirmEmail",
       }),
-      args: args.confirmEmail,
+      args: authArgs.confirmEmail,
       resolve: applyResolver({
         middlewares: [validate(validators.confirmEmailSchema.graphql())],
-        resolver: this.AuthResolver.confirmEmail,
+        resolver: this.authResolver.confirmEmail,
       }),
     }
   }
 
-  public static readonly register = (): IMutationController => {
+  public readonly register = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'register',
+      type: graphResponseType({
+        name: "register",
       }),
-      args: args.register,
+      args: authArgs.register,
       resolve: applyResolver({
         middlewares: [validate(validators.registerSchema.graphql())],
-        resolver: this.AuthResolver.register,
+        resolver: this.authResolver.register,
       }),
     }
   }
 
-  public static readonly login = (): IMutationController => {
+  public readonly login = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'login',
+      type: graphResponseType({
+        name: "login",
+        data: new GraphQLObjectType({
+          name: "loginResponseData",
+          fields: {
+            accessToken: {
+              type: GraphQLString,
+            },
+          },
+        }),
       }),
-      args: args.login,
+      args: authArgs.login,
       resolve: applyResolver({
         middlewares: [validate(validators.loginSchema.graphql())],
-        resolver: this.AuthResolver.login,
+        resolver: this.authResolver.login,
       }),
     }
   }
 
-  public static readonly forgotPassword = (): IMutationController => {
+  public readonly forgotPassword = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'forgotPassword',
+      type: graphResponseType({
+        name: "forgotPassword",
       }),
-      args: args.forgotPassword,
+      args: authArgs.forgotPassword,
       resolve: applyResolver({
         middlewares: [validate(validators.forgotPasswordSchema.graphql())],
-        resolver: this.AuthResolver.forgotPassword,
+        resolver: this.authResolver.forgotPassword,
       }),
     }
   }
 
-  public static readonly resetPassword = (): IMutationController => {
+  public readonly resetPassword = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'resetPassword',
+      type: graphResponseType({
+        name: "resetPassword",
       }),
-      args: args.resetPassword,
+      args: authArgs.resetPassword,
       resolve: applyResolver({
         middlewares: [validate(validators.resetPasswordSchema.graphql())],
-        resolver: this.AuthResolver.resetPassword,
+        resolver: this.authResolver.resetPassword,
       }),
     }
   }
 }
+export default new AuthController()

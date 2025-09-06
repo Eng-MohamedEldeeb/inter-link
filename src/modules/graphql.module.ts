@@ -1,22 +1,22 @@
-import { GraphQLError, GraphQLObjectType, GraphQLSchema } from 'graphql'
+import { GraphQLError, GraphQLObjectType, GraphQLSchema } from "graphql"
 
-import { createHandler } from 'graphql-http/lib/use/express'
+import { createHandler } from "graphql-http/lib/use/express"
 
-import * as auth from './auth/graphql/auth.module'
-import * as notification from './notification/graphql/notification.module'
-import * as profile from './profile/graphql/profile.module'
-import * as user from './user/graphql/user.module'
-import * as post from './post/graphql/post.module'
-import * as comment from './comment/graphql/comment.module'
-import * as reply from './reply/graphql/reply.module'
-import * as story from './story/graphql/story.module'
-import * as community from './community/graphql/community.module'
-import * as chat from './chat/graphql/chat.module'
-import * as group from './group/graphql/group.module'
+import * as auth from "./auth/graphql/auth.module"
+import * as notification from "./notification/graphql/notification.module"
+import * as profile from "./profile/graphql/profile.module"
+import * as user from "./user/graphql/user.module"
+import * as post from "./post/graphql/post.module"
+import * as comment from "./comment/graphql/comment.module"
+import * as reply from "./reply/graphql/reply.module"
+import * as story from "./story/graphql/story.module"
+import * as community from "./community/graphql/community.module"
+import * as chat from "./chat/graphql/chat.module"
+import * as group from "./group/graphql/group.module"
 
 export const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
-    name: 'mainRootQuery',
+    name: "mainRootQuery",
     fields: {
       notification: notification.queryModule,
       profile: profile.queryModule,
@@ -32,7 +32,7 @@ export const schema = new GraphQLSchema({
   }),
 
   mutation: new GraphQLObjectType({
-    name: 'mainRootMutation',
+    name: "mainRootMutation",
     fields: {
       auth: auth.mutationModule,
       notification: notification.mutationModule,
@@ -56,9 +56,9 @@ const graphqlModule = createHandler({
 
     return { authorization }
   },
-  formatError(err) {
-    return new GraphQLError(err.message, { originalError: err })
-  },
+  // formatError(err) {
+  //   return new GraphQLError(err.message, { originalError: err })
+  // },
 })
 
 export default graphqlModule

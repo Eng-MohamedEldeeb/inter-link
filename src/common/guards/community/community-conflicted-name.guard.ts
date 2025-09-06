@@ -1,16 +1,16 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   ICreateCommunity,
   IGetCommunity,
-} from '../../../modules/community/dto/community.dto'
+} from "../../../modules/community/dto/community.dto"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from '../../repositories/community.repository'
+import communityRepository from "../../repositories/community.repository"
 
 class CommunityConflictedNameGuard extends GuardActivator {
   protected readonly communityRepository = communityRepository
@@ -46,7 +46,7 @@ class CommunityConflictedNameGuard extends GuardActivator {
 
     if (existedCommunity)
       return throwError({
-        msg: `'${this.name}' is and In-valid community name`,
+        msg: `'${this.name}' is and Invalid community name`,
       })
 
     return true

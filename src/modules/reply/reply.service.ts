@@ -1,18 +1,18 @@
-import commentRepository from '../../common/repositories/comment.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import commentRepository from "../../common/repositories/comment.repository"
+import notificationsService from "../../common/services/notifications/notifications.service"
 
-import * as DTO from './dto/reply.dto'
+import * as DTO from "./dto/reply.dto"
 
 import {
   ILikedCommentNotification,
   IReplyToCommentNotification,
-} from '../../db/interfaces/INotification.interface'
+} from "../../db/interfaces/INotification.interface"
 
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { IReply } from '../../db/interfaces/IReply.interface'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import { throwError } from "../../common/handlers/error-message.handler"
+import { MongoId } from "../../common/types/db"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { IReply } from "../../db/interfaces/IReply.interface"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
 export class ReplyService {
   protected static readonly commentRepository = commentRepository
@@ -47,7 +47,7 @@ export class ReplyService {
       content,
       from: { _id: profileId, username, avatar },
       on: { _id: commentId, attachment },
-      refTo: 'Comment',
+      refTo: "Comment",
       sentAt: getNowMoment(),
     }
 
@@ -78,7 +78,7 @@ export class ReplyService {
           new: true,
         },
       })
-      return { msg: 'Done' }
+      return { msg: "Done" }
     }
 
     await this.commentRepository.findByIdAndUpdate({
@@ -94,7 +94,7 @@ export class ReplyService {
       message: `${username} Liked Your Reply 💚`,
       on: { _id: commentId },
       from: { _id: profileId, avatar, username },
-      refTo: 'Comment',
+      refTo: "Comment",
       sentAt: getNowMoment(),
     }
 
@@ -103,7 +103,7 @@ export class ReplyService {
       notificationDetails: notification,
     })
 
-    return { msg: 'comment is liked successfully' }
+    return { msg: "comment is liked successfully" }
   }
 
   public static readonly edit = async ({
@@ -118,7 +118,7 @@ export class ReplyService {
     return (
       updatedReply ??
       throwError({
-        msg: "In-valid Reply id or Reply doesn't exist",
+        msg: "Invalid Reply id or Reply doesn't exist",
         status: 404,
       })
     )
@@ -133,7 +133,7 @@ export class ReplyService {
     return (
       isDeletedReply ??
       throwError({
-        msg: "In-valid Reply id or Reply doesn't exist",
+        msg: "Invalid Reply id or Reply doesn't exist",
         status: 404,
       })
     )

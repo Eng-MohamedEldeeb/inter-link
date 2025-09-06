@@ -1,21 +1,21 @@
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { CommentResponse } from './types/comment-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { CommentResponse } from "./types/comment-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as resolvers from './comment.resolver'
-import * as args from './types/comment-args.type'
-import * as validators from './../validators/comment.validators'
+import * as resolvers from "./comment.resolver"
+import * as args from "./types/comment-args.type"
+import * as validators from "./../validators/comment.validators"
 
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import CommentOwnerGuard from '../../../common/guards/comment/comment-owner.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
+import CommentOwnerGuard from "../../../common/guards/comment/comment-owner.guard"
 
 export class CommentController {
   protected static readonly CommentQueryResolver =
@@ -26,8 +26,8 @@ export class CommentController {
   // Queries:
   public static readonly getSingleComment = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getPostComments',
+      type: graphResponseType({
+        name: "getPostComments",
         data: CommentResponse.getSingleComment(),
       }),
       args: args.getPostComments,
@@ -42,8 +42,8 @@ export class CommentController {
   // Mutations:
   public static readonly likeComment = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'likeCommentMutation',
+      type: graphResponseType({
+        name: "likeCommentMutation",
       }),
       args: args.like,
       resolve: applyResolver({
@@ -60,8 +60,8 @@ export class CommentController {
 
   public static readonly edit = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'editCommentMutation',
+      type: graphResponseType({
+        name: "editCommentMutation",
       }),
       args: args.edit,
       resolve: applyResolver({
@@ -79,8 +79,8 @@ export class CommentController {
 
   public static readonly deleteComment = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteCommentMutation',
+      type: graphResponseType({
+        name: "deleteCommentMutation",
       }),
       args: args.deleteComment,
       resolve: applyResolver({

@@ -3,10 +3,10 @@ import { throwError } from '../../../handlers/error-message.handler'
 import { ContextDetector } from '../../context/context-detector.decorator'
 
 export const httpContextGuardsActivator = async (
-  Ctx: typeof ContextDetector,
+  ctx: typeof ContextDetector,
   guards: GuardActivator[],
 ) => {
-  const { req, res, next } = Ctx.switchToHTTP()
+  const { req, res, next } = ctx.switchToHTTP()
 
   for (const guard of guards) {
     const result = await guard.canActivate(req, res, next)
@@ -17,10 +17,10 @@ export const httpContextGuardsActivator = async (
 }
 
 export const graphQlContextGuardsActivator = async (
-  Ctx: typeof ContextDetector,
+  ctx: typeof ContextDetector,
   guards: GuardActivator[],
 ) => {
-  const { source, args, context, info } = Ctx.switchToGraphQL()
+  const { source, args, context, info } = ctx.switchToGraphQL()
 
   for (const guard of guards) {
     const result = await guard.canActivate(source, args, context, info)
@@ -31,10 +31,10 @@ export const graphQlContextGuardsActivator = async (
 }
 
 export const socketContextGuardsActivator = async (
-  Ctx: typeof ContextDetector,
+  ctx: typeof ContextDetector,
   guards: GuardActivator[],
 ) => {
-  const { socket, socketServerNext } = Ctx.switchToSocket()
+  const { socket, socketServerNext } = ctx.switchToSocket()
 
   for (const guard of guards) {
     const result = await guard.canActivate(socket, socketServerNext)

@@ -1,18 +1,18 @@
-import otpRepository from '../../common/repositories/otp.repository'
-import userRepository from '../../common/repositories/user.repository'
-import postRepository from '../../common/repositories/post.repository'
+import otpRepository from "../../common/repositories/otp.repository"
+import userRepository from "../../common/repositories/user.repository"
+import postRepository from "../../common/repositories/post.repository"
 
-import * as DTO from './dto/profile.dto'
+import * as DTO from "./dto/profile.dto"
 
-import { throwError } from '../../common/handlers/error-message.handler'
-import { compareValues } from '../../common/utils/security/bcrypt/bcrypt.service'
-import { decryptValue } from '../../common/utils/security/crypto/crypto.service'
-import { OtpType } from '../../db/models/enums/otp.enum'
-import { IGetAll } from '../post/dto/post.dto'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { MongoId } from '../../common/types/db'
-import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { ICloud } from '../../common/services/upload/interface/cloud-response.interface'
+import { throwError } from "../../common/handlers/error-message.handler"
+import { compareValues } from "../../common/utils/security/bcrypt/bcrypt.service"
+import { decryptValue } from "../../common/utils/security/crypto/crypto.service"
+import { OtpType } from "../../db/models/enums/otp.enum"
+import { IGetAll } from "../post/dto/post.dto"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { MongoId } from "../../common/types/db"
+import { CloudUploader } from "../../common/services/upload/cloud.service"
+import { ICloud } from "../../common/services/upload/interface/cloud-response.interface"
 
 export class ProfileService {
   protected static readonly userRepository = userRepository
@@ -107,7 +107,7 @@ export class ProfileService {
       options: {
         new: true,
         lean: true,
-        projection: { 'avatar.secure_url': 1 },
+        projection: { "avatar.secure_url": 1 },
       },
     })
   }
@@ -143,7 +143,7 @@ export class ProfileService {
       options: {
         new: true,
         lean: true,
-        projection: { 'avatar.secure_url': 1 },
+        projection: { "avatar.secure_url": 1 },
       },
     })
   }
@@ -176,7 +176,7 @@ export class ProfileService {
       }))
 
     if (isConflictedUsername)
-      return throwError({ msg: 'username is taken', status: 409 })
+      return throwError({ msg: "username is taken", status: 409 })
 
     return await this.userRepository.findByIdAndUpdate({
       _id: profileId,
@@ -184,7 +184,7 @@ export class ProfileService {
       options: {
         lean: true,
         new: true,
-        projection: Object.keys(updateProfile).join(' '),
+        projection: Object.keys(updateProfile).join(" "),
       },
     })
   }
@@ -236,7 +236,7 @@ export class ProfileService {
     })
 
     if (!isMatchedPasswords)
-      return throwError({ msg: 'in-valid password', status: 400 })
+      return throwError({ msg: "Invalid password", status: 400 })
 
     const conflictedEmail = await this.userRepository.findOne({
       filter: {
@@ -246,7 +246,7 @@ export class ProfileService {
     })
 
     if (conflictedEmail)
-      return throwError({ msg: 'e-mail already exists', status: 409 })
+      return throwError({ msg: "e-mail already exists", status: 409 })
 
     Promise.allSettled([
       otpRepository.create({
@@ -279,7 +279,7 @@ export class ProfileService {
 
     if (!isExistedOtp)
       return throwError({
-        msg: 'expired verification code',
+        msg: "expired verification code",
         status: 400,
       })
 
@@ -290,7 +290,7 @@ export class ProfileService {
 
     if (!isMatchedOtp)
       return throwError({
-        msg: 'in-valid verification code',
+        msg: "Invalid verification code",
         status: 400,
       })
 
@@ -314,7 +314,7 @@ export class ProfileService {
     })
 
     if (!isExistedUser)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: "Invalid email or password", status: 400 })
 
     const isMatchedPasswords = compareValues({
       value: password,
@@ -322,7 +322,7 @@ export class ProfileService {
     })
 
     if (!isMatchedPasswords)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: "Invalid email or password", status: 400 })
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email: isExistedUser.email, type: OtpType.verifyDeactivation },
@@ -332,7 +332,7 @@ export class ProfileService {
 
     if (isExistedOtp)
       return throwError({
-        msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
+        msg: "code was already sent, check your e-mail or wait for 15m to request another code",
         status: 409,
       })
 
@@ -353,7 +353,7 @@ export class ProfileService {
     })
 
     if (!isExistedUser)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: "Invalid email or password", status: 400 })
 
     const isMatchedPasswords = compareValues({
       value: password,
@@ -361,7 +361,7 @@ export class ProfileService {
     })
 
     if (!isMatchedPasswords)
-      return throwError({ msg: 'in-valid email or password', status: 400 })
+      return throwError({ msg: "Invalid email or password", status: 400 })
 
     const isExistedOtp = await this.otpRepository.findOne({
       filter: { email: isExistedUser.email, type: OtpType.verifyDeletion },
@@ -371,7 +371,7 @@ export class ProfileService {
 
     if (isExistedOtp)
       return throwError({
-        msg: 'code was already sent, check your e-mail or wait for 15m to request another code',
+        msg: "code was already sent, check your e-mail or wait for 15m to request another code",
         status: 409,
       })
 
@@ -397,14 +397,14 @@ export class ProfileService {
     })
 
     if (!isExistedOtp)
-      return throwError({ msg: 'code is expired', status: 400 })
+      return throwError({ msg: "code is expired", status: 400 })
 
     const isMatchedOtp = compareValues({
       value: otpCode,
       hashedValue: isExistedOtp.otpCode,
     })
 
-    if (!isMatchedOtp) return throwError({ msg: 'in-valid code', status: 400 })
+    if (!isMatchedOtp) return throwError({ msg: "Invalid code", status: 400 })
 
     if (isExistedOtp.type == OtpType.verifyDeactivation) {
       await this.userRepository.findOneAndUpdate({

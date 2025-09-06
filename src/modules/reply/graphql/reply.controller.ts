@@ -1,21 +1,21 @@
 import {
   IMutationController,
   IQueryController,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { applyResolver } from '../../../common/decorators/resolver/apply-resolver.decorator'
-import { returnedResponseType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { CommentResponse } from './types/reply-response.type'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
+import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
+import { CommentResponse } from "./types/reply-response.type"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as resolvers from './reply.resolver'
-import * as args from './types/reply-args.type'
-import * as validators from '../validators/reply.validators'
+import * as resolvers from "./reply.resolver"
+import * as args from "./types/reply-args.type"
+import * as validators from "../validators/reply.validators"
 
-import isAuthenticatedGuard from '../../../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../../../common/guards/auth/is-authorized.guard'
-import replyExistenceGuard from '../../../common/guards/reply/reply-existence.guard'
-import replyOwnerGuard from '../../../common/guards/reply/reply-owner.guard'
+import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
+import replyExistenceGuard from "../../../common/guards/reply/reply-existence.guard"
+import replyOwnerGuard from "../../../common/guards/reply/reply-owner.guard"
 
 export class ReplyController {
   protected static readonly ReplyQueryResolver = resolvers.ReplyQueryResolver
@@ -25,8 +25,8 @@ export class ReplyController {
   // Queries:
   public static readonly getCommentReplies = (): IQueryController => {
     return {
-      type: returnedResponseType({
-        name: 'getCommentReplies',
+      type: graphResponseType({
+        name: "getCommentReplies",
         data: CommentResponse.getPostComments(),
       }),
       args: args.getCommentReply,
@@ -40,8 +40,8 @@ export class ReplyController {
   // Mutations:
   public static readonly like = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'likeReplyMutation',
+      type: graphResponseType({
+        name: "likeReplyMutation",
       }),
       args: args.like,
       resolve: applyResolver({
@@ -54,8 +54,8 @@ export class ReplyController {
 
   public static readonly edit = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'editReplyMutation',
+      type: graphResponseType({
+        name: "editReplyMutation",
       }),
       args: args.edit,
       resolve: applyResolver({
@@ -73,8 +73,8 @@ export class ReplyController {
 
   public static readonly deleteReply = (): IMutationController => {
     return {
-      type: returnedResponseType({
-        name: 'deleteReplyMutation',
+      type: graphResponseType({
+        name: "deleteReplyMutation",
       }),
       args: args.deleteReply,
       resolve: applyResolver({

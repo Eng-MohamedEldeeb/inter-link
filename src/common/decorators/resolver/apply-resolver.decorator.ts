@@ -5,9 +5,9 @@ import { asyncHandler } from '../async-handler/async-handler.decorator'
 import { IContext, IResolveArgs } from '../../interface/IGraphQL.interface'
 
 export const applyResolver = ({
-  resolver,
   guards,
   middlewares,
+  resolver,
 }: IResolveArgs) => {
   return asyncHandler(
     async (_: any, args: any, context: IContext, __: GraphQLResolveInfo) => {

@@ -1,19 +1,19 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { IContext } from '../../interface/IGraphQL.interface'
-import { IRequest } from '../../interface/IRequest.interface'
-import { IPayload } from '../../utils/security/token/interface/token.interface'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { IContext } from "../../interface/IGraphQL.interface"
+import { IRequest } from "../../interface/IRequest.interface"
+import { IPayload } from "../../utils/security/token/interface/token.interface"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   GraphQLParams,
   HttpParams,
   SocketServerParams,
-} from '../../decorators/context/types'
+} from "../../decorators/context/types"
 
-import userRepository from '../../repositories/user.repository'
-import { ISocket } from '../../interface/ISocket.interface'
+import userRepository from "../../repositories/user.repository"
+import { ISocket } from "../../interface/ISocket.interface"
 
 class IsAuthorizedGuard implements GuardActivator {
   protected readonly userRepository = userRepository
@@ -67,23 +67,23 @@ class IsAuthorizedGuard implements GuardActivator {
         password: 0,
         oldPasswords: 0,
         phone: 0,
-        'avatar.public_id': 0,
-        'avatar.folderPath': 0,
+        "avatar.public_id": 0,
+        "avatar.folderPath": 0,
       },
       populate: [
         {
-          path: 'posts',
+          path: "posts",
         },
       ],
     })
 
     if (!isExistedUser)
-      return throwError({ msg: 'un-authenticated user', status: 403 })
+      return throwError({ msg: "un-authenticated user", status: 403 })
 
     this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
     if (this.hasChangedCredentials())
-      return throwError({ msg: 're-login is required', status: 403 })
+      return throwError({ msg: "re-login is required", status: 403 })
 
     this.contextArg.profile = isExistedUser
 
@@ -101,17 +101,17 @@ class IsAuthorizedGuard implements GuardActivator {
         ],
       },
       projection: { password: 0, oldPasswords: 0 },
-      populate: [{ path: 'posts' }],
+      populate: [{ path: "posts" }],
       options: { lean: true },
     })
 
     if (!isExistedUser)
-      return throwError({ msg: 'un-authenticated user', status: 403 })
+      return throwError({ msg: "un-authenticated user", status: 403 })
 
     this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
     if (this.hasChangedCredentials())
-      return throwError({ msg: 're-login is required', status: 403 })
+      return throwError({ msg: "re-login is required", status: 403 })
 
     this.contextArg.profile = isExistedUser
 
@@ -131,18 +131,24 @@ class IsAuthorizedGuard implements GuardActivator {
       projection: {
         _id: 1,
         username: 1,
-        'avatar.secure_url': 1,
+        "avatar.secure_url": 1,
       },
       options: { lean: true },
     })
 
     if (!isExistedUser)
-      return throwError({ msg: 'un-authenticated user', status: 403 })
+      return throwError({
+        msg: "Account not found, try to register",
+        status: 401,
+      })
 
     this.changedCredentialsAt = isExistedUser.changedCredentialsAt
 
     if (this.hasChangedCredentials())
-      return throwError({ msg: 're-login is required', status: 403 })
+      return throwError({
+        msg: "Login Timed out, Try to login again",
+        status: 440,
+      })
 
     this.contextArg.profile = isExistedUser
 
