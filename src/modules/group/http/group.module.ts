@@ -1,67 +1,67 @@
-import { Router } from 'express'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { GroupController } from './group.controller'
+import { Router } from "express"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+import { groupCoverUploader } from "../../../common/middlewares/upload/group-cover-uploader.middleware"
 
-import * as validators from '../validators/group.validators'
+import * as validators from "../validators/group.validators"
 
-import groupExistenceGuard from '../../../common/guards/group/group-existence.guard'
-import groupMembersGuard from '../../../common/guards/group/group-members.guard'
-import { fileReader } from '../../../common/utils/multer/file-reader'
-import { groupCoverUploader } from '../../../common/middlewares/upload/group-cover-uploader.middleware'
+import groupController from "./group.controller"
+import groupExistenceGuard from "../../../common/guards/group/group-existence.guard"
+import groupMembersGuard from "../../../common/guards/group/group-members.guard"
 
 const router: Router = Router()
 
-router.get('/all', GroupController.getAllGroups)
+router.get("/all", groupController.getAllGroups)
 
 router.get(
-  '/:id',
+  "/:id",
   validate(validators.getSingleGroupChatValidator.http()),
   applyGuards(groupExistenceGuard, groupMembersGuard),
-  GroupController.getSingle,
+  groupController.getSingle,
 )
 
 router.post(
-  '/create',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
+  "/create",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
   validate(validators.createGroupValidator.http()),
   groupCoverUploader,
-  GroupController.create,
+  groupController.create,
 )
 
 router.post(
-  '/:id/like',
+  "/:id/like",
   applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.likeMessageValidator.http()),
-  GroupController.likeMessage,
+  groupController.likeMessage,
 )
 
 router.patch(
-  '/:id/edit-message',
+  "/:id/edit-message",
   applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.editMessageValidator.http()),
-  GroupController.editMessage,
+  groupController.editMessage,
 )
 
 router.delete(
-  '/:id/delete-message',
+  "/:id/delete-message",
   applyGuards(groupExistenceGuard, groupMembersGuard),
   validate(validators.deleteMessageValidator.http()),
-  GroupController.deleteMessage,
+  groupController.deleteMessage,
 )
 
 router.patch(
-  '/edit',
+  "/edit",
   applyGuards(groupExistenceGuard),
   validate(validators.editGroupValidator.http()),
-  GroupController.editGroup,
+  groupController.editGroup,
 )
 
 // router.delete(
 //   '/delete',
 //   applyGuards(groupExistenceGuard),
 //   validate(validators.deleteChatValidator.http()),
-//   GroupController.deleteChat,
+//   groupController.deleteChat,
 // )
 
 export default router

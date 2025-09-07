@@ -1,29 +1,29 @@
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { IGetUserProfile } from '../../../modules/user/dto/user.dto'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { MongoId } from '../../types/db'
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { IGetUserProfile } from "../../../modules/user/dto/user.dto"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { MongoId } from "../../types/db"
 
 import {
   IAddAdmin,
   IRemoveAdmin,
-} from '../../../modules/community/dto/community.dto'
+} from "../../../modules/community/dto/community.dto"
 
 import {
   GraphQLParams,
   HttpParams,
   SocketServerParams,
-} from '../../decorators/context/types'
+} from "../../decorators/context/types"
 
-import userRepository from '../../repositories/user.repository'
+import userRepository from "../../repositories/user.repository"
 
 class UserExistenceGuard extends GuardActivator {
   protected readonly userRepository = userRepository
   protected username: string | undefined
   protected userId!: MongoId | string
   protected adminId!: MongoId | string
-  protected id!: MongoId | string
+  protected user_id!: MongoId | string
 
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
@@ -32,17 +32,16 @@ class UserExistenceGuard extends GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<
-        Pick<IGetUserProfile, 'id'>,
+        Pick<IGetUserProfile, "user_id">,
         IGetUserProfile & IAddAdmin & IRemoveAdmin
       >()
 
-      const { username, id, userId, adminId } = { ...req.query, ...req.params }
+      const { username, user_id, adminId } = { ...req.query, ...req.params }
       const { _id: profileId } = req.profile
 
       this.username = username
-      this.userId = userId
       this.adminId = adminId
-      this.id = id
+      this.user_id = user_id
 
       const user = await this.checkUserExistence()
 
@@ -59,12 +58,11 @@ class UserExistenceGuard extends GuardActivator {
         IGetUserProfile & IAddAdmin & IRemoveAdmin
       >()
 
-      const { username, id, userId, adminId } = args
+      const { username, user_id, adminId } = args
 
       this.username = username
       this.adminId = adminId
-      this.userId = userId
-      this.id = id
+      this.user_id = user_id
 
       context.user = await this.checkUserExistence()
     }
@@ -72,12 +70,12 @@ class UserExistenceGuard extends GuardActivator {
     if (Ctx.type === ContextType.socketContext) {
       const { socket } = Ctx.switchToSocket()
 
-      const { id } = socket.handshake.query
+      const { user_id } = socket.handshake.query
 
-      if (!id)
-        return throwError({ msg: 'user id is required in id query param' })
+      if (!user_id)
+        return throwError({ msg: "user_id is required in query param" })
 
-      this.id = id as string
+      this.user_id = user_id as string
 
       socket.user = await this.checkUserExistence()
     }
@@ -107,18 +105,18 @@ class UserExistenceGuard extends GuardActivator {
               }
             : {
                 $and: [
-                  { $or: [{ _id: this.id }, { _id: this.userId }] },
+                  { $or: [{ _id: this.user_id }, { _id: this.userId }] },
                   { deactivatedAt: { $exists: false } },
                 ],
               }),
       },
-      populate: [{ path: 'posts' }],
+      populate: [{ path: "posts" }],
       projection: {
         phone: 0,
         password: 0,
         oldPasswords: 0,
-        'avatar.public_id': 0,
-        'avatar.folderPath': 0,
+        "avatar.public_id": 0,
+        "avatar.folderPath": 0,
         blockedUsers: 0,
         savedPosts: 0,
       },
@@ -126,8 +124,8 @@ class UserExistenceGuard extends GuardActivator {
 
     if (!isExistedUser)
       return throwError({
-        msg: "user doesn't exist",
-        status: 400,
+        msg: "User not found",
+        status: 404,
       })
 
     return isExistedUser

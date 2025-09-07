@@ -4,7 +4,7 @@ import {
 } from "../../../../common/decorators/resolver/returned-type.decorator"
 
 import { GraphQLList } from "graphql"
-import { replyFields } from "./reply-fields.type"
+import { replyFields } from "./reply-fields"
 import { IReply } from "../../../../db/interfaces/IReply.interface"
 
 export const singleReply = returnedType<Omit<IReply, "__v">>({

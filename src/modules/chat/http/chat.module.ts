@@ -1,51 +1,51 @@
-import { Router } from 'express'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { ChatController } from './chat.controller'
+import { Router } from "express"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from '../validators/chat.validators'
+import * as validators from "../validators/chat.validators"
 
-import chatExistenceGuard from '../../../common/guards/chat/chat-existence.guard'
-import chatOwnerGuard from '../../../common/guards/chat/chat-owner.guard'
-import messageExistenceGuard from '../../../common/guards/chat/message-existence.guard'
+import chatController from "./chat.controller"
+import chatExistenceGuard from "../../../common/guards/chat/chat-existence.guard"
+import chatOwnerGuard from "../../../common/guards/chat/chat-owner.guard"
+import messageExistenceGuard from "../../../common/guards/chat/message-existence.guard"
 
 const router: Router = Router()
 
-router.get('/all', ChatController.getAllChats)
+router.get("/all", chatController.getAllChats)
 
 router.get(
-  '/:chatId',
+  "/:chatId",
   validate(validators.getSingleChatValidator.http()),
   applyGuards(chatExistenceGuard, chatOwnerGuard),
-  ChatController.getSingleChat,
+  chatController.getSingleChat,
 )
 
 router.post(
-  '/:chatId/like',
+  "/:chatId/like",
   applyGuards(chatExistenceGuard, chatOwnerGuard, messageExistenceGuard),
   validate(validators.likeMessageValidator.http()),
-  ChatController.likeMessage,
+  chatController.likeMessage,
 )
 
 router.patch(
-  '/:chatId/edit',
+  "/:chatId/edit",
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.editMessageValidator.http()),
-  ChatController.editMessage,
+  chatController.editMessage,
 )
 
 router.delete(
-  '/:chatId/delete',
+  "/:chatId/delete",
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.deleteMessageValidator.http()),
-  ChatController.deleteMessage,
+  chatController.deleteMessage,
 )
 
 router.delete(
-  '/delete',
+  "/delete",
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.deleteChatValidator.http()),
-  ChatController.deleteChat,
+  chatController.deleteChat,
 )
 
 export default router

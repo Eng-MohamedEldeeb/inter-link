@@ -1,13 +1,13 @@
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { PostController } from './post.controller'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
+import postController from "./post.controller"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'postQuery',
+      name: "postQuery",
       fields: {
-        getAll: PostController.getAll(),
-        getSingle: PostController.getSingle(),
+        getAll: postController.getAll(),
+        getSingle: postController.getSingle(),
       },
     }),
     resolve: () => true,
@@ -17,14 +17,14 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'postMutation',
+      name: "postMutation",
       fields: {
-        edit: PostController.edit(),
-        save: PostController.save(),
-        shared: PostController.shared(),
-        archive: PostController.archive(),
-        restore: PostController.restore(),
-        deletePost: PostController.deletePost(),
+        edit: postController.edit(),
+        save: postController.save(),
+        shared: postController.shared(),
+        archive: postController.archive(),
+        restore: postController.restore(),
+        deletePost: postController.deletePost(),
       },
     }),
     resolve: () => true,

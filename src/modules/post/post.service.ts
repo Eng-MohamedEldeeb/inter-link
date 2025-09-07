@@ -1,6 +1,6 @@
 import postRepository from "../../common/repositories/post.repository"
 import userRepository from "../../common/repositories/user.repository"
-import notificationsService from "../../common/services/notifications/notifications.service"
+import notifyService from "../../common/services/notify/notify.service"
 
 import * as DTO from "./dto/post.dto"
 
@@ -12,12 +12,12 @@ import { IPost } from "../../db/interfaces/IPost.interface"
 import { ILikedPostNotification } from "../../db/interfaces/INotification.interface"
 import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class PostService {
-  protected static readonly postRepository = postRepository
-  protected static readonly userRepository = userRepository
-  protected static readonly notificationsService = notificationsService
+class PostService {
+  protected readonly postRepository = postRepository
+  protected readonly userRepository = userRepository
+  protected readonly notifyService = notifyService
 
-  public static readonly getAll = async (query: DTO.IGetAll) => {
+  public readonly getAll = async (query: DTO.IGetAll) => {
     const { page, limit } = query
 
     const skip = (page ?? 1 - 1) * limit
@@ -38,7 +38,7 @@ export class PostService {
     }
   }
 
-  public static readonly create = async ({
+  public readonly create = async ({
     createdBy,
     createPost,
     attachments,
@@ -56,7 +56,7 @@ export class PostService {
     })
   }
 
-  public static readonly edit = async ({
+  public readonly edit = async ({
     postId,
     editPost,
   }: {
@@ -72,7 +72,7 @@ export class PostService {
     })
   }
 
-  public static readonly save = async ({
+  public readonly save = async ({
     profileId,
     postId,
   }: {
@@ -94,7 +94,7 @@ export class PostService {
     })
   }
 
-  public static readonly shared = async (postId: MongoId) => {
+  public readonly shared = async (postId: MongoId) => {
     await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -105,7 +105,7 @@ export class PostService {
     })
   }
 
-  public static readonly archive = async (postId: MongoId) => {
+  public readonly archive = async (postId: MongoId) => {
     return await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
@@ -115,7 +115,7 @@ export class PostService {
     })
   }
 
-  public static readonly restore = async (postId: MongoId) => {
+  public readonly restore = async (postId: MongoId) => {
     const isRestored = await this.postRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: postId }, { archivedAt: { $exists: true } }],
@@ -134,7 +134,7 @@ export class PostService {
         })
   }
 
-  public static readonly delete = async ({
+  public readonly delete = async ({
     profileId,
     postId,
   }: {
@@ -155,7 +155,7 @@ export class PostService {
     })
   }
 
-  public static readonly removeFromCommunity = async ({
+  public readonly removeFromCommunity = async ({
     communityId,
     postId,
   }: {
@@ -169,7 +169,7 @@ export class PostService {
     })
   }
 
-  public static readonly like = async ({
+  public readonly like = async ({
     profile,
     post,
   }: {
@@ -211,7 +211,7 @@ export class PostService {
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails: notification,
     })
@@ -219,7 +219,7 @@ export class PostService {
     return { msg: "Post is liked successfully" }
   }
 
-  public static readonly unlike = async ({
+  public readonly unlike = async ({
     profileId,
     postId,
   }: {
@@ -232,3 +232,5 @@ export class PostService {
     })
   }
 }
+
+export default new PostService()

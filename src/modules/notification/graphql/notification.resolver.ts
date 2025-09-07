@@ -1,44 +1,47 @@
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { NotificationService } from '../notification.service'
+import notificationService from "../notification.service"
 
-export class NotificationQueryResolver {
-  private static readonly NotificationService = NotificationService
+class NotificationQueryResolver {
+  private readonly notificationService = notificationService
 
-  public static readonly getAllNotifications = async (
+  public readonly getAllNotifications = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: postId } = context.post
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.NotificationService.getAllNotifications(postId),
+      data: await this.notificationService.getAllNotifications(postId),
     }
   }
 }
 
-export class NotificationMutationResolver {
-  private static readonly NotificationService = NotificationService
+class NotificationMutationResolver {
+  private readonly notificationService = notificationService
 
-  public static readonly deleteNotification = async (
+  public readonly deleteNotification = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     const { _id: id } = context.notifications
 
-    await this.NotificationService.deleteNotification({
+    await this.notificationService.deleteNotification({
       profileId,
       id,
     })
 
     return {
-      msg: 'Notification is deleted successfully',
+      msg: "Notification is deleted successfully",
       status: 200,
     }
   }
 }
+
+export const notificationQueryResolver = new NotificationQueryResolver()
+export const notificationMutationResolver = new NotificationMutationResolver()

@@ -4,7 +4,6 @@ import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import postExistenceGuard from "../../../common/guards/post/post-existence.guard"
 import PostOwnerGuard from "../../../common/guards/post/post-owner.guard"
 
-import * as args from "./types/post-args.type"
 import * as validators from "./../validators/post.validators"
 
 import {
@@ -12,55 +11,56 @@ import {
   IQueryController,
 } from "../../../common/interface/IGraphQL.interface"
 
-import { PostMutationResolver, PostQueryResolver } from "./post.resolver"
-import { PostResponse } from "./types/post-response.type"
+import { PostArgs } from "./types/post-args"
+import { postMutationResolver, postQueryResolver } from "./post.resolver"
+import { PostResponse } from "./types/post-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 
-export class PostController {
-  private static readonly PostQueryResolver = PostQueryResolver
-  private static readonly PostMutationResolver = PostMutationResolver
+class PostController {
+  private readonly postQueryResolver = postQueryResolver
+  private readonly postMutationResolver = postMutationResolver
 
   // Queries:
-  public static readonly getAll = (): IQueryController => {
+  public readonly getAll = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getAllPostsQuery",
         data: PostResponse.getAll(),
       }),
-      args: args.getAll,
+      args: PostArgs.getAll,
       resolve: applyResolver({
         middlewares: [validate(validators.getAllValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.PostQueryResolver.getAll,
+        resolver: this.postQueryResolver.getAll,
       }),
     }
   }
 
-  public static readonly getSingle = (): IQueryController => {
+  public readonly getSingle = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getSinglePostQuery",
         data: PostResponse.getSingle(),
       }),
-      args: args.getSingle,
+      args: PostArgs.getSingle,
       resolve: applyResolver({
         middlewares: [validate(validators.getSingleValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.PostQueryResolver.getSingle,
+        resolver: this.postQueryResolver.getSingle,
       }),
     }
   }
 
   // Mutations:
 
-  public static readonly edit = (): IMutationController => {
+  public readonly edit = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "editPostMutation",
       }),
-      args: args.edit,
+      args: PostArgs.edit,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphql())],
         guards: [
@@ -69,31 +69,31 @@ export class PostController {
           postExistenceGuard,
           PostOwnerGuard,
         ],
-        resolver: this.PostMutationResolver.edit,
+        resolver: this.postMutationResolver.edit,
       }),
     }
   }
 
-  public static readonly save = (): IMutationController => {
+  public readonly save = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "savePostMutation",
       }),
-      args: args.save,
+      args: PostArgs.save,
       resolve: applyResolver({
         middlewares: [validate(validators.saveValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.PostMutationResolver.save,
+        resolver: this.postMutationResolver.save,
       }),
     }
   }
 
-  public static readonly shared = (): IMutationController => {
+  public readonly shared = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "sharedPostMutation",
       }),
-      args: args.shared,
+      args: PostArgs.shared,
       resolve: applyResolver({
         middlewares: [validate(validators.sharedValidator.graphql())],
         guards: [
@@ -102,50 +102,51 @@ export class PostController {
           postExistenceGuard,
           PostSharePermissionGuardGuard,
         ],
-        resolver: this.PostMutationResolver.shared,
+        resolver: this.postMutationResolver.shared,
       }),
     }
   }
 
-  public static readonly archive = (): IMutationController => {
+  public readonly archive = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "archivePostMutation",
       }),
-      args: args.archive,
+      args: PostArgs.archive,
       resolve: applyResolver({
         middlewares: [validate(validators.archiveValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.PostMutationResolver.archive,
+        resolver: this.postMutationResolver.archive,
       }),
     }
   }
 
-  public static readonly restore = (): IMutationController => {
+  public readonly restore = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "restorePostMutation",
       }),
-      args: args.restore,
+      args: PostArgs.restore,
       resolve: applyResolver({
         middlewares: [validate(validators.restoreValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.PostMutationResolver.restore,
+        resolver: this.postMutationResolver.restore,
       }),
     }
   }
 
-  public static readonly deletePost = (): IMutationController => {
+  public readonly deletePost = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deletePostMutation",
       }),
-      args: args.deletePost,
+      args: PostArgs.deletePost,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
-        resolver: this.PostMutationResolver.deletePost,
+        resolver: this.postMutationResolver.deletePost,
       }),
     }
   }
 }
+export default new PostController()

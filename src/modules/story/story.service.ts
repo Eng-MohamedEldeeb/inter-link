@@ -1,33 +1,33 @@
-import storyRepository from '../../common/repositories/story.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import storyRepository from "../../common/repositories/story.repository"
+import notifyService from "../../common/services/notify/notify.service"
 
-import { MongoId } from '../../common/types/db'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
-import { ICreateStory } from './dto/story.dto'
-import { IStory } from '../../db/interfaces/IStory.interface'
-import { ILikedStoryNotification } from '../../db/interfaces/INotification.interface'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import { MongoId } from "../../common/types/db"
+import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
+import { ICreateStory } from "./dto/story.dto"
+import { IStory } from "../../db/interfaces/IStory.interface"
+import { ILikedStoryNotification } from "../../db/interfaces/INotification.interface"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class StoryService {
-  protected static readonly storyRepository = storyRepository
-  protected static readonly notificationsService = notificationsService
+class StoryService {
+  protected readonly storyRepository = storyRepository
+  protected readonly notifyService = notifyService
 
-  public static readonly getAll = async (userId: MongoId) => {
+  public readonly getAll = async (userId: MongoId) => {
     const stories = await this.storyRepository.find({
-      filter: { createdBy: userId, 'createdBy.isPrivateProfile': false },
+      filter: { createdBy: userId, "createdBy.isPrivateProfile": false },
       projection: {
-        'attachment.path.secure_url': 1,
+        "attachment.path.secure_url": 1,
         createdBy: 1,
       },
       options: { sort: { createdAt: -1 }, lean: true },
-      populate: [{ path: 'createdBy' }],
+      populate: [{ path: "createdBy" }],
     })
 
     return stories
   }
 
-  public static readonly create = async ({
+  public readonly create = async ({
     createdBy,
     attachment,
   }: {
@@ -43,7 +43,7 @@ export class StoryService {
     })
   }
 
-  public static readonly like = async ({
+  public readonly like = async ({
     profile,
     story,
   }: {
@@ -64,7 +64,7 @@ export class StoryService {
           new: true,
         },
       })
-      return { msg: 'Done' }
+      return { msg: "Done" }
     }
 
     await this.storyRepository.findByIdAndUpdate({
@@ -81,19 +81,19 @@ export class StoryService {
       message: `${username} Liked Your Story ❤️`,
       on: { _id: storyId, attachment },
       from: { _id: profileId, avatar, username },
-      refTo: 'Story',
+      refTo: "Story",
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails: notification,
     })
 
-    return { msg: 'Story is liked successfully' }
+    return { msg: "Story is liked successfully" }
   }
 
-  public static readonly delete = async ({
+  public readonly delete = async ({
     profileId,
     storyId,
   }: {
@@ -107,3 +107,5 @@ export class StoryService {
     })
   }
 }
+
+export default new StoryService()

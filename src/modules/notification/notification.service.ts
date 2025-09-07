@@ -5,10 +5,10 @@ import * as DTO from "./dto/notification.dto"
 import { throwError } from "../../common/handlers/error-message.handler"
 import { MongoId } from "../../common/types/db"
 
-export class NotificationService {
-  protected static readonly notificationRepository = notificationRepository
+class NotificationService {
+  protected readonly notificationRepository = notificationRepository
 
-  public static readonly getAllNotifications = async (profileId: MongoId) => {
+  public readonly getAllNotifications = async (profileId: MongoId) => {
     const notifications = await this.notificationRepository.findOne({
       filter: { belongsTo: profileId },
     })
@@ -28,7 +28,7 @@ export class NotificationService {
     }
   }
 
-  public static readonly deleteNotification = async ({
+  public readonly deleteNotification = async ({
     profileId,
     id,
   }: DTO.IDeleteNotifications) => {
@@ -48,3 +48,5 @@ export class NotificationService {
     )
   }
 }
+
+export default new NotificationService()

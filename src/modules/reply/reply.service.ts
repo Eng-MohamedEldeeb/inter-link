@@ -1,5 +1,5 @@
 import commentRepository from "../../common/repositories/comment.repository"
-import notificationsService from "../../common/services/notifications/notifications.service"
+import notifyService from "../../common/services/notify/notify.service"
 
 import * as DTO from "./dto/reply.dto"
 
@@ -14,11 +14,11 @@ import { IUser } from "../../db/interfaces/IUser.interface"
 import { IReply } from "../../db/interfaces/IReply.interface"
 import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class ReplyService {
-  protected static readonly commentRepository = commentRepository
-  protected static readonly notificationsService = notificationsService
+class ReplyService {
+  protected readonly commentRepository = commentRepository
+  protected readonly notifyService = notifyService
 
-  public static readonly getCommentReplies = async (commentId: MongoId) => {
+  public readonly getCommentReplies = async (commentId: MongoId) => {
     const replies = await this.commentRepository.find({
       filter: { replyingTo: commentId },
     })
@@ -28,7 +28,7 @@ export class ReplyService {
     }
   }
 
-  public static readonly reply = async ({
+  public readonly reply = async ({
     content,
     profile,
     comment,
@@ -51,13 +51,13 @@ export class ReplyService {
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: commentCreator,
       notificationDetails: notification,
     })
   }
 
-  public static readonly like = async ({
+  public readonly like = async ({
     profile,
     reply,
   }: {
@@ -98,7 +98,7 @@ export class ReplyService {
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails: notification,
     })
@@ -106,10 +106,7 @@ export class ReplyService {
     return { msg: "comment is liked successfully" }
   }
 
-  public static readonly edit = async ({
-    replyId,
-    content,
-  }: DTO.IEditReply) => {
+  public readonly edit = async ({ replyId, content }: DTO.IEditReply) => {
     const updatedReply = await this.commentRepository.findByIdAndUpdate({
       _id: replyId,
       data: { content },
@@ -124,9 +121,7 @@ export class ReplyService {
     )
   }
 
-  public static readonly deleteReply = async ({
-    replyId,
-  }: DTO.IDeleteReply) => {
+  public readonly deleteReply = async ({ replyId }: DTO.IDeleteReply) => {
     const isDeletedReply = await this.commentRepository.findByIdAndDelete({
       _id: replyId,
     })
@@ -139,3 +134,5 @@ export class ReplyService {
     )
   }
 }
+
+export default new ReplyService()

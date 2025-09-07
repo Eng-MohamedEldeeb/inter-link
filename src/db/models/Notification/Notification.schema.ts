@@ -1,14 +1,14 @@
-import { Schema, SchemaTypes } from 'mongoose'
+import { Schema, SchemaTypes } from "mongoose"
 
-import { INotifications } from './../../interfaces/INotification.interface'
-import { INotificationInputs } from '../../interfaces/INotification.interface'
-import { RefTypes } from '../../../common/services/notifications/types'
+import { INotifications } from "./../../interfaces/INotification.interface"
+import { INotificationInputs } from "../../interfaces/INotification.interface"
+import { RefTypes } from "../../../common/utils/notify/types"
 
 export const NotificationSchema = new Schema<INotifications>(
   {
     belongsTo: {
       type: SchemaTypes.ObjectId,
-      ref: 'User',
+      ref: "User",
       unique: [true, '"belongsTo" Id already exists'],
     },
 
@@ -17,7 +17,7 @@ export const NotificationSchema = new Schema<INotifications>(
         {
           from: {
             type: SchemaTypes.ObjectId,
-            ref: 'User',
+            ref: "User",
           },
           message: {
             type: String,
@@ -50,7 +50,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           from: {
             type: SchemaTypes.ObjectId,
-            ref: 'User',
+            ref: "User",
           },
 
           on: {
@@ -86,7 +86,7 @@ export const NotificationSchema = new Schema<INotifications>(
 
           from: {
             type: SchemaTypes.ObjectId,
-            ref: 'User',
+            ref: "User",
           },
 
           on: {
@@ -117,7 +117,7 @@ export const NotificationSchema = new Schema<INotifications>(
   },
 )
 
-NotificationSchema.virtual('totalMissedNotifications').get(function (
+NotificationSchema.virtual("totalMissedNotifications").get(function (
   this: INotifications,
 ) {
   return this.missedNotifications && this.missedNotifications.length
@@ -125,7 +125,7 @@ NotificationSchema.virtual('totalMissedNotifications').get(function (
     : 0
 })
 
-NotificationSchema.virtual('totalMissedMessages').get(function (
+NotificationSchema.virtual("totalMissedMessages").get(function (
   this: INotifications,
 ) {
   return this.missedNotifications && this.missedNotifications.length

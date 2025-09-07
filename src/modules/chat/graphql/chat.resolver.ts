@@ -1,94 +1,98 @@
+import chatService from "../chat.service"
+
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { ChatService } from '../chat.service'
-import { IDeleteMessage, ILikeMessage } from '../dto/chat.dto'
+import { IDeleteMessage, ILikeMessage } from "../dto/chat.dto"
 
-export class ChatQueryResolver {
-  private static readonly ChatService = ChatService
+class ChatQueryResolver {
+  private readonly chatService = chatService
 
-  public static readonly getAllChats = async (
+  public readonly getAllChats = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.ChatService.getAllChats(profileId),
+      data: await this.chatService.getAllChats(profileId),
     }
   }
 
-  public static readonly getSingleChat = async (
+  public readonly getSingleChat = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
       data: context.chat,
     }
   }
 }
 
-export class ChatMutationResolver {
-  private static readonly ChatService = ChatService
+class ChatMutationResolver {
+  private readonly chatService = chatService
 
-  public static readonly likeMessage = async (
-    { messageId }: Pick<ILikeMessage, 'messageId'>,
+  public readonly likeMessage = async (
+    { messageId }: Pick<ILikeMessage, "messageId">,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const profile = context.profile
     const chat = context.chat
 
-    await this.ChatService.likeMessage({
+    await this.chatService.likeMessage({
       messageId,
       chat,
       profile,
     })
 
     return {
-      msg: 'Liked the Message successfully',
+      msg: "Liked the Message successfully",
       status: 200,
     }
   }
 
-  public static readonly deleteMessage = async (
-    { messageId }: Pick<IDeleteMessage, 'messageId'>,
+  public readonly deleteMessage = async (
+    { messageId }: Pick<IDeleteMessage, "messageId">,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: chatId } = context.chat
     const { _id: profileId } = context.profile
 
-    await this.ChatService.deleteMessage({
+    await this.chatService.deleteMessage({
       chatId,
       profileId,
       messageId,
     })
 
     return {
-      msg: 'Message is Deleted successfully',
+      msg: "Message is Deleted successfully",
       status: 200,
     }
   }
 
-  public static readonly deleteChat = async (
+  public readonly deleteChat = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     const chat = context.chat
 
-    await this.ChatService.deleteChat({
+    await this.chatService.deleteChat({
       profileId,
       chat,
     })
 
     return {
-      msg: 'Chat is deleted successfully',
+      msg: "Chat is deleted successfully",
       status: 200,
     }
   }
 }
+
+export const chatQueryResolver = new ChatQueryResolver()
+export const chatMutationResolver = new ChatMutationResolver()

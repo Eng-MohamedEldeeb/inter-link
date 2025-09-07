@@ -1,13 +1,13 @@
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { GroupController } from './group.controller'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
+import groupController from "./group.controller"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'groupQuery',
+      name: "groupQuery",
       fields: {
-        getAllGroups: GroupController.getAllGroups(),
-        getSingleGroup: GroupController.getSingleGroup(),
+        getAllGroups: groupController.getAllGroups(),
+        getSingleGroup: groupController.getSingleGroup(),
       },
     }),
     resolve: () => true,
@@ -17,11 +17,11 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'groupMutation',
+      name: "groupMutation",
       fields: {
-        likeGroupMessage: GroupController.likeGroupMessage(),
-        deleteGroupMessage: GroupController.deleteGroupMessage(),
-        deleteGroup: GroupController.deleteGroup(),
+        likeGroupMessage: groupController.likeGroupMessage(),
+        deleteGroupMessage: groupController.deleteGroupMessage(),
+        deleteGroup: groupController.deleteGroup(),
       },
     }),
     resolve: () => true,

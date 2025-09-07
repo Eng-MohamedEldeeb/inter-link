@@ -5,17 +5,17 @@ import {
   GraphQLList,
   GraphQLObjectType,
   GraphQLString,
-} from 'graphql'
+} from "graphql"
 import {
   DateType,
   ObjFields,
-} from '../../../../common/types/graphql/graphql.types'
+} from "../../../../common/types/graphql/graphql.types"
 
-import { singleFile } from '../../../../common/services/upload/interface/cloud-response.interface'
-import { ICommunity } from '../../../../db/interfaces/ICommunity.interface'
-import { singlePost } from '../../../post/graphql/types/post-response.type'
+import { singleFile } from "../../../../common/services/upload/interface/cloud-response.interface"
+import { ICommunity } from "../../../../db/interfaces/ICommunity.interface"
+import { singlePost } from "../../../post/graphql/types/post-response"
 
-export const communityFields: ObjFields<Omit<ICommunity, '__v'>> = {
+export const communityFields: ObjFields<Omit<ICommunity, "__v">> = {
   _id: { type: GraphQLID },
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
@@ -35,6 +35,6 @@ export const communityFields: ObjFields<Omit<ICommunity, '__v'>> = {
 }
 
 export const oneCommunity = new GraphQLObjectType({
-  name: 'oneCommunity',
+  name: "oneCommunity",
   fields: communityFields,
 })

@@ -1,8 +1,7 @@
-import { Response } from 'express'
-import { successResponse } from '../../../common/handlers/success-response.handler'
-import { IRequest } from '../../../common/interface/IRequest.interface'
-import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { GroupService } from '../group.service'
+import { Response } from "express"
+import { successResponse } from "../../../common/handlers/success-response.handler"
+import { IRequest } from "../../../common/interface/IRequest.interface"
+import { asyncHandler } from "../../../common/decorators/async-handler/async-handler.decorator"
 
 import {
   IDeleteGroup,
@@ -12,35 +11,36 @@ import {
   IEditMessage,
   ICreateGroup,
   IUpdateGroup,
-} from '../dto/group.dto'
+} from "../dto/group.dto"
 
-export class GroupController {
-  protected static readonly GroupService = GroupService
+import groupService from "../group.service"
+class GroupController {
+  protected readonly groupService = groupService
 
-  public static readonly getAllGroups = asyncHandler(
+  public readonly getAllGroups = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.GroupService.getAllGroups(profileId),
+        data: await this.groupService.getAllGroups(profileId),
       })
     },
   )
 
-  public static readonly getSingle = asyncHandler(
+  public readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
       return successResponse(res, {
-        data: await this.GroupService.getSingle(req.group),
+        data: await this.groupService.getSingle(req.group),
       })
     },
   )
 
-  public static readonly create = asyncHandler(
+  public readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const cover = req.cloudFile
-      const createGroupDto: Omit<ICreateGroup, 'createdBy'> = req.body
+      const createGroupDto: Omit<ICreateGroup, "createdBy"> = req.body
 
-      await this.GroupService.create({
+      await this.groupService.create({
         ...createGroupDto,
         createdBy: profileId,
         cover,
@@ -52,9 +52,9 @@ export class GroupController {
     },
   )
 
-  public static readonly likeMessage = asyncHandler(
+  public readonly likeMessage = asyncHandler(
     async (
-      req: IRequest<null, Pick<ILikeMessage, 'messageId'>>,
+      req: IRequest<null, Pick<ILikeMessage, "messageId">>,
       res: Response,
     ) => {
       const { _id, username, avatar } = req.profile
@@ -62,21 +62,21 @@ export class GroupController {
 
       const group = req.group
 
-      await this.GroupService.likeMessage({
+      await this.groupService.likeMessage({
         profile: { _id, username, avatar },
         group,
         messageId,
       })
 
       return successResponse(res, {
-        msg: 'Liked the Message Successfully',
+        msg: "Liked the Message Successfully",
       })
     },
   )
 
-  public static readonly editMessage = asyncHandler(
+  public readonly editMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, "messageId">>,
       res: Response,
     ) => {
       const { _id: groupId } = req.group
@@ -84,7 +84,7 @@ export class GroupController {
       const { messageId } = req.query
       const { newMessage }: IEditMessage = req.body
 
-      await this.GroupService.editMessage({
+      await this.groupService.editMessage({
         groupId,
         profileId,
         messageId,
@@ -92,58 +92,60 @@ export class GroupController {
       })
 
       return successResponse(res, {
-        msg: 'Message Has Been Modified Successfully',
+        msg: "Message Has Been Modified Successfully",
       })
     },
   )
 
-  public static readonly deleteMessage = asyncHandler(
+  public readonly deleteMessage = asyncHandler(
     async (
-      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, 'messageId'>>,
+      req: IRequest<IGetSingleGroup, Pick<IDeleteMessage, "messageId">>,
       res: Response,
     ) => {
       const { _id: groupId } = req.group
       const { _id: profileId } = req.profile
       const { messageId } = req.query
 
-      await this.GroupService.deleteMessage({
+      await this.groupService.deleteMessage({
         groupId,
         profileId,
         messageId,
       })
 
       return successResponse(res, {
-        msg: 'Message Has Been Deleted Successfully',
+        msg: "Message Has Been Deleted Successfully",
       })
     },
   )
 
-  public static readonly deleteGroup = asyncHandler(
+  public readonly deleteGroup = asyncHandler(
     async (req: IRequest<IDeleteGroup>, res: Response) => {
       const { _id: profileId } = req.profile
       const group = req.chat
 
-      // await this.GroupService.deleteChat({
+      // await this.groupService.deleteChat({
       //   profileId,
       //   group,
       // })
 
       return successResponse(res, {
-        msg: 'Group Has Been Deleted Successfully',
+        msg: "Group Has Been Deleted Successfully",
       })
     },
   )
 
-  public static readonly editGroup = asyncHandler(
-    async (req: IRequest<null, Pick<IUpdateGroup, 'id'>>, res: Response) => {
+  public readonly editGroup = asyncHandler(
+    async (req: IRequest<null, Pick<IUpdateGroup, "id">>, res: Response) => {
       const { _id: id } = req.group
       const { _id: createdBy } = req.profile
       const updateGroupDTO: IUpdateGroup = req.body
-      await this.GroupService.editGroup({ ...updateGroupDTO, id, createdBy })
+      await this.groupService.editGroup({ ...updateGroupDTO, id, createdBy })
 
       return successResponse(res, {
-        msg: 'Group Has Been Deleted Successfully',
+        msg: "Group Has Been Deleted Successfully",
       })
     },
   )
 }
+
+export default new GroupController()

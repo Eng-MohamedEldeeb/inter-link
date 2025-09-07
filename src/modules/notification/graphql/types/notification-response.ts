@@ -3,7 +3,7 @@ import {
   returnedType,
 } from "../../../../common/decorators/resolver/returned-type.decorator"
 
-import { notificationFields } from "./notification-fields.type"
+import { notificationFields } from "./notification-fields"
 
 export class NotificationResponse {
   public static readonly getAllNotifications = () => {

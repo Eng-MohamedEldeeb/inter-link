@@ -1,21 +1,21 @@
-import notificationsService from '../../../common/services/notifications/notifications.service'
-import chatRepository from '../../../common/repositories/chat.repository'
-import roomMembersController from '../../../common/controllers/room-members.controller'
+import chatService from "../chat.service"
+import notifyService from "../../../common/services/notify/notify.service"
+import chatRepository from "../../../common/repositories/chat.repository"
+import roomMembersController from "../../../common/controllers/room-members.controller"
 
-import { ISocket } from '../../../common/interface/ISocket.interface'
-import { ChatService } from '../chat.service'
-import { ISendMessage } from '../dto/chat.dto'
-import { isInChat, upsertChatMessage } from './helpers/chat-helpers'
-import { getNowMoment } from '../../../common/decorators/moment/moment'
+import { ISocket } from "../../../common/interface/ISocket.interface"
+import { ISendMessage } from "../dto/chat.dto"
+import { ChatHelpers } from "./helpers/chat-helpers"
+import { getNowMoment } from "../../../common/decorators/moment/moment"
 
 export const sendMessage = async (socket: ISocket) => {
   const { _id: profileId } = socket.profile._id
   const { _id: userId } = socket.user._id
 
-  ChatService.setProfileId = profileId
-  ChatService.setUserId = userId
+  chatService.setProfileId = profileId
+  chatService.setUserId = userId
 
-  ChatService.setRoomId = `${profileId} ${userId}`
+  chatService.setRoomId = `${profileId} ${userId}`
 
   const existedChat = await chatRepository.findOne({
     filter: {
@@ -27,22 +27,22 @@ export const sendMessage = async (socket: ISocket) => {
     projection: { roomId: 1 },
   })
 
-  if (existedChat) ChatService.setRoomId = existedChat.roomId
+  if (existedChat) chatService.setRoomId = existedChat.roomId
 
-  const roomId = ChatService.getCurrentRoomId
+  const roomId = chatService.getCurrentRoomId
 
   roomMembersController.joinChat({ profileId, roomId })
 
   socket.join(roomId)
 
-  socket.on('send-message', async ({ message }: { message: string }) => {
-    const updatedChat = await upsertChatMessage({
+  socket.on("send-message", async ({ message }: { message: string }) => {
+    const updatedChat = await ChatHelpers.upsertChatMessage({
       roomId,
       message,
       profileId,
       userId,
     })
-    const inChat = isInChat({ roomId, userId })
+    const inChat = ChatHelpers.isInChat({ roomId, userId })
 
     const data: ISendMessage = {
       message,
@@ -51,23 +51,23 @@ export const sendMessage = async (socket: ISocket) => {
     }
 
     if (!inChat) {
-      return await notificationsService.sendNotification({
+      return notifyService.sendNotification({
         userId: userId,
         notificationDetails: {
           from: socket.profile,
           message,
           messageId: updatedChat.messages[0]._id,
-          refTo: 'Chat',
+          refTo: "Chat",
           on: { _id: updatedChat._id },
           sentAt: getNowMoment(),
         },
       })
     }
 
-    return socket.to(roomId).emit('new-message', data)
+    return socket.to(roomId).emit("new-message", data)
   })
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     roomMembersController.leaveChat({ profileId, roomId })
 
     socket.leave(roomId)

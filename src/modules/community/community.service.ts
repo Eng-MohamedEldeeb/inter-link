@@ -1,38 +1,38 @@
-import { ICommunity } from '../../db/interfaces/ICommunity.interface'
-import { ICloudFile } from '../../common/services/upload/interface/cloud-response.interface'
-import { CloudUploader } from '../../common/services/upload/cloud.service'
-import { MongoId } from '../../common/types/db'
-import { getNowMoment } from '../../common/decorators/moment/moment'
-import { IUser } from '../../db/interfaces/IUser.interface'
+import { ICommunity } from "../../db/interfaces/ICommunity.interface"
+import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
+import { CloudUploader } from "../../common/services/upload/cloud.service"
+import { MongoId } from "../../common/types/db"
+import { getNowMoment } from "../../common/decorators/moment/moment"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { throwError } from "../../common/handlers/error-message.handler"
 
-import { ICreateCommunity, IEditCommunity } from './dto/community.dto'
+import { ICreateCommunity, IEditCommunity } from "./dto/community.dto"
 import {
   IJoinedCommunityNotification,
   INotificationInputs,
-} from '../../db/interfaces/INotification.interface'
+} from "../../db/interfaces/INotification.interface"
 
-import userRepository from '../../common/repositories/user.repository'
-import communityRepository from '../../common/repositories/community.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
-import { throwError } from '../../common/handlers/error-message.handler'
+import userRepository from "../../common/repositories/user.repository"
+import communityRepository from "../../common/repositories/community.repository"
+import notifyService from "../../common/services/notify/notify.service"
 
-export class CommunityService {
-  protected static readonly userRepository = userRepository
-  protected static readonly communityRepository = communityRepository
-  protected static readonly notificationsService = notificationsService
-  protected static readonly CloudUploader = CloudUploader
+class CommunityService {
+  protected readonly userRepository = userRepository
+  protected readonly communityRepository = communityRepository
+  protected readonly notifyService = notifyService
+  protected readonly CloudUploader = CloudUploader
 
-  protected static userId: MongoId
-  protected static members: MongoId[]
-  protected static requests: MongoId[]
+  protected userId!: MongoId
+  protected members!: MongoId[]
+  protected requests!: MongoId[]
 
-  public static readonly getAllCommunities = async () => {
+  public readonly getAllCommunities = async () => {
     return await this.communityRepository.find({
       filter: {},
-      projection: { 'cover.path.secure_url': 1, name: 1, totalMembers: 1 },
+      projection: { "cover.path.secure_url": 1, name: 1, totalMembers: 1 },
     })
   }
-  public static readonly getCommunity = ({
+  public readonly getCommunity = ({
     community,
     profileId,
   }: {
@@ -49,7 +49,7 @@ export class CommunityService {
     return community
   }
 
-  public static readonly getCommunityMembers = ({
+  public readonly getCommunityMembers = ({
     community,
     profileId,
   }: {
@@ -67,7 +67,7 @@ export class CommunityService {
     }
   }
 
-  public static readonly create = async ({
+  public readonly create = async ({
     createdBy,
     createCommunityDTO,
     cover,
@@ -86,7 +86,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly changeCover = async ({
+  public readonly changeCover = async ({
     community,
     path,
   }: {
@@ -124,12 +124,12 @@ export class CommunityService {
       options: {
         new: true,
         lean: true,
-        projection: { 'cover.secure_url': 1 },
+        projection: { "cover.secure_url": 1 },
       },
     })
   }
 
-  public static readonly changeVisibility = async ({
+  public readonly changeVisibility = async ({
     communityId,
     state,
   }: {
@@ -149,7 +149,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly editCommunity = async ({
+  public readonly editCommunity = async ({
     communityId,
     editCommunity,
   }: {
@@ -163,13 +163,13 @@ export class CommunityService {
       data: editCommunity,
       options: {
         new: true,
-        projection: Object.keys(editCommunity).join(' '),
+        projection: Object.keys(editCommunity).join(" "),
         lean: true,
       },
     })
   }
 
-  public static readonly deleteCommunity = async (communityId: MongoId) => {
+  public readonly deleteCommunity = async (communityId: MongoId) => {
     await this.communityRepository.findOneAndDelete({
       filter: {
         _id: communityId,
@@ -177,7 +177,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly join = async ({
+  public readonly join = async ({
     profile,
     community,
   }: {
@@ -198,9 +198,9 @@ export class CommunityService {
     this.members = members
 
     if (profileId.equals(createdBy))
-      return 'You are Already Joined as The Creator of This Community'
+      return "You are Already Joined as The Creator of This Community"
 
-    if (this.isExistedMember()) return 'You are Already Joined as a Member'
+    if (this.isExistedMember()) return "You are Already Joined as a Member"
 
     const notificationDetails: INotificationInputs = {
       from: { _id: profileId, username, avatar },
@@ -208,7 +208,7 @@ export class CommunityService {
         ? `${username} Requested to join your community`
         : `${username} Joined your community`,
 
-      refTo: 'Community',
+      refTo: "Community",
       on: { _id: communityId, cover, name },
       sentAt: getNowMoment(),
     }
@@ -223,7 +223,7 @@ export class CommunityService {
         },
       })
 
-      await this.notificationsService.sendNotification({
+      this.notifyService.sendNotification({
         userId: createdBy,
         notificationDetails,
       })
@@ -240,7 +240,7 @@ export class CommunityService {
       },
     })
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails,
     })
@@ -248,13 +248,13 @@ export class CommunityService {
     return `You Joined ${name} Community Successfully`
   }
 
-  protected static readonly isExistedMember = () => {
+  protected readonly isExistedMember = () => {
     return this.members.some(requestedUserId =>
       requestedUserId.equals(this.userId),
     )
   }
 
-  public static readonly leave = async ({
+  public readonly leave = async ({
     profileId,
     community,
   }: {
@@ -266,7 +266,7 @@ export class CommunityService {
 
     if (!this.isExistedMember())
       return throwError({
-        msg: 'You are not a member of this Community',
+        msg: "You are not a member of this Community",
         status: 400,
       })
 
@@ -280,7 +280,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly acceptJoinRequest = async ({
+  public readonly acceptJoinRequest = async ({
     user,
     community,
   }: {
@@ -295,7 +295,7 @@ export class CommunityService {
     const notificationDetails: IJoinedCommunityNotification = {
       from: { _id: communityId, name, cover: cover },
       message: `${community.name} Accepted Your Join Request`,
-      refTo: 'Community',
+      refTo: "Community",
       on: { _id: communityId, cover, name },
       sentAt: getNowMoment(),
     }
@@ -310,14 +310,14 @@ export class CommunityService {
           $push: { members: this.userId },
         },
       }),
-      this.notificationsService.sendNotification({
+      this.notifyService.sendNotification({
         userId: createdBy,
         notificationDetails,
       }),
     ])
   }
 
-  public static readonly rejectJoinRequest = async ({
+  public readonly rejectJoinRequest = async ({
     user,
     community,
   }: {
@@ -340,13 +340,13 @@ export class CommunityService {
     })
   }
 
-  protected static filterJoinRequests = () => {
+  protected filterJoinRequests = () => {
     return this.requests.filter(
       requestedUser => !requestedUser.equals(this.userId),
     )
   }
 
-  public static readonly addAdmin = async ({
+  public readonly addAdmin = async ({
     communityId,
     userId,
   }: {
@@ -361,7 +361,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly removeAdmin = async ({
+  public readonly removeAdmin = async ({
     community,
     admin,
   }: {
@@ -383,7 +383,7 @@ export class CommunityService {
     })
   }
 
-  public static readonly kickOut = async ({
+  public readonly kickOut = async ({
     community,
     user,
   }: {
@@ -404,3 +404,5 @@ export class CommunityService {
     })
   }
 }
+
+export default new CommunityService()

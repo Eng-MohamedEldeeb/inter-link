@@ -1,33 +1,33 @@
-import { Router } from 'express'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { NotificationController } from './notification.controller'
+import { Router } from "express"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from '../validators/notification.validators'
+import * as validators from "../validators/notification.validators"
 
-import NotificationExistenceGuardGuard from '../../../common/guards/notification/notification-existence.guard'
-import NotificationOwnerGuardGuard from '../../../common/guards/notification/notification-owner.guard'
+import notificationController from "./notification.controller"
+import NotificationExistenceGuardGuard from "../../../common/guards/notification/notification-existence.guard"
+import NotificationOwnerGuardGuard from "../../../common/guards/notification/notification-owner.guard"
 
 const router: Router = Router()
 
 router.get(
-  '/',
+  "/",
   validate(validators.getAllNotificationsValidator.http()),
-  NotificationController.getAllNotifications,
+  notificationController.getAllNotifications,
 )
 
 router.get(
-  '/:id',
+  "/:id",
   validate(validators.getAllNotificationsValidator.http()),
   applyGuards(NotificationExistenceGuardGuard),
-  NotificationController.getNotification,
+  notificationController.getNotification,
 )
 
 router.delete(
-  '/:id',
+  "/:id",
   applyGuards(NotificationExistenceGuardGuard, NotificationOwnerGuardGuard),
   validate(validators.deleteNotificationValidator.http()),
-  NotificationController.deleteNotification,
+  notificationController.deleteNotification,
 )
 
 export default router

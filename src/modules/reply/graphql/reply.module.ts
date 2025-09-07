@@ -1,12 +1,12 @@
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { ReplyController } from './reply.controller'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
+import replyController from "./reply.controller"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'replyQuery',
+      name: "replyQuery",
       fields: {
-        getCommentReplies: ReplyController.getCommentReplies(),
+        getCommentReplies: replyController.getCommentReplies(),
       },
     }),
     resolve: () => true,
@@ -16,10 +16,10 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'replyMutation',
+      name: "replyMutation",
       fields: {
-        edit: ReplyController.edit(),
-        delete: ReplyController.deleteReply(),
+        edit: replyController.edit(),
+        delete: replyController.deleteReply(),
       },
     }),
     resolve: () => true,

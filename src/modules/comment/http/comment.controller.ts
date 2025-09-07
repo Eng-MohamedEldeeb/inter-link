@@ -1,17 +1,18 @@
-import { Response } from 'express'
-import { IRequest } from '../../../common/interface/IRequest.interface'
-import { successResponse } from '../../../common/handlers/success-response.handler'
-import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { MongoId } from '../../../common/types/db'
-import { IPostId } from '../../post/dto/post.dto'
-import { CommentService } from '../comment.service'
+import { Response } from "express"
+import { IRequest } from "../../../common/interface/IRequest.interface"
+import { successResponse } from "../../../common/handlers/success-response.handler"
+import { asyncHandler } from "../../../common/decorators/async-handler/async-handler.decorator"
+import { MongoId } from "../../../common/types/db"
+import { IPostId } from "../../post/dto/post.dto"
 
-import * as DTO from '../dto/comment.dto'
+import * as DTO from "../dto/comment.dto"
 
-export class CommentController {
-  private static readonly CommentService = CommentService
+import commentService from "../comment.service"
 
-  public static readonly getSingle = asyncHandler(
+class CommentController {
+  private readonly commentService = commentService
+
+  public readonly getSingle = asyncHandler(
     async (req: IRequest, res: Response) => {
       return successResponse(res, {
         data: req.comment,
@@ -19,12 +20,12 @@ export class CommentController {
     },
   )
 
-  public static readonly addComment = asyncHandler(
+  public readonly addComment = asyncHandler(
     async (req: IRequest<IPostId>, res: Response) => {
       const attachment = req.cloudFile
-      const { content }: Pick<DTO.IAddComment, 'content'> = req.body
+      const { content }: Pick<DTO.IAddComment, "content"> = req.body
 
-      await this.CommentService.addComment({
+      await this.commentService.addComment({
         attachment,
         content,
         profile: req.profile,
@@ -32,30 +33,28 @@ export class CommentController {
       })
 
       return successResponse(res, {
-        msg: 'Comment added Successfully',
+        msg: "Comment added Successfully",
         status: 201,
       })
     },
   )
 
-  public static readonly like = asyncHandler(
-    async (req: IRequest, res: Response) => {
-      const { msg } = await this.CommentService.like({
-        profile: req.profile,
-        comment: req.comment,
-      })
+  public readonly like = asyncHandler(async (req: IRequest, res: Response) => {
+    const { msg } = await this.commentService.like({
+      profile: req.profile,
+      comment: req.comment,
+    })
 
-      return successResponse(res, { msg })
-    },
-  )
+    return successResponse(res, { msg })
+  })
 
-  public static readonly edit = asyncHandler(
+  public readonly edit = asyncHandler(
     async (req: IRequest<DTO.ICommentId>, res: Response) => {
       const { commentId } = req.params
       const { content }: DTO.IEditComment = req.body
       return successResponse(res, {
-        msg: 'Comment is modified Successfully',
-        data: await this.CommentService.edit({
+        msg: "Comment is modified Successfully",
+        data: await this.commentService.edit({
           id: commentId,
           content,
         }),
@@ -63,13 +62,15 @@ export class CommentController {
     },
   )
 
-  public static readonly deleteComment = asyncHandler(
+  public readonly deleteComment = asyncHandler(
     async (req: IRequest<{ commentId: MongoId }>, res: Response) => {
       const { commentId } = req.params
-      await this.CommentService.deleteComment({ id: commentId })
+      await this.commentService.deleteComment({ id: commentId })
       return successResponse(res, {
-        msg: 'Comment is deleted successfully',
+        msg: "Comment is deleted successfully",
       })
     },
   )
 }
+
+export default new CommentController()

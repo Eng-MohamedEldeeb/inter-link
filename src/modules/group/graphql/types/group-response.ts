@@ -3,7 +3,7 @@ import {
   returnedType,
 } from "../../../../common/decorators/resolver/returned-type.decorator"
 
-import { allGroupChats, singleGroupChatFields } from "./group-fields.type"
+import { allGroupChats, singleGroupChatFields } from "./group-fields"
 
 export class GroupResponse {
   public static readonly getAllGroups = () => {

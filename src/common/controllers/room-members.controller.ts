@@ -1,5 +1,5 @@
-import { MongoId } from '../types/db'
-import { RoomMembers } from '../services/notifications/types'
+import { MongoId } from "../types/db"
+import { RoomMembers } from "../utils/notify/types"
 
 const roomStatus = new Map<string, RoomMembers>()
 class RoomMembersController {

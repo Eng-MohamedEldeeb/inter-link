@@ -1,47 +1,47 @@
-import { MongoId } from '../../common/types/db'
-import { IMessageDetails } from '../../db/interfaces/IChat.interface'
-import { TChat } from '../../db/documents'
-import { throwError } from '../../common/handlers/error-message.handler'
+import { MongoId } from "../../common/types/db"
+import { IMessageDetails } from "../../db/interfaces/IChat.interface"
+import { TChat } from "../../db/documents"
+import { throwError } from "../../common/handlers/error-message.handler"
 
 import {
   INotifications,
   UserDetails,
-} from '../../db/interfaces/INotification.interface'
+} from "../../db/interfaces/INotification.interface"
 
-import * as DTO from './dto/chat.dto'
+import * as DTO from "./dto/chat.dto"
 
-import chatRepository from '../../common/repositories/chat.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
-import notificationRepository from '../../common/repositories/notification.repository'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import chatRepository from "../../common/repositories/chat.repository"
+import notifyService from "../../common/services/notify/notify.service"
+import notificationRepository from "../../common/repositories/notification.repository"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class ChatService {
-  protected static readonly chatRepository = chatRepository
-  protected static readonly notificationRepository = notificationRepository
-  protected static readonly notificationService = notificationsService
+class ChatService {
+  protected readonly chatRepository = chatRepository
+  protected readonly notificationRepository = notificationRepository
+  protected readonly notifyService = notifyService
 
-  protected static roomId: string
-  protected static userId: MongoId
-  protected static profileId: MongoId
+  protected roomId!: string
+  protected userId!: MongoId
+  protected profileId!: MongoId
 
-  protected static userSocketId: string
+  protected userSocketId!: string
 
-  public static set setUserId(userId: MongoId) {
+  public set setUserId(userId: MongoId) {
     this.userId = userId
   }
-  public static set setProfileId(profileId: MongoId) {
+  public set setProfileId(profileId: MongoId) {
     this.profileId = profileId
   }
 
-  public static set setRoomId(roomId: string) {
+  public set setRoomId(roomId: string) {
     this.roomId = roomId
   }
 
-  public static get getCurrentRoomId(): string {
+  public get getCurrentRoomId(): string {
     return this.roomId
   }
 
-  public static readonly getAllChats = async (profileId: MongoId) => {
+  public readonly getAllChats = async (profileId: MongoId) => {
     const chats = await this.chatRepository.find({
       filter: { $or: [{ startedBy: profileId }, { participant: profileId }] },
       projection: {
@@ -55,21 +55,21 @@ export class ChatService {
       options: { lean: true },
       populate: [
         {
-          path: 'startedBy',
+          path: "startedBy",
           select: {
             _id: 1,
             username: 1,
 
-            'avatar.secure_url': 1,
+            "avatar.secure_url": 1,
           },
         },
         {
-          path: 'participant',
+          path: "participant",
           select: {
             _id: 1,
             username: 1,
 
-            'avatar.secure_url': 1,
+            "avatar.secure_url": 1,
           },
         },
       ],
@@ -78,13 +78,13 @@ export class ChatService {
     return chats
   }
 
-  public static readonly getSingle = async (chat: TChat) => {
+  public readonly getSingle = async (chat: TChat) => {
     if (chat.newMessages.length >= 1) await this.emptyMissedMessages(chat)
 
     return chat
   }
 
-  protected static readonly emptyMissedMessages = async (chat: TChat) => {
+  protected readonly emptyMissedMessages = async (chat: TChat) => {
     for (let i = chat.newMessages.length - 1; i >= 0; i--) {
       chat.messages.unshift(chat.newMessages[i])
     }
@@ -94,7 +94,7 @@ export class ChatService {
     return await chat.save()
   }
 
-  public static readonly likeMessage = async ({
+  public readonly likeMessage = async ({
     profile,
     messageId,
     chat,
@@ -112,39 +112,39 @@ export class ChatService {
     if (isLiked)
       return await this.chatRepository.findOneAndUpdate({
         filter: {
-          $and: [{ _id: chat._id }, { 'messages._id': messageId }],
+          $and: [{ _id: chat._id }, { "messages._id": messageId }],
         },
         data: {
           $pull: {
-            'messages.$.likedBy': profile._id,
+            "messages.$.likedBy": profile._id,
           },
         },
       })
 
     await this.chatRepository.findOneAndUpdate({
       filter: {
-        $and: [{ _id: chat._id }, { 'messages._id': messageId }],
+        $and: [{ _id: chat._id }, { "messages._id": messageId }],
       },
       data: {
         $addToSet: {
-          'messages.$.likedBy': profile._id,
+          "messages.$.likedBy": profile._id,
         },
       },
     })
 
-    await this.notificationService.sendNotification({
+    this.notifyService.sendNotification({
       userId: message.from._id,
       notificationDetails: {
         from: profile,
         message: `${profile.username} Liked Your Message 🧡`,
         messageId,
-        refTo: 'Chat',
+        refTo: "Chat",
         sentAt: getNowMoment(),
       },
     })
   }
 
-  protected static readonly findMessage = ({
+  protected readonly findMessage = ({
     chat,
     messageId,
   }: {
@@ -163,12 +163,12 @@ export class ChatService {
     )
 
     if (!inMessages && !inUnread)
-      return throwError({ msg: 'message not found', status: 404 })
+      return throwError({ msg: "message not found", status: 404 })
 
     return { inMessages, inUnread }
   }
 
-  protected static readonly checkLikes = ({
+  protected readonly checkLikes = ({
     message,
     profile,
   }: {
@@ -182,7 +182,7 @@ export class ChatService {
     return likedBy.some(user => user._id.equals(profile._id))
   }
 
-  public static readonly editMessage = async ({
+  public readonly editMessage = async ({
     profileId,
     messageId,
     chatId,
@@ -199,7 +199,7 @@ export class ChatService {
       profileId,
     })
 
-    let searchedMessage: string = ''
+    let searchedMessage: string = ""
 
     const { inMessages, inUnread } = this.findMessage({
       chat,
@@ -243,7 +243,7 @@ export class ChatService {
     return await Promise.all([chat.save(), relatedNotification.save()])
   }
 
-  protected static readonly findUserMessageInChat = async ({
+  protected readonly findUserMessageInChat = async ({
     chatId,
     messageId,
     profileId,
@@ -260,8 +260,8 @@ export class ChatService {
               { _id: chatId },
               {
                 $or: [
-                  { 'messages._id': messageId },
-                  { 'newMessages._id': messageId },
+                  { "messages._id": messageId },
+                  { "newMessages._id": messageId },
                 ],
               },
             ],
@@ -270,14 +270,14 @@ export class ChatService {
             $or: [
               {
                 $and: [
-                  { 'messages.from': profileId },
-                  { 'messages.deletedAt': { $exists: false } },
+                  { "messages.from": profileId },
+                  { "messages.deletedAt": { $exists: false } },
                 ],
               },
               {
                 $and: [
-                  { 'newMessages.from': profileId },
-                  { 'newMessages.deletedAt': { $exists: false } },
+                  { "newMessages.from": profileId },
+                  { "newMessages.deletedAt": { $exists: false } },
                 ],
               },
             ],
@@ -288,7 +288,7 @@ export class ChatService {
     return chat!
   }
 
-  protected static readonly findRelatedNotification = async ({
+  protected readonly findRelatedNotification = async ({
     belongsTo,
     messageFrom,
     searchedMessage,
@@ -301,16 +301,16 @@ export class ChatService {
       filter: {
         $and: [
           {
-            $and: [{ belongsTo }, { 'missedMessages.from': messageFrom }],
+            $and: [{ belongsTo }, { "missedMessages.from": messageFrom }],
           },
           {
             $and: [
               {
-                'missedMessages.messages.message': {
+                "missedMessages.messages.message": {
                   $regex: searchedMessage,
                 },
               },
-              { 'missedMessages.messages.deletedAt': { $exists: false } },
+              { "missedMessages.messages.deletedAt": { $exists: false } },
             ],
           },
         ],
@@ -318,7 +318,7 @@ export class ChatService {
     })
   }
 
-  protected static readonly hasRelatedNotification = ({
+  protected readonly hasRelatedNotification = ({
     relatedNotification,
     messageId,
   }: {
@@ -330,7 +330,7 @@ export class ChatService {
     )
   }
 
-  public static readonly deleteMessage = async ({
+  public readonly deleteMessage = async ({
     profileId,
     messageId,
     chatId,
@@ -343,35 +343,35 @@ export class ChatService {
       filter: {
         $and: [
           {
-            $and: [{ _id: chatId }, { 'messages._id': messageId }],
+            $and: [{ _id: chatId }, { "messages._id": messageId }],
           },
           {
             $and: [
-              { 'messages.from': profileId },
-              { 'messages.deletedAt': { $exists: false } },
+              { "messages.from": profileId },
+              { "messages.deletedAt": { $exists: false } },
             ],
           },
         ],
       },
       data: {
-        'messages.$.message': 'message is deleted',
-        'messages.$.deletedAt': Date.now(),
+        "messages.$.message": "message is deleted",
+        "messages.$.deletedAt": Date.now(),
       },
     })
 
     return (
       deletedMessage ??
       throwError({
-        msg: 'Message was not deleted as it was not found',
+        msg: "Message was not deleted as it was not found",
         status: 404,
       })
     )
   }
 
-  public static readonly deleteChat = async ({
+  public readonly deleteChat = async ({
     profileId,
     chat,
-  }: Omit<DTO.IDeleteChat, 'chatId'>) => {
+  }: Omit<DTO.IDeleteChat, "chatId">) => {
     const startedChat = chat.startedBy.equals(profileId)
     if (startedChat) await chat.updateOne({ $unset: { startedBy: 1 } })
 
@@ -381,3 +381,5 @@ export class ChatService {
     await chat.save()
   }
 }
+
+export default new ChatService()

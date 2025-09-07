@@ -1,35 +1,34 @@
-import { Server } from 'socket.io'
+import { Server } from "socket.io"
 
-import { asyncHandler } from '../common/decorators/async-handler/async-handler.decorator'
-import { ISocket } from '../common/interface/ISocket.interface'
-import { applyGuards } from '../common/decorators/guard/apply-guards.decorator'
-import { GroupService } from './group/group.service'
+import { asyncHandler } from "../common/decorators/async-handler/async-handler.decorator"
+import { ISocket } from "../common/interface/ISocket.interface"
+import { applyGuards } from "../common/decorators/guard/apply-guards.decorator"
+import { sendMessage } from "./chat/socket/chat-interactions.service"
+import { GroupInteractions } from "./group/socket/group-interactions.service"
 
-import { sendMessage } from './chat/socket/chat-interactions.service'
+import isAuthenticatedGuard from "../common/guards/auth/is-authenticated.guard"
+import isAuthorizedGuard from "../common/guards/auth/is-authorized.guard"
+import userExistenceGuard from "../common/guards/user/user-existence.guard"
 
-import isAuthenticatedGuard from '../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../common/guards/auth/is-authorized.guard'
-import userExistenceGuard from '../common/guards/user/user-existence.guard'
-
-import connectedUserController from '../common/controllers/connected-users.controller'
-import notificationsService from '../common/services/notifications/notifications.service'
-import groupExistenceGuard from '../common/guards/group/group-existence.guard'
-import { sendGroupMessage } from './group/socket/group-interactions.service'
-import groupMembersGuard from '../common/guards/group/group-members.guard'
+import groupService from "./group/group.service"
+import connectedUserController from "../common/controllers/connected-users.controller"
+import notifyService from "../common/services/notify/notify.service"
+import groupExistenceGuard from "../common/guards/group/group-existence.guard"
+import groupMembersGuard from "../common/guards/group/group-members.guard"
 
 export const socketIoBootStrap = async (io: Server) => {
   io.use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard)).on(
-    'connection',
+    "connection",
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
-      const groups = await GroupService.getAllGroups(profileId)
+      const groups = await groupService.getAllGroups(profileId)
 
       connectedUserController.setOnline({
         profileId,
         socketId: socket.id,
       })
 
-      await notificationsService.readMissedNotifications({
+      notifyService.readMissedNotifications({
         userId: profileId,
         socketId: socket.id,
       })
@@ -42,7 +41,7 @@ export const socketIoBootStrap = async (io: Server) => {
         socket.join(rooms)
       }
 
-      socket.on('disconnect', async () => {
+      socket.on("disconnect", async () => {
         connectedUserController.setOffline(profileId)
 
         if (rooms.length) rooms.forEach(room => socket.leave(room))
@@ -50,13 +49,13 @@ export const socketIoBootStrap = async (io: Server) => {
     }),
   )
 
-  io.of('/chats').use(
+  io.of("/chats").use(
     applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
   )
 
-  io.of('/chats').on('connection', asyncHandler(sendMessage))
+  io.of("/chats").on("connection", asyncHandler(sendMessage))
 
-  io.of('/groups').use(
+  io.of("/groups").use(
     applyGuards(
       isAuthenticatedGuard,
       isAuthorizedGuard,
@@ -65,5 +64,8 @@ export const socketIoBootStrap = async (io: Server) => {
     ),
   )
 
-  io.of('/groups').on('connection', asyncHandler(sendGroupMessage(io)))
+  io.of("/groups").on(
+    "connection",
+    asyncHandler(GroupInteractions.sendGroupMessage(io)),
+  )
 }

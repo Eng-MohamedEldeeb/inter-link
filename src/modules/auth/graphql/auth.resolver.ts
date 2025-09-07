@@ -1,16 +1,16 @@
 import { ISuccessResponse } from "../../../common/interface/IGraphQL.interface"
-import { AuthService } from "../auth.service"
+import authService from "../auth.service"
 
 import * as DTO from "../dto/auth.dto"
 
 class AuthResolver {
-  protected readonly AuthService = AuthService
+  protected readonly authService = authService
 
   public readonly confirmEmail = async (
     args: DTO.IConfirmEmail,
     _: any,
   ): Promise<ISuccessResponse> => {
-    await this.AuthService.confirmEmail(args)
+    await this.authService.confirmEmail(args)
     return { msg: "Check your E-mail for a confirmation code" }
   }
 
@@ -21,7 +21,7 @@ class AuthResolver {
     return {
       msg: `Registered Successfully, Welcome ${args.username}`,
       status: 201,
-      data: { accessToken: await this.AuthService.register(args) },
+      data: { accessToken: await this.authService.register(args) },
     }
   }
 
@@ -31,7 +31,7 @@ class AuthResolver {
   ): Promise<ISuccessResponse> => {
     return {
       msg: `Welcome Back ${args.username}`,
-      data: { accessToken: await this.AuthService.login(args) },
+      data: { accessToken: await this.authService.login(args) },
     }
   }
 
@@ -39,7 +39,7 @@ class AuthResolver {
     args: DTO.IForgotPassword,
     _: any,
   ) => {
-    await this.AuthService.forgotPassword(args)
+    await this.authService.forgotPassword(args)
     return { msg: "Check your E-mail to confirm" }
   }
 
@@ -47,7 +47,7 @@ class AuthResolver {
     args: DTO.IResetPassword,
     _: any,
   ): Promise<ISuccessResponse> => {
-    await this.AuthService.resetPassword(args)
+    await this.authService.resetPassword(args)
     return { msg: "Password has been reset successfully" }
   }
 }

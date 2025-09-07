@@ -1,56 +1,56 @@
-import { Router } from 'express'
-import { CommentController } from './comment.controller'
-import { fileReader } from '../../../common/utils/multer/file-reader'
-import { commentAttachmentUploader } from '../../../common/middlewares/upload/comment-attachments-uploader.middleware'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { Router } from "express"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+import { commentAttachmentUploader } from "../../../common/middlewares/upload/comment-attachments-uploader.middleware"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from './../validators/comment.validators'
+import * as validators from "./../validators/comment.validators"
 
-import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import CommentOwnerGuard from '../../../common/guards/comment/comment-owner.guard'
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
-import replyRouter from './../../reply/http/reply.module'
+import commentController from "./comment.controller"
+import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
+import CommentOwnerGuard from "../../../common/guards/comment/comment-owner.guard"
+import postExistenceGuard from "../../../common/guards/post/post-existence.guard"
+import replyRouter from "./../../reply/http/reply.module"
 
 const router: Router = Router({ mergeParams: true })
 
-router.use('/reply', replyRouter)
+router.use("/reply", replyRouter)
 
 router.get(
-  '/:id',
+  "/:id",
   validate(validators.getSingleCommentValidator.http()),
   applyGuards(commentExistenceGuard),
-  CommentController.getSingle,
+  commentController.getSingle,
 )
 
 router.post(
-  '/add/:postId',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('attachment'),
+  "/add/:postId",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
   validate(validators.addValidator.http()),
   applyGuards(postExistenceGuard),
   commentAttachmentUploader,
-  CommentController.addComment,
+  commentController.addComment,
 )
 
 router.post(
-  '/like',
+  "/like",
   validate(validators.likeValidator.http()),
   applyGuards(commentExistenceGuard),
-  CommentController.like,
+  commentController.like,
 )
 
 router.patch(
-  '/edit',
+  "/edit",
   validate(validators.editValidator.http()),
   applyGuards(commentExistenceGuard, CommentOwnerGuard),
-  CommentController.edit,
+  commentController.edit,
 )
 
 router.delete(
-  '/:id',
+  "/:id",
   applyGuards(commentExistenceGuard, CommentOwnerGuard),
   validate(validators.deleteValidator.http()),
-  CommentController.deleteComment,
+  commentController.deleteComment,
 )
 
 export default router

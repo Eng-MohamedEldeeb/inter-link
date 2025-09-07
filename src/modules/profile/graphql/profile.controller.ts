@@ -1,6 +1,6 @@
 import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
 import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import profileResponse from "./types/profile-response"
+import { ProfileResponse } from "./types/profile-response"
 
 import ProfileArgs from "./types/profile-args"
 import * as validators from "../validator/profile.validator"
@@ -18,7 +18,7 @@ import { applyResolver } from "../../../common/decorators/resolver/apply-resolve
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-export class ProfileController {
+class ProfileController {
   private readonly profileQueryResolver = profileQueryResolver
   private readonly profileMutationResolver = profileMutationResolver
 
@@ -27,7 +27,7 @@ export class ProfileController {
     return {
       type: graphResponseType({
         name: "getProfile",
-        data: profileResponse.getProfile(),
+        data: ProfileResponse.getProfile(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
@@ -40,7 +40,7 @@ export class ProfileController {
     return {
       type: graphResponseType({
         name: "getFollowers",
-        data: profileResponse.getFollowers(),
+        data: ProfileResponse.getFollowers(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
@@ -53,7 +53,7 @@ export class ProfileController {
     return {
       type: graphResponseType({
         name: "getFollowing",
-        data: profileResponse.getFollowing(),
+        data: ProfileResponse.getFollowing(),
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
@@ -66,7 +66,7 @@ export class ProfileController {
     return {
       type: graphResponseType({
         name: "getAllSavedPostsQuery",
-        data: profileResponse.getAllSavedPosts(),
+        data: ProfileResponse.getAllSavedPosts(),
       }),
       args: ProfileArgs.getAllSavedPosts,
       resolve: applyResolver({
@@ -81,7 +81,7 @@ export class ProfileController {
     return {
       type: graphResponseType({
         name: "updateProfile",
-        data: profileResponse.updateProfileResponse(),
+        data: ProfileResponse.updateProfileResponse(),
       }),
       args: ProfileArgs.updateProfile,
       resolve: applyResolver({
@@ -186,4 +186,5 @@ export class ProfileController {
     }
   }
 }
+
 export default new ProfileController()

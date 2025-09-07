@@ -1,39 +1,40 @@
-import { Router } from 'express'
-import { AuthController } from './auth.controller'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
+import { Router } from "express"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from './../validator/auth.validator'
+import * as validators from "./../validator/auth.validator"
+
+import authController from "./auth.controller"
 
 const router: Router = Router()
 
 router.post(
-  '/confirm-email',
+  "/confirm-email",
   validate(validators.confirmEmailSchema.http()),
-  AuthController.confirmEmail,
+  authController.confirmEmail,
 )
 
 router.post(
-  '/register',
+  "/register",
   validate(validators.registerSchema.http()),
-  AuthController.register,
+  authController.register,
 )
 
 router.post(
-  '/login',
+  "/login",
   validate(validators.loginSchema.http()),
-  AuthController.login,
+  authController.login,
 )
 
 router.post(
-  '/forgot-password',
+  "/forgot-password",
   validate(validators.forgotPasswordSchema.http()),
-  AuthController.forgotPassword,
+  authController.forgotPassword,
 )
 
 router.patch(
-  '/reset-password',
+  "/reset-password",
   validate(validators.resetPasswordSchema.http()),
-  AuthController.resetPassword,
+  authController.resetPassword,
 )
 
 export default router

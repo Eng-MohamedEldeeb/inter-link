@@ -1,7 +1,8 @@
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
-import { CommunityResponse } from "./types/community-response.type"
+import { CommunityResponse } from "./types/community-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { CommunityArgs } from "./types/community-args"
 
 import {
   IMutationController,
@@ -9,11 +10,10 @@ import {
 } from "../../../common/interface/IGraphQL.interface"
 
 import {
-  CommunityMutationResolver,
-  CommunityQueryResolver,
+  communityMutationResolver,
+  communityQueryResolver,
 } from "./community.resolver"
 
-import * as args from "./types/community-args.type"
 import * as validators from "../validators/community.validators"
 
 import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
@@ -26,12 +26,12 @@ import communityConflictedNameGuard from "../../../common/guards/community/commu
 import inCommunityRequestsGuard from "../../../common/guards/community/in-community-requests.guard"
 import inCommunityAdminsGuard from "../../../common/guards/community/in-community-admins.guard"
 
-export class CommunityController {
-  private static readonly CommunityQueryResolver = CommunityQueryResolver
-  private static readonly CommunityMutationResolver = CommunityMutationResolver
+class CommunityController {
+  private readonly communityQueryResolver = communityQueryResolver
+  private readonly communityMutationResolver = communityMutationResolver
 
   // Queries:
-  public static readonly getAllCommunities = (): IQueryController => {
+  public readonly getAllCommunities = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getAllCommunitiesQuery",
@@ -39,18 +39,18 @@ export class CommunityController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.CommunityQueryResolver.getAllCommunities,
+        resolver: this.communityQueryResolver.getAllCommunities,
       }),
     }
   }
 
-  public static readonly getCommunity = (): IQueryController => {
+  public readonly getCommunity = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getSingleCommunityQuery",
         data: CommunityResponse.getCommunity(),
       }),
-      args: args.getCommunity,
+      args: CommunityArgs.getCommunity,
       resolve: applyResolver({
         middlewares: [validate(validators.getCommunityValidator.graphql())],
         guards: [
@@ -58,12 +58,12 @@ export class CommunityController {
           isAuthorizedGuard,
           communityExistenceGuard,
         ],
-        resolver: this.CommunityQueryResolver.getCommunity,
+        resolver: this.communityQueryResolver.getCommunity,
       }),
     }
   }
 
-  public static readonly getCommunityMembers = (): IQueryController => {
+  public readonly getCommunityMembers = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getCommunityMembersQuery",
@@ -76,17 +76,17 @@ export class CommunityController {
           isAuthorizedGuard,
           communityExistenceGuard,
         ],
-        resolver: this.CommunityQueryResolver.getCommunityMembers,
+        resolver: this.communityQueryResolver.getCommunityMembers,
       }),
     }
   }
   // Mutations:
-  public static readonly create = (): IMutationController => {
+  public readonly create = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "createCommunityMutation",
       }),
-      args: args.create,
+      args: CommunityArgs.create,
       resolve: applyResolver({
         middlewares: [validate(validators.createValidator.graphql())],
         guards: [
@@ -94,17 +94,17 @@ export class CommunityController {
           isAuthorizedGuard,
           communityConflictedNameGuard,
         ],
-        resolver: this.CommunityMutationResolver.create,
+        resolver: this.communityMutationResolver.create,
       }),
     }
   }
 
-  public static readonly edit = (): IMutationController => {
+  public readonly edit = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "editCommunityMutation",
       }),
-      args: args.edit,
+      args: CommunityArgs.edit,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphql())],
         guards: [
@@ -113,17 +113,17 @@ export class CommunityController {
           communityExistenceGuard,
           inCommunityAdminsGuard,
         ],
-        resolver: this.CommunityMutationResolver.edit,
+        resolver: this.communityMutationResolver.edit,
       }),
     }
   }
 
-  public static readonly changeVisibility = (): IMutationController => {
+  public readonly changeVisibility = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "changeCommunityVisibilityMutation",
       }),
-      args: args.changeVisibility,
+      args: CommunityArgs.changeVisibility,
       resolve: applyResolver({
         middlewares: [validate(validators.changeVisibilityValidator.graphql())],
         guards: [
@@ -132,17 +132,17 @@ export class CommunityController {
           communityExistenceGuard,
           communityOwnerAuthorizationGuard,
         ],
-        resolver: this.CommunityMutationResolver.changeVisibility,
+        resolver: this.communityMutationResolver.changeVisibility,
       }),
     }
   }
 
-  public static readonly deleteCommunity = (): IMutationController => {
+  public readonly deleteCommunity = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deleteCommunityMutation",
       }),
-      args: args.deleteCommunity,
+      args: CommunityArgs.deleteCommunity,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteCommunityValidator.graphql())],
         guards: [
@@ -151,17 +151,17 @@ export class CommunityController {
           communityExistenceGuard,
           communityOwnerAuthorizationGuard,
         ],
-        resolver: this.CommunityMutationResolver.deleteCommunity,
+        resolver: this.communityMutationResolver.deleteCommunity,
       }),
     }
   }
 
-  public static readonly removePostFromCommunity = (): IMutationController => {
+  public readonly removePostFromCommunity = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "removePostFromCommunityMutation",
       }),
-      args: args.removePost,
+      args: CommunityArgs.removePost,
       resolve: applyResolver({
         middlewares: [validate(validators.removePostValidator.graphql())],
         guards: [
@@ -171,17 +171,17 @@ export class CommunityController {
           inCommunityAdminsGuard,
           postExistenceInCommunityGuard,
         ],
-        resolver: this.CommunityMutationResolver.removePostFromCommunity,
+        resolver: this.communityMutationResolver.removePostFromCommunity,
       }),
     }
   }
 
-  public static readonly addAdmin = (): IMutationController => {
+  public readonly addAdmin = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "addAdminMutation",
       }),
-      args: args.addAdmin,
+      args: CommunityArgs.addAdmin,
       resolve: applyResolver({
         middlewares: [validate(validators.addAdminValidator.graphql())],
         guards: [
@@ -191,17 +191,17 @@ export class CommunityController {
           userExistenceGuard,
           communityOwnerAuthorizationGuard,
         ],
-        resolver: this.CommunityMutationResolver.addAdmin,
+        resolver: this.communityMutationResolver.addAdmin,
       }),
     }
   }
 
-  public static readonly removeAdmin = (): IMutationController => {
+  public readonly removeAdmin = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "removeAdminMutation",
       }),
-      args: args.removeAdmin,
+      args: CommunityArgs.removeAdmin,
       resolve: applyResolver({
         middlewares: [validate(validators.removeAdminValidator.graphql())],
         guards: [
@@ -211,17 +211,17 @@ export class CommunityController {
           userExistenceGuard,
           inCommunityAdminsGuard,
         ],
-        resolver: this.CommunityMutationResolver.removeAdmin,
+        resolver: this.communityMutationResolver.removeAdmin,
       }),
     }
   }
 
-  public static readonly join = (): IMutationController => {
+  public readonly join = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "joinMutation",
       }),
-      args: args.join,
+      args: CommunityArgs.join,
       resolve: applyResolver({
         middlewares: [validate(validators.joinCommunityValidator.graphql())],
         guards: [
@@ -229,17 +229,17 @@ export class CommunityController {
           isAuthorizedGuard,
           communityExistenceGuard,
         ],
-        resolver: this.CommunityMutationResolver.join,
+        resolver: this.communityMutationResolver.join,
       }),
     }
   }
 
-  public static readonly leave = (): IMutationController => {
+  public readonly leave = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "leaveMutation",
       }),
-      args: args.leave,
+      args: CommunityArgs.leave,
       resolve: applyResolver({
         middlewares: [validate(validators.leaveCommunityValidator.graphql())],
         guards: [
@@ -247,17 +247,17 @@ export class CommunityController {
           isAuthorizedGuard,
           communityExistenceGuard,
         ],
-        resolver: this.CommunityMutationResolver.leave,
+        resolver: this.communityMutationResolver.leave,
       }),
     }
   }
 
-  public static readonly acceptJoinRequest = (): IMutationController => {
+  public readonly acceptJoinRequest = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "acceptJoinRequestMutation",
       }),
-      args: args.acceptJoinRequest,
+      args: CommunityArgs.acceptJoinRequest,
       resolve: applyResolver({
         middlewares: [
           validate(validators.acceptJoinRequestValidator.graphql()),
@@ -270,17 +270,17 @@ export class CommunityController {
           inCommunityRequestsGuard,
           inCommunityAdminsGuard,
         ],
-        resolver: this.CommunityMutationResolver.acceptJoinRequest,
+        resolver: this.communityMutationResolver.acceptJoinRequest,
       }),
     }
   }
 
-  public static readonly rejectJoinRequest = (): IMutationController => {
+  public readonly rejectJoinRequest = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "rejectJoinRequestMutation",
       }),
-      args: args.rejectJoinRequest,
+      args: CommunityArgs.rejectJoinRequest,
       resolve: applyResolver({
         middlewares: [
           validate(validators.rejectJoinRequestValidator.graphql()),
@@ -293,17 +293,17 @@ export class CommunityController {
           inCommunityRequestsGuard,
           inCommunityAdminsGuard,
         ],
-        resolver: this.CommunityMutationResolver.leave,
+        resolver: this.communityMutationResolver.leave,
       }),
     }
   }
 
-  public static readonly kickOut = (): IMutationController => {
+  public readonly kickOut = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "kickOutMutation",
       }),
-      args: args.kickOut,
+      args: CommunityArgs.kickOut,
       resolve: applyResolver({
         middlewares: [validate(validators.kickOutValidator.graphql())],
         guards: [
@@ -313,8 +313,10 @@ export class CommunityController {
           userExistenceGuard,
           inCommunityAdminsGuard,
         ],
-        resolver: this.CommunityMutationResolver.kickOut,
+        resolver: this.communityMutationResolver.kickOut,
       }),
     }
   }
 }
+
+export default new CommunityController()

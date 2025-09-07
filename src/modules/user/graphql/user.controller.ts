@@ -2,7 +2,6 @@ import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.g
 import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
 
-import * as args from "./types/user-args.type"
 import * as validators from "../validator/user.validator"
 
 import {
@@ -10,87 +9,91 @@ import {
   IQueryController,
 } from "../../../common/interface/IGraphQL.interface"
 
-import { UserQueryResolver, UserMutationResolver } from "./user.resolver"
+import { userQueryResolver, userMutationResolver } from "./user.resolver"
 
+import { UserArgs } from "./types/user-args"
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
-import { UserResponse } from "./types/user-response.type"
+import { UserResponse } from "./types/user-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-export class UserQueryController {
-  private static readonly UserQueryResolver = UserQueryResolver
-  public static readonly getUserProfile = (): IQueryController => {
+class UserQueryController {
+  private readonly userQueryResolver = userQueryResolver
+  public readonly getUserProfile = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getUserProfile",
         data: UserResponse.getUserProfile(),
       }),
-      args: args.getUserProfile,
+      args: UserArgs.getUserProfile,
       resolve: applyResolver({
         middlewares: [validate(validators.getUserProfileSchema.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        resolver: this.UserQueryResolver.getUserProfile,
+        resolver: this.userQueryResolver.getUserProfile,
       }),
     }
   }
 
-  public static readonly getUserFollowers = (): IQueryController => {
+  public readonly getUserFollowers = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getUserFollowers",
         data: UserResponse.getUseFollowers(),
       }),
-      args: args.getUserFollowers,
+      args: UserArgs.getUserFollowers,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        resolver: this.UserQueryResolver.getUseFollowers,
+        resolver: this.userQueryResolver.getUseFollowers,
       }),
     }
   }
 
-  public static readonly getUserFollowing = (): IQueryController => {
+  public readonly getUserFollowing = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getUserFollowing",
         data: UserResponse.getUseFollowing(),
       }),
-      args: args.getUserFollowing,
+      args: UserArgs.getUserFollowing,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        resolver: this.UserQueryResolver.getUseFollowing,
+        resolver: this.userQueryResolver.getUseFollowing,
       }),
     }
   }
 }
 
-export class UserMutationController {
-  private static readonly UserMutationResolver = UserMutationResolver
+class UserMutationController {
+  private readonly userMutationResolver = userMutationResolver
 
-  public static readonly blockUser = (): IMutationController => {
+  public readonly blockUser = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "blockUser",
       }),
-      args: args.blockUser,
+      args: UserArgs.blockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
         middlewares: [validate(validators.blockUserSchema.graphql())],
-        resolver: this.UserMutationResolver.blockUser,
+        resolver: this.userMutationResolver.blockUser,
       }),
     }
   }
 
-  public static readonly unblockUser = (): IMutationController => {
+  public readonly unblockUser = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "unblockUser",
       }),
-      args: args.unblockUser,
+      args: UserArgs.unblockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
         middlewares: [validate(validators.blockUserSchema.graphql())],
-        resolver: this.UserMutationResolver.unblockUser,
+        resolver: this.userMutationResolver.unblockUser,
       }),
     }
   }
 }
+
+export const userQueryController = new UserQueryController()
+export const userMutationController = new UserMutationController()

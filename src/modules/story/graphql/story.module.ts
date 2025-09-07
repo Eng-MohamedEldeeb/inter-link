@@ -1,13 +1,13 @@
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
-import { StoryController } from './story.controller'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
+import storyController from "./story.controller"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'storyQuery',
+      name: "storyQuery",
       fields: {
-        getAll: StoryController.getAll(),
-        getSingle: StoryController.getSingle(),
+        getAll: storyController.getAll(),
+        getSingle: storyController.getSingle(),
       },
     }),
     resolve: () => true,
@@ -17,10 +17,10 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'storyMutation',
+      name: "storyMutation",
       fields: {
-        like: StoryController.like(),
-        deleteStory: StoryController.deleteStory(),
+        like: storyController.like(),
+        deleteStory: storyController.deleteStory(),
       },
     }),
     resolve: () => true,

@@ -1,108 +1,108 @@
-import { Router } from 'express'
-import { CommunityController } from './community.controller'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { fileReader } from '../../../common/utils/multer/file-reader'
-import { communityCoverUploader } from '../../../common/middlewares/upload/community-cover-uploader.middleware'
-import { communityAttachmentsUploader } from '../../../common/middlewares/upload/community-attachments-uploader.middleware'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+import { Router } from "express"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+import { communityCoverUploader } from "../../../common/middlewares/upload/community-cover-uploader.middleware"
+import { communityAttachmentsUploader } from "../../../common/middlewares/upload/community-attachments-uploader.middleware"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
 
-import * as validators from '../validators/community.validators'
+import * as validators from "../validators/community.validators"
 
-import communityExistenceGuard from '../../../common/guards/community/community-existence.guard'
-import communityOwnerGuard from '../../../common/guards/community/community-owner-authorization.guard'
-import communityPublishPermissionGuard from '../../../common/guards/community/community-publish-permission.guard'
-import postExistenceInCommunityGuard from '../../../common/guards/community/post-existence-in-community.guard'
-import userExistenceGuard from '../../../common/guards/user/user-existence.guard'
-import communityConflictedNameGuard from '../../../common/guards/community/community-conflicted-name.guard'
-import communityPostDeletionGuard from '../../../common/guards/community/community-post-deletion.guard'
-import inCommunityRequestsGuard from '../../../common/guards/community/in-community-requests.guard'
-import inCommunityAdminsGuard from '../../../common/guards/community/in-community-admins.guard'
+import communityController from "./community.controller"
+import communityExistenceGuard from "../../../common/guards/community/community-existence.guard"
+import communityOwnerGuard from "../../../common/guards/community/community-owner-authorization.guard"
+import communityPublishPermissionGuard from "../../../common/guards/community/community-publish-permission.guard"
+import postExistenceInCommunityGuard from "../../../common/guards/community/post-existence-in-community.guard"
+import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
+import communityConflictedNameGuard from "../../../common/guards/community/community-conflicted-name.guard"
+import communityPostDeletionGuard from "../../../common/guards/community/community-post-deletion.guard"
+import inCommunityRequestsGuard from "../../../common/guards/community/in-community-requests.guard"
+import inCommunityAdminsGuard from "../../../common/guards/community/in-community-admins.guard"
 
 const router: Router = Router()
 
-router.get('/', CommunityController.getAllCommunities)
+router.get("/", communityController.getAllCommunities)
 
 router.get(
-  '/:communityId',
+  "/:communityId",
   validate(validators.getCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
-  CommunityController.getCommunity,
+  communityController.getCommunity,
 )
 
 router.get(
-  '/:communityId/members',
+  "/:communityId/members",
   validate(validators.getCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
-  CommunityController.getCommunityMembers,
+  communityController.getCommunityMembers,
 )
 
 router.post(
-  '/',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
+  "/",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
   validate(validators.createValidator.http()),
   applyGuards(communityConflictedNameGuard),
   communityCoverUploader,
-  CommunityController.create,
+  communityController.create,
 )
 
 router.post(
-  '/add-post',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
+  "/add-post",
+  fileReader("image/jpeg", "image/jpg", "image/png").array("attachments", 4),
   validate(validators.addPostValidator),
   applyGuards(communityExistenceGuard, communityPublishPermissionGuard),
   communityAttachmentsUploader,
-  CommunityController.addPost,
+  communityController.addPost,
 )
 
 router.delete(
-  '/:communityId/remove-post',
+  "/:communityId/remove-post",
   validate(validators.removePostValidator.http()),
   applyGuards(
     communityExistenceGuard,
     postExistenceInCommunityGuard,
     communityPostDeletionGuard,
   ),
-  CommunityController.removePost,
+  communityController.removePost,
 )
 
 router.patch(
-  '/change-cover',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').single('cover'),
+  "/change-cover",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
   validate(validators.changeCoverValidator),
   applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
-  CommunityController.changeCover,
+  communityController.changeCover,
 )
 
 router.patch(
-  '/edit-community',
+  "/edit-community",
   validate(validators.editValidator.http()),
   applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
-  CommunityController.editCommunity,
+  communityController.editCommunity,
 )
 
 router.patch(
-  '/change-visibility',
+  "/change-visibility",
   validate(validators.changeVisibilityValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard),
-  CommunityController.changeVisibility,
+  communityController.changeVisibility,
 )
 
 router.delete(
-  '/:communityId',
+  "/:communityId",
   validate(validators.deleteCommunityValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard),
-  CommunityController.deleteCommunity,
+  communityController.deleteCommunity,
 )
 
 router.post(
-  '/join',
+  "/join",
   validate(validators.joinCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
-  CommunityController.join,
+  communityController.join,
 )
 
 router.post(
-  '/accept-join-request',
+  "/accept-join-request",
   validate(validators.acceptJoinRequestValidator.http()),
   applyGuards(
     communityExistenceGuard,
@@ -110,11 +110,11 @@ router.post(
     inCommunityRequestsGuard,
     inCommunityAdminsGuard,
   ),
-  CommunityController.acceptJoinRequest,
+  communityController.acceptJoinRequest,
 )
 
 router.delete(
-  '/reject-join-request',
+  "/reject-join-request",
   validate(validators.rejectJoinRequestValidator.http()),
   applyGuards(
     communityExistenceGuard,
@@ -122,39 +122,39 @@ router.delete(
     inCommunityRequestsGuard,
     inCommunityAdminsGuard,
   ),
-  CommunityController.rejectJoinRequest,
+  communityController.rejectJoinRequest,
 )
 
 router.patch(
-  '/leave',
+  "/leave",
   validate(validators.leaveCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
-  CommunityController.leave,
+  communityController.leave,
 )
 
 router.patch(
-  '/:communityId/kick-out',
+  "/:communityId/kick-out",
   validate(validators.kickOutValidator.http()),
   applyGuards(
     communityExistenceGuard,
     userExistenceGuard,
     inCommunityAdminsGuard,
   ),
-  CommunityController.kickOut,
+  communityController.kickOut,
 )
 
 router.post(
-  '/:communityId/add-admin',
+  "/:communityId/add-admin",
   validate(validators.addAdminValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
-  CommunityController.addAdmin,
+  communityController.addAdmin,
 )
 
 router.patch(
-  '/:communityId/remove-admin',
+  "/:communityId/remove-admin",
   validate(validators.removeAdminValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
-  CommunityController.removeAdmin,
+  communityController.removeAdmin,
 )
 
 export default router

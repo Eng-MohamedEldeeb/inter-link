@@ -1,35 +1,36 @@
-import { MongoId } from '../../common/types/db'
-import { TGroup, TNotification } from '../../db/documents'
-import { throwError } from '../../common/handlers/error-message.handler'
+import { MongoId } from "../../common/types/db"
+import { throwError } from "../../common/handlers/error-message.handler"
+import { getNowMoment } from "../../common/decorators/moment/moment"
+
+import { TGroup, TNotification } from "../../db/documents"
 
 import {
   IGroup,
   IGroupMessageDetails,
-} from '../../db/interfaces/IGroup.interface'
+} from "../../db/interfaces/IGroup.interface"
 
 import {
   IMissedMessages,
   INotifications,
   UserDetails,
-} from '../../db/interfaces/INotification.interface'
+} from "../../db/interfaces/INotification.interface"
 
-import * as DTO from './dto/group.dto'
+import * as DTO from "./dto/group.dto"
 
-import groupRepository from '../../common/repositories/group.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
-import notificationRepository from '../../common/repositories/notification.repository'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import groupRepository from "../../common/repositories/group.repository"
+import notifyService from "../../common/services/notify/notify.service"
+import notificationRepository from "../../common/repositories/notification.repository"
 
-export class GroupService {
-  protected static readonly groupRepository = groupRepository
-  protected static readonly notificationRepository = notificationRepository
-  protected static readonly notificationService = notificationsService
+class GroupService {
+  protected readonly groupRepository = groupRepository
+  protected readonly notificationRepository = notificationRepository
+  protected readonly notifyService = notifyService
 
-  protected static profileId: MongoId
+  protected profileId!: MongoId
 
-  protected static userSocketId: string
+  protected userSocketId!: string
 
-  public static readonly getAllGroups = async (
+  public readonly getAllGroups = async (
     profileId: MongoId,
   ): Promise<IGroup[]> => {
     const chats = await this.groupRepository.find({
@@ -42,12 +43,12 @@ export class GroupService {
       options: { lean: true },
       populate: [
         {
-          path: 'members',
+          path: "members",
           select: {
             _id: 1,
             username: 1,
 
-            'avatar.secure_url': 1,
+            "avatar.secure_url": 1,
           },
         },
       ],
@@ -56,11 +57,11 @@ export class GroupService {
     return chats
   }
 
-  public static readonly getSingle = async (group: TGroup) => {
+  public readonly getSingle = async (group: TGroup) => {
     return group
   }
 
-  public static readonly create = async ({
+  public readonly create = async ({
     createdBy,
     members,
     description,
@@ -75,7 +76,7 @@ export class GroupService {
     })
 
     if (isExistedGroupName)
-      return throwError({ msg: 'Group Name Is Already Used', status: 400 })
+      return throwError({ msg: "Group Name Is Already Used", status: 400 })
 
     return await this.groupRepository.create({
       createdBy,
@@ -86,7 +87,7 @@ export class GroupService {
     })
   }
 
-  public static readonly likeMessage = async ({
+  public readonly likeMessage = async ({
     profile,
     messageId,
     group,
@@ -104,38 +105,38 @@ export class GroupService {
     if (isLiked)
       return await this.groupRepository.findOneAndUpdate({
         filter: {
-          $and: [{ _id: group._id }, { 'messages._id': messageId }],
+          $and: [{ _id: group._id }, { "messages._id": messageId }],
         },
         data: {
           $pull: {
-            'messages.$.likedBy': profile._id,
+            "messages.$.likedBy": profile._id,
           },
         },
       })
 
     await this.groupRepository.findOneAndUpdate({
       filter: {
-        $and: [{ _id: group._id }, { 'messages._id': messageId }],
+        $and: [{ _id: group._id }, { "messages._id": messageId }],
       },
       data: {
         $addToSet: {
-          'messages.$.likedBy': profile._id,
+          "messages.$.likedBy": profile._id,
         },
       },
     })
 
-    await this.notificationService.sendNotification({
+    this.notifyService.sendNotification({
       userId: inMessages.from,
       notificationDetails: {
         from: profile,
         message: `${profile.username} Liked Your Message 🧡`,
-        refTo: 'Chat',
+        refTo: "Chat",
         sentAt: getNowMoment(),
       },
     })
   }
 
-  protected static readonly findMessage = ({
+  protected readonly findMessage = ({
     group,
     notifications,
     messageId,
@@ -167,12 +168,12 @@ export class GroupService {
     }
 
     if (!inMessages)
-      return throwError({ msg: 'message was not found', status: 404 })
+      return throwError({ msg: "message was not found", status: 404 })
 
     return { inMessages }
   }
 
-  protected static readonly checkLikes = ({
+  protected readonly checkLikes = ({
     message,
     profile,
   }: {
@@ -186,7 +187,7 @@ export class GroupService {
     return likedBy.some(user => user._id.equals(profile._id))
   }
 
-  public static readonly editMessage = async ({
+  public readonly editMessage = async ({
     profileId,
     messageId,
     groupId,
@@ -236,7 +237,7 @@ export class GroupService {
     return group.save()
   }
 
-  protected static readonly findUserMessageInGroup = async ({
+  protected readonly findUserMessageInGroup = async ({
     groupId,
     messageId,
     profileId,
@@ -251,8 +252,8 @@ export class GroupService {
           { _id: groupId },
           {
             $and: [
-              { 'messages._id': messageId },
-              { 'messages.from': profileId },
+              { "messages._id": messageId },
+              { "messages.from": profileId },
             ],
           },
         ],
@@ -261,10 +262,10 @@ export class GroupService {
 
     return group
       ? group
-      : throwError({ msg: 'message was not found', status: 404 })
+      : throwError({ msg: "message was not found", status: 404 })
   }
 
-  protected static readonly findRelatedNotification = async ({
+  protected readonly findRelatedNotification = async ({
     messageFrom,
     searchedMessage,
   }: {
@@ -275,16 +276,16 @@ export class GroupService {
       filter: {
         $and: [
           {
-            'missedMessages.from': messageFrom,
+            "missedMessages.from": messageFrom,
           },
           {
             $and: [
               {
-                'missedMessages.message': {
+                "missedMessages.message": {
                   $regex: searchedMessage,
                 },
               },
-              { 'missedMessages.deletedAt': { $exists: false } },
+              { "missedMessages.deletedAt": { $exists: false } },
             ],
           },
         ],
@@ -292,7 +293,7 @@ export class GroupService {
     })
   }
 
-  protected static readonly hasRelatedNotification = ({
+  protected readonly hasRelatedNotification = ({
     relatedNotification,
     messageId,
   }: {
@@ -304,7 +305,7 @@ export class GroupService {
     )
   }
 
-  public static readonly deleteMessage = async ({
+  public readonly deleteMessage = async ({
     profileId,
     messageId,
     groupId,
@@ -317,33 +318,33 @@ export class GroupService {
       filter: {
         $and: [
           {
-            $and: [{ _id: groupId }, { 'messages._id': messageId }],
+            $and: [{ _id: groupId }, { "messages._id": messageId }],
           },
           {
             $and: [
-              { 'messages.from': profileId },
-              { 'messages.deletedAt': { $exists: false } },
+              { "messages.from": profileId },
+              { "messages.deletedAt": { $exists: false } },
             ],
           },
         ],
       },
       data: {
-        'messages.$.message': 'message is deleted',
-        'messages.$.deletedAt': Date.now(),
+        "messages.$.message": "message is deleted",
+        "messages.$.deletedAt": Date.now(),
       },
     })
 
     return (
       deletedMessage ??
       throwError({
-        msg: 'Message was not deleted as it was not found',
+        msg: "Message was not deleted as it was not found",
         status: 404,
       })
     )
   }
 
-  public static readonly editGroup = async (
-    updateGroupDTO: Omit<DTO.IUpdateGroup, 'cover' | 'members'>,
+  public readonly editGroup = async (
+    updateGroupDTO: Omit<DTO.IUpdateGroup, "cover" | "members">,
   ) => {
     return await this.groupRepository.findOneAndUpdate({
       filter: {
@@ -357,10 +358,7 @@ export class GroupService {
       },
     })
   }
-  public static readonly deleteGroup = async ({
-    profileId,
-    id,
-  }: DTO.IDeleteGroup) => {
+  public readonly deleteGroup = async ({ profileId, id }: DTO.IDeleteGroup) => {
     return await this.groupRepository.findOneAndDelete({
       filter: {
         $and: [{ _id: id }, { createdBy: profileId }],
@@ -368,3 +366,5 @@ export class GroupService {
     })
   }
 }
+
+export default new GroupService()

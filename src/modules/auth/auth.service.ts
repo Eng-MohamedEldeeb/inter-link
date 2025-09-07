@@ -8,13 +8,11 @@ import { compareValues } from "../../common/utils/security/bcrypt/bcrypt.service
 import { signToken } from "../../common/utils/security/token/token.service"
 import { OtpType } from "../../db/models/enums/otp.enum"
 
-export class AuthService {
-  private static readonly userRepository = userRepository
-  private static readonly otpRepository = otpRepository
+class AuthService {
+  private readonly userRepository = userRepository
+  private readonly otpRepository = otpRepository
 
-  public static readonly confirmEmail = async (
-    confirmEmail: DTO.IConfirmEmail,
-  ) => {
+  public readonly confirmEmail = async (confirmEmail: DTO.IConfirmEmail) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { email: confirmEmail.email },
       projection: { _id: 1 },
@@ -45,7 +43,7 @@ export class AuthService {
     })
   }
 
-  public static readonly register = async (
+  public readonly register = async (
     register: Omit<
       DTO.IRegister,
       "avatar" | "confirmPassword" | "bio" | "isPrivateProfile"
@@ -101,7 +99,7 @@ export class AuthService {
     return await this.login({ username, password })
   }
 
-  public static readonly login = async (login: DTO.ILogin) => {
+  public readonly login = async (login: DTO.ILogin) => {
     const { username, password } = login
 
     const isExistedUser = await this.userRepository.findOne({
@@ -147,7 +145,7 @@ export class AuthService {
     return accessToken
   }
 
-  public static readonly forgotPassword = async (
+  public readonly forgotPassword = async (
     forgotPassword: DTO.IForgotPassword,
   ) => {
     const isExistedUser = await this.userRepository.findOne({
@@ -176,9 +174,7 @@ export class AuthService {
     })
   }
 
-  public static readonly resetPassword = async (
-    resetPassword: DTO.IResetPassword,
-  ) => {
+  public readonly resetPassword = async (resetPassword: DTO.IResetPassword) => {
     const { email, newPassword, otpCode } = resetPassword
 
     const isExistedUser = await this.userRepository.findOne({
@@ -219,3 +215,4 @@ export class AuthService {
     })
   }
 }
+export default new AuthService()

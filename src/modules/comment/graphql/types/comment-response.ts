@@ -4,7 +4,7 @@ import {
 } from "../../../../common/decorators/resolver/returned-type.decorator"
 
 import { IComment } from "../../../../db/interfaces/IComment.interface"
-import { commentFields } from "./comment-fields.type"
+import { commentFields } from "./comment-fields"
 
 export const singleComment = returnedType<Omit<IComment, "__v">>({
   name: "singleComment",

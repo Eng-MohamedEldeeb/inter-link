@@ -5,11 +5,11 @@ import {
 
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
-import { CommentResponse } from "./types/comment-response.type"
+import { CommentResponse } from "./types/comment-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
 import * as resolvers from "./comment.resolver"
-import * as args from "./types/comment-args.type"
+import { CommentArgs } from "./types/comment-args"
 import * as validators from "./../validators/comment.validators"
 
 import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
@@ -17,35 +17,33 @@ import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
 import CommentOwnerGuard from "../../../common/guards/comment/comment-owner.guard"
 
-export class CommentController {
-  protected static readonly CommentQueryResolver =
-    resolvers.CommentQueryResolver
-  protected static readonly CommentMutationResolver =
-    resolvers.CommentMutationResolver
+class CommentController {
+  protected readonly commentQueryResolver = resolvers.commentQueryResolver
+  protected readonly commentMutationResolver = resolvers.commentMutationResolver
 
   // Queries:
-  public static readonly getSingleComment = (): IQueryController => {
+  public readonly getSingleComment = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getPostComments",
         data: CommentResponse.getSingleComment(),
       }),
-      args: args.getPostComments,
+      args: CommentArgs.getPostComments,
       resolve: applyResolver({
         middlewares: [validate(validators.addValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.CommentQueryResolver.getSingleComment,
+        resolver: this.commentQueryResolver.getSingleComment,
       }),
     }
   }
 
   // Mutations:
-  public static readonly likeComment = (): IMutationController => {
+  public readonly likeComment = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "likeCommentMutation",
       }),
-      args: args.like,
+      args: CommentArgs.like,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphql())],
         guards: [
@@ -53,17 +51,17 @@ export class CommentController {
           isAuthorizedGuard,
           commentExistenceGuard,
         ],
-        resolver: this.CommentMutationResolver.like,
+        resolver: this.commentMutationResolver.like,
       }),
     }
   }
 
-  public static readonly edit = (): IMutationController => {
+  public readonly edit = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "editCommentMutation",
       }),
-      args: args.edit,
+      args: CommentArgs.edit,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphql())],
         guards: [
@@ -72,17 +70,17 @@ export class CommentController {
           commentExistenceGuard,
           CommentOwnerGuard,
         ],
-        resolver: this.CommentMutationResolver.edit,
+        resolver: this.commentMutationResolver.edit,
       }),
     }
   }
 
-  public static readonly deleteComment = (): IMutationController => {
+  public readonly deleteComment = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deleteCommentMutation",
       }),
-      args: args.deleteComment,
+      args: CommentArgs.deleteComment,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [
@@ -91,8 +89,10 @@ export class CommentController {
           commentExistenceGuard,
           CommentOwnerGuard,
         ],
-        resolver: this.CommentMutationResolver.deleteComment,
+        resolver: this.commentMutationResolver.deleteComment,
       }),
     }
   }
 }
+
+export default new CommentController()

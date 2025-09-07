@@ -5,11 +5,11 @@ import {
 
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
-import { CommentResponse } from "./types/reply-response.type"
+import { CommentResponse } from "./types/reply-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { ReplyArgs } from "./types/reply-args"
 
 import * as resolvers from "./reply.resolver"
-import * as args from "./types/reply-args.type"
 import * as validators from "../validators/reply.validators"
 
 import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
@@ -17,47 +17,46 @@ import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import replyExistenceGuard from "../../../common/guards/reply/reply-existence.guard"
 import replyOwnerGuard from "../../../common/guards/reply/reply-owner.guard"
 
-export class ReplyController {
-  protected static readonly ReplyQueryResolver = resolvers.ReplyQueryResolver
-  protected static readonly ReplyMutationResolver =
-    resolvers.ReplyMutationResolver
+class ReplyController {
+  protected readonly replyQueryResolver = resolvers.replyQueryResolver
+  protected readonly replyMutationResolver = resolvers.replyMutationResolver
 
   // Queries:
-  public static readonly getCommentReplies = (): IQueryController => {
+  public readonly getCommentReplies = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getCommentReplies",
         data: CommentResponse.getPostComments(),
       }),
-      args: args.getCommentReply,
+      args: ReplyArgs.getCommentReply,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.ReplyQueryResolver.getCommentReplies,
+        resolver: this.replyQueryResolver.getCommentReplies,
       }),
     }
   }
 
   // Mutations:
-  public static readonly like = (): IMutationController => {
+  public readonly like = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "likeReplyMutation",
       }),
-      args: args.like,
+      args: ReplyArgs.like,
       resolve: applyResolver({
         middlewares: [validate(validators.likeValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, replyExistenceGuard],
-        resolver: this.ReplyMutationResolver.like,
+        resolver: this.replyMutationResolver.like,
       }),
     }
   }
 
-  public static readonly edit = (): IMutationController => {
+  public readonly edit = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "editReplyMutation",
       }),
-      args: args.edit,
+      args: ReplyArgs.edit,
       resolve: applyResolver({
         middlewares: [validate(validators.editValidator.graphql())],
         guards: [
@@ -66,17 +65,17 @@ export class ReplyController {
           replyExistenceGuard,
           replyOwnerGuard,
         ],
-        resolver: this.ReplyMutationResolver.edit,
+        resolver: this.replyMutationResolver.edit,
       }),
     }
   }
 
-  public static readonly deleteReply = (): IMutationController => {
+  public readonly deleteReply = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deleteReplyMutation",
       }),
-      args: args.deleteReply,
+      args: ReplyArgs.deleteReply,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteValidator.graphql())],
         guards: [
@@ -85,8 +84,9 @@ export class ReplyController {
           replyExistenceGuard,
           replyOwnerGuard,
         ],
-        resolver: this.ReplyMutationResolver.deleteReply,
+        resolver: this.replyMutationResolver.deleteReply,
       }),
     }
   }
 }
+export default new ReplyController()

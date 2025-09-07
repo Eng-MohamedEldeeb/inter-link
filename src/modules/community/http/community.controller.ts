@@ -1,46 +1,47 @@
-import { Response } from 'express'
-import { IRequest } from '../../../common/interface/IRequest.interface'
-import { asyncHandler } from '../../../common/decorators/async-handler/async-handler.decorator'
-import { successResponse } from '../../../common/handlers/success-response.handler'
-import { CommunityService } from '../community.service'
-import { PostService } from '../../post/post.service'
-import { ICreatePost } from '../../post/dto/post.dto'
+import { Response } from "express"
+import { IRequest } from "../../../common/interface/IRequest.interface"
+import { asyncHandler } from "../../../common/decorators/async-handler/async-handler.decorator"
+import { successResponse } from "../../../common/handlers/success-response.handler"
+import { ICreatePost } from "../../post/dto/post.dto"
 
-import * as DTO from '../dto/community.dto'
+import * as DTO from "../dto/community.dto"
 
-export class CommunityController {
-  private static readonly CommunityService = CommunityService
-  private static readonly PostService = PostService
+import communityService from "../community.service"
+import postService from "../../post/post.service"
 
-  public static readonly getAllCommunities = asyncHandler(
+class CommunityController {
+  private readonly communityService = communityService
+  private readonly postService = postService
+
+  public readonly getAllCommunities = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const community = req.community
 
       return successResponse(res, {
-        data: await this.CommunityService.getAllCommunities(),
+        data: await this.communityService.getAllCommunities(),
       })
     },
   )
 
-  public static readonly getCommunity = asyncHandler(
+  public readonly getCommunity = asyncHandler(
     (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const community = req.community
 
       return successResponse(res, {
-        data: this.CommunityService.getCommunity({ profileId, community }),
+        data: this.communityService.getCommunity({ profileId, community }),
       })
     },
   )
 
-  public static readonly getCommunityMembers = asyncHandler(
+  public readonly getCommunityMembers = asyncHandler(
     (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       const community = req.community
 
       return successResponse(res, {
-        data: this.CommunityService.getCommunityMembers({
+        data: this.communityService.getCommunityMembers({
           profileId,
           community,
         }),
@@ -48,15 +49,15 @@ export class CommunityController {
     },
   )
 
-  public static readonly create = asyncHandler(
+  public readonly create = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id } = req.profile
       const cover = req.cloudFile
       const createCommunityDTO: DTO.ICreateCommunity = req.body
       return successResponse(res, {
         status: 201,
-        msg: 'Community is created Successfully',
-        data: await this.CommunityService.create({
+        msg: "Community is created Successfully",
+        data: await this.communityService.create({
           createdBy: _id,
           createCommunityDTO,
           cover,
@@ -65,7 +66,7 @@ export class CommunityController {
     },
   )
 
-  public static readonly addPost = asyncHandler(
+  public readonly addPost = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const { _id } = req.profile
       const { _id: communityId, name } = req.community
@@ -76,7 +77,7 @@ export class CommunityController {
       return successResponse(res, {
         status: 201,
         msg: `Post is uploaded to ${name} Community Successfully`,
-        data: await this.PostService.create({
+        data: await this.postService.create({
           createdBy: _id,
           attachments,
           createPost: {
@@ -88,7 +89,7 @@ export class CommunityController {
     },
   )
 
-  public static readonly removePost = asyncHandler(
+  public readonly removePost = asyncHandler(
     async (
       req: IRequest<DTO.IGetCommunity, DTO.IRemovePost>,
       res: Response,
@@ -96,7 +97,7 @@ export class CommunityController {
       const { _id: postId } = req.post
       const { _id: communityId, name } = req.community
 
-      await this.PostService.removeFromCommunity({ communityId, postId })
+      await this.postService.removeFromCommunity({ communityId, postId })
 
       return successResponse(res, {
         msg: `Post is deleted from ${name} Community Successfully`,
@@ -104,14 +105,14 @@ export class CommunityController {
     },
   )
 
-  public static readonly editCommunity = asyncHandler(
+  public readonly editCommunity = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: communityId } = req.community
       const editCommunity: DTO.IEditCommunity = req.body
 
       return successResponse(res, {
-        msg: 'Community is modified successfully',
-        data: await this.CommunityService.editCommunity({
+        msg: "Community is modified successfully",
+        data: await this.communityService.editCommunity({
           communityId,
           editCommunity,
         }),
@@ -119,48 +120,48 @@ export class CommunityController {
     },
   )
 
-  public static readonly changeCover = asyncHandler(
+  public readonly changeCover = asyncHandler(
     async (req: IRequest, res: Response) => {
       const community = req.community
       const path = req.file?.path!
 
       return successResponse(res, {
-        msg: 'Community Cover has been modified successfully',
-        data: await this.CommunityService.changeCover({ community, path }),
+        msg: "Community Cover has been modified successfully",
+        data: await this.communityService.changeCover({ community, path }),
       })
     },
   )
 
-  public static readonly changeVisibility = asyncHandler(
+  public readonly changeVisibility = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: communityId, isPrivateCommunity } = req.community
-      await this.CommunityService.changeVisibility({
+      await this.communityService.changeVisibility({
         communityId,
         state: isPrivateCommunity,
       })
       return successResponse(res, {
-        msg: 'Community Visibility is Changed successfully',
+        msg: "Community Visibility is Changed successfully",
       })
     },
   )
 
-  public static readonly deleteCommunity = asyncHandler(
+  public readonly deleteCommunity = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: communityId } = req.community
-      await this.CommunityService.deleteCommunity(communityId)
+      await this.communityService.deleteCommunity(communityId)
       return successResponse(res, {
-        msg: 'Community is deleted successfully',
+        msg: "Community is deleted successfully",
       })
     },
   )
 
-  public static join = asyncHandler(
+  public join = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const profile = req.profile
       const community = req.community
 
       return successResponse(res, {
-        msg: await this.CommunityService.join({
+        msg: await this.communityService.join({
           profile,
           community,
         }),
@@ -168,44 +169,44 @@ export class CommunityController {
     },
   )
 
-  public static acceptJoinRequest = asyncHandler(
+  public acceptJoinRequest = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const user = req.user
       const community = req.community
 
-      await this.CommunityService.acceptJoinRequest({
+      await this.communityService.acceptJoinRequest({
         user,
         community,
       })
 
       return successResponse(res, {
-        msg: 'Join Request Has Been Accepted Successfully',
+        msg: "Join Request Has Been Accepted Successfully",
       })
     },
   )
 
-  public static rejectJoinRequest = asyncHandler(
+  public rejectJoinRequest = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const user = req.user
       const community = req.community
 
-      await this.CommunityService.rejectJoinRequest({
+      await this.communityService.rejectJoinRequest({
         user,
         community,
       })
 
       return successResponse(res, {
-        msg: 'Join Request Has Been Rejected Successfully',
+        msg: "Join Request Has Been Rejected Successfully",
       })
     },
   )
 
-  public static leave = asyncHandler(
+  public leave = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const { _id: profileId } = req.profile
       const { name } = req.community
 
-      await this.CommunityService.leave({
+      await this.communityService.leave({
         profileId,
         community: req.community,
       })
@@ -216,12 +217,12 @@ export class CommunityController {
     },
   )
 
-  public static readonly addAdmin = asyncHandler(
+  public readonly addAdmin = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const { _id: userId, username } = req.user
       const { _id: communityId } = req.community
 
-      await this.CommunityService.addAdmin({
+      await this.communityService.addAdmin({
         communityId,
         userId,
       })
@@ -232,12 +233,12 @@ export class CommunityController {
     },
   )
 
-  public static readonly removeAdmin = asyncHandler(
+  public readonly removeAdmin = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const admin = req.user
       const community = req.community
 
-      await this.CommunityService.removeAdmin({
+      await this.communityService.removeAdmin({
         community,
         admin,
       })
@@ -248,12 +249,12 @@ export class CommunityController {
     },
   )
 
-  public static kickOut = asyncHandler(
+  public kickOut = asyncHandler(
     async (req: IRequest<DTO.IGetCommunity>, res: Response) => {
       const community = req.community
       const user = req.user
 
-      await this.CommunityService.kickOut({
+      await this.communityService.kickOut({
         user,
         community,
       })
@@ -264,3 +265,4 @@ export class CommunityController {
     },
   )
 }
+export default new CommunityController()

@@ -3,7 +3,7 @@ import { Server as HttpServer } from "node:http"
 import express from "express"
 
 import { Server } from "socket.io"
-import { portLogger } from "./common/utils/logger"
+import { portLogger } from "./common/utils/loggers/port-logger"
 import { bootstrap } from "./app.module"
 import { socketIoBootStrap } from "./modules/socket.module"
 

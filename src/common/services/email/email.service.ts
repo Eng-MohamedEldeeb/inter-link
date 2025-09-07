@@ -1,6 +1,6 @@
-import { ISendArgs } from './event/interface/send-args.interface'
+import { ISendArgs } from "../../events/send-email/interface/send-args.interface"
 
-import emailEvent from './event/send-email.event'
+import emailEvent from "../../events/send-email/send-email.event"
 
 export class EmailService {
   private static readonly emailEvent = emailEvent
@@ -11,6 +11,6 @@ export class EmailService {
     otpCode,
     userName,
   }: ISendArgs) => {
-    return this.emailEvent.emit('send', { schema, to, otpCode, userName })
+    return this.emailEvent.emit("send", { schema, to, otpCode, userName })
   }
 }

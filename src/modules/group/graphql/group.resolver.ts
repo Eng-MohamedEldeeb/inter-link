@@ -1,94 +1,97 @@
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { GroupService } from '../group.service'
+import { IDeleteMessage, ILikeMessage } from "../dto/group.dto"
 
-import { IDeleteMessage, ILikeMessage } from '../dto/group.dto'
+import groupService from "../group.service"
 
-export class GroupQueryResolver {
-  private static readonly GroupService = GroupService
+class GroupQueryResolver {
+  private readonly groupService = groupService
 
-  public static readonly getAllGroups = async (
+  public readonly getAllGroups = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.GroupService.getAllGroups(profileId),
+      data: await this.groupService.getAllGroups(profileId),
     }
   }
 
-  public static readonly getSingleGroup = async (
+  public readonly getSingleGroup = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
       data: context.group,
     }
   }
 }
 
-export class GroupMutationResolver {
-  private static readonly GroupService = GroupService
+class GroupMutationResolver {
+  private readonly groupService = groupService
 
-  public static readonly likeMessage = async (
-    { messageId }: Pick<ILikeMessage, 'messageId'>,
+  public readonly likeMessage = async (
+    { messageId }: Pick<ILikeMessage, "messageId">,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: groupId } = context.group
 
-    // await this.GroupService.likeMessage({
+    // await this.groupService.likeMessage({
     //   messageId,
     //   groupId,
     // })
 
     return {
-      msg: 'Liked the Message successfully',
+      msg: "Liked the Message successfully",
       status: 200,
     }
   }
 
-  public static readonly deleteMessage = async (
-    { messageId }: Pick<IDeleteMessage, 'messageId'>,
+  public readonly deleteMessage = async (
+    { messageId }: Pick<IDeleteMessage, "messageId">,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: groupId } = context.group
     const { _id: profileId } = context.profile
 
-    await this.GroupService.deleteMessage({
+    await this.groupService.deleteMessage({
       groupId,
       profileId,
       messageId,
     })
 
     return {
-      msg: 'Message is Deleted successfully',
+      msg: "Message is Deleted successfully",
       status: 200,
     }
   }
 
-  public static readonly deleteGroup = async (
+  public readonly deleteGroup = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     const { _id: id } = context.group
 
-    await this.GroupService.deleteGroup({
+    await this.groupService.deleteGroup({
       id,
       profileId,
     })
 
     return {
-      msg: 'Group is deleted successfully',
+      msg: "Group is deleted successfully",
       status: 200,
     }
   }
 }
+
+export const groupQueryResolver = new GroupQueryResolver()
+export const groupMutationResolver = new GroupMutationResolver()

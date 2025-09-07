@@ -1,6 +1,6 @@
 import { GraphQLObjectType, GraphQLString } from "graphql"
 
-import authArgs from "./types/auth-args"
+import { AuthArgs } from "./types/auth-args"
 import authResolver from "./auth.resolver"
 
 import * as validators from "./../validator/auth.validator"
@@ -18,7 +18,7 @@ class AuthController {
       type: graphResponseType({
         name: "confirmEmail",
       }),
-      args: authArgs.confirmEmail,
+      args: AuthArgs.confirmEmail,
       resolve: applyResolver({
         middlewares: [validate(validators.confirmEmailSchema.graphql())],
         resolver: this.authResolver.confirmEmail,
@@ -31,7 +31,7 @@ class AuthController {
       type: graphResponseType({
         name: "register",
       }),
-      args: authArgs.register,
+      args: AuthArgs.register,
       resolve: applyResolver({
         middlewares: [validate(validators.registerSchema.graphql())],
         resolver: this.authResolver.register,
@@ -52,7 +52,7 @@ class AuthController {
           },
         }),
       }),
-      args: authArgs.login,
+      args: AuthArgs.login,
       resolve: applyResolver({
         middlewares: [validate(validators.loginSchema.graphql())],
         resolver: this.authResolver.login,
@@ -65,7 +65,7 @@ class AuthController {
       type: graphResponseType({
         name: "forgotPassword",
       }),
-      args: authArgs.forgotPassword,
+      args: AuthArgs.forgotPassword,
       resolve: applyResolver({
         middlewares: [validate(validators.forgotPasswordSchema.graphql())],
         resolver: this.authResolver.forgotPassword,
@@ -78,7 +78,7 @@ class AuthController {
       type: graphResponseType({
         name: "resetPassword",
       }),
-      args: authArgs.resetPassword,
+      args: AuthArgs.resetPassword,
       resolve: applyResolver({
         middlewares: [validate(validators.resetPasswordSchema.graphql())],
         resolver: this.authResolver.resetPassword,

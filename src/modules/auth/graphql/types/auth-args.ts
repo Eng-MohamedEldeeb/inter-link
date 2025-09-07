@@ -5,12 +5,12 @@ import * as DTO from "../../dto/auth.dto"
 import { argsType } from "../../../../common/decorators/resolver/returned-type.decorator"
 import { userFields } from "../../../../common/types/graphql/graphql-fields.types"
 
-class AuthArgs {
-  readonly confirmEmail = argsType<DTO.IConfirmEmail>({
+export class AuthArgs {
+  public static readonly confirmEmail = argsType<DTO.IConfirmEmail>({
     email: { type: new GraphQLNonNull(userFields.email) },
   })
 
-  readonly register = argsType<DTO.IRegister>({
+  public static readonly register = argsType<DTO.IRegister>({
     otpCode: {
       type: new GraphQLNonNull(GraphQLString),
     },
@@ -23,21 +23,19 @@ class AuthArgs {
     bio: { type: userFields.bio },
   })
 
-  readonly login = argsType<DTO.ILogin>({
+  public static readonly login = argsType<DTO.ILogin>({
     username: { type: new GraphQLNonNull(userFields.email) },
     password: { type: new GraphQLNonNull(userFields.password) },
   })
 
-  readonly forgotPassword = argsType<DTO.IForgotPassword>({
+  public static readonly forgotPassword = argsType<DTO.IForgotPassword>({
     email: { type: new GraphQLNonNull(userFields.email) },
   })
 
-  readonly resetPassword = argsType<DTO.IResetPassword>({
+  public static readonly resetPassword = argsType<DTO.IResetPassword>({
     email: { type: new GraphQLNonNull(userFields.email) },
     newPassword: { type: new GraphQLNonNull(userFields.password) },
     confirmPassword: { type: new GraphQLNonNull(userFields.password) },
     otpCode: { type: new GraphQLNonNull(GraphQLString) },
   })
 }
-
-export default new AuthArgs()

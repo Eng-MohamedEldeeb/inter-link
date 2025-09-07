@@ -1,25 +1,25 @@
-import moment from 'moment'
-import userRepository from '../../common/repositories/user.repository'
-import notificationsService from '../../common/services/notifications/notifications.service'
+import moment from "moment"
+import userRepository from "../../common/repositories/user.repository"
+import notifyService from "../../common/services/notify/notify.service"
 
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { throwError } from '../../common/handlers/error-message.handler'
-import { MongoId } from '../../common/types/db'
-import { UserViewersStrategy } from './helpers/user-viewers.strategy'
-import { IFollowedUserNotification } from '../../db/interfaces/INotification.interface'
-import { getNowMoment } from '../../common/decorators/moment/moment'
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { throwError } from "../../common/handlers/error-message.handler"
+import { MongoId } from "../../common/types/db"
+import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
+import { IFollowedUserNotification } from "../../db/interfaces/INotification.interface"
+import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class UserService {
-  protected static readonly userRepository = userRepository
-  protected static readonly notificationsService = notificationsService
+class UserService {
+  protected readonly userRepository = userRepository
+  protected readonly notifyService = notifyService
 
-  protected static readonly UserViewersStrategy = UserViewersStrategy
-  protected static views: { viewer: MongoId; totalVisits: number }[]
+  protected readonly UserViewersStrategy = UserViewersStrategy
+  protected views!: { viewer: MongoId; totalVisits: number }[]
 
-  protected static userId: MongoId
-  protected static profileId: MongoId
+  protected userId!: MongoId
+  protected profileId!: MongoId
 
-  protected static readonly updateUserViewers = async () => {
+  protected readonly updateUserViewers = async () => {
     const inViews = this.views.some(views =>
       views.viewer.equals(this.profileId),
     )
@@ -35,12 +35,12 @@ export class UserService {
     })
   }
 
-  public static readonly getUserProfile = async ({
+  public readonly getUserProfile = async ({
     profileId,
     user,
   }: {
     profileId: MongoId
-    user: Omit<IUser, 'password' | 'oldPasswords'>
+    user: Omit<IUser, "password" | "oldPasswords">
   }) => {
     this.profileId = profileId
     this.userId = user._id
@@ -54,8 +54,8 @@ export class UserService {
     return user
   }
 
-  public static readonly getUseFollowers = async (
-    user: Omit<IUser, 'password' | 'oldPasswords'>,
+  public readonly getUseFollowers = async (
+    user: Omit<IUser, "password" | "oldPasswords">,
   ) => {
     const { isPrivateProfile, followers } = user
 
@@ -70,8 +70,8 @@ export class UserService {
     }
   }
 
-  public static readonly getUseFollowing = async (
-    user: Omit<IUser, 'password' | 'oldPasswords'>,
+  public readonly getUseFollowing = async (
+    user: Omit<IUser, "password" | "oldPasswords">,
   ) => {
     const { isPrivateProfile, following } = user
 
@@ -86,10 +86,7 @@ export class UserService {
     }
   }
 
-  public static readonly blockUser = async (
-    profileId: MongoId,
-    userId: MongoId,
-  ) => {
+  public readonly blockUser = async (profileId: MongoId, userId: MongoId) => {
     await this.userRepository.findOneAndUpdate({
       filter: {
         $and: [{ _id: profileId }, { deactivatedAt: { $exists: false } }],
@@ -103,7 +100,7 @@ export class UserService {
     })
   }
 
-  public static readonly unblockUser = async ({
+  public readonly unblockUser = async ({
     userId,
     profileId,
     blockedUsers,
@@ -115,7 +112,7 @@ export class UserService {
     const isBlocked = blockedUsers.some(id => id.equals(userId))
 
     if (!isBlocked)
-      return throwError({ msg: 'user is already un-blocked', status: 400 })
+      return throwError({ msg: "user is already un-blocked", status: 400 })
 
     await this.userRepository.findOneAndUpdate({
       filter: {
@@ -130,118 +127,134 @@ export class UserService {
     })
   }
 
-  public static readonly follow = async ({
+  public readonly follow = async ({
     user,
     profile,
   }: {
     user: IUser
     profile: IUser
   }) => {
-    const { _id: userId, isPrivateProfile, requests } = user
-    const { _id: profileId, avatar, username, following } = profile
+    const alreadyFollowed = profile.following.some(userId =>
+      userId.equals(user._id),
+    )
+    const alreadyRequested = user.requests.some(userId =>
+      userId.equals(profile._id),
+    )
 
-    const alreadyFollowed = following.some(userId => userId.equals(userId))
-    const alreadyRequested = requests.some(userId => userId.equals(profileId))
+    if (alreadyFollowed)
+      return { msg: `Followed ${user.username} Successfully` }
+    if (alreadyRequested)
+      return { msg: `Follow Request Sent to ${user.username} Successfully` }
 
-    if (alreadyFollowed) return { msg: 'User is Followed Successfully' }
-    if (alreadyRequested) return { msg: 'Follow Request sent Successfully' }
-
-    if (isPrivateProfile) {
+    if (user.isPrivateProfile) {
       await this.userRepository.findByIdAndUpdate({
-        _id: userId,
-        data: { $addToSet: { requests: profileId } },
+        _id: user._id,
+        data: { $addToSet: { requests: profile._id } },
       })
 
       const notification: IFollowedUserNotification = {
-        message: `${username} Requested To Follow You 💛`,
-        from: { _id: profileId, avatar, username },
-        refTo: 'User',
+        message: `${profile.username} Requested To Follow You 💛`,
+        from: {
+          _id: profile._id,
+          avatar: profile.avatar,
+          username: profile.username,
+        },
+        refTo: "User",
         sentAt: getNowMoment(),
       }
 
-      await this.notificationsService.sendNotification({
-        userId,
+      this.notifyService.sendNotification({
+        userId: user._id,
         notificationDetails: notification,
       })
 
-      return { msg: 'Follow Request sent Successfully' }
+      return { msg: "Follow Request sent Successfully" }
     }
 
     await this.userRepository.findByIdAndUpdate({
-      _id: userId,
-      data: { $addToSet: { followers: profileId } },
+      _id: user._id,
+      data: { $addToSet: { followers: profile._id } },
     })
 
     await this.userRepository.findByIdAndUpdate({
-      _id: profileId,
-      data: { $addToSet: { following: userId } },
+      _id: profile._id,
+      data: { $addToSet: { following: user._id } },
     })
 
     const notification: IFollowedUserNotification = {
-      message: `${username} Started Following You 💚`,
-      from: { _id: profileId, avatar, username },
-      refTo: 'User',
+      message: `${user.username} Started Following You 💚`,
+      from: {
+        _id: profile._id,
+        avatar: profile.avatar,
+        username: profile.username,
+      },
+      refTo: "User",
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
-      userId,
+    this.notifyService.sendNotification({
+      userId: user._id,
       notificationDetails: notification,
     })
 
-    return { msg: 'User is Followed Successfully' }
+    return { msg: "User is Followed Successfully" }
   }
 
-  public static readonly acceptFollowRequest = async ({
+  public readonly acceptFollowRequest = async ({
     profile,
     user,
   }: {
     profile: IUser
     user: IUser
   }) => {
-    const {
-      _id: profileId,
-      isPrivateProfile,
-      requests,
-      avatar,
-      username,
-    } = profile
-    const { _id: userId } = user
+    const inProfileRequests = profile.requests.some(userId =>
+      userId.equals(user._id),
+    )
 
-    const inRequests = requests.some(id => id.equals(userId))
-
-    if (!inRequests)
-      return throwError({ msg: 'Follow Request Not Found', status: 404 })
+    if (!inProfileRequests)
+      return throwError({ msg: "Follow Request Not Found", status: 404 })
 
     await this.userRepository.findOneAndUpdate({
       filter: {
         $and: [
-          { $and: [{ _id: profileId }, { isPrivateProfile }] },
+          {
+            $and: [
+              { _id: profile._id },
+              { isPrivateProfile: profile.isPrivateProfile },
+            ],
+          },
           { deactivatedAt: { $exists: false } },
         ],
       },
-      data: { $addToSet: { followers: userId }, $pull: { requests: userId } },
+      data: {
+        $addToSet: { followers: user._id },
+        $pull: { requests: user._id },
+      },
     })
 
     await this.userRepository.findByIdAndUpdate({
-      _id: userId,
-      data: { $addToSet: { following: profileId } },
+      _id: user._id,
+      data: { $addToSet: { following: profile._id } },
     })
 
     const notification: IFollowedUserNotification = {
-      message: `${username} Accepted Your Follow Request 🩵`,
-      from: { _id: profileId, username, avatar },
-      refTo: 'User',
+      message: `${profile.username} Accepted Your Follow Request 🩵`,
+      from: {
+        _id: profile._id,
+        username: profile.username,
+        avatar: profile.avatar,
+      },
+      refTo: "User",
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
-      userId,
+    this.notifyService.sendNotification({
+      userId: user._id,
       notificationDetails: notification,
     })
   }
 
-  public static readonly unfollow = async ({
+  public readonly unfollow = async ({
     userId,
     profileId,
   }: {
@@ -259,12 +272,12 @@ export class UserService {
     })
   }
 
-  public static readonly rejectFollowRequest = async ({
+  public readonly rejectFollowRequest = async ({
     user,
     profile,
   }: {
-    user: Pick<IUser, 'isPrivateProfile' | '_id'>
-    profile: Pick<IUser, '_id'>
+    user: Pick<IUser, "isPrivateProfile" | "_id">
+    profile: Pick<IUser, "_id">
   }) => {
     const { _id: profileId } = profile
     const { _id: userId, isPrivateProfile } = user
@@ -281,3 +294,5 @@ export class UserService {
     })
   }
 }
+
+export default new UserService()

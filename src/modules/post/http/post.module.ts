@@ -1,86 +1,86 @@
-import { Router } from 'express'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { PostController } from './post.controller'
-import { fileReader } from './../../../common/utils/multer/file-reader'
-import { postAttachmentUploader } from '../../../common/middlewares/upload/post-attachments-uploader.middleware'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
+import { Router } from "express"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "./../../../common/utils/multer/file-reader"
+import { postAttachmentUploader } from "../../../common/middlewares/upload/post-attachments-uploader.middleware"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
 
-import * as validators from './../validators/post.validators'
+import * as validators from "./../validators/post.validators"
 
-import postExistenceGuard from '../../../common/guards/post/post-existence.guard'
-import PostOwnerGuard from '../../../common/guards/post/post-owner.guard'
-import PostSharePermissionGuardGuard from '../../../common/guards/post/post-share-permission.guard'
+import postController from "./post.controller"
+import postExistenceGuard from "../../../common/guards/post/post-existence.guard"
+import PostOwnerGuard from "../../../common/guards/post/post-owner.guard"
+import PostSharePermissionGuardGuard from "../../../common/guards/post/post-share-permission.guard"
 
 const router: Router = Router()
 
 router.get(
-  '/',
+  "/",
   validate(validators.getAllValidator.http()),
-  PostController.getAll,
+  postController.getAll,
 )
 
 router.get(
-  '/:id',
+  "/:id",
   validate(validators.getSingleValidator.http()),
   applyGuards(postExistenceGuard),
-  PostController.getSingle,
+  postController.getSingle,
 )
 
 router.post(
-  '/',
-  fileReader('image/jpeg', 'image/jpg', 'image/png').array('attachments', 4),
+  "/",
+  fileReader("image/jpeg", "image/jpg", "image/png").array("attachments", 4),
   validate(validators.createValidator),
   postAttachmentUploader,
-  PostController.create,
+  postController.create,
 )
 
 router.patch(
-  '/edit',
+  "/edit",
   validate(validators.editValidator.http()),
   applyGuards(postExistenceGuard, PostOwnerGuard),
-  PostController.edit,
+  postController.edit,
 )
 
 router.post(
-  '/save',
+  "/save",
   validate(validators.saveValidator.http()),
   applyGuards(postExistenceGuard),
-  PostController.save,
+  postController.save,
 )
 
 router.post(
-  '/shared',
+  "/shared",
   validate(validators.sharedValidator.http()),
   applyGuards(postExistenceGuard, PostSharePermissionGuardGuard),
-  PostController.shared,
+  postController.shared,
 )
 
 router.post(
-  '/like',
+  "/like",
   validate(validators.likeValidator.http()),
   applyGuards(postExistenceGuard),
-  PostController.like,
+  postController.like,
 )
 
 router.patch(
-  '/archive',
+  "/archive",
   validate(validators.archiveValidator.http()),
   applyGuards(postExistenceGuard, PostOwnerGuard),
-  PostController.archive,
+  postController.archive,
 )
 
 router.patch(
-  '/restore',
+  "/restore",
   validate(validators.restoreValidator.http()),
   applyGuards(postExistenceGuard, PostOwnerGuard),
-  PostController.restore,
+  postController.restore,
 )
 
 router.delete(
-  '/:id',
+  "/:id",
   validate(validators.deleteValidator.http()),
   applyGuards(postExistenceGuard, PostOwnerGuard),
-  PostController.delete,
+  postController.delete,
 )
 
 export default router

@@ -1,5 +1,5 @@
 import commentRepository from "../../common/repositories/comment.repository"
-import notificationsService from "../../common/services/notifications/notifications.service"
+import notifyService from "../../common/services/notify/notify.service"
 
 import * as DTO from "./dto/comment.dto"
 
@@ -11,14 +11,13 @@ import {
 import { throwError } from "../../common/handlers/error-message.handler"
 import { IUser } from "../../db/interfaces/IUser.interface"
 import { IComment } from "../../db/interfaces/IComment.interface"
-import moment from "moment"
 import { getNowMoment } from "../../common/decorators/moment/moment"
 
-export class CommentService {
-  protected static readonly commentRepository = commentRepository
-  protected static readonly notificationsService = notificationsService
+class CommentService {
+  protected readonly commentRepository = commentRepository
+  protected readonly notifyService = notifyService
 
-  public static readonly addComment = async ({
+  public readonly addComment = async ({
     content,
     attachment,
     post,
@@ -43,13 +42,13 @@ export class CommentService {
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails: notification,
     })
   }
 
-  public static readonly like = async ({
+  public readonly like = async ({
     profile,
     comment,
   }: {
@@ -90,7 +89,7 @@ export class CommentService {
       sentAt: getNowMoment(),
     }
 
-    await this.notificationsService.sendNotification({
+    this.notifyService.sendNotification({
       userId: createdBy,
       notificationDetails: notification,
     })
@@ -98,7 +97,7 @@ export class CommentService {
     return { msg: "comment is liked successfully" }
   }
 
-  public static readonly edit = async ({ id, content }: DTO.IEditComment) => {
+  public readonly edit = async ({ id, content }: DTO.IEditComment) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
       _id: id,
       data: { content },
@@ -113,7 +112,7 @@ export class CommentService {
     )
   }
 
-  public static readonly deleteComment = async ({ id }: DTO.IDeleteComment) => {
+  public readonly deleteComment = async ({ id }: DTO.IDeleteComment) => {
     const isDeletedComment = await this.commentRepository.findByIdAndDelete({
       _id: id,
     })
@@ -126,3 +125,5 @@ export class CommentService {
     )
   }
 }
+
+export default new CommentService()

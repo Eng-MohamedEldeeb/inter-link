@@ -1,69 +1,71 @@
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-import { IEditReply, ILikeReply } from '../dto/reply.dto'
+import { IEditReply, ILikeReply } from "../dto/reply.dto"
 
-import { ReplyService } from '../reply.service'
+import replyService from "../reply.service"
 
-export class ReplyQueryResolver {
-  private static readonly ReplyService = ReplyService
+class ReplyQueryResolver {
+  private readonly replyService = replyService
 
-  public static readonly getCommentReplies = async (
+  public readonly getCommentReplies = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: postId } = context.post
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.ReplyService.getCommentReplies(postId),
+      data: await this.replyService.getCommentReplies(postId),
     }
   }
 }
 
-export class ReplyMutationResolver {
-  private static readonly ReplyService = ReplyService
+class ReplyMutationResolver {
+  private readonly replyService = replyService
 
-  public static readonly like = async (
+  public readonly like = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     return {
-      msg: 'Reply is Liked successfully',
+      msg: "Reply is Liked successfully",
       status: 201,
-      data: await this.ReplyService.like({
+      data: await this.replyService.like({
         profile: context.profile,
         reply: context.reply,
       }),
     }
   }
 
-  public static readonly edit = async (
+  public readonly edit = async (
     args: IEditReply,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: replyId } = context.reply
     return {
-      msg: 'Reply is modified successfully',
+      msg: "Reply is modified successfully",
       status: 201,
-      data: await this.ReplyService.edit({
+      data: await this.replyService.edit({
         replyId,
         content: args.content,
       }),
     }
   }
 
-  public static readonly deleteReply = async (
+  public readonly deleteReply = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: replyId } = context.reply
     return {
-      msg: 'Reply is deleted successfully',
+      msg: "Reply is deleted successfully",
       status: 201,
-      data: await this.ReplyService.deleteReply({ replyId }),
+      data: await this.replyService.deleteReply({ replyId }),
     }
   }
 }
+export const replyQueryResolver = new ReplyQueryResolver()
+export const replyMutationResolver = new ReplyMutationResolver()

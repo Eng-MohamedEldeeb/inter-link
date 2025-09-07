@@ -1,15 +1,15 @@
-import { UserQueryController, UserMutationController } from './user.controller'
+import { userQueryController, userMutationController } from "./user.controller"
 
-import { returnedType } from '../../../common/decorators/resolver/returned-type.decorator'
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
-      name: 'userQuery',
+      name: "userQuery",
       fields: {
-        getUserProfile: UserQueryController.getUserProfile(),
-        getUserFollowers: UserQueryController.getUserFollowers(),
-        getUserFollowing: UserQueryController.getUserFollowing(),
+        getUserProfile: userQueryController.getUserProfile(),
+        getUserFollowers: userQueryController.getUserFollowers(),
+        getUserFollowing: userQueryController.getUserFollowing(),
       },
     }),
     resolve: () => true,
@@ -19,10 +19,10 @@ export const queryModule = (() => {
 export const mutationModule = (() => {
   return {
     type: returnedType({
-      name: 'userMutation',
+      name: "userMutation",
       fields: {
-        blockUser: UserMutationController.blockUser(),
-        unblockUser: UserMutationController.unblockUser(),
+        blockUser: userMutationController.blockUser(),
+        unblockUser: userMutationController.unblockUser(),
       },
     }),
 

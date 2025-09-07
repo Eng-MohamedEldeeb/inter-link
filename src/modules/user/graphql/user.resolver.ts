@@ -1,77 +1,77 @@
-import { UserService } from '../user.service'
+import userService from "../user.service"
 
 import {
   IContext,
   ISuccessResponse,
-} from '../../../common/interface/IGraphQL.interface'
+} from "../../../common/interface/IGraphQL.interface"
 
-export class UserQueryResolver {
-  protected static readonly UserService = UserService
+class UserQueryResolver {
+  protected readonly userService = userService
 
-  public static readonly getUserProfile = (
+  public readonly getUserProfile = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
     const { _id: profileId } = context.profile
     const user = context.user
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: this.UserService.getUserProfile({ profileId, user }),
+      data: this.userService.getUserProfile({ profileId, user }),
     }
   }
 
-  public static readonly getUseFollowers = (
+  public readonly getUseFollowers = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
     const userProfile = context.user
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: this.UserService.getUseFollowers(userProfile),
+      data: this.userService.getUseFollowers(userProfile),
     }
   }
 
-  public static readonly getUseFollowing = (
+  public readonly getUseFollowing = (
     _: any,
     context: IContext,
   ): ISuccessResponse => {
     const userProfile = context.user
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: this.UserService.getUseFollowing(userProfile),
+      data: this.userService.getUseFollowing(userProfile),
     }
   }
 }
 
-export class UserMutationResolver {
-  protected static readonly UserService = UserService
+class UserMutationResolver {
+  protected readonly userService = userService
 
-  public static readonly blockUser = async (
+  public readonly blockUser = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId } = context.profile
     const { _id: userId } = context.user
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.UserService.blockUser(profileId, userId),
+      data: await this.userService.blockUser(profileId, userId),
     }
   }
 
-  public static readonly unblockUser = async (
+  public readonly unblockUser = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId, blockedUsers } = context.profile
     const { _id: userId } = context.user
     return {
-      msg: 'done',
+      msg: "done",
       status: 200,
-      data: await this.UserService.unblockUser({
+      data: await this.userService.unblockUser({
         profileId,
         userId,
         blockedUsers,
@@ -79,3 +79,6 @@ export class UserMutationResolver {
     }
   }
 }
+
+export const userQueryResolver = new UserQueryResolver()
+export const userMutationResolver = new UserMutationResolver()

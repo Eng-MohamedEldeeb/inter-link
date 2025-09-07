@@ -1,69 +1,70 @@
-import { Router } from 'express'
-import { ProfileController } from './profile.controller'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { fileReader } from '../../../common/utils/multer/file-reader'
+import { Router } from "express"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
 
-import * as validators from '../validator/profile.validator'
+import * as validators from "../validator/profile.validator"
+
+import profileController from "./profile.controller"
 
 const router: Router = Router()
 
-router.get('/', ProfileController.getProfile)
+router.get("/", profileController.getProfile)
 
-router.get('/followers', ProfileController.getFollowers)
+router.get("/followers", profileController.getFollowers)
 
-router.get('/following', ProfileController.getFollowing)
+router.get("/following", profileController.getFollowing)
 
 router.get(
-  '/saved',
+  "/saved",
   validate(validators.getAllSavedPostsValidator.http()),
-  ProfileController.getAllSavedPosts,
+  profileController.getAllSavedPosts,
 )
 
 router.patch(
-  '/',
+  "/",
   validate(validators.updateProfileSchema.http()),
-  ProfileController.updateProfile,
+  profileController.updateProfile,
 )
 
-router.patch('/visibility', ProfileController.changeVisibility)
+router.patch("/visibility", profileController.changeVisibility)
 
 router.patch(
-  '/avatar',
-  fileReader('image/jpeg', 'image/jpeg', 'image/png').single('avatar'),
+  "/avatar",
+  fileReader("image/jpeg", "image/jpeg", "image/png").single("avatar"),
   validate(validators.updateProfilePicSchema.http()),
-  ProfileController.changeAvatar,
+  profileController.changeAvatar,
 )
 
-router.delete('/avatar', ProfileController.deleteProfilePic)
+router.delete("/avatar", profileController.deleteProfilePic)
 
 router.patch(
-  '/change-email',
+  "/change-email",
   validate(validators.changeEmailSchema.http()),
-  ProfileController.changeEmail,
+  profileController.changeEmail,
 )
 
 router.patch(
-  '/confirm-new-email',
+  "/confirm-new-email",
   validate(validators.confirmNewEmailSchema.http()),
-  ProfileController.confirmNewEmail,
+  profileController.confirmNewEmail,
 )
 
 router.delete(
-  '/deactivate',
+  "/deactivate",
   validate(validators.deleteAccountSchema.http()),
-  ProfileController.deactivateAccount,
+  profileController.deactivateAccount,
 )
 
 router.delete(
-  '/delete-permanently',
+  "/delete-permanently",
   validate(validators.deleteAccountSchema.http()),
-  ProfileController.deleteAccount,
+  profileController.deleteAccount,
 )
 
 router.delete(
-  '/confirm-deletion',
+  "/confirm-deletion",
   validate(validators.confirmDeletionSchema.http()),
-  ProfileController.confirmDeletion,
+  profileController.confirmDeletion,
 )
 
 export default router

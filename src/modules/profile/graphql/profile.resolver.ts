@@ -3,16 +3,17 @@ import {
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
 
-import { ProfileService } from "../profile.service"
 import { OtpType } from "../../../db/models/enums/otp.enum"
 import { IGetAll } from "../../post/dto/post.dto"
-import { PostService } from "../../post/post.service"
+
+import postService from "../../post/post.service"
+import profileService from "../profile.service"
 
 import * as DTO from "../dto/profile.dto"
 
 class ProfileQueryResolver {
-  protected readonly ProfileService = ProfileService
-  protected readonly PostService = PostService
+  protected readonly profileService = profileService
+  protected readonly postService = postService
 
   public readonly getProfile = (
     _: any,
@@ -22,7 +23,7 @@ class ProfileQueryResolver {
     return {
       msg: "done",
       status: 200,
-      data: this.ProfileService.getProfile(profile),
+      data: this.profileService.getProfile(profile),
     }
   }
 
@@ -34,7 +35,7 @@ class ProfileQueryResolver {
     return {
       msg: "done",
       status: 200,
-      data: this.ProfileService.getFollowers(profile),
+      data: this.profileService.getFollowers(profile),
     }
   }
 
@@ -46,7 +47,7 @@ class ProfileQueryResolver {
     return {
       msg: "done",
       status: 200,
-      data: this.ProfileService.getFollowing(profile),
+      data: this.profileService.getFollowing(profile),
     }
   }
 
@@ -58,7 +59,7 @@ class ProfileQueryResolver {
     return {
       msg: "done",
       status: 200,
-      data: await this.ProfileService.getAllSavedPosts({
+      data: await this.profileService.getAllSavedPosts({
         profileId,
         query: args,
       }),
@@ -67,7 +68,7 @@ class ProfileQueryResolver {
 }
 
 class ProfileMutationResolver {
-  protected readonly ProfileService = ProfileService
+  protected readonly profileService = profileService
 
   public readonly updateProfile = async (
     args: DTO.IUpdateProfile,
@@ -78,7 +79,7 @@ class ProfileMutationResolver {
     return {
       msg: "Profile has is updated successfully",
       status: 200,
-      data: await this.ProfileService.updateProfile({
+      data: await this.profileService.updateProfile({
         profileId: _id,
         updateProfile,
       }),
@@ -89,7 +90,7 @@ class ProfileMutationResolver {
     const { _id } = context.tokenPayload
     return {
       msg: "Profile Picture is deleted successfully",
-      data: await this.ProfileService.deleteProfilePic(_id),
+      data: await this.profileService.deleteProfilePic(_id),
       status: 200,
     }
   }
@@ -99,7 +100,7 @@ class ProfileMutationResolver {
     context: IContext,
   ): Promise<ISuccessResponse> => {
     const { _id: profileId, isPrivateProfile } = context.profile
-    await this.ProfileService.changeVisibility({
+    await this.profileService.changeVisibility({
       profileId,
       profileState: isPrivateProfile,
     })
@@ -115,7 +116,7 @@ class ProfileMutationResolver {
   ) => {
     const changeEmail = args
     const { _id } = context.tokenPayload
-    await this.ProfileService.changeEmail({ profileId: _id, changeEmail })
+    await this.profileService.changeEmail({ profileId: _id, changeEmail })
     return {
       msg: "check your e-mail for verification",
       status: 200,
@@ -126,7 +127,7 @@ class ProfileMutationResolver {
     _: IContext,
   ) => {
     const confirmNewEmail = args
-    await this.ProfileService.confirmNewEmail(confirmNewEmail)
+    await this.profileService.confirmNewEmail(confirmNewEmail)
     return {
       msg: "your new e-mail has is verified successfully",
       status: 200,
@@ -138,7 +139,7 @@ class ProfileMutationResolver {
     _: IContext,
   ) => {
     const deleteAccount = args
-    await this.ProfileService.deactivateAccount(deleteAccount)
+    await this.profileService.deactivateAccount(deleteAccount)
     return {
       msg: "check your e-mail to confirm",
       status: 200,
@@ -150,7 +151,7 @@ class ProfileMutationResolver {
     _: IContext,
   ) => {
     const deleteAccount = args
-    await this.ProfileService.deleteAccount(deleteAccount)
+    await this.profileService.deleteAccount(deleteAccount)
     return {
       msg: "check your e-mail to confirm",
       status: 200,
@@ -162,7 +163,7 @@ class ProfileMutationResolver {
     _: IContext,
   ) => {
     const confirmDelete = args
-    const type = await this.ProfileService.confirmDeletion(confirmDelete)
+    const type = await this.profileService.confirmDeletion(confirmDelete)
     return {
       msg: `Account has is ${type == OtpType.verifyDeletion ? "deleted" : "deactivated"} successfully`,
       status: 200,

@@ -1,21 +1,21 @@
-import { ReftTo } from '../../common/services/notifications/types'
-import { MongoId } from '../../common/types/db'
-import { IUser } from './IUser.interface'
-import { IPost } from './IPost.interface'
-import { IComment } from './IComment.interface'
-import { IStory } from './IStory.interface'
-import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
-import { IChat } from './IChat.interface'
-import { IGroup } from './IGroup.interface'
-import { ICommunity } from './ICommunity.interface'
+import { ReftTo } from "../../common/utils/notify/types"
+import { MongoId } from "../../common/types/db"
+import { IUser } from "./IUser.interface"
+import { IPost } from "./IPost.interface"
+import { IComment } from "./IComment.interface"
+import { IStory } from "./IStory.interface"
+import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
+import { IChat } from "./IChat.interface"
+import { IGroup } from "./IGroup.interface"
+import { ICommunity } from "./ICommunity.interface"
 
-export type UserDetails = Pick<IUser, '_id' | 'username' | 'avatar'>
-type PostDetails = Pick<IPost, '_id' | 'attachments'>
-type CommentDetails = Pick<IComment, '_id' | 'attachment'>
-type CommunityDetails = Pick<ICommunity, '_id' | 'cover' | 'name'>
-type StoryDetails = Pick<IStory, '_id' | 'attachment'>
-type ChatDetails = Pick<IChat, '_id'>
-type GroupDetails = Pick<IGroup, '_id'>
+export type UserDetails = Pick<IUser, "_id" | "username" | "avatar">
+type PostDetails = Pick<IPost, "_id" | "attachments">
+type CommentDetails = Pick<IComment, "_id" | "attachment">
+type CommunityDetails = Pick<ICommunity, "_id" | "cover" | "name">
+type StoryDetails = Pick<IStory, "_id" | "attachment">
+type ChatDetails = Pick<IChat, "_id">
+type GroupDetails = Pick<IGroup, "_id">
 
 export interface INotificationInputs {
   _id?: MongoId
@@ -72,7 +72,7 @@ export interface IJoinedCommunityNotification extends INotificationInputs {
 
 export type MessageDetails = Pick<
   INotificationInputs,
-  'message' | 'sentAt' | 'from' | 'updatedAt' | 'messageId' | 'refTo'
+  "message" | "sentAt" | "from" | "updatedAt" | "messageId" | "refTo"
 >
 
 export interface IMissedMessages extends MessageDetails, Partial<IMongoDoc> {}

@@ -1,15 +1,15 @@
-import { io } from '../../../main'
-import { NotificationType } from './types'
-import { MongoId } from '../../types/db'
-import { TNotification } from '../../../db/documents'
+import { io } from "../../../main"
+import { NotificationType } from "./types"
+import { MongoId } from "../../types/db"
+import { TNotification } from "../../../db/documents"
 
 import {
   IMissedMessages,
   INotificationInputs,
-} from '../../../db/interfaces/INotification.interface'
+} from "../../../db/interfaces/INotification.interface"
 
-import connectedUserController from '../../controllers/connected-users.controller'
-import notificationRepository from '../../repositories/notification.repository'
+import connectedUserController from "../../controllers/connected-users.controller"
+import notificationRepository from "../../repositories/notification.repository"
 
 class NotificationsService {
   protected readonly connectedUserController = connectedUserController
@@ -49,8 +49,8 @@ class NotificationsService {
     const messageNotification = this.notificationType.newMessage
 
     const refToChat =
-      this.notificationDetails.refTo === 'Chat' ||
-      this.notificationDetails.refTo === 'Group'
+      this.notificationDetails.refTo === "Chat" ||
+      this.notificationDetails.refTo === "Group"
 
     if (refToChat)
       return io
@@ -67,7 +67,7 @@ class NotificationsService {
   protected readonly addToMissedNotification = async () => {
     const { refTo } = this.notificationDetails
 
-    if (refTo === 'Chat' || refTo == 'Group')
+    if (refTo === "Chat" || refTo == "Group")
       return await this.upsertMissedMessages()
 
     return await this.upsertMissedNotifications()
@@ -91,12 +91,12 @@ class NotificationsService {
     if (includesUserMissedMessages)
       return await this.notificationRepository.findOneAndUpdate({
         filter: {
-          $and: [{ belongsTo: this.userId }, { 'missedMessages.from': from }],
+          $and: [{ belongsTo: this.userId }, { "missedMessages.from": from }],
         },
 
         data: {
           $push: {
-            'missedMessages.$.messages': { message, sentAt },
+            "missedMessages.$.messages": { message, sentAt },
           },
         },
       })
@@ -133,8 +133,8 @@ class NotificationsService {
     const currentNotifications = await this.getUserNotifications()
 
     const refToChat =
-      this.notificationDetails.refTo === 'Chat' ||
-      this.notificationDetails.refTo === 'Group'
+      this.notificationDetails.refTo === "Chat" ||
+      this.notificationDetails.refTo === "Group"
 
     if (refToChat) return
 
@@ -176,41 +176,41 @@ class NotificationsService {
       },
       populate: [
         {
-          path: 'missedMessages.from',
+          path: "missedMessages.from",
           select: {
             _id: 1,
             username: 1,
 
             content: 1,
-            'avatar.secure_url': 1,
-            'attachments.paths.secure_url': 1,
-            'attachment.path.secure_url': 1,
+            "avatar.secure_url": 1,
+            "attachments.paths.secure_url": 1,
+            "attachment.path.secure_url": 1,
           },
           options: { lean: true },
         },
         {
-          path: 'missedNotifications.from',
+          path: "missedNotifications.from",
           select: {
             _id: 1,
             username: 1,
 
             content: 1,
-            'avatar.secure_url': 1,
-            'attachments.paths.secure_url': 1,
-            'attachment.path.secure_url': 1,
+            "avatar.secure_url": 1,
+            "attachments.paths.secure_url": 1,
+            "attachment.path.secure_url": 1,
           },
           options: { lean: true },
         },
         {
-          path: 'missedNotifications.on',
+          path: "missedNotifications.on",
           select: {
             _id: 1,
             username: 1,
 
             content: 1,
-            'avatar.secure_url': 1,
-            'attachments.paths.secure_url': 1,
-            'attachment.path.secure_url': 1,
+            "avatar.secure_url": 1,
+            "attachments.paths.secure_url": 1,
+            "attachment.path.secure_url": 1,
           },
 
           options: { lean: true },
@@ -279,7 +279,7 @@ class NotificationsService {
     for (const messageDetails of missedMessages) {
       const notificationMessage: Pick<
         INotificationInputs,
-        'from' | 'message' | 'sentAt' | 'messageId'
+        "from" | "message" | "sentAt" | "messageId"
       > = {
         from: messageDetails.from,
         message: messageDetails.message,

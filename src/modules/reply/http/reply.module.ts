@@ -1,49 +1,49 @@
-import { Router } from 'express'
-import { applyGuards } from '../../../common/decorators/guard/apply-guards.decorator'
-import { validate } from '../../../common/middlewares/validation/validation.middleware'
-import { ReplyController } from './reply.controller'
+import { Router } from "express"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from '../validators/reply.validators'
+import * as validators from "../validators/reply.validators"
 
-import commentExistenceGuard from '../../../common/guards/comment/comment-existence.guard'
-import replyExistenceGuard from '../../../common/guards/reply/reply-existence.guard'
-import replyOwnerGuard from '../../../common/guards/reply/reply-owner.guard'
+import replyController from "./reply.controller"
+import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
+import replyExistenceGuard from "../../../common/guards/reply/reply-existence.guard"
+import replyOwnerGuard from "../../../common/guards/reply/reply-owner.guard"
 
 const router: Router = Router({ mergeParams: true })
 
 router.get(
-  '/:commentId',
+  "/:commentId",
   validate(validators.getCommentRepliesValidator.http()),
   applyGuards(commentExistenceGuard),
-  ReplyController.getCommentReplies,
+  replyController.getCommentReplies,
 )
 
 router.post(
-  '/add/:commentId',
+  "/add/:commentId",
   validate(validators.addValidator.http()),
   applyGuards(commentExistenceGuard),
-  ReplyController.reply,
+  replyController.reply,
 )
 
 router.post(
-  '/like',
+  "/like",
   validate(validators.likeValidator.http()),
   applyGuards(replyExistenceGuard),
-  ReplyController.like,
+  replyController.like,
 )
 
 router.patch(
-  '/edit',
+  "/edit",
   validate(validators.editValidator.http()),
   applyGuards(replyExistenceGuard, replyOwnerGuard),
-  ReplyController.edit,
+  replyController.edit,
 )
 
 router.delete(
-  '/:replyId',
+  "/:replyId",
   applyGuards(replyExistenceGuard, replyOwnerGuard),
   validate(validators.deleteValidator.http()),
-  ReplyController.deleteReply,
+  replyController.deleteReply,
 )
 
 export default router

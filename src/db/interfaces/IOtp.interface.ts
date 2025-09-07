@@ -1,6 +1,6 @@
-import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
+import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
 
-import * as emailSchemas from '../../common/services/email/schemas/email-schema'
+import * as emailSchemas from "../../common/utils/nodemailer/schemas/email-schema"
 
 export interface IOtpInputs {
   email: string

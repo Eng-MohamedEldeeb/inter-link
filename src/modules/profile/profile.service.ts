@@ -14,32 +14,32 @@ import { MongoId } from "../../common/types/db"
 import { CloudUploader } from "../../common/services/upload/cloud.service"
 import { ICloud } from "../../common/services/upload/interface/cloud-response.interface"
 
-export class ProfileService {
-  protected static readonly userRepository = userRepository
-  protected static readonly postRepository = postRepository
-  protected static readonly otpRepository = otpRepository
-  protected static readonly CloudUploader = CloudUploader
+class ProfileService {
+  protected readonly userRepository = userRepository
+  protected readonly postRepository = postRepository
+  protected readonly otpRepository = otpRepository
+  protected readonly CloudUploader = CloudUploader
 
-  public static readonly getProfile = (profile: IUser) => {
+  public readonly getProfile = (profile: IUser) => {
     if (profile.phone)
       profile.phone = decryptValue({ encryptedValue: profile.phone })
 
     return profile
   }
 
-  public static readonly getFollowers = (profile: IUser) => {
+  public readonly getFollowers = (profile: IUser) => {
     return {
       followers: profile.followers,
     }
   }
 
-  public static readonly getFollowing = (profile: IUser) => {
+  public readonly getFollowing = (profile: IUser) => {
     return {
       following: profile.following,
     }
   }
 
-  public static readonly getAllSavedPosts = async ({
+  public readonly getAllSavedPosts = async ({
     profileId,
     query,
   }: {
@@ -68,7 +68,7 @@ export class ProfileService {
     }
   }
 
-  public static readonly changeAvatar = async ({
+  public readonly changeAvatar = async ({
     profileId,
     avatar,
     path,
@@ -112,7 +112,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly deleteProfilePic = async (userId: MongoId) => {
+  public readonly deleteProfilePic = async (userId: MongoId) => {
     const isExistedUser = await this.userRepository.findOne({
       filter: { _id: userId, deactivatedAt: { $exists: false } },
       projection: { _id: 1, avatar: 1 },
@@ -148,7 +148,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly updateProfile = async ({
+  public readonly updateProfile = async ({
     profileId,
     updateProfile,
   }: {
@@ -189,7 +189,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly changeVisibility = async ({
+  public readonly changeVisibility = async ({
     profileId,
     profileState,
   }: {
@@ -207,7 +207,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly changeEmail = async ({
+  public readonly changeEmail = async ({
     profileId,
     changeEmail,
   }: {
@@ -257,7 +257,7 @@ export class ProfileService {
     ])
   }
 
-  public static readonly confirmNewEmail = async (
+  public readonly confirmNewEmail = async (
     confirmEmail: DTO.IConfirmNewEmail,
   ) => {
     const { originalEmail, otpCode } = confirmEmail
@@ -303,7 +303,7 @@ export class ProfileService {
     ])
   }
 
-  public static readonly deactivateAccount = async (
+  public readonly deactivateAccount = async (
     deleteAccount: DTO.IDeleteAccount,
   ) => {
     const { email, password } = deleteAccount
@@ -342,9 +342,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly deleteAccount = async (
-    deleteAccount: DTO.IDeleteAccount,
-  ) => {
+  public readonly deleteAccount = async (deleteAccount: DTO.IDeleteAccount) => {
     const { email, password } = deleteAccount
     const isExistedUser = await this.userRepository.findOne({
       filter: { email },
@@ -381,7 +379,7 @@ export class ProfileService {
     })
   }
 
-  public static readonly confirmDeletion = async (
+  public readonly confirmDeletion = async (
     confirmDeletion: DTO.IConfirmDelete,
   ) => {
     const { email, otpCode } = confirmDeletion
@@ -425,3 +423,5 @@ export class ProfileService {
     return OtpType.verifyDeletion
   }
 }
+
+export default new ProfileService()

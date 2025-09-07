@@ -1,12 +1,12 @@
-import { Schema } from 'mongoose'
-import { IOtp } from '../../interfaces/IOtp.interface'
-import { OtpType } from '../enums/otp.enum'
-import { generateCode } from '../../../common/utils/randomstring/generate-code.function'
-import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
-import { EmailService } from '../../../common/services/email/email.service'
-import { EmailSchemas } from '../../../common/services/email/event/interface/send-args.interface'
+import { Schema } from "mongoose"
+import { IOtp } from "../../interfaces/IOtp.interface"
+import { OtpType } from "../enums/otp.enum"
+import { generateCode } from "../../../common/utils/randomstring/generate-code.function"
+import { hashValue } from "../../../common/utils/security/bcrypt/bcrypt.service"
+import { EmailService } from "../../../common/services/email/email.service"
+import { EmailSchemas } from "../../../common/events/send-email/interface/send-args.interface"
 
-import * as emailSchemas from '../../../common/services/email/schemas/email-schema'
+import * as emailSchemas from "../../../common/utils/nodemailer/schemas/email-schema"
 
 export const otpSchema = new Schema<IOtp>(
   {
@@ -14,7 +14,7 @@ export const otpSchema = new Schema<IOtp>(
     email: {
       type: String,
       trim: true,
-      required: [true, 'email is required'],
+      required: [true, "email is required"],
       unique: [true, "can't request another otpCode at the moment"],
     },
     type: {
@@ -26,17 +26,19 @@ export const otpSchema = new Schema<IOtp>(
   { timestamps: true },
 )
 
-otpSchema.index({ createdAt: 1 }, { expires: '1m' })
+otpSchema.index({ createdAt: 1 }, { expires: "1m" })
 
-otpSchema.pre('save', function (next) {
+otpSchema.pre("save", function (next) {
   const email: string = this.email
   const type: EmailSchemas = this.type
-  const otpCode = generateCode({ length: 4, charset: 'numeric' })
+  const otpCode = generateCode({ length: 4, charset: "numeric" })
 
   console.log({ otpCode })
 
   const hashedCode = hashValue(otpCode)
   this.otpCode = hashedCode
+
   EmailService.send({ schema: type, otpCode, to: email })
+
   return next()
 })

@@ -5,11 +5,11 @@ import {
 
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
-import { GroupResponse } from "./types/group-response.type"
+import { GroupResponse } from "./types/group-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { GroupArgs } from "./types/group-args"
 
 import * as resolvers from "./group.resolver"
-import * as args from "./types/group-args.type"
 import * as validators from "../validators/group.validators"
 
 import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
@@ -17,13 +17,12 @@ import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import groupExistenceGuard from "../../../common/guards/group/group-existence.guard"
 import groupMembersGuard from "../../../common/guards/group/group-members.guard"
 
-export class GroupController {
-  protected static readonly GroupQueryResolver = resolvers.GroupQueryResolver
-  protected static readonly GroupMutationResolver =
-    resolvers.GroupMutationResolver
+class GroupController {
+  protected readonly groupQueryResolver = resolvers.groupQueryResolver
+  protected readonly groupMutationResolver = resolvers.groupMutationResolver
 
   // Queries:
-  public static readonly getAllGroups = (): IQueryController => {
+  public readonly getAllGroups = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getAllGroups",
@@ -31,12 +30,12 @@ export class GroupController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        resolver: this.GroupQueryResolver.getAllGroups,
+        resolver: this.groupQueryResolver.getAllGroups,
       }),
     }
   }
 
-  public static readonly getSingleGroup = (): IQueryController => {
+  public readonly getSingleGroup = (): IQueryController => {
     return {
       type: graphResponseType({
         name: "getSingleGroup",
@@ -52,51 +51,53 @@ export class GroupController {
           groupExistenceGuard,
           groupMembersGuard,
         ],
-        resolver: this.GroupQueryResolver.getSingleGroup,
+        resolver: this.groupQueryResolver.getSingleGroup,
       }),
     }
   }
 
   // Mutations:
-  public static readonly likeGroupMessage = (): IMutationController => {
+  public readonly likeGroupMessage = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "likeGroupMessage",
       }),
-      args: args.likeMessage,
+      args: GroupArgs.likeMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.likeMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.GroupMutationResolver.likeMessage,
+        resolver: this.groupMutationResolver.likeMessage,
       }),
     }
   }
 
-  public static readonly deleteGroupMessage = (): IMutationController => {
+  public readonly deleteGroupMessage = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deleteGroupMessage",
       }),
-      args: args.deleteMessage,
+      args: GroupArgs.deleteMessage,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteMessageValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.GroupMutationResolver.deleteMessage,
+        resolver: this.groupMutationResolver.deleteMessage,
       }),
     }
   }
 
-  public static readonly deleteGroup = (): IMutationController => {
+  public readonly deleteGroup = (): IMutationController => {
     return {
       type: graphResponseType({
         name: "deleteGroup",
       }),
-      args: args.deleteGroup,
+      args: GroupArgs.deleteGroup,
       resolve: applyResolver({
         middlewares: [validate(validators.deleteGroupValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, groupExistenceGuard],
-        resolver: this.GroupMutationResolver.deleteGroup,
+        resolver: this.groupMutationResolver.deleteGroup,
       }),
     }
   }
 }
+
+export default new GroupController()

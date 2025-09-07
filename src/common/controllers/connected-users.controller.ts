@@ -1,5 +1,5 @@
-import { MongoId } from '../types/db'
-import { UserStatus } from '../services/notifications/types'
+import { MongoId } from "../types/db"
+import { UserStatus } from "../utils/notify/types"
 
 const usersStatus = new Map<string, UserStatus>()
 class ConnectedUserController {
@@ -8,7 +8,7 @@ class ConnectedUserController {
 
     if (userStatus) return userStatus
 
-    return { socketId: '', isOnline: false }
+    return { socketId: "", isOnline: false }
   }
 
   public readonly setOnline = ({
