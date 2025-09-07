@@ -24,10 +24,18 @@ export class ChatInteractions {
           { participants: profileId, startedBy: userId },
         ],
       },
-      projection: { _id: 1 },
+      projection: { _id: 1, newMessages: 1, messages: 1 },
     })
 
-    if (existedChat) chatService.setRoomId = existedChat._id
+    if (existedChat) {
+      for (const msg of existedChat.newMessages) {
+        existedChat.messages.unshift(msg)
+      }
+
+      existedChat.newMessages = []
+
+      await existedChat.save()
+    }
 
     if (!existedChat) {
       const newChat = await chatRepository.create({

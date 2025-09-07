@@ -47,14 +47,42 @@ export class ChatHelpers {
   }) => {
     const inChat = this.isInChat({ roomId: roomId, userId: userId })
 
-    const existedChat = (await chatRepository.findOne({
+    const existedChat = await chatRepository.findOne({
       filter: {
-        _id: roomId,
+        $or: [
+          { startedBy: profileId, participants: userId },
+          { participants: profileId, startedBy: userId },
+        ],
       },
-    }))!
-    console.log({ inChat })
-    console.log({ roomId })
-    console.log({ existedChat })
+    })
+    if (!existedChat) {
+      const createdChat = await chatRepository.create({
+        startedBy: profileId,
+        participants: [userId],
+        ...(inChat
+          ? {
+              messages: [
+                {
+                  from: profileId,
+                  to: userId,
+                  message,
+                  sentAt: getNowMoment(),
+                },
+              ],
+            }
+          : {
+              newMessages: [
+                {
+                  from: profileId,
+                  to: userId,
+                  message,
+                  sentAt: getNowMoment(),
+                },
+              ],
+            }),
+      })
+      return inChat ? createdChat.messages[0] : createdChat.newMessages[0]
+    }
 
     if (!inChat) {
       existedChat.newMessages.unshift({
