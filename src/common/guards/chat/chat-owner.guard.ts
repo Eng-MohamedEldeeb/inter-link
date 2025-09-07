@@ -1,15 +1,15 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { MongoId } from '../../types/db'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { MongoId } from "../../types/db"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   ContextType,
   GraphQLParams,
   HttpParams,
-} from '../../decorators/context/types'
+} from "../../decorators/context/types"
 
-import { IGetSingleChat } from '../../../modules/chat/dto/chat.dto'
+import { IGetSingleChat } from "../../../modules/chat/dto/chat.dto"
 
 class ChatOwnerGuard extends GuardActivator {
   protected chatStartedById!: MongoId
@@ -22,11 +22,11 @@ class ChatOwnerGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP<IGetSingleChat>()
 
-      const { startedBy, participant } = req.chat
+      const { startedBy, participants } = req.chat
       const { _id: profileId } = req.profile
 
       this.chatStartedById = startedBy
-      this.participant = participant
+      this.participant = participants[0]
       this.profileId = profileId
     }
 

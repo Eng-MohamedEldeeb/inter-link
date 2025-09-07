@@ -3,7 +3,7 @@ import { Server } from "socket.io"
 import { asyncHandler } from "../common/decorators/async-handler/async-handler.decorator"
 import { ISocket } from "../common/interface/ISocket.interface"
 import { applyGuards } from "../common/decorators/guard/apply-guards.decorator"
-import { sendMessage } from "./chat/socket/chat-interactions.service"
+import { ChatInteractions } from "./chat/socket/chat-interactions.service"
 import { GroupInteractions } from "./group/socket/group-interactions.service"
 
 import isAuthenticatedGuard from "../common/guards/auth/is-authenticated.guard"
@@ -53,7 +53,7 @@ export const socketIoBootStrap = async (io: Server) => {
     applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
   )
 
-  io.of("/chats").on("connection", asyncHandler(sendMessage))
+  io.of("/chats").on("connection", asyncHandler(ChatInteractions.sendMessage))
 
   io.of("/groups").use(
     applyGuards(

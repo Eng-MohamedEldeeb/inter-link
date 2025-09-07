@@ -47,38 +47,14 @@ export class ChatHelpers {
   }) => {
     const inChat = this.isInChat({ roomId: roomId, userId: userId })
 
-    const existedChat = await chatRepository.findOne({
+    const existedChat = (await chatRepository.findOne({
       filter: {
-        roomId,
+        _id: roomId,
       },
-    })
-
-    if (!existedChat)
-      return await chatRepository.create({
-        startedBy: profileId,
-        participant: userId,
-        ...(inChat
-          ? {
-              messages: [
-                {
-                  from: profileId,
-                  to: userId,
-                  message,
-                  sentAt: getNowMoment(),
-                },
-              ],
-            }
-          : {
-              newMessages: [
-                {
-                  from: profileId,
-                  to: userId,
-                  message,
-                  sentAt: getNowMoment(),
-                },
-              ],
-            }),
-      })
+    }))!
+    console.log({ inChat })
+    console.log({ roomId })
+    console.log({ existedChat })
 
     if (!inChat) {
       existedChat.newMessages.unshift({
@@ -88,16 +64,16 @@ export class ChatHelpers {
         sentAt: getNowMoment(),
       })
       await existedChat.save()
+      return existedChat.newMessages[0]
     }
-    if (inChat) {
-      existedChat.messages.unshift({
-        from: profileId,
-        to: userId,
-        message,
-        sentAt: getNowMoment(),
-      })
-      await existedChat.save()
-    }
-    return existedChat
+
+    existedChat.messages.unshift({
+      from: profileId,
+      to: userId,
+      message,
+      sentAt: getNowMoment(),
+    })
+    await existedChat.save()
+    return existedChat.messages[0]
   }
 }

@@ -1,6 +1,10 @@
-import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
-import { MongoId } from '../../common/types/db'
+import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
+import { MongoId } from "../../common/types/db"
 
+export enum ChatType {
+  OTO = "OneToOne",
+  MTM = "ManyToMany",
+}
 export interface IMessageInputs {
   message: string
   to: MongoId
@@ -21,7 +25,9 @@ export interface IChat extends IMongoDoc {
 
   startedBy: MongoId
 
-  participant: MongoId
+  participants: MongoId[]
 
-  roomId: string
+  // roomId: string
+
+  type: ChatType
 }

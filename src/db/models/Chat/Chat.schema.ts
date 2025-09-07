@@ -1,45 +1,42 @@
-import { Schema, SchemaTypes } from 'mongoose'
-import { IChat } from '../../interfaces/IChat.interface'
+import { Schema, SchemaTypes } from "mongoose"
+import { ChatType, IChat } from "../../interfaces/IChat.interface"
+import { generateCode } from "../../../common/utils/randomstring/generate-code.function"
+
+const chatMessage = {
+  message: String,
+  sentAt: String,
+  from: { type: SchemaTypes.ObjectId, ref: "User" },
+  to: { type: SchemaTypes.ObjectId, ref: "User" },
+  likedBy: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+  updatedAt: Date,
+  deletedAt: Date,
+}
 
 export const ChatSchema = new Schema<IChat>(
   {
     messages: {
-      type: [
-        {
-          message: String,
-          sentAt: String,
-          from: { type: SchemaTypes.ObjectId, ref: 'User' },
-          to: { type: SchemaTypes.ObjectId, ref: 'User' },
-          likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
-          updatedAt: Date,
-          deletedAt: Date,
-        },
-      ],
+      type: [chatMessage],
     },
 
     newMessages: {
-      type: [
-        {
-          message: String,
-          sentAt: String,
-          from: { type: SchemaTypes.ObjectId, ref: 'User' },
-          to: { type: SchemaTypes.ObjectId, ref: 'User' },
-          likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
-          updatedAt: Date,
-          deletedAt: Date,
-        },
-      ],
+      type: [chatMessage],
     },
 
-    roomId: {
-      type: String,
-      default: function (this: IChat) {
-        return `${this.startedBy} ${this.participant}`
-      },
-    },
+    // roomId: {
+    //   type: String,
+    //   default: function (this: IChat) {
+    //     if (this.type.match(ChatType.OTO))
+    //       return `${this.startedBy} ${this.participants[0]}`
 
-    startedBy: { type: SchemaTypes.ObjectId, ref: 'User' },
-    participant: { type: SchemaTypes.ObjectId, ref: 'User' },
+    //     return generateCode({ length: 16, charset: "alphanumeric" })
+    //   },
+    // },
+
+    startedBy: { type: SchemaTypes.ObjectId, ref: "User" },
+
+    participants: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+
+    type: { type: String, enum: ChatType, default: ChatType.OTO },
   },
   {
     timestamps: true,
@@ -48,7 +45,7 @@ export const ChatSchema = new Schema<IChat>(
   },
 )
 
-ChatSchema.virtual('totalMissedMessages').get(function (this: IChat) {
+ChatSchema.virtual("totalMissedMessages").get(function (this: IChat) {
   return this.newMessages && this.newMessages.length
     ? this.newMessages.length
     : 0

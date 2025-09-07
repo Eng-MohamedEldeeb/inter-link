@@ -1,15 +1,16 @@
-import { GraphQLID, GraphQLList, GraphQLString } from 'graphql'
+import { GraphQLEnumType, GraphQLID, GraphQLList, GraphQLString } from "graphql"
 
 import {
+  ChatType,
   IChat,
   IMessageDetails,
-} from '../../../../db/interfaces/IChat.interface'
+} from "../../../../db/interfaces/IChat.interface"
 
-import { DateType } from '../../../../common/types/graphql/graphql.types'
-import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
+import { DateType } from "../../../../common/types/graphql/graphql.types"
+import { returnedType } from "../../../../common/decorators/resolver/returned-type.decorator"
 
 const messageDetails = returnedType<IMessageDetails>({
-  name: 'messageDetails',
+  name: "messageDetails",
   fields: {
     from: { type: GraphQLID },
     to: { type: GraphQLID },
@@ -18,18 +19,31 @@ const messageDetails = returnedType<IMessageDetails>({
   },
 })
 
-export const singleChatFields = returnedType<Omit<IChat, '__v' | 'updatedAt'>>({
-  name: 'singleChat',
+export const singleChatFields = returnedType<Omit<IChat, "__v" | "updatedAt">>({
+  name: "singleChat",
   fields: {
     _id: { type: GraphQLID },
     messages: { type: new GraphQLList(messageDetails) },
     newMessages: { type: new GraphQLList(messageDetails) },
 
     startedBy: { type: GraphQLID },
-    participant: { type: GraphQLID },
+    participants: { type: new GraphQLList(GraphQLID) },
 
     createdAt: { type: DateType },
-    roomId: { type: GraphQLString },
+    // roomId: { type: GraphQLString },
+    type: {
+      type: new GraphQLEnumType({
+        name: "singleChatType",
+        values: {
+          OTO: {
+            value: ChatType.OTO,
+          },
+          MTM: {
+            value: ChatType.MTM,
+          },
+        },
+      }),
+    },
   },
 })
 

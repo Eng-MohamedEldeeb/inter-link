@@ -50,7 +50,7 @@ class ChatExistenceGuard extends GuardActivator {
           {
             $or: [
               { startedBy: this.profileId },
-              { participant: this.profileId },
+              { participants: this.profileId },
             ],
           },
         ],

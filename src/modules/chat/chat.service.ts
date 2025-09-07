@@ -20,7 +20,7 @@ class ChatService {
   protected readonly notificationRepository = notificationRepository
   protected readonly notifyService = notifyService
 
-  protected roomId!: string
+  protected roomId!: MongoId
   protected userId!: MongoId
   protected profileId!: MongoId
 
@@ -33,17 +33,17 @@ class ChatService {
     this.profileId = profileId
   }
 
-  public set setRoomId(roomId: string) {
+  public set setRoomId(roomId: MongoId) {
     this.roomId = roomId
   }
 
-  public get getCurrentRoomId(): string {
+  public get getCurrentRoomId(): MongoId {
     return this.roomId
   }
 
   public readonly getAllChats = async (profileId: MongoId) => {
     const chats = await this.chatRepository.find({
-      filter: { $or: [{ startedBy: profileId }, { participant: profileId }] },
+      filter: { $or: [{ startedBy: profileId }, { participants: profileId }] },
       projection: {
         messages: {
           $slice: 1,
@@ -219,7 +219,7 @@ class ChatService {
     }
 
     const userId = chat.startedBy.equals(profileId)
-      ? chat.participant
+      ? chat.participants[0]
       : chat.startedBy
 
     const relatedNotification = await this.findRelatedNotification({
@@ -376,7 +376,7 @@ class ChatService {
     if (startedChat) await chat.updateOne({ $unset: { startedBy: 1 } })
 
     const participant = chat.startedBy.equals(profileId)
-    if (participant) await chat.updateOne({ $unset: { participant: 1 } })
+    if (participant) await chat.updateOne({ $unset: { participants: 1 } })
 
     await chat.save()
   }

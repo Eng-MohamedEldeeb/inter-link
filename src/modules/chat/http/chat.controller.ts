@@ -26,13 +26,13 @@ class ChatController {
 
   public readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { participant, messages } = await this.chatService.getSingle(
+      const { participants, messages } = await this.chatService.getSingle(
         req.chat,
       )
 
       return successResponse(res, {
         data: {
-          participant,
+          participants,
           messages,
         },
       })
