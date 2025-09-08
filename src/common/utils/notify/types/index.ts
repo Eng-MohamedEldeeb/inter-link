@@ -2,7 +2,7 @@ import { INotificationInputs } from "../../../../db/interfaces/INotification.int
 import { MongoId } from "../../../types/db"
 
 export enum NotificationType {
-  newNotifications = "new-notifications",
+  newNotification = "new-notification",
   newMessage = "new-message",
   newGroupMessage = "new-group-message",
 }
@@ -17,11 +17,11 @@ export enum RefTypes {
   Group = "Group",
 }
 
-export type ReftTo = keyof typeof RefTypes
+export type RefTo = keyof typeof RefTypes
 
 export type UserStatus = {
   socketId: string
-  isOnline: boolean
+  isConnected: boolean
 }
 
 export type RoomMembers = string[]

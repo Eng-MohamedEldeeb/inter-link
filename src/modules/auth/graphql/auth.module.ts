@@ -1,5 +1,5 @@
-import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 import authController from "./auth.controller"
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 
 export const mutationModule = (() => {
   return {

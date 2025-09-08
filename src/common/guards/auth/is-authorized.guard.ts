@@ -12,14 +12,14 @@ import {
   SocketServerParams,
 } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/user.repository"
+import userRepository from "../../repositories/concrete/user.repository"
 import { ISocket } from "../../interface/ISocket.interface"
 
 class IsAuthorizedGuard implements GuardActivator {
-  protected readonly userRepository = userRepository
-  protected contextArg!: IRequest | IContext | ISocket
-  protected tokenPayload!: IPayload
-  protected changedCredentialsAt: Date | undefined = undefined
+  private readonly userRepository = userRepository
+  private contextArg!: IRequest | IContext | ISocket
+  private tokenPayload!: IPayload
+  private changedCredentialsAt: Date | undefined = undefined
 
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
@@ -45,7 +45,7 @@ class IsAuthorizedGuard implements GuardActivator {
     }
   }
 
-  protected readonly hasChangedCredentials = (): boolean => {
+  private readonly hasChangedCredentials = (): boolean => {
     const { iat } = this.tokenPayload
 
     if (!this.changedCredentialsAt) return false
@@ -53,7 +53,7 @@ class IsAuthorizedGuard implements GuardActivator {
     return iat < Math.ceil(this.changedCredentialsAt.getTime() / 1000)
   }
 
-  protected readonly httpAuthorization = async () => {
+  private readonly httpAuthorization = async () => {
     this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
@@ -90,7 +90,7 @@ class IsAuthorizedGuard implements GuardActivator {
     return true
   }
 
-  protected readonly graphQLAuthorization = async () => {
+  private readonly graphQLAuthorization = async () => {
     this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
@@ -118,7 +118,7 @@ class IsAuthorizedGuard implements GuardActivator {
     return this.contextArg
   }
 
-  protected readonly socketAuthorization = async () => {
+  private readonly socketAuthorization = async () => {
     this.tokenPayload = this.contextArg.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({

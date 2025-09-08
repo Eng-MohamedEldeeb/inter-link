@@ -12,8 +12,8 @@ import profileService from "../profile.service"
 import * as DTO from "../dto/profile.dto"
 
 class ProfileQueryResolver {
-  protected readonly profileService = profileService
-  protected readonly postService = postService
+  private readonly profileService = profileService
+  private readonly postService = postService
 
   public readonly getProfile = (
     _: any,
@@ -68,7 +68,7 @@ class ProfileQueryResolver {
 }
 
 class ProfileMutationResolver {
-  protected readonly profileService = profileService
+  private readonly profileService = profileService
 
   public readonly updateProfile = async (
     args: DTO.IUpdateProfile,

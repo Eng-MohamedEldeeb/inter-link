@@ -1,20 +1,21 @@
 import { Server } from "socket.io"
-
 import { asyncHandler } from "../common/decorators/async-handler/async-handler.decorator"
 import { ISocket } from "../common/interface/ISocket.interface"
 import { applyGuards } from "../common/decorators/guard/apply-guards.decorator"
-import { ChatInteractions } from "./chat/socket/chat-interactions.service"
 import { GroupInteractions } from "./group/socket/group-interactions.service"
 
-import isAuthenticatedGuard from "../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../common/guards/auth/is-authorized.guard"
-import userExistenceGuard from "../common/guards/user/user-existence.guard"
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  userExistenceGuard,
+} from "../common/guards"
 
+import chatInteractions from "./chat/socket/chat-interactions.service"
 import groupService from "./group/group.service"
-import connectedUserController from "../common/controllers/connected-users.controller"
 import notifyService from "../common/services/notify/notify.service"
 import groupExistenceGuard from "../common/guards/group/group-existence.guard"
 import groupMembersGuard from "../common/guards/group/group-members.guard"
+import userService from "./user/user.service"
 
 export const socketIoBootStrap = async (io: Server) => {
   io.use(applyGuards(isAuthenticatedGuard, isAuthorizedGuard)).on(
@@ -23,7 +24,7 @@ export const socketIoBootStrap = async (io: Server) => {
       const profileId = socket.profile._id
       const groups = await groupService.getAllGroups(profileId)
 
-      connectedUserController.setOnline({
+      userService.setOnline({
         profileId,
         socketId: socket.id,
       })
@@ -42,7 +43,7 @@ export const socketIoBootStrap = async (io: Server) => {
       }
 
       socket.on("disconnect", async () => {
-        connectedUserController.setOffline(profileId)
+        userService.setOffline(profileId)
 
         if (rooms.length) rooms.forEach(room => socket.leave(room))
       })
@@ -53,7 +54,7 @@ export const socketIoBootStrap = async (io: Server) => {
     applyGuards(isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard),
   )
 
-  io.of("/chats").on("connection", asyncHandler(ChatInteractions.sendMessage))
+  io.of("/chats").on("connection", asyncHandler(chatInteractions.connect))
 
   io.of("/groups").use(
     applyGuards(

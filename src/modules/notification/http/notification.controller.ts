@@ -7,13 +7,13 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import notificationService from "../notification.service"
 
 class NotificationController {
-  protected readonly notificationService = notificationService
+  private readonly notificationService = notificationService
 
-  public readonly getAllNotifications = asyncHandler(
+  public readonly getUserNotifications = asyncHandler(
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.notificationService.getAllNotifications(profileId),
+        data: await this.notificationService.getUserNotifications(profileId),
       })
     },
   )

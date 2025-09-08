@@ -1,12 +1,12 @@
-import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 import notificationController from "./notification.controller"
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 
 export const queryModule = (() => {
   return {
     type: returnedType({
       name: "notificationQuery",
       fields: {
-        getAllNotifications: notificationController.getAllNotifications(),
+        getUserNotifications: notificationController.getUserNotifications(),
       },
     }),
     resolve: () => true,

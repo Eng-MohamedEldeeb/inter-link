@@ -1,6 +1,8 @@
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  userExistenceGuard,
+} from "../../../common/guards"
 
 import * as validators from "../validator/user.validator"
 

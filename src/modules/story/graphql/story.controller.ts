@@ -4,20 +4,23 @@ import { StoryResponse } from "./types/story-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { StoryArgs } from "./types/story-args"
 
+import * as validators from "../validators/story.validators"
+
 import {
   IMutationController,
   IQueryController,
 } from "../../../common/interface/IGraphQL.interface"
 
-import { storyQueryResolver, storyMutationResolver } from "./story.resolver"
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  userExistenceGuard,
+  storyExistenceGuard,
+  storyViewPermissionGuard,
+  storyOwnerGuard,
+} from "../../../common/guards"
 
-import * as validators from "../validators/story.validators"
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import storyExistenceGuard from "../../../common/guards/story/story-existence.guard"
-import storyOwnerGuard from "../../../common/guards/story/story-owner.guard"
-import storyViewPermissionGuard from "../../../common/guards/story/story-view-permission.guard"
-import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
+import { storyQueryResolver, storyMutationResolver } from "./story.resolver"
 
 class StoryController {
   private readonly storyQueryResolver = storyQueryResolver

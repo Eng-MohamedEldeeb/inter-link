@@ -1,22 +1,22 @@
-import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from 'graphql'
+import { GraphQLID, GraphQLInt, GraphQLList, GraphQLString } from "graphql"
 
 import {
   INotifications,
   INotificationInputs,
-} from '../../../../db/interfaces/INotification.interface'
+} from "../../../../db/interfaces/INotification.interface"
 
 import {
   DateType,
   ObjFields,
-} from '../../../../common/types/graphql/graphql.types'
-import { returnedType } from '../../../../common/decorators/resolver/returned-type.decorator'
-import { IUser } from '../../../../db/interfaces/IUser.interface'
-import { cloudFile } from '../../../../common/services/upload/interface/cloud-response.interface'
+} from "../../../../common/types/graphql/graphql.types"
+import { returnedType } from "../../../../common/decorators/resolver/returned-type.decorator"
+import { IUser } from "../../../../db/interfaces/IUser.interface"
+import { cloudFile } from "../../../../common/services/upload/interface/cloud-response.interface"
 
 const notificationFromDetails = returnedType<
-  Pick<IUser, 'avatar' | 'username' | '_id'>
+  Pick<IUser, "avatar" | "username" | "_id">
 >({
-  name: 'notificationFromDetails',
+  name: "notificationFromDetails",
   fields: {
     _id: { type: GraphQLID },
     avatar: {
@@ -27,9 +27,9 @@ const notificationFromDetails = returnedType<
 })
 
 const notificationDetailsFields = returnedType<
-  Omit<INotificationInputs, '__v'>
+  Omit<INotificationInputs, "__v">
 >({
-  name: 'singleNotification',
+  name: "singleNotification",
   fields: {
     _id: { type: GraphQLID },
     from: { type: notificationFromDetails },
@@ -42,20 +42,20 @@ const notificationDetailsFields = returnedType<
   },
 })
 
-export const notificationFields: ObjFields<Omit<INotifications, '__v'>> = {
+export const notificationFields: ObjFields<Omit<INotifications, "__v">> = {
   _id: { type: GraphQLID },
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
 
   belongsTo: { type: GraphQLID },
 
-  missedNotifications: {
+  newNotifications: {
     type: new GraphQLList(notificationDetailsFields),
   },
 
-  totalMissedNotifications: { type: GraphQLInt },
+  totalNewNotifications: { type: GraphQLInt },
 
-  missedMessages: {
+  newMessages: {
     type: new GraphQLList(notificationDetailsFields),
   },
 

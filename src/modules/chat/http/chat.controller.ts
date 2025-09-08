@@ -13,7 +13,7 @@ import {
 
 import chatService from "../chat.service"
 class ChatController {
-  protected readonly chatService = chatService
+  private readonly chatService = chatService
 
   public readonly getAllChats = asyncHandler(
     async (req: IRequest, res: Response) => {
@@ -35,6 +35,22 @@ class ChatController {
           participants,
           messages,
         },
+      })
+    },
+  )
+
+  public readonly sendImage = asyncHandler(
+    async (req: IRequest, res: Response) => {
+      const { _id, username, avatar } = req.profile
+
+      await this.chatService.sendImage({
+        profile: { _id, username, avatar },
+        user: req.user,
+        image: req.cloudFile,
+      })
+
+      return successResponse(res, {
+        msg: `Image sent to ${req.user.username}`,
       })
     },
   )

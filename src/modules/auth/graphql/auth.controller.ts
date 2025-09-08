@@ -1,10 +1,10 @@
 import { GraphQLObjectType, GraphQLString } from "graphql"
 
-import { AuthArgs } from "./types/auth-args"
 import authResolver from "./auth.resolver"
 
 import * as validators from "./../validator/auth.validator"
 
+import { AuthArgs } from "./types/auth-args"
 import { IMutationController } from "../../../common/interface/IGraphQL.interface"
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"

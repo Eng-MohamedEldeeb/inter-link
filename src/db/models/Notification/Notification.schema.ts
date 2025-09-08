@@ -12,7 +12,7 @@ export const NotificationSchema = new Schema<INotifications>(
       unique: [true, '"belongsTo" Id already exists'],
     },
 
-    missedMessages: {
+    newMessages: {
       type: [
         {
           from: {
@@ -33,13 +33,14 @@ export const NotificationSchema = new Schema<INotifications>(
             type: String,
             enum: [RefTypes.Chat, RefTypes.Group],
           },
+          attachment: { type: String },
           sentAt: String,
           updatedAt: Date,
         },
       ],
     },
 
-    missedNotifications: {
+    newNotifications: {
       type: [
         {
           message: {
@@ -117,18 +118,18 @@ export const NotificationSchema = new Schema<INotifications>(
   },
 )
 
-NotificationSchema.virtual("totalMissedNotifications").get(function (
+NotificationSchema.virtual("totalNewNotifications").get(function (
   this: INotifications,
 ) {
-  return this.missedNotifications && this.missedNotifications.length
-    ? this.missedNotifications.length
+  return this.newNotifications && this.newNotifications.length
+    ? this.newNotifications.length
     : 0
 })
 
 NotificationSchema.virtual("totalMissedMessages").get(function (
   this: INotifications,
 ) {
-  return this.missedNotifications && this.missedNotifications.length
-    ? this.missedNotifications.length
+  return this.newNotifications && this.newNotifications.length
+    ? this.newNotifications.length
     : 0
 })

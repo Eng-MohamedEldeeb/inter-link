@@ -1,4 +1,4 @@
-import { Model, PipelineStage, RootFilterQuery } from 'mongoose'
+import { Model, PipelineStage, RootFilterQuery } from "mongoose"
 
 import {
   IFind,
@@ -9,13 +9,13 @@ import {
   IFindOneAndDelete,
   IFindOneAndUpdate,
   IUpdateMany,
-} from '../../db/interfaces/db-service.interface'
+} from "../../../db/interfaces/db-service.interface"
 
 export abstract class DataBaseService<Inputs, TDocument> {
-  constructor(protected readonly model: Model<TDocument>) {}
+  constructor(private readonly model: Model<TDocument>) {}
 
   readonly create = async (
-    data: Partial<Omit<Inputs, '_id' | 'createdAt' | 'updatedAt' | '__V'>>,
+    data: Partial<Omit<Inputs, "_id" | "createdAt" | "updatedAt" | "__V">>,
   ): Promise<TDocument> => {
     return await this.model.create(data)
   }

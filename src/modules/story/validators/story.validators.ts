@@ -1,4 +1,4 @@
-import joi from 'joi'
+import joi from "joi"
 
 import {
   ICreateStory,
@@ -6,9 +6,9 @@ import {
   IGetAllStory,
   IGetSingleStory,
   ILikeStory,
-} from '../dto/story.dto'
+} from "../dto/story.dto"
 
-import { generalFields } from '../../../common/validation/general-fields'
+import { generalFields } from "../../../common/validation/general-fields"
 
 export const getAllValidator = {
   schema: joi
@@ -21,7 +21,7 @@ export const getAllValidator = {
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'user id query param is required',
+        "any.required": "user id query param is required",
       }),
     }
   },
@@ -29,7 +29,7 @@ export const getAllValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'user id arg is required',
+        "any.required": "user id arg is required",
       }),
     }
   },
@@ -46,7 +46,7 @@ export const getSingleValidator = {
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'editPost id param is required',
+        "any.required": "editPost id param is required",
       }),
     }
   },
@@ -54,7 +54,7 @@ export const getSingleValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'editPost id arg is required',
+        "any.required": "editPost id arg is required",
       }),
     }
   },
@@ -68,16 +68,12 @@ export const createValidator = {
     })
     .required()
     .messages({
-      'any.required': 'createPost body is required',
+      "any.required": "createPost body is required",
     }),
 
-  file: joi
-    .object<Express.Multer.File>()
-    .keys(generalFields.file)
-    .required()
-    .messages({
-      'any.required': 'createPost body is required',
-    }),
+  file: generalFields.file.required().messages({
+    "any.required": "createPost body is required",
+  }),
 }
 
 export const deleteValidator = {
@@ -90,7 +86,7 @@ export const deleteValidator = {
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'deletePost id param is required',
+        "any.required": "deletePost id param is required",
       }),
     }
   },
@@ -98,7 +94,7 @@ export const deleteValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'deletePost id arg is required',
+        "any.required": "deletePost id arg is required",
       }),
     }
   },
@@ -114,7 +110,7 @@ export const likeValidator = {
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'deletePost id query param is required',
+        "any.required": "deletePost id query param is required",
       }),
     }
   },
@@ -122,7 +118,7 @@ export const likeValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'deletePost id arg is required',
+        "any.required": "deletePost id arg is required",
       }),
     }
   },

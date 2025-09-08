@@ -1,39 +1,25 @@
-import moment from "moment"
-import userRepository from "../../common/repositories/user.repository"
 import notifyService from "../../common/services/notify/notify.service"
 
-import { IUser } from "../../db/interfaces/IUser.interface"
+import { currentMoment } from "../../common/decorators/moment/moment"
 import { throwError } from "../../common/handlers/error-message.handler"
+import { userRepository } from "../../common/repositories"
 import { MongoId } from "../../common/types/db"
-import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
+import { UserStatus } from "../../common/utils/notify/types"
 import { IFollowedUserNotification } from "../../db/interfaces/INotification.interface"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
+
+const usersStatus = new Map<string, UserStatus>()
 
 class UserService {
-  protected readonly userRepository = userRepository
-  protected readonly notifyService = notifyService
+  private readonly userRepository = userRepository
+  private readonly notifyService = notifyService
 
-  protected readonly UserViewersStrategy = UserViewersStrategy
-  protected views!: { viewer: MongoId; totalVisits: number }[]
+  private readonly UserViewersStrategy = UserViewersStrategy
+  private views!: { viewer: MongoId; totalVisits: number }[]
 
-  protected userId!: MongoId
-  protected profileId!: MongoId
-
-  protected readonly updateUserViewers = async () => {
-    const inViews = this.views.some(views =>
-      views.viewer.equals(this.profileId),
-    )
-    if (inViews)
-      return await this.UserViewersStrategy.incUserProfileViewersCount({
-        userId: this.userId,
-        profileId: this.profileId,
-      })
-
-    return await this.UserViewersStrategy.addViewerToProfile({
-      userId: this.userId,
-      profileId: this.profileId,
-    })
-  }
+  private userId!: MongoId
+  private profileId!: MongoId
 
   public readonly getUserProfile = async ({
     profileId,
@@ -52,6 +38,22 @@ class UserService {
     }
 
     return user
+  }
+
+  private readonly updateUserViewers = async () => {
+    const inViews = this.views.some(views =>
+      views.viewer.equals(this.profileId),
+    )
+    if (inViews)
+      return await this.UserViewersStrategy.incUserProfileViewersCount({
+        userId: this.userId,
+        profileId: this.profileId,
+      })
+
+    return await this.UserViewersStrategy.addViewerToProfile({
+      userId: this.userId,
+      profileId: this.profileId,
+    })
   }
 
   public readonly getUseFollowers = async (
@@ -160,7 +162,7 @@ class UserService {
           username: profile.username,
         },
         refTo: "User",
-        sentAt: getNowMoment(),
+        sentAt: currentMoment(),
       }
 
       this.notifyService.sendNotification({
@@ -189,7 +191,7 @@ class UserService {
         username: profile.username,
       },
       refTo: "User",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({
@@ -245,7 +247,7 @@ class UserService {
         avatar: profile.avatar,
       },
       refTo: "User",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({
@@ -291,6 +293,40 @@ class UserService {
         ],
       },
       data: { $pull: { requests: userId } },
+    })
+  }
+
+  public readonly getCurrentStatus = (profileId: MongoId): UserStatus => {
+    const userStatus = usersStatus.get(profileId.toString())
+
+    if (userStatus) return userStatus
+
+    return { socketId: "", isConnected: false }
+  }
+
+  public readonly setOnline = ({
+    profileId,
+    socketId,
+  }: {
+    profileId: MongoId
+    socketId: string
+  }) => {
+    usersStatus.set(profileId.toString(), {
+      isConnected: true,
+      socketId,
+    })
+  }
+
+  public readonly setOffline = (profileId: MongoId) => {
+    const userStatus = this.getCurrentStatus(profileId)
+
+    if (!userStatus) return
+
+    const { socketId } = userStatus
+
+    usersStatus.set(profileId.toString(), {
+      socketId,
+      isConnected: false,
     })
   }
 }

@@ -1,8 +1,3 @@
-import {
-  IMutationController,
-  IQueryController,
-} from "../../../common/interface/IGraphQL.interface"
-
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { ChatResponse } from "./types/chat-response"
@@ -12,13 +7,20 @@ import { ChatArgs } from "./types/chat-args"
 import * as resolvers from "./chat.resolver"
 import * as validators from "../validators/chat.validators"
 
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import chatExistenceGuard from "../../../common/guards/chat/chat-existence.guard"
+import {
+  IMutationController,
+  IQueryController,
+} from "../../../common/interface/IGraphQL.interface"
+
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  chatExistenceGuard,
+} from "../../../common/guards"
 
 class ChatController {
-  protected readonly chatQueryResolver = resolvers.chatQueryResolver
-  protected readonly chatMutationResolver = resolvers.chatMutationResolver
+  private readonly chatQueryResolver = resolvers.chatQueryResolver
+  private readonly chatMutationResolver = resolvers.chatMutationResolver
 
   // Queries:
   public readonly getAllChats = (): IQueryController => {

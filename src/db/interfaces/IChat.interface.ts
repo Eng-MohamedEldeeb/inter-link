@@ -1,5 +1,6 @@
 import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
 import { MongoId } from "../../common/types/db"
+import { IUser } from "./IUser.interface"
 
 export enum ChatType {
   OTO = "OneToOne",
@@ -7,6 +8,7 @@ export enum ChatType {
 }
 export interface IMessageInputs {
   message: string
+  attachment?: string
   to: MongoId
 }
 
@@ -27,7 +29,7 @@ export interface IChat extends IMongoDoc {
 
   participants: MongoId[]
 
-  // roomId: string
+  // chatRoomId: string
 
   type: ChatType
 }

@@ -3,23 +3,25 @@ import {
   IQueryController,
 } from "../../../common/interface/IGraphQL.interface"
 
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  commentExistenceGuard,
+  commentOwnerGuard,
+} from "../../../common/guards"
+
+import * as resolvers from "./comment.resolver"
+import * as validators from "./../validators/comment.validators"
+
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { CommentResponse } from "./types/comment-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
-
-import * as resolvers from "./comment.resolver"
 import { CommentArgs } from "./types/comment-args"
-import * as validators from "./../validators/comment.validators"
-
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
-import CommentOwnerGuard from "../../../common/guards/comment/comment-owner.guard"
 
 class CommentController {
-  protected readonly commentQueryResolver = resolvers.commentQueryResolver
-  protected readonly commentMutationResolver = resolvers.commentMutationResolver
+  private readonly commentQueryResolver = resolvers.commentQueryResolver
+  private readonly commentMutationResolver = resolvers.commentMutationResolver
 
   // Queries:
   public readonly getSingleComment = (): IQueryController => {
@@ -68,7 +70,7 @@ class CommentController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           commentExistenceGuard,
-          CommentOwnerGuard,
+          commentOwnerGuard,
         ],
         resolver: this.commentMutationResolver.edit,
       }),
@@ -87,7 +89,7 @@ class CommentController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           commentExistenceGuard,
-          CommentOwnerGuard,
+          commentOwnerGuard,
         ],
         resolver: this.commentMutationResolver.deleteComment,
       }),

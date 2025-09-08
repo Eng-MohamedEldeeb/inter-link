@@ -3,17 +3,18 @@ import { RoomMembers } from "../utils/notify/types"
 
 const roomStatus = new Map<string, RoomMembers>()
 class RoomMembersController {
-  public readonly getRoomMembers = (roomId: string) => {
-    return roomStatus.get(roomId.toString()) ?? []
+  public readonly getRoomMembers = (chatRoomId: string) => {
+    return roomStatus.get(chatRoomId.toString()) ?? []
   }
+
   public readonly joinChat = ({
     profileId,
-    roomId,
+    chatRoomId,
   }: {
     profileId: MongoId
-    roomId: string | MongoId
+    chatRoomId: string | MongoId
   }) => {
-    const room = roomId.toString()
+    const room = chatRoomId.toString()
 
     const members = this.getRoomMembers(room)
 
@@ -26,12 +27,12 @@ class RoomMembersController {
 
   public readonly leaveChat = ({
     profileId,
-    roomId,
+    chatRoomId,
   }: {
     profileId: MongoId
-    roomId: string | MongoId
+    chatRoomId: string | MongoId
   }) => {
-    const room = roomId.toString()
+    const room = chatRoomId.toString()
     const members = this.getRoomMembers(room)
 
     const filteredMembers = members.filter(member => !profileId.equals(member))

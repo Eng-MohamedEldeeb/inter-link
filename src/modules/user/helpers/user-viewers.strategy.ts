@@ -1,7 +1,6 @@
-import userRepository from '../../../common/repositories/user.repository'
-
-import { throwError } from '../../../common/handlers/error-message.handler'
-import { MongoId } from '../../../common/types/db'
+import { throwError } from "../../../common/handlers/error-message.handler"
+import { userRepository } from "../../../common/repositories"
+import { MongoId } from "../../../common/types/db"
 
 export class UserViewersStrategy {
   private static readonly userRepository = userRepository
@@ -17,23 +16,23 @@ export class UserViewersStrategy {
       filter: {
         $and: [
           { _id: userId },
-          { 'viewers.viewer': profileId },
+          { "viewers.viewer": profileId },
           { deactivatedAt: { $exists: false } },
         ],
       },
       data: {
-        $inc: { 'viewers.$.totalVisits': 1 },
+        $inc: { "viewers.$.totalVisits": 1 },
       },
 
       options: {
         new: true,
-        populate: [{ path: 'posts' }],
+        populate: [{ path: "posts" }],
         projection: {
           phone: 0,
           password: 0,
           oldPasswords: 0,
-          'avatar.public_id': 0,
-          'avatar.folderPath': 0,
+          "avatar.public_id": 0,
+          "avatar.folderPath": 0,
           blockedUsers: 0,
           savedPosts: 0,
           requests: 0,
@@ -71,13 +70,13 @@ export class UserViewersStrategy {
       },
       options: {
         new: true,
-        populate: [{ path: 'posts' }],
+        populate: [{ path: "posts" }],
         projection: {
           phone: 0,
           password: 0,
           oldPasswords: 0,
-          'avatar.public_id': 0,
-          'avatar.folderPath': 0,
+          "avatar.public_id": 0,
+          "avatar.folderPath": 0,
           blockedUsers: 0,
           savedPosts: 0,
           requests: 0,

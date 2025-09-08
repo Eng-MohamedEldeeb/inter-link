@@ -4,6 +4,8 @@ import { CommunityResponse } from "./types/community-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { CommunityArgs } from "./types/community-args"
 
+import * as validators from "../validators/community.validators"
+
 import {
   IMutationController,
   IQueryController,
@@ -14,17 +16,17 @@ import {
   communityQueryResolver,
 } from "./community.resolver"
 
-import * as validators from "../validators/community.validators"
-
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
-import communityExistenceGuard from "../../../common/guards/community/community-existence.guard"
-import communityOwnerAuthorizationGuard from "../../../common/guards/community/community-owner-authorization.guard"
-import postExistenceInCommunityGuard from "../../../common/guards/community/post-existence-in-community.guard"
-import communityConflictedNameGuard from "../../../common/guards/community/community-conflicted-name.guard"
-import inCommunityRequestsGuard from "../../../common/guards/community/in-community-requests.guard"
-import inCommunityAdminsGuard from "../../../common/guards/community/in-community-admins.guard"
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  communityExistenceGuard,
+  communityConflictedNameGuard,
+  inCommunityAdminsGuard,
+  postExistenceInCommunityGuard,
+  userExistenceGuard,
+  inCommunityRequestsGuard,
+  communityOwnerGuard,
+} from "../../../common/guards"
 
 class CommunityController {
   private readonly communityQueryResolver = communityQueryResolver
@@ -130,7 +132,7 @@ class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityOwnerAuthorizationGuard,
+          communityOwnerGuard,
         ],
         resolver: this.communityMutationResolver.changeVisibility,
       }),
@@ -149,7 +151,7 @@ class CommunityController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           communityExistenceGuard,
-          communityOwnerAuthorizationGuard,
+          communityOwnerGuard,
         ],
         resolver: this.communityMutationResolver.deleteCommunity,
       }),
@@ -189,7 +191,7 @@ class CommunityController {
           isAuthorizedGuard,
           communityExistenceGuard,
           userExistenceGuard,
-          communityOwnerAuthorizationGuard,
+          communityOwnerGuard,
         ],
         resolver: this.communityMutationResolver.addAdmin,
       }),

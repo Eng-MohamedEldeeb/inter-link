@@ -1,10 +1,10 @@
-import joi from 'joi'
+import joi from "joi"
 
-import * as DTO from '../dto/notification.dto'
+import * as DTO from "../dto/notification.dto"
 
-import { generalFields } from '../../../common/validation/general-fields'
+import { generalFields } from "../../../common/validation/general-fields"
 
-export const getAllNotificationsValidator = {
+export const getUserNotificationsValidator = {
   schema: joi
     .object<DTO.IGetNotification>()
     .keys({
@@ -15,7 +15,7 @@ export const getAllNotificationsValidator = {
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'notification id param is required',
+        "any.required": "notification id param is required",
       }),
     }
   },
@@ -23,7 +23,7 @@ export const getAllNotificationsValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'notification id arg is required',
+        "any.required": "notification id arg is required",
       }),
     }
   },
@@ -40,7 +40,7 @@ export const deleteNotificationValidator = {
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'notification id param is required',
+        "any.required": "notification id param is required",
       }),
     }
   },
@@ -48,7 +48,7 @@ export const deleteNotificationValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'notification id arg is required',
+        "any.required": "notification id arg is required",
       }),
     }
   },

@@ -8,7 +8,7 @@ import { IAddReply, IEditReply, IGetCommentReplies } from "../dto/reply.dto"
 import replyService from "../reply.service"
 
 class ReplyController {
-  protected readonly replyService = replyService
+  private readonly replyService = replyService
 
   public readonly getCommentReplies = asyncHandler(
     async (req: IRequest<IGetCommentReplies>, res: Response) => {

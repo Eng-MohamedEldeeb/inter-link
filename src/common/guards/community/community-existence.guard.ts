@@ -7,13 +7,13 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/community.repository"
+import communityRepository from "../../repositories/concrete/community.repository"
 
 class CommunityExistenceGuard extends GuardActivator {
-  protected readonly communityRepository = communityRepository
-  protected communityId!: MongoId
-  protected profileId!: MongoId
-  protected createdBy!: MongoId
+  private readonly communityRepository = communityRepository
+  private communityId!: MongoId
+  private profileId!: MongoId
+  private createdBy!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -39,7 +39,7 @@ class CommunityExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getCommunityInformation = async () => {
+  private readonly getCommunityInformation = async () => {
     const isExistedCommunity = await this.communityRepository.findOne({
       filter: { _id: this.communityId },
       populate: [

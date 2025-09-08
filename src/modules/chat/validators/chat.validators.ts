@@ -1,8 +1,8 @@
-import joi from 'joi'
+import joi from "joi"
 
-import * as DTO from '../dto/chat.dto'
+import * as DTO from "../dto/chat.dto"
 
-import { generalFields } from '../../../common/validation/general-fields'
+import { generalFields } from "../../../common/validation/general-fields"
 
 export const getSingleChatValidator = {
   schema: joi
@@ -15,7 +15,7 @@ export const getSingleChatValidator = {
   http() {
     return {
       params: this.schema.required().messages({
-        'any.required': 'userId query param is required',
+        "any.required": "userId query param is required",
       }),
     }
   },
@@ -23,10 +23,14 @@ export const getSingleChatValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'userId arg is required',
+        "any.required": "userId arg is required",
       }),
     }
   },
+}
+
+export const sendImageMessageValidator = {
+  file: generalFields.file.required(),
 }
 
 export const likeMessageValidator = {
@@ -41,19 +45,19 @@ export const likeMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
+        .object<Pick<DTO.ILikeMessage, "chatId">>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'chatId param is required',
+          "any.required": "chatId param is required",
         }),
 
       query: joi
-        .object<Pick<DTO.ILikeMessage, 'messageId'>>()
+        .object<Pick<DTO.ILikeMessage, "messageId">>()
         .keys(this.query)
         .required()
         .messages({
-          'any.required': 'messageId query param is required',
+          "any.required": "messageId query param is required",
         }),
     }
   },
@@ -65,7 +69,7 @@ export const likeMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and chatId args are required',
+          "any.required": "messageId and chatId args are required",
         }),
     }
   },
@@ -87,27 +91,27 @@ export const editMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.IEditMessage, 'chatId'>>()
+        .object<Pick<DTO.IEditMessage, "chatId">>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'chatId param and messageId query param is required',
+          "any.required": "chatId param and messageId query param is required",
         }),
 
       query: joi
-        .object<Pick<DTO.IEditMessage, 'messageId'>>()
+        .object<Pick<DTO.IEditMessage, "messageId">>()
         .keys(this.query)
         .required()
         .messages({
-          'any.required': 'chatId and messageId is required',
+          "any.required": "chatId and messageId is required",
         }),
 
       body: joi
-        .object<Pick<DTO.IEditMessage, 'newMessage'>>()
+        .object<Pick<DTO.IEditMessage, "newMessage">>()
         .keys(this.body)
         .required()
         .messages({
-          'any.required': 'newMessage is required in body',
+          "any.required": "newMessage is required in body",
         }),
     }
   },
@@ -119,7 +123,7 @@ export const editMessageValidator = {
         .keys({ ...this.query, ...this.params, ...this.body })
         .required()
         .messages({
-          'any.required': 'messageId, chatId  and newMessage args are required',
+          "any.required": "messageId, chatId  and newMessage args are required",
         }),
     }
   },
@@ -137,19 +141,19 @@ export const deleteMessageValidator = {
   http() {
     return {
       params: joi
-        .object<Pick<DTO.ILikeMessage, 'chatId'>>()
+        .object<Pick<DTO.ILikeMessage, "chatId">>()
         .keys(this.params)
         .required()
         .messages({
-          'any.required': 'chatId param and messageId query param is required',
+          "any.required": "chatId param and messageId query param is required",
         }),
 
       query: joi
-        .object<Pick<DTO.ILikeMessage, 'messageId'>>()
+        .object<Pick<DTO.ILikeMessage, "messageId">>()
         .keys(this.query)
         .required()
         .messages({
-          'any.required': 'chatId and messageId is required',
+          "any.required": "chatId and messageId is required",
         }),
     }
   },
@@ -161,7 +165,7 @@ export const deleteMessageValidator = {
         .keys({ ...this.query, ...this.params })
         .required()
         .messages({
-          'any.required': 'messageId and chatId args are required',
+          "any.required": "messageId and chatId args are required",
         }),
     }
   },
@@ -178,7 +182,7 @@ export const deleteChatValidator = {
   http() {
     return {
       query: this.schema.required().messages({
-        'any.required': 'chatId query param is required',
+        "any.required": "chatId query param is required",
       }),
     }
   },
@@ -186,7 +190,7 @@ export const deleteChatValidator = {
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'chatId arg is required',
+        "any.required": "chatId arg is required",
       }),
     }
   },

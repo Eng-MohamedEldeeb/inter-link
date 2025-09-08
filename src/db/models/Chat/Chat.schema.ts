@@ -22,7 +22,7 @@ export const ChatSchema = new Schema<IChat>(
       type: [chatMessage],
     },
 
-    // roomId: {
+    // chatRoomId: {
     //   type: String,
     //   default: function (this: IChat) {
     //     if (this.type.match(ChatType.OTO))

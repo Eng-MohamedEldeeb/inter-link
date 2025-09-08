@@ -1,17 +1,17 @@
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { IUser } from '../../../db/interfaces/IUser.interface'
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { IUser } from "../../../db/interfaces/IUser.interface"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import groupRepository from '../../repositories/group.repository'
+import groupRepository from "../../repositories/concrete/group.repository"
 
 class GroupMembersGuard extends GuardActivator {
-  protected readonly groupRepository = groupRepository
-  protected profileId!: MongoId
-  protected members!: MongoId[] | IUser[]
+  private readonly groupRepository = groupRepository
+  private profileId!: MongoId
+  private members!: MongoId[] | IUser[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -49,7 +49,7 @@ class GroupMembersGuard extends GuardActivator {
     return this.isExistedMember()
   }
 
-  protected isExistedMember = () => {
+  private isExistedMember = () => {
     return this.members.some(member => member._id.equals(this.profileId))
   }
 }

@@ -1,17 +1,17 @@
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { MongoId } from '../../types/db'
-import { ContextType } from '../../decorators/context/types'
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { MongoId } from "../../types/db"
+import { ContextType } from "../../decorators/context/types"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
-import { IUser } from '../../../db/interfaces/IUser.interface'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
+import { IUser } from "../../../db/interfaces/IUser.interface"
 
 class UserPrivacyGuard extends GuardActivator {
-  protected userId!: MongoId
-  protected profileId!: MongoId
-  protected following!: MongoId[]
-  protected followers!: MongoId[]
-  protected isPrivateProfile!: boolean
+  private userId!: MongoId
+  private profileId!: MongoId
+  private following!: MongoId[]
+  private followers!: MongoId[]
+  private isPrivateProfile!: boolean
 
   canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -85,7 +85,7 @@ class UserPrivacyGuard extends GuardActivator {
     return true
   }
 
-  protected readonly isAllowedToView = (): boolean => {
+  private readonly isAllowedToView = (): boolean => {
     if (this.following.length)
       return this.following.some((followedUser: MongoId) =>
         followedUser.equals(this.profileId),

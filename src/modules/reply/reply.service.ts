@@ -1,4 +1,3 @@
-import commentRepository from "../../common/repositories/comment.repository"
 import notifyService from "../../common/services/notify/notify.service"
 
 import * as DTO from "./dto/reply.dto"
@@ -12,11 +11,12 @@ import { throwError } from "../../common/handlers/error-message.handler"
 import { MongoId } from "../../common/types/db"
 import { IUser } from "../../db/interfaces/IUser.interface"
 import { IReply } from "../../db/interfaces/IReply.interface"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { currentMoment } from "../../common/decorators/moment/moment"
+import { commentRepository } from "../../common/repositories"
 
 class ReplyService {
-  protected readonly commentRepository = commentRepository
-  protected readonly notifyService = notifyService
+  private readonly commentRepository = commentRepository
+  private readonly notifyService = notifyService
 
   public readonly getCommentReplies = async (commentId: MongoId) => {
     const replies = await this.commentRepository.find({
@@ -48,7 +48,7 @@ class ReplyService {
       from: { _id: profileId, username, avatar },
       on: { _id: commentId, attachment },
       refTo: "Comment",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({
@@ -95,7 +95,7 @@ class ReplyService {
       on: { _id: commentId },
       from: { _id: profileId, avatar, username },
       refTo: "Comment",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({

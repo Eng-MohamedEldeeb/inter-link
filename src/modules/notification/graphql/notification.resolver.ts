@@ -1,14 +1,14 @@
+import notificationService from "../notification.service"
+
 import {
   IContext,
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
 
-import notificationService from "../notification.service"
-
 class NotificationQueryResolver {
   private readonly notificationService = notificationService
 
-  public readonly getAllNotifications = async (
+  public readonly getUserNotifications = async (
     _: any,
     context: IContext,
   ): Promise<ISuccessResponse> => {
@@ -16,7 +16,7 @@ class NotificationQueryResolver {
     return {
       msg: "done",
       status: 200,
-      data: await this.notificationService.getAllNotifications(postId),
+      data: await this.notificationService.getUserNotifications(postId),
     }
   }
 }

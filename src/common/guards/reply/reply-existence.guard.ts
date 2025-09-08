@@ -7,11 +7,11 @@ import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import commentRepository from "../../repositories/comment.repository"
+import commentRepository from "../../repositories/concrete/comment.repository"
 
 class ReplyExistenceGuard extends GuardActivator {
-  protected readonly commentRepository = commentRepository
-  protected replyId!: MongoId
+  private readonly commentRepository = commentRepository
+  private replyId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -37,7 +37,7 @@ class ReplyExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getReplyDetails = async () => {
+  private readonly getReplyDetails = async () => {
     const isExistedReply = await this.commentRepository.findOne({
       filter: { _id: this.replyId },
       projection: { savedBy: 0 },

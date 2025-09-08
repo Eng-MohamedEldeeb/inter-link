@@ -1,3 +1,13 @@
+import * as resolvers from "./reply.resolver"
+import * as validators from "../validators/reply.validators"
+
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  replyExistenceGuard,
+  replyOwnerGuard,
+} from "../../../common/guards"
+
 import {
   IMutationController,
   IQueryController,
@@ -9,17 +19,9 @@ import { CommentResponse } from "./types/reply-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { ReplyArgs } from "./types/reply-args"
 
-import * as resolvers from "./reply.resolver"
-import * as validators from "../validators/reply.validators"
-
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import replyExistenceGuard from "../../../common/guards/reply/reply-existence.guard"
-import replyOwnerGuard from "../../../common/guards/reply/reply-owner.guard"
-
 class ReplyController {
-  protected readonly replyQueryResolver = resolvers.replyQueryResolver
-  protected readonly replyMutationResolver = resolvers.replyMutationResolver
+  private readonly replyQueryResolver = resolvers.replyQueryResolver
+  private readonly replyMutationResolver = resolvers.replyMutationResolver
 
   // Queries:
   public readonly getCommentReplies = (): IQueryController => {

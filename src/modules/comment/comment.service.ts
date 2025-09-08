@@ -1,4 +1,3 @@
-import commentRepository from "../../common/repositories/comment.repository"
 import notifyService from "../../common/services/notify/notify.service"
 
 import * as DTO from "./dto/comment.dto"
@@ -11,11 +10,12 @@ import {
 import { throwError } from "../../common/handlers/error-message.handler"
 import { IUser } from "../../db/interfaces/IUser.interface"
 import { IComment } from "../../db/interfaces/IComment.interface"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { currentMoment } from "../../common/decorators/moment/moment"
+import { commentRepository } from "../../common/repositories"
 
 class CommentService {
-  protected readonly commentRepository = commentRepository
-  protected readonly notifyService = notifyService
+  private readonly commentRepository = commentRepository
+  private readonly notifyService = notifyService
 
   public readonly addComment = async ({
     content,
@@ -39,7 +39,7 @@ class CommentService {
       from: { _id: profileId, avatar, username },
       on: { _id: postId, attachments },
       refTo: "Post",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({
@@ -86,7 +86,7 @@ class CommentService {
       on: { _id: commentId, attachment },
       from: { _id: profileId, avatar, username },
       refTo: "Comment",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({

@@ -1,31 +1,68 @@
-import notificationRepository from "../../common/repositories/notification.repository"
-
 import * as DTO from "./dto/notification.dto"
 
 import { throwError } from "../../common/handlers/error-message.handler"
 import { MongoId } from "../../common/types/db"
+import { notificationRepository } from "../../common/repositories"
 
 class NotificationService {
-  protected readonly notificationRepository = notificationRepository
+  private readonly notificationRepository = notificationRepository
 
-  public readonly getAllNotifications = async (profileId: MongoId) => {
-    const notifications = await this.notificationRepository.findOne({
-      filter: { belongsTo: profileId },
-    })
+  public readonly getUserNotifications = async (profileId: MongoId) => {
+    const notifications = await this.getNotifications(profileId)
 
     if (!notifications)
       return {
         notifications: null,
-        totalMissedNotifications: 0,
+        totalNewNotifications: 0,
       }
 
     return {
       notifications: {
-        missedNotifications: notifications.missedNotifications,
+        _id: notifications._id,
+        newNotifications: notifications.newNotifications,
         seen: notifications.seen,
       },
-      totalMissedNotifications: notifications.totalMissedNotifications,
+      totalNewNotifications: notifications.totalNewNotifications,
     }
+  }
+
+  private readonly getNotifications = async (profileId: MongoId) => {
+    return await this.notificationRepository.findOne({
+      filter: { belongsTo: profileId },
+      projection: {
+        missed: 1,
+        seen: 1,
+        newMessages: 1,
+        newNotifications: 1,
+      },
+      populate: [
+        {
+          path: "newNotifications.from",
+          select: {
+            _id: 1,
+            username: 1,
+            content: 1,
+            "avatar.secure_url": 1,
+            "attachments.paths.secure_url": 1,
+            "attachment.path.secure_url": 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "newNotifications.on",
+          select: {
+            _id: 1,
+            content: 1,
+            "avatar.secure_url": 1,
+            "attachments.paths.secure_url": 1,
+            "attachment.path.secure_url": 1,
+          },
+
+          options: { lean: true },
+        },
+      ],
+      options: { lean: true },
+    })
   }
 
   public readonly deleteNotification = async ({

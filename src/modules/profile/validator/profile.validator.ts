@@ -1,9 +1,9 @@
-import joi from 'joi'
+import joi from "joi"
 
-import * as DTO from '../dto/profile.dto'
+import * as DTO from "../dto/profile.dto"
 
-import { generalFields } from '../../../common/validation/general-fields'
-import { getAllValidator } from '../../post/validators/post.validators'
+import { generalFields } from "../../../common/validation/general-fields"
+import { getAllValidator } from "../../post/validators/post.validators"
 
 export const getAllSavedPostsValidator = getAllValidator
 
@@ -20,22 +20,22 @@ export const updateProfileSchema = {
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'updateProfile body is required',
+        "any.required": "updateProfile body is required",
       }),
     }
   },
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'updateProfile args is required',
+        "any.required": "updateProfile args is required",
       }),
     }
   },
 }
 
 export const updateProfilePicSchema = {
-  schema: joi.object().keys(generalFields.file).required().messages({
-    'any.required': 'avatar file is required',
+  schema: generalFields.file.required().messages({
+    "any.required": "avatar file is required",
   }),
   http() {
     return { file: this.schema }
@@ -54,14 +54,14 @@ export const changeEmailSchema = {
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'changeEmail body is required',
+        "any.required": "changeEmail body is required",
       }),
     }
   },
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'changeEmail args is required',
+        "any.required": "changeEmail args is required",
       }),
     }
   },
@@ -78,14 +78,14 @@ export const confirmNewEmailSchema = {
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'confirmNewEmail body is required',
+        "any.required": "confirmNewEmail body is required",
       }),
     }
   },
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'confirmNewEmail args is required',
+        "any.required": "confirmNewEmail args is required",
       }),
     }
   },
@@ -96,24 +96,24 @@ export const deleteAccountSchema = {
     .object<DTO.IDeleteAccount>()
     .keys({
       email: generalFields.email.required().messages({
-        'any.required': 'email is required',
+        "any.required": "email is required",
       }),
       password: generalFields.password.required().messages({
-        'any.required': 'password is required',
+        "any.required": "password is required",
       }),
     })
     .required(),
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'deleteAccount body is required',
+        "any.required": "deleteAccount body is required",
       }),
     }
   },
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'deleteAccount args is required',
+        "any.required": "deleteAccount args is required",
       }),
     }
   },
@@ -124,24 +124,24 @@ export const confirmDeletionSchema = {
     .object<DTO.IConfirmDelete>()
     .keys({
       email: generalFields.email.required().messages({
-        'any.required': 'email is required',
+        "any.required": "email is required",
       }),
       otpCode: generalFields.otpCode.required().messages({
-        'any.required': 'otpCode is required',
+        "any.required": "otpCode is required",
       }),
     })
     .required(),
   http() {
     return {
       body: this.schema.required().messages({
-        'any.required': 'confirmDeletion body is required',
+        "any.required": "confirmDeletion body is required",
       }),
     }
   },
   graphql() {
     return {
       args: this.schema.required().messages({
-        'any.required': 'confirmDeletion args is required',
+        "any.required": "confirmDeletion args is required",
       }),
     }
   },

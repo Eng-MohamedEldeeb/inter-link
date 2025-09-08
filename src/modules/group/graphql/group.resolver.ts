@@ -1,11 +1,11 @@
+import groupService from "../group.service"
+
 import {
   IContext,
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
 
 import { IDeleteMessage, ILikeMessage } from "../dto/group.dto"
-
-import groupService from "../group.service"
 
 class GroupQueryResolver {
   private readonly groupService = groupService

@@ -1,15 +1,15 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityOwnerAuthorizationGuard from './community-owner-authorization.guard'
+import communityOwnerAuthorizationGuard from "./community-owner.guard"
 
 class InCommunityAdminsGuard extends GuardActivator {
-  protected profileId!: MongoId
-  protected admins!: MongoId[]
+  private profileId!: MongoId
+  private admins!: MongoId[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -37,7 +37,7 @@ class InCommunityAdminsGuard extends GuardActivator {
     )
   }
 
-  protected readonly isAdmin = () => {
+  private readonly isAdmin = () => {
     return this.admins.some(adminId => adminId.equals(this.profileId))
   }
 }

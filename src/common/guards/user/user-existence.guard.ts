@@ -16,14 +16,14 @@ import {
   SocketServerParams,
 } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/user.repository"
+import userRepository from "../../repositories/concrete/user.repository"
 
 class UserExistenceGuard extends GuardActivator {
-  protected readonly userRepository = userRepository
-  protected username: string | undefined
-  protected userId!: MongoId | string
-  protected adminId!: MongoId | string
-  protected user_id!: MongoId | string
+  private readonly userRepository = userRepository
+  private username: string | undefined
+  private userId!: MongoId | string
+  private adminId!: MongoId | string
+  private user_id!: MongoId | string
 
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
@@ -36,7 +36,11 @@ class UserExistenceGuard extends GuardActivator {
         IGetUserProfile & IAddAdmin & IRemoveAdmin
       >()
 
-      const { username, user_id, adminId } = { ...req.query, ...req.params }
+      const { username, user_id, adminId } = {
+        ...req.query,
+        ...req.params,
+        ...(req.chat && { user_id: req.chat.participants[0] }),
+      }
       const { _id: profileId } = req.profile
 
       this.username = username
@@ -83,7 +87,7 @@ class UserExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly checkUserExistence = async () => {
+  private readonly checkUserExistence = async () => {
     const isExistedUser = await this.userRepository.findOne({
       filter: {
         ...(this.username

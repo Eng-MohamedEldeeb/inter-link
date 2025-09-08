@@ -1,23 +1,23 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   IGetCommunity,
   IRemovePost,
-} from '../../../modules/community/dto/community.dto'
+} from "../../../modules/community/dto/community.dto"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from '../../repositories/post.repository'
-import { MongoId } from '../../types/db'
+import postRepository from "../../repositories/concrete/post.repository"
+import { MongoId } from "../../types/db"
 
 class PostExistenceInCommunityGuard extends GuardActivator {
-  protected readonly postRepository = postRepository
-  protected communityName!: string
-  protected communityId!: MongoId
-  protected postId!: MongoId
+  private readonly postRepository = postRepository
+  private communityName!: string
+  private communityId!: MongoId
+  private postId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -51,7 +51,7 @@ class PostExistenceInCommunityGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getPostFromCommunity = async () => {
+  private readonly getPostFromCommunity = async () => {
     const isExistedInCommunity = await this.postRepository.findOne({
       filter: {
         $and: [

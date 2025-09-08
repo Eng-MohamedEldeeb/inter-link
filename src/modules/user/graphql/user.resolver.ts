@@ -6,7 +6,7 @@ import {
 } from "../../../common/interface/IGraphQL.interface"
 
 class UserQueryResolver {
-  protected readonly userService = userService
+  private readonly userService = userService
 
   public readonly getUserProfile = (
     _: any,
@@ -47,7 +47,7 @@ class UserQueryResolver {
 }
 
 class UserMutationResolver {
-  protected readonly userService = userService
+  private readonly userService = userService
 
   public readonly blockUser = async (
     _: any,

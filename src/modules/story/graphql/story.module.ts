@@ -1,5 +1,5 @@
-import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 import storyController from "./story.controller"
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 
 export const queryModule = (() => {
   return {

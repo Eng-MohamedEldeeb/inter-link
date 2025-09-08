@@ -1,10 +1,10 @@
-import { Schema, SchemaTypes } from 'mongoose'
+import { Schema, SchemaTypes } from "mongoose"
 
-import { ICommunity } from '../../interfaces/ICommunity.interface'
-import { CloudUploader } from '../../../common/services/upload/cloud.service'
+import { ICommunity } from "../../interfaces/ICommunity.interface"
+import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import postRepository from '../../../common/repositories/post.repository'
-import slugify from 'slugify'
+import postRepository from "../../../common/repositories/concrete/post.repository"
+import slugify from "slugify"
 
 export const communitySchema = new Schema<ICommunity>(
   {
@@ -15,7 +15,7 @@ export const communitySchema = new Schema<ICommunity>(
         secure_url: {
           type: String,
           default:
-            'https://res.cloudinary.com/djjqzi02l/image/upload/v1750848008/blank-profile-picture_d3zmwj.png',
+            "https://res.cloudinary.com/djjqzi02l/image/upload/v1750848008/blank-profile-picture_d3zmwj.png",
         },
         public_id: String,
       },
@@ -29,7 +29,7 @@ export const communitySchema = new Schema<ICommunity>(
       ],
       maxlength: [50, "Community's name can't be more than 50 characters"],
       required: [true, "Community's name is required"],
-      unique: [true, 'Community name must be unique'],
+      unique: [true, "Community name must be unique"],
     },
 
     description: {
@@ -48,18 +48,18 @@ export const communitySchema = new Schema<ICommunity>(
       },
     },
 
-    admins: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    admins: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    members: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    members: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    requests: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    requests: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
     isPrivateCommunity: { type: Boolean, default: false },
 
     createdBy: {
       type: SchemaTypes.ObjectId,
-      ref: 'User',
-      required: [true, 'createdBy is required'],
+      ref: "User",
+      required: [true, "createdBy is required"],
     },
   },
   {
@@ -69,18 +69,18 @@ export const communitySchema = new Schema<ICommunity>(
   },
 )
 
-communitySchema.virtual('posts', {
-  ref: 'Post',
-  localField: '_id',
-  foreignField: 'onCommunity',
+communitySchema.virtual("posts", {
+  ref: "Post",
+  localField: "_id",
+  foreignField: "onCommunity",
 })
 
-communitySchema.virtual('totalMembers').get(function (this: ICommunity) {
+communitySchema.virtual("totalMembers").get(function (this: ICommunity) {
   if (this.members) return this.members.length
   return 0
 })
 
-communitySchema.post('findOneAndDelete', async function (res: ICommunity) {
+communitySchema.post("findOneAndDelete", async function (res: ICommunity) {
   const { _id, cover } = res
 
   await postRepository.deleteMany({ onCommunity: _id })

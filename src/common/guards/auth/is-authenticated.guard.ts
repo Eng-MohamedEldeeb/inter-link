@@ -16,7 +16,7 @@ import {
 } from "../../decorators/context/types"
 
 class IsAuthenticatedGuard implements GuardActivator {
-  protected contextArg!: IRequest | IContext | ISocket
+  private contextArg!: IRequest | IContext | ISocket
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
   ) {
@@ -40,7 +40,7 @@ class IsAuthenticatedGuard implements GuardActivator {
     return true
   }
 
-  protected readonly httpAuthentication = (req: IRequest) => {
+  private readonly httpAuthentication = (req: IRequest) => {
     const { authorization } = req.headers
 
     if (!authorization)
@@ -57,7 +57,7 @@ class IsAuthenticatedGuard implements GuardActivator {
     req.tokenPayload = verifyToken(token)
   }
 
-  protected readonly graphQLAuthentication = (context: IContext) => {
+  private readonly graphQLAuthentication = (context: IContext) => {
     const { authorization } = context
 
     if (!authorization) return throwError({ msg: "Token is required" })
@@ -70,7 +70,7 @@ class IsAuthenticatedGuard implements GuardActivator {
     context.tokenPayload = verifyToken(token)
   }
 
-  protected readonly socketAuthentication = (socket: ISocket) => {
+  private readonly socketAuthentication = (socket: ISocket) => {
     const { authorization } = socket.handshake.headers
 
     if (!authorization) return throwError({ msg: "Token is required" })

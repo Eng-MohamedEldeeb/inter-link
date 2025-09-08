@@ -1,6 +1,8 @@
-import otpRepository from "../../common/repositories/otp.repository"
-import userRepository from "../../common/repositories/user.repository"
-import postRepository from "../../common/repositories/post.repository"
+import {
+  otpRepository,
+  postRepository,
+  userRepository,
+} from "../../common/repositories"
 
 import * as DTO from "./dto/profile.dto"
 
@@ -15,10 +17,10 @@ import { CloudUploader } from "../../common/services/upload/cloud.service"
 import { ICloud } from "../../common/services/upload/interface/cloud-response.interface"
 
 class ProfileService {
-  protected readonly userRepository = userRepository
-  protected readonly postRepository = postRepository
-  protected readonly otpRepository = otpRepository
-  protected readonly CloudUploader = CloudUploader
+  private readonly userRepository = userRepository
+  private readonly postRepository = postRepository
+  private readonly otpRepository = otpRepository
+  private readonly CloudUploader = CloudUploader
 
   public readonly getProfile = (profile: IUser) => {
     if (profile.phone)

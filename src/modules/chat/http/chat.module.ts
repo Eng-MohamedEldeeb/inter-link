@@ -1,13 +1,19 @@
 import { Router } from "express"
-import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
-import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import chatController from "./chat.controller"
 
 import * as validators from "../validators/chat.validators"
 
-import chatController from "./chat.controller"
-import chatExistenceGuard from "../../../common/guards/chat/chat-existence.guard"
-import chatOwnerGuard from "../../../common/guards/chat/chat-owner.guard"
-import messageExistenceGuard from "../../../common/guards/chat/message-existence.guard"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { chatImageUploader } from "../../../common/middlewares/upload/chat-image-upload.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+
+import {
+  chatExistenceGuard,
+  chatOwnerGuard,
+  userExistenceGuard,
+  messageExistenceGuard,
+} from "../../../common/guards"
 
 const router: Router = Router()
 
@@ -21,21 +27,30 @@ router.get(
 )
 
 router.post(
-  "/:chatId/like",
+  "/:chatId/send-image",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
+  applyGuards(chatExistenceGuard, chatOwnerGuard, userExistenceGuard),
+  chatImageUploader,
+  validate(validators.sendImageMessageValidator),
+  chatController.sendImage,
+)
+
+router.post(
+  "/:chatId/like-message",
   applyGuards(chatExistenceGuard, chatOwnerGuard, messageExistenceGuard),
   validate(validators.likeMessageValidator.http()),
   chatController.likeMessage,
 )
 
 router.patch(
-  "/:chatId/edit",
+  "/:chatId/edit-message",
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.editMessageValidator.http()),
   chatController.editMessage,
 )
 
 router.delete(
-  "/:chatId/delete",
+  "/:chatId/delete-message",
   applyGuards(chatExistenceGuard, chatOwnerGuard),
   validate(validators.deleteMessageValidator.http()),
   chatController.deleteMessage,

@@ -1,7 +1,6 @@
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 import { MongoId } from "../../types/db"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
-import { throwError } from "../../handlers/error-message.handler"
 
 import {
   ContextType,
@@ -12,9 +11,9 @@ import {
 import { IGetSingleChat } from "../../../modules/chat/dto/chat.dto"
 
 class ChatOwnerGuard extends GuardActivator {
-  protected chatStartedById!: MongoId
-  protected participant!: MongoId
-  protected profileId!: MongoId
+  private chatStartedById!: MongoId
+  private participants!: MongoId[]
+  private profileId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -26,22 +25,21 @@ class ChatOwnerGuard extends GuardActivator {
       const { _id: profileId } = req.profile
 
       this.chatStartedById = startedBy
-      this.participant = participants[0]
+      this.participants = participants
       this.profileId = profileId
     }
 
     return this.isChatOwner()
   }
 
-  protected readonly isChatOwner = async () => {
-    const isTheOwner = this.chatStartedById._id.equals(
-      this.profileId.toString(),
-    )
-    const isTheParticipant = this.participant._id.equals(
-      this.profileId.toString(),
+  private readonly isChatOwner = async () => {
+    const isTheOwner = this.chatStartedById._id.equals(this.profileId)
+
+    const isInParticipants = this.participants.some(userId =>
+      userId.equals(this.profileId),
     )
 
-    return !isTheOwner && !isTheParticipant ? false : true
+    return !isTheOwner && !isInParticipants ? false : true
   }
 }
 

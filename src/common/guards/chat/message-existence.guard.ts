@@ -1,20 +1,20 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { MongoId } from '../../types/db'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { MongoId } from "../../types/db"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { throwError } from "../../handlers/error-message.handler"
 
 import {
   ContextType,
   GraphQLParams,
   HttpParams,
-} from '../../decorators/context/types'
+} from "../../decorators/context/types"
 
-import { ILikeMessage } from '../../../modules/chat/dto/chat.dto'
-import { IMessageDetails } from '../../../db/interfaces/IChat.interface'
+import { ILikeMessage } from "../../../modules/chat/dto/chat.dto"
+import { IMessageDetails } from "../../../db/interfaces/IChat.interface"
 
 class MessageExistence extends GuardActivator {
-  protected messageId!: MongoId
-  protected messages!: Required<IMessageDetails>[]
+  private messageId!: MongoId
+  private messages!: Required<IMessageDetails>[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -29,7 +29,7 @@ class MessageExistence extends GuardActivator {
     return this.isExistedMessage()
   }
 
-  protected readonly isExistedMessage = async () => {
+  private readonly isExistedMessage = async () => {
     const isExisted = this.messages.some((message: Required<IMessageDetails>) =>
       message._id.equals(this.messageId),
     )

@@ -1,6 +1,6 @@
-import postRepository from "../../common/repositories/post.repository"
-import userRepository from "../../common/repositories/user.repository"
 import notifyService from "../../common/services/notify/notify.service"
+
+import { postRepository, userRepository } from "../../common/repositories"
 
 import * as DTO from "./dto/post.dto"
 
@@ -10,12 +10,12 @@ import { throwError } from "../../common/handlers/error-message.handler"
 import { IUser } from "../../db/interfaces/IUser.interface"
 import { IPost } from "../../db/interfaces/IPost.interface"
 import { ILikedPostNotification } from "../../db/interfaces/INotification.interface"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { currentMoment } from "../../common/decorators/moment/moment"
 
 class PostService {
-  protected readonly postRepository = postRepository
-  protected readonly userRepository = userRepository
-  protected readonly notifyService = notifyService
+  private readonly postRepository = postRepository
+  private readonly userRepository = userRepository
+  private readonly notifyService = notifyService
 
   public readonly getAll = async (query: DTO.IGetAll) => {
     const { page, limit } = query
@@ -208,7 +208,7 @@ class PostService {
       on: { _id: postId, attachments },
       from: { _id: profileId, avatar, username },
       refTo: "Post",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({

@@ -4,9 +4,9 @@ import { ISendMessage } from "../dto/group.dto"
 import { throwError } from "../../../common/handlers/error-message.handler"
 import { MongoId } from "../../../common/types/db"
 import { UserDetails } from "../../../db/interfaces/INotification.interface"
-import { getNowMoment } from "../../../common/decorators/moment/moment"
+import { currentMoment } from "../../../common/decorators/moment/moment"
 
-import groupRepository from "../../../common/repositories/group.repository"
+import groupRepository from "../../../common/repositories/concrete/group.repository"
 import notifyService from "../../../common/services/notify/notify.service"
 import roomMembersController from "../../../common/controllers/room-members.controller"
 
@@ -52,14 +52,14 @@ export class GroupInteractions {
 
       const members = socket.group.members.map(member => member._id)
 
-      roomMembersController.joinChat({ profileId, roomId: groupId })
+      roomMembersController.joinChat({ profileId, chatRoomId: groupId })
 
       socket.join(groupId.toString())
 
       socket.on("send-message", async ({ message }: { message: string }) => {
         const data: ISendMessage = {
           message,
-          sentAt: getNowMoment(),
+          sentAt: currentMoment(),
           from: socket.profile,
         }
 
@@ -92,7 +92,7 @@ export class GroupInteractions {
       })
 
       socket.on("disconnect", () =>
-        roomMembersController.leaveChat({ profileId, roomId: groupId }),
+        roomMembersController.leaveChat({ profileId, chatRoomId: groupId }),
       )
     }
   }

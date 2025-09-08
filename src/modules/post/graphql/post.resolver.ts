@@ -1,11 +1,10 @@
+import postService from "../post.service"
+import * as DTO from "../dto/post.dto"
+
 import {
   IContext,
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
-
-import * as DTO from "../dto/post.dto"
-
-import postService from "../post.service"
 
 class PostQueryResolver {
   private readonly postService = postService

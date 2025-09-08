@@ -7,13 +7,13 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import notificationRepository from "../../repositories/notification.repository"
+import notificationRepository from "../../repositories/concrete/notification.repository"
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 
 class NotificationExistenceGuard extends GuardActivator {
-  protected readonly notificationRepository = notificationRepository
-  protected profileId!: MongoId
-  protected notificationId!: MongoId
+  private readonly notificationRepository = notificationRepository
+  private profileId!: MongoId
+  private notificationId!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -43,13 +43,13 @@ class NotificationExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getNotificationDetails =
+  private readonly getNotificationDetails =
     async (): Promise<INotificationInputs> => {
       const userNotification = await this.notificationRepository.findOne({
         filter: { belongsTo: this.profileId },
         populate: [
           {
-            path: "missedNotifications.from",
+            path: "newNotifications.from",
             select: {
               _id: 1,
               username: 1,
@@ -62,7 +62,7 @@ class NotificationExistenceGuard extends GuardActivator {
             options: { lean: true },
           },
           {
-            path: "missedNotifications.on",
+            path: "newNotifications.on",
             select: {
               _id: 1,
               username: 1,
@@ -112,11 +112,11 @@ class NotificationExistenceGuard extends GuardActivator {
           status: 404,
         })
 
-      const { missedNotifications, seen } = userNotification
+      const { newNotifications, seen } = userNotification
 
       const inMissed =
-        missedNotifications.length &&
-        missedNotifications.find(this.targetedNotification)!
+        newNotifications.length &&
+        newNotifications.find(this.targetedNotification)!
 
       if (inMissed) return inMissed
 
@@ -130,7 +130,7 @@ class NotificationExistenceGuard extends GuardActivator {
       })
     }
 
-  protected readonly targetedNotification = (
+  private readonly targetedNotification = (
     notification: INotificationInputs,
     i: number,
     obj: INotificationInputs[],

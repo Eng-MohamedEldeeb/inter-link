@@ -7,13 +7,13 @@ import { TGroup } from "../../../db/documents"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import groupRepository from "../../repositories/group.repository"
+import groupRepository from "../../repositories/concrete/group.repository"
 import { IGetSingleGroup } from "../../../modules/group/dto/group.dto"
 
 class GroupExistenceGuard extends GuardActivator {
-  protected readonly groupRepository = groupRepository
-  protected profileId!: MongoId
-  protected groupId!: string | MongoId
+  private readonly groupRepository = groupRepository
+  private profileId!: MongoId
+  private groupId!: string | MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -60,7 +60,7 @@ class GroupExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getGroupDetails = async (): Promise<TGroup> => {
+  private readonly getGroupDetails = async (): Promise<TGroup> => {
     const groupDetails = await this.groupRepository.findOne({
       filter: { _id: this.groupId },
       populate: [

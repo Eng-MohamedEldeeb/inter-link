@@ -1,13 +1,17 @@
 import { Router } from "express"
-import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
-import { validate } from "../../../common/middlewares/validation/validation.middleware"
+
+import replyController from "./reply.controller"
 
 import * as validators from "../validators/reply.validators"
 
-import replyController from "./reply.controller"
-import commentExistenceGuard from "../../../common/guards/comment/comment-existence.guard"
-import replyExistenceGuard from "../../../common/guards/reply/reply-existence.guard"
-import replyOwnerGuard from "../../../common/guards/reply/reply-owner.guard"
+import {
+  commentExistenceGuard,
+  replyExistenceGuard,
+  replyOwnerGuard,
+} from "../../../common/guards"
+
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
 const router: Router = Router({ mergeParams: true })
 

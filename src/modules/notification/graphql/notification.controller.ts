@@ -1,8 +1,3 @@
-import {
-  IMutationController,
-  IQueryController,
-} from "../../../common/interface/IGraphQL.interface"
-
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { NotificationResponse } from "./types/notification-response"
@@ -12,31 +7,38 @@ import * as resolvers from "./notification.resolver"
 import * as args from "./types/notification-args"
 import * as validators from "../validators/notification.validators"
 
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import NotificationExistenceGuardGuard from "../../../common/guards/notification/notification-owner.guard"
-import NotificationOwnerGuardGuard from "../../../common/guards/notification/notification-owner.guard"
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  notificationExistenceGuard,
+  notificationOwnerGuard,
+} from "../../../common/guards"
+
+import {
+  IMutationController,
+  IQueryController,
+} from "../../../common/interface/IGraphQL.interface"
 
 class NotificationController {
-  protected readonly notificationQueryResolver =
+  private readonly notificationQueryResolver =
     resolvers.notificationQueryResolver
-  protected readonly notificationMutationResolver =
+  private readonly notificationMutationResolver =
     resolvers.notificationMutationResolver
 
   // Queries:
-  public readonly getAllNotifications = (): IQueryController => {
+  public readonly getUserNotifications = (): IQueryController => {
     return {
       type: graphResponseType({
-        name: "getAllNotifications",
-        data: NotificationResponse.getAllNotifications(),
+        name: "getUserNotifications",
+        data: NotificationResponse.getUserNotifications(),
       }),
       resolve: applyResolver({
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          NotificationExistenceGuardGuard,
+          notificationExistenceGuard,
         ],
-        resolver: this.notificationQueryResolver.getAllNotifications,
+        resolver: this.notificationQueryResolver.getUserNotifications,
       }),
     }
   }
@@ -55,8 +57,8 @@ class NotificationController {
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
-          NotificationExistenceGuardGuard,
-          NotificationOwnerGuardGuard,
+          notificationExistenceGuard,
+          notificationOwnerGuard,
         ],
         resolver: this.notificationMutationResolver.deleteNotification,
       }),

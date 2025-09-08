@@ -11,12 +11,12 @@ import {
   IGetSingleComment,
 } from "../../../modules/comment/dto/comment.dto"
 
-import commentRepository from "../../repositories/comment.repository"
+import commentRepository from "../../repositories/concrete/comment.repository"
 
 class CommentExistenceGuard extends GuardActivator {
-  protected readonly commentRepository = commentRepository
-  protected id: MongoId | undefined = undefined
-  protected commentId: MongoId | undefined = undefined
+  private readonly commentRepository = commentRepository
+  private id: MongoId | undefined = undefined
+  private commentId: MongoId | undefined = undefined
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -47,7 +47,7 @@ class CommentExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getCommentDetails = async () => {
+  private readonly getCommentDetails = async () => {
     const isExistedComment = await this.commentRepository.findOne({
       filter: { $or: [{ _id: this.id }, { _id: this.commentId }] },
       populate: [{ path: "replies" }],

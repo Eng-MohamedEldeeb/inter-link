@@ -1,10 +1,11 @@
+import commentService from "../comment.service"
+
 import {
   IContext,
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
 
 import { IEditComment } from "../dto/comment.dto"
-import commentService from "../comment.service"
 
 class CommentQueryResolver {
   public readonly getSingleComment = async (

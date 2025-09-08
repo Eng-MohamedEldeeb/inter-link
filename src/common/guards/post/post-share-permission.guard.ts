@@ -7,12 +7,12 @@ import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/user.repository"
+import userRepository from "../../repositories/concrete/user.repository"
 
 class PostSharePermissionGuard extends GuardActivator {
-  protected readonly userRepository = userRepository
-  protected profileId!: MongoId
-  protected createdBy!: MongoId
+  private readonly userRepository = userRepository
+  private profileId!: MongoId
+  private createdBy!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -34,7 +34,7 @@ class PostSharePermissionGuard extends GuardActivator {
     return await this.allowedToShare()
   }
 
-  protected readonly allowedToShare = async () => {
+  private readonly allowedToShare = async () => {
     const ownerProfile = await this.userRepository.findOne({
       filter: {
         $and: [{ _id: this.createdBy }, { deactivatedAt: { $exists: false } }],

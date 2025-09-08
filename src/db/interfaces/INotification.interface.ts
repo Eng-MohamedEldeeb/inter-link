@@ -1,4 +1,4 @@
-import { ReftTo } from "../../common/utils/notify/types"
+import { RefTo } from "../../common/utils/notify/types"
 import { MongoId } from "../../common/types/db"
 import { IUser } from "./IUser.interface"
 import { IPost } from "./IPost.interface"
@@ -21,8 +21,9 @@ export interface INotificationInputs {
   _id?: MongoId
   message: string
   messageId?: MongoId
+  attachment?: string
   from: MongoId | UserDetails | CommunityDetails
-  refTo: ReftTo
+  refTo: RefTo
   on?:
     | MongoId
     | PostDetails
@@ -72,15 +73,21 @@ export interface IJoinedCommunityNotification extends INotificationInputs {
 
 export type MessageDetails = Pick<
   INotificationInputs,
-  "message" | "sentAt" | "from" | "updatedAt" | "messageId" | "refTo"
+  | "message"
+  | "sentAt"
+  | "from"
+  | "updatedAt"
+  | "messageId"
+  | "refTo"
+  | "attachment"
 >
 
 export interface IMissedMessages extends MessageDetails, Partial<IMongoDoc> {}
 
 export interface INotifications extends IMongoDoc {
-  missedNotifications: INotificationInputs[]
-  missedMessages: IMissedMessages[]
+  newNotifications: INotificationInputs[]
+  totalNewNotifications: number
   seen: INotificationInputs[]
+  newMessages: IMissedMessages[]
   belongsTo: MongoId
-  totalMissedNotifications: number
 }

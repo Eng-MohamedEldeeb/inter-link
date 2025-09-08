@@ -1,13 +1,13 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
 class CommunityOwnerGuard extends GuardActivator {
-  protected profileId!: MongoId
-  protected createdBy!: MongoId
+  private profileId!: MongoId
+  private createdBy!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -29,7 +29,7 @@ class CommunityOwnerGuard extends GuardActivator {
     return this.isTheOwner()
   }
 
-  protected readonly isTheOwner = async () => {
+  private readonly isTheOwner = async () => {
     return this.createdBy.equals(this.profileId)
   }
 }

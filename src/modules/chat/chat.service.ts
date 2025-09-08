@@ -1,30 +1,35 @@
-import { MongoId } from "../../common/types/db"
-import { IMessageDetails } from "../../db/interfaces/IChat.interface"
-import { TChat } from "../../db/documents"
-import { throwError } from "../../common/handlers/error-message.handler"
+import * as DTO from "./dto/chat.dto"
+
+import notifyService from "../../common/services/notify/notify.service"
+
+import {
+  chatRepository,
+  notificationRepository,
+} from "../../common/repositories"
 
 import {
   INotifications,
   UserDetails,
 } from "../../db/interfaces/INotification.interface"
 
-import * as DTO from "./dto/chat.dto"
-
-import chatRepository from "../../common/repositories/chat.repository"
-import notifyService from "../../common/services/notify/notify.service"
-import notificationRepository from "../../common/repositories/notification.repository"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { MongoId } from "../../common/types/db"
+import { IMessageDetails } from "../../db/interfaces/IChat.interface"
+import { TChat } from "../../db/documents"
+import { throwError } from "../../common/handlers/error-message.handler"
+import { currentMoment } from "../../common/decorators/moment/moment"
+import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
+import { IUser } from "../../db/interfaces/IUser.interface"
 
 class ChatService {
-  protected readonly chatRepository = chatRepository
-  protected readonly notificationRepository = notificationRepository
-  protected readonly notifyService = notifyService
+  private readonly chatRepository = chatRepository
+  private readonly notificationRepository = notificationRepository
+  private readonly notifyService = notifyService
 
-  protected roomId!: MongoId
-  protected userId!: MongoId
-  protected profileId!: MongoId
+  private chatRoomId!: MongoId
+  private userId!: MongoId
+  private profileId!: MongoId
 
-  protected userSocketId!: string
+  private userSocketId!: string
 
   public set setUserId(userId: MongoId) {
     this.userId = userId
@@ -33,12 +38,12 @@ class ChatService {
     this.profileId = profileId
   }
 
-  public set setRoomId(roomId: MongoId) {
-    this.roomId = roomId
+  public set setCurrentChatRoomId(chatRoomId: MongoId) {
+    this.chatRoomId = chatRoomId
   }
 
-  public get getCurrentRoomId(): MongoId {
-    return this.roomId
+  public get getCurrentChatRoomId(): MongoId {
+    return this.chatRoomId
   }
 
   public readonly getAllChats = async (profileId: MongoId) => {
@@ -84,7 +89,7 @@ class ChatService {
     return chat
   }
 
-  protected readonly emptyMissedMessages = async (chat: TChat) => {
+  private readonly emptyMissedMessages = async (chat: TChat) => {
     for (let i = chat.newMessages.length - 1; i >= 0; i--) {
       chat.messages.unshift(chat.newMessages[i])
     }
@@ -92,6 +97,26 @@ class ChatService {
     chat.newMessages = []
 
     return await chat.save()
+  }
+  public readonly sendImage = async ({
+    image,
+    profile,
+    user,
+  }: {
+    image: ICloudFile
+    profile: UserDetails
+    user: IUser
+  }) => {
+    this.notifyService.sendNotification({
+      userId: user._id,
+      notificationDetails: {
+        from: profile,
+        message: `${profile.username} Sent a Picture 📷`,
+        attachment: image.path.secure_url,
+        refTo: "Chat",
+        sentAt: currentMoment(),
+      },
+    })
   }
 
   public readonly likeMessage = async ({
@@ -139,12 +164,12 @@ class ChatService {
         message: `${profile.username} Liked Your Message 🧡`,
         messageId,
         refTo: "Chat",
-        sentAt: getNowMoment(),
+        sentAt: currentMoment(),
       },
     })
   }
 
-  protected readonly findMessage = ({
+  private readonly findMessage = ({
     chat,
     messageId,
   }: {
@@ -168,7 +193,7 @@ class ChatService {
     return { inMessages, inUnread }
   }
 
-  protected readonly checkLikes = ({
+  private readonly checkLikes = ({
     message,
     profile,
   }: {
@@ -243,7 +268,7 @@ class ChatService {
     return await Promise.all([chat.save(), relatedNotification.save()])
   }
 
-  protected readonly findUserMessageInChat = async ({
+  private readonly findUserMessageInChat = async ({
     chatId,
     messageId,
     profileId,
@@ -288,7 +313,7 @@ class ChatService {
     return chat!
   }
 
-  protected readonly findRelatedNotification = async ({
+  private readonly findRelatedNotification = async ({
     belongsTo,
     messageFrom,
     searchedMessage,
@@ -301,16 +326,16 @@ class ChatService {
       filter: {
         $and: [
           {
-            $and: [{ belongsTo }, { "missedMessages.from": messageFrom }],
+            $and: [{ belongsTo }, { "newMessages.from": messageFrom }],
           },
           {
             $and: [
               {
-                "missedMessages.messages.message": {
+                "newMessages.messages.message": {
                   $regex: searchedMessage,
                 },
               },
-              { "missedMessages.messages.deletedAt": { $exists: false } },
+              { "newMessages.messages.deletedAt": { $exists: false } },
             ],
           },
         ],
@@ -318,14 +343,14 @@ class ChatService {
     })
   }
 
-  protected readonly hasRelatedNotification = ({
+  private readonly hasRelatedNotification = ({
     relatedNotification,
     messageId,
   }: {
     relatedNotification: INotifications
     messageId: MongoId
   }) => {
-    return relatedNotification.missedMessages.find(message =>
+    return relatedNotification.newMessages.find(message =>
       message._id?.equals(messageId),
     )
   }

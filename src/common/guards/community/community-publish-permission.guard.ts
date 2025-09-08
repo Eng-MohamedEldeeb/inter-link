@@ -1,22 +1,22 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
-import { IGetSinglePost } from '../../../modules/post/dto/post.dto'
-import { throwError } from '../../handlers/error-message.handler'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
+import { IGetSinglePost } from "../../../modules/post/dto/post.dto"
+import { throwError } from "../../handlers/error-message.handler"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import inCommunityAdminsGuard from './in-community-admins.guard'
-import inCommunityMembersGuard from './in-community-members.guard'
+import inCommunityAdminsGuard from "./in-community-admins.guard"
+import inCommunityMembersGuard from "./in-community-members.guard"
 
 class CommunityPublishPermissionGuard extends GuardActivator {
-  protected createdBy!: MongoId
-  protected profileId!: MongoId
-  protected members!: MongoId[]
-  protected admins!: MongoId[]
-  protected isPrivateCommunity!: boolean
-  protected params!: HttpParams | GraphQLParams
+  private createdBy!: MongoId
+  private profileId!: MongoId
+  private members!: MongoId[]
+  private admins!: MongoId[]
+  private isPrivateCommunity!: boolean
+  private params!: HttpParams | GraphQLParams
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -52,7 +52,7 @@ class CommunityPublishPermissionGuard extends GuardActivator {
     return this.publishPermission()
   }
 
-  protected readonly publishPermission = async () => {
+  private readonly publishPermission = async () => {
     if (this.profileId.equals(this.createdBy)) return true
 
     if (
@@ -60,7 +60,7 @@ class CommunityPublishPermissionGuard extends GuardActivator {
       !inCommunityMembersGuard.canActivate(...this.params)
     )
       return throwError({
-        msg: 'only members are allowed to share posts in the community',
+        msg: "only members are allowed to share posts in the community",
         status: 403,
       })
 

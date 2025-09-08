@@ -4,7 +4,7 @@ import authService from "../auth.service"
 import * as DTO from "../dto/auth.dto"
 
 class AuthResolver {
-  protected readonly authService = authService
+  private readonly authService = authService
 
   public readonly confirmEmail = async (
     args: DTO.IConfirmEmail,

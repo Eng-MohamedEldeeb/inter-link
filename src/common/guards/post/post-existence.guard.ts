@@ -7,13 +7,13 @@ import { IGetSinglePost, IPostId } from "../../../modules/post/dto/post.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from "../../repositories/post.repository"
+import postRepository from "../../repositories/concrete/post.repository"
 import { MongoId } from "../../types/db"
 
 class PostExistenceGuard extends GuardActivator {
-  protected readonly postRepository = postRepository
-  protected postId!: MongoId
-  protected id!: MongoId
+  private readonly postRepository = postRepository
+  private postId!: MongoId
+  private id!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -44,7 +44,7 @@ class PostExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getPost = async () => {
+  private readonly getPost = async () => {
     const isExistedPost = await this.postRepository.findOne({
       filter: {
         $and: [

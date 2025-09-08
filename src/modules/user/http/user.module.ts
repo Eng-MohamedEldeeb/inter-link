@@ -1,76 +1,80 @@
 import { Router } from "express"
-import { validate } from "../../../common/middlewares/validation/validation.middleware"
-import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+
+import userController from "./user.controller"
 
 import * as validators from "../validator/user.validator"
 
-import userController from "./user.controller"
-import UserExistenceGuard from "../../../common/guards/user/user-existence.guard"
-import isBlockedUserGuard from "../../../common/guards/user/is-blocked-user.guard"
-import userPrivacyGuard from "../../../common/guards/user/user-privacy.guard"
+import {
+  isBlockedUserGuard,
+  userExistenceGuard,
+  userPrivacyGuard,
+} from "../../../common/guards"
+
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
 
 const router: Router = Router()
 
 router.get(
   "/",
   validate(validators.getUserProfileSchema.http()),
-  applyGuards(UserExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
+  applyGuards(userExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
   userController.getUserProfile,
 )
 
 router.get(
   "/following",
   validate(validators.getUserProfileSchema.http()),
-  applyGuards(UserExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
+  applyGuards(userExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
   userController.getUserFollowing,
 )
 
 router.get(
   "/followers",
   validate(validators.getUserProfileSchema.http()),
-  applyGuards(UserExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
+  applyGuards(userExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
   userController.getUserFollowers,
 )
 
 router.post(
   "/block",
   validate(validators.blockUserSchema.http()),
-  applyGuards(UserExistenceGuard, isBlockedUserGuard),
+  applyGuards(userExistenceGuard, isBlockedUserGuard),
   userController.block,
 )
 
 router.patch(
   "/un-block",
   validate(validators.blockUserSchema.http()),
-  applyGuards(UserExistenceGuard),
+  applyGuards(userExistenceGuard),
   userController.unblock,
 )
 
 router.post(
   "/follow",
   validate(validators.followUserSchema.http()),
-  applyGuards(UserExistenceGuard),
+  applyGuards(userExistenceGuard),
   userController.follow,
 )
 
 router.delete(
   "/un-follow",
   validate(validators.unfollowUserSchema.http()),
-  applyGuards(UserExistenceGuard),
+  applyGuards(userExistenceGuard),
   userController.unfollow,
 )
 
 router.post(
   "/follow/accept-request",
   validate(validators.acceptFollowRequestSchema.http()),
-  applyGuards(UserExistenceGuard),
+  applyGuards(userExistenceGuard),
   userController.acceptFollowRequest,
 )
 
 router.delete(
   "/follow/reject-request",
   validate(validators.rejectFollowRequestSchema.http()),
-  applyGuards(UserExistenceGuard),
+  applyGuards(userExistenceGuard),
   userController.rejectFollowRequest,
 )
 

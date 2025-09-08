@@ -1,8 +1,3 @@
-import {
-  IMutationController,
-  IQueryController,
-} from "../../../common/interface/IGraphQL.interface"
-
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
 import { GroupResponse } from "./types/group-response"
@@ -12,14 +7,21 @@ import { GroupArgs } from "./types/group-args"
 import * as resolvers from "./group.resolver"
 import * as validators from "../validators/group.validators"
 
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import groupExistenceGuard from "../../../common/guards/group/group-existence.guard"
-import groupMembersGuard from "../../../common/guards/group/group-members.guard"
+import {
+  IMutationController,
+  IQueryController,
+} from "../../../common/interface/IGraphQL.interface"
+
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  groupExistenceGuard,
+  groupMembersGuard,
+} from "../../../common/guards"
 
 class GroupController {
-  protected readonly groupQueryResolver = resolvers.groupQueryResolver
-  protected readonly groupMutationResolver = resolvers.groupMutationResolver
+  private readonly groupQueryResolver = resolvers.groupQueryResolver
+  private readonly groupMutationResolver = resolvers.groupMutationResolver
 
   // Queries:
   public readonly getAllGroups = (): IQueryController => {

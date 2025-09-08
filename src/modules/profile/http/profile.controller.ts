@@ -1,3 +1,7 @@
+import profileService from "../profile.service"
+
+import * as DTO from "../dto/profile.dto"
+
 import { successResponse } from "../../../common/handlers/success-response.handler"
 import { OtpType } from "../../../db/models/enums/otp.enum"
 import { asyncHandler } from "../../../common/decorators/async-handler/async-handler.decorator"
@@ -5,10 +9,6 @@ import { Response } from "express"
 import { IRequest } from "../../../common/interface/IRequest.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IGetAll } from "../../post/dto/post.dto"
-
-import * as DTO from "../dto/profile.dto"
-
-import profileService from "../profile.service"
 
 class ProfileController {
   private readonly profileService = profileService

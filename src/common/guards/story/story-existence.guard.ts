@@ -8,12 +8,12 @@ import { IGetSingleStory, IStoryId } from "../../../modules/story/dto/story.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import storyRepository from "../../repositories/story.repository"
+import storyRepository from "../../repositories/concrete/story.repository"
 
 class StoryExistenceGuard extends GuardActivator {
-  protected readonly storyRepository = storyRepository
-  protected id: MongoId | undefined = undefined
-  protected storyId: MongoId | undefined = undefined
+  private readonly storyRepository = storyRepository
+  private id: MongoId | undefined = undefined
+  private storyId: MongoId | undefined = undefined
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -40,7 +40,7 @@ class StoryExistenceGuard extends GuardActivator {
     return true
   }
 
-  protected readonly getStoryDetails = async () => {
+  private readonly getStoryDetails = async () => {
     const isExistedStory = await this.storyRepository.findOne({
       filter: { $or: [{ _id: this.id }, { _id: this.storyId }] },
     })

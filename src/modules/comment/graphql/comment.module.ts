@@ -1,5 +1,6 @@
-import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 import commentController from "./comment.controller"
+
+import { returnedType } from "../../../common/decorators/resolver/returned-type.decorator"
 
 export const queryModule = (() => {
   return {

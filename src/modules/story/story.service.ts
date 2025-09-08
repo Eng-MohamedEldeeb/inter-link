@@ -1,17 +1,17 @@
-import storyRepository from "../../common/repositories/story.repository"
 import notifyService from "../../common/services/notify/notify.service"
 
-import { MongoId } from "../../common/types/db"
+import { currentMoment } from "../../common/decorators/moment/moment"
+import { storyRepository } from "../../common/repositories"
 import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
-import { ICreateStory } from "./dto/story.dto"
-import { IStory } from "../../db/interfaces/IStory.interface"
+import { MongoId } from "../../common/types/db"
 import { ILikedStoryNotification } from "../../db/interfaces/INotification.interface"
+import { IStory } from "../../db/interfaces/IStory.interface"
 import { IUser } from "../../db/interfaces/IUser.interface"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import { ICreateStory } from "./dto/story.dto"
 
 class StoryService {
-  protected readonly storyRepository = storyRepository
-  protected readonly notifyService = notifyService
+  private readonly storyRepository = storyRepository
+  private readonly notifyService = notifyService
 
   public readonly getAll = async (userId: MongoId) => {
     const stories = await this.storyRepository.find({
@@ -82,7 +82,7 @@ class StoryService {
       on: { _id: storyId, attachment },
       from: { _id: profileId, avatar, username },
       refTo: "Story",
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     this.notifyService.sendNotification({

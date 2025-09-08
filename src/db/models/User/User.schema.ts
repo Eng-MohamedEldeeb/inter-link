@@ -1,15 +1,15 @@
-import { Schema, SchemaTypes, UpdateQuery } from 'mongoose'
+import { Schema, SchemaTypes, UpdateQuery } from "mongoose"
 
-import { IUser } from '../../interfaces/IUser.interface'
-import { hashValue } from '../../../common/utils/security/bcrypt/bcrypt.service'
-import { OtpType } from '../enums/otp.enum'
-import { encryptValue } from '../../../common/utils/security/crypto/crypto.service'
-import { CloudUploader } from '../../../common/services/upload/cloud.service'
+import { IUser } from "../../interfaces/IUser.interface"
+import { hashValue } from "../../../common/utils/security/bcrypt/bcrypt.service"
+import { OtpType } from "../enums/otp.enum"
+import { encryptValue } from "../../../common/utils/security/crypto/crypto.service"
+import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import postRepository from '../../../common/repositories/post.repository'
-import communityRepository from '../../../common/repositories/community.repository'
-import commentRepository from '../../../common/repositories/comment.repository'
-import otpRepository from '../../../common/repositories/otp.repository'
+import postRepository from "../../../common/repositories/concrete/post.repository"
+import communityRepository from "../../../common/repositories/concrete/community.repository"
+import commentRepository from "../../../common/repositories/concrete/comment.repository"
+import otpRepository from "../../../common/repositories/concrete/otp.repository"
 
 export const UserSchema = new Schema<IUser>(
   {
@@ -17,20 +17,20 @@ export const UserSchema = new Schema<IUser>(
       secure_url: {
         type: String,
         default:
-          'https://res.cloudinary.com/djjqzi02l/image/upload/v1750848008/blank-profile-picture_d3zmwj.png',
+          "https://res.cloudinary.com/djjqzi02l/image/upload/v1750848008/blank-profile-picture_d3zmwj.png",
       },
       public_id: String,
     },
 
     bio: {
       type: String,
-      maxlength: [700, 'bio limit is reached [700 char only allowed]'],
+      maxlength: [700, "bio limit is reached [700 char only allowed]"],
     },
 
     username: {
       type: String,
-      required: [true, 'username is required'],
-      unique: [true, 'username must be unique'],
+      required: [true, "username is required"],
+      unique: [true, "username must be unique"],
       minlength: [2, "username can't be less than 2 then characters"],
       maxlength: [16, "username can't be more than 16 characters"],
       trim: true,
@@ -38,20 +38,20 @@ export const UserSchema = new Schema<IUser>(
 
     email: {
       type: String,
-      required: [true, 'email is required'],
+      required: [true, "email is required"],
       trim: true,
       lowercase: true,
     },
 
     phone: {
       type: String,
-      required: [true, 'phone number is required'],
+      required: [true, "phone number is required"],
       trim: true,
     },
 
     password: {
       type: String,
-      required: [true, 'password is required'],
+      required: [true, "password is required"],
       trim: true,
     },
 
@@ -65,25 +65,25 @@ export const UserSchema = new Schema<IUser>(
 
     oldPasswords: [String],
 
-    following: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    following: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    followers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    followers: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    requests: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    requests: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    blockedUsers: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    blockedUsers: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-    savedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
+    savedPosts: [{ type: SchemaTypes.ObjectId, ref: "Post" }],
 
-    likedPosts: [{ type: SchemaTypes.ObjectId, ref: 'Post' }],
+    likedPosts: [{ type: SchemaTypes.ObjectId, ref: "Post" }],
 
-    joinedCommunities: [{ type: SchemaTypes.ObjectId, ref: 'Community' }],
+    joinedCommunities: [{ type: SchemaTypes.ObjectId, ref: "Community" }],
 
     viewers: [
       {
         viewer: {
           type: SchemaTypes.ObjectId,
-          ref: 'User',
+          ref: "User",
         },
         totalVisits: Number,
       },
@@ -91,13 +91,13 @@ export const UserSchema = new Schema<IUser>(
 
     age: {
       type: Number,
-      required: [true, 'birthDate is required'],
+      required: [true, "birthDate is required"],
       min: 15,
     },
 
     isPrivateProfile: { type: Boolean, default: false },
 
-    deactivatedAt: { type: Date, expires: '30d' },
+    deactivatedAt: { type: Date, expires: "30d" },
   },
   {
     timestamps: true,
@@ -106,46 +106,46 @@ export const UserSchema = new Schema<IUser>(
   },
 )
 
-UserSchema.virtual('posts', {
-  ref: 'Post',
-  localField: '_id',
-  foreignField: 'createdBy',
+UserSchema.virtual("posts", {
+  ref: "Post",
+  localField: "_id",
+  foreignField: "createdBy",
   options: {
     lean: true,
     projection: {
-      'attachments.paths.secure_url': 1,
+      "attachments.paths.secure_url": 1,
     },
   },
 })
 
-UserSchema.virtual('totalPosts').get(function () {
+UserSchema.virtual("totalPosts").get(function () {
   if (this.posts) return this.posts.length
   return 0
 })
 
-UserSchema.virtual('totalFollowing').get(function () {
+UserSchema.virtual("totalFollowing").get(function () {
   if (this.following) return this.following.length
   return 0
 })
 
-UserSchema.virtual('totalFollowers').get(function () {
+UserSchema.virtual("totalFollowers").get(function () {
   if (this.followers) return this.followers.length
   return 0
 })
 
-UserSchema.virtual('birthDate').set(function (v) {
-  return this.set('age', new Date().getFullYear() - new Date(v).getFullYear())
+UserSchema.virtual("birthDate").set(function (v) {
+  return this.set("age", new Date().getFullYear() - new Date(v).getFullYear())
 })
 
-UserSchema.pre('save', async function (next) {
-  if (this.isModified('password')) this.password = hashValue(this.password)
-  if (this.isModified('phone')) this.phone = encryptValue(this.phone!)
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("password")) this.password = hashValue(this.password)
+  if (this.isModified("phone")) this.phone = encryptValue(this.phone!)
 
   return next()
 })
 
-UserSchema.post('save', async function (res) {
-  const userDoc: Pick<IUser, 'email'> = res
+UserSchema.post("save", async function (res) {
+  const userDoc: Pick<IUser, "email"> = res
   await otpRepository.findOneAndDelete({
     filter: {
       email: userDoc.email,
@@ -154,12 +154,12 @@ UserSchema.post('save', async function (res) {
   })
 })
 
-UserSchema.pre('findOneAndUpdate', async function (next) {
+UserSchema.pre("findOneAndUpdate", async function (next) {
   const updatedData: UpdateQuery<IUser> | null = this.getUpdate()
   const keys = Object.keys(updatedData ?? {}) as (keyof IUser)[]
 
   if (updatedData) {
-    if (keys.includes('password'))
+    if (keys.includes("password"))
       this.setUpdate({
         password: hashValue(updatedData.password),
         $set: {
@@ -167,7 +167,7 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
         },
       })
 
-    if (keys.includes('phone'))
+    if (keys.includes("phone"))
       this.setUpdate({
         phone: encryptValue(updatedData.phone),
       })
@@ -176,7 +176,7 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
   return next()
 })
 
-UserSchema.post('findOneAndDelete', async function ({ _id, avatar }: IUser) {
+UserSchema.post("findOneAndDelete", async function ({ _id, avatar }: IUser) {
   Promise.allSettled([
     postRepository.deleteMany({ createdBy: _id }),
     commentRepository.deleteMany({ createdBy: _id }),

@@ -1,19 +1,23 @@
-import connectedUsersController from "../../../../common/controllers/connected-users.controller"
 import roomMembersController from "../../../../common/controllers/room-members.controller"
-import chatRepository from "../../../../common/repositories/chat.repository"
+import chatRepository from "../../../../common/repositories/concrete/chat.repository"
+import userService from "../../../user/user.service"
 
 import { MongoId } from "../../../../common/types/db"
-import { getNowMoment } from "../../../../common/decorators/moment/moment"
+import { currentMoment } from "../../../../common/decorators/moment/moment"
 
 export class ChatHelpers {
+  private static readonly chatRepository = chatRepository
+  private static readonly userService = userService
+  private static readonly roomMembersController = roomMembersController
+
   public static readonly isInChat = ({
-    roomId,
+    chatRoomId,
     userId,
   }: {
-    roomId: string
+    chatRoomId: string
     userId: MongoId
   }): boolean => {
-    const roomMembers = roomMembersController.getRoomMembers(roomId)
+    const roomMembers = this.roomMembersController.getRoomMembers(chatRoomId)
 
     if (roomMembers.length == 0) return false
 
@@ -24,30 +28,30 @@ export class ChatHelpers {
     return true
   }
 
-  public static readonly isOnline = (userId: MongoId): boolean => {
-    const userStatus = connectedUsersController.getUserStatus(userId)
+  public static readonly isConnected = (userId: MongoId): boolean => {
+    const userStatus = this.userService.getCurrentStatus(userId)
 
     if (!userStatus) return false
 
-    const { isOnline } = userStatus
+    const { isConnected } = userStatus
 
-    return isOnline
+    return isConnected
   }
 
   public static readonly upsertChatMessage = async ({
-    roomId,
+    chatRoomId,
     message,
     profileId,
     userId,
   }: {
-    roomId: string
+    chatRoomId: string
     profileId: MongoId
     userId: MongoId
     message: string
   }) => {
-    const inChat = this.isInChat({ roomId: roomId, userId: userId })
+    const inChat = this.isInChat({ chatRoomId: chatRoomId, userId: userId })
 
-    const existedChat = await chatRepository.findOne({
+    const existedChat = await this.chatRepository.findOne({
       filter: {
         $or: [
           { startedBy: profileId, participants: userId },
@@ -56,7 +60,7 @@ export class ChatHelpers {
       },
     })
     if (!existedChat) {
-      const createdChat = await chatRepository.create({
+      const createdChat = await this.chatRepository.create({
         startedBy: profileId,
         participants: [userId],
         ...(inChat
@@ -66,7 +70,7 @@ export class ChatHelpers {
                   from: profileId,
                   to: userId,
                   message,
-                  sentAt: getNowMoment(),
+                  sentAt: currentMoment(),
                 },
               ],
             }
@@ -76,7 +80,7 @@ export class ChatHelpers {
                   from: profileId,
                   to: userId,
                   message,
-                  sentAt: getNowMoment(),
+                  sentAt: currentMoment(),
                 },
               ],
             }),
@@ -89,7 +93,7 @@ export class ChatHelpers {
         from: profileId,
         to: userId,
         message,
-        sentAt: getNowMoment(),
+        sentAt: currentMoment(),
       })
       await existedChat.save()
       return existedChat.newMessages[0]
@@ -99,7 +103,7 @@ export class ChatHelpers {
       from: profileId,
       to: userId,
       message,
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     })
     await existedChat.save()
     return existedChat.messages[0]

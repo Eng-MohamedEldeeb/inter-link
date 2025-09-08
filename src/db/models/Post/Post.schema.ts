@@ -1,9 +1,9 @@
-import { Schema, SchemaTypes } from 'mongoose'
+import { Schema, SchemaTypes } from "mongoose"
 
-import { IPost } from '../../interfaces/IPost.interface'
-import { CloudUploader } from '../../../common/services/upload/cloud.service'
+import { IPost } from "../../interfaces/IPost.interface"
+import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import commentRepository from '../../../common/repositories/comment.repository'
+import commentRepository from "../../../common/repositories/concrete/comment.repository"
 
 export const PostSchema = new Schema<IPost>(
   {
@@ -25,20 +25,20 @@ export const PostSchema = new Schema<IPost>(
       maxlength: [100, "post's content can't be more than 100 characters"],
     },
 
-    likedBy: [{ type: SchemaTypes.ObjectId, ref: 'User' }],
+    likedBy: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
     totalSaves: { type: Number },
 
     shares: { type: Number },
 
-    onCommunity: { type: SchemaTypes.ObjectId, ref: 'Community' },
+    onCommunity: { type: SchemaTypes.ObjectId, ref: "Community" },
 
     archivedAt: { type: Date },
 
     createdBy: {
       type: SchemaTypes.ObjectId,
-      ref: 'User',
-      required: [true, 'createdBy is required'],
+      ref: "User",
+      required: [true, "createdBy is required"],
     },
   },
   {
@@ -48,24 +48,24 @@ export const PostSchema = new Schema<IPost>(
   },
 )
 
-PostSchema.index({ archivedAt: 1 }, { expires: '15d' })
+PostSchema.index({ archivedAt: 1 }, { expires: "15d" })
 
-PostSchema.virtual('comments', {
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'onPost',
+PostSchema.virtual("comments", {
+  ref: "Comment",
+  localField: "_id",
+  foreignField: "onPost",
   options: { sort: { createdAt: -1 } },
 })
 
-PostSchema.virtual('totalLikes').get(function () {
+PostSchema.virtual("totalLikes").get(function () {
   return this.likedBy?.length ?? 0
 })
 
-PostSchema.virtual('totalComments').get(function () {
+PostSchema.virtual("totalComments").get(function () {
   return this.comments?.length ?? 0
 })
 
-PostSchema.post('findOneAndDelete', async function (res: IPost) {
+PostSchema.post("findOneAndDelete", async function (res: IPost) {
   await commentRepository.deleteMany({ onPost: res._id })
 
   const attachments = res.attachments

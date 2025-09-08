@@ -1,5 +1,4 @@
-import otpRepository from "../../common/repositories/otp.repository"
-import userRepository from "../../common/repositories/user.repository"
+import { otpRepository, userRepository } from "../../common/repositories"
 
 import * as DTO from "./dto/auth.dto"
 

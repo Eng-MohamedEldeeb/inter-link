@@ -1,22 +1,28 @@
 import { Router } from "express"
-import { validate } from "../../../common/middlewares/validation/validation.middleware"
-import { fileReader } from "../../../common/utils/multer/file-reader"
-import { communityCoverUploader } from "../../../common/middlewares/upload/community-cover-uploader.middleware"
-import { communityAttachmentsUploader } from "../../../common/middlewares/upload/community-attachments-uploader.middleware"
-import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+
+import communityController from "./community.controller"
 
 import * as validators from "../validators/community.validators"
 
-import communityController from "./community.controller"
-import communityExistenceGuard from "../../../common/guards/community/community-existence.guard"
-import communityOwnerGuard from "../../../common/guards/community/community-owner-authorization.guard"
-import communityPublishPermissionGuard from "../../../common/guards/community/community-publish-permission.guard"
-import postExistenceInCommunityGuard from "../../../common/guards/community/post-existence-in-community.guard"
-import userExistenceGuard from "../../../common/guards/user/user-existence.guard"
-import communityConflictedNameGuard from "../../../common/guards/community/community-conflicted-name.guard"
-import communityPostDeletionGuard from "../../../common/guards/community/community-post-deletion.guard"
-import inCommunityRequestsGuard from "../../../common/guards/community/in-community-requests.guard"
-import inCommunityAdminsGuard from "../../../common/guards/community/in-community-admins.guard"
+import {
+  communityExistenceGuard,
+  communityConflictedNameGuard,
+  communityPublishPermissionGuard,
+  postExistenceInCommunityGuard,
+  communityPostDeletionGuard,
+  inCommunityAdminsGuard,
+  communityOwnerGuard,
+  userExistenceGuard,
+  inCommunityRequestsGuard,
+} from "../../../common/guards"
+
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import {
+  communityCoverUploader,
+  communityAttachmentsUploader,
+} from "../../../common/middlewares/upload"
 
 const router: Router = Router()
 

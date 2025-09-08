@@ -1,30 +1,30 @@
-import { ICommunity } from "../../db/interfaces/ICommunity.interface"
-import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
-import { CloudUploader } from "../../common/services/upload/cloud.service"
-import { MongoId } from "../../common/types/db"
-import { getNowMoment } from "../../common/decorators/moment/moment"
-import { IUser } from "../../db/interfaces/IUser.interface"
-import { throwError } from "../../common/handlers/error-message.handler"
+import notifyService from "../../common/services/notify/notify.service"
 
+import { communityRepository, userRepository } from "../../common/repositories"
 import { ICreateCommunity, IEditCommunity } from "./dto/community.dto"
+
 import {
   IJoinedCommunityNotification,
   INotificationInputs,
 } from "../../db/interfaces/INotification.interface"
 
-import userRepository from "../../common/repositories/user.repository"
-import communityRepository from "../../common/repositories/community.repository"
-import notifyService from "../../common/services/notify/notify.service"
+import { ICommunity } from "../../db/interfaces/ICommunity.interface"
+import { ICloudFile } from "../../common/services/upload/interface/cloud-response.interface"
+import { CloudUploader } from "../../common/services/upload/cloud.service"
+import { MongoId } from "../../common/types/db"
+import { currentMoment } from "../../common/decorators/moment/moment"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { throwError } from "../../common/handlers/error-message.handler"
 
 class CommunityService {
-  protected readonly userRepository = userRepository
-  protected readonly communityRepository = communityRepository
-  protected readonly notifyService = notifyService
-  protected readonly CloudUploader = CloudUploader
+  private readonly userRepository = userRepository
+  private readonly communityRepository = communityRepository
+  private readonly notifyService = notifyService
+  private readonly CloudUploader = CloudUploader
 
-  protected userId!: MongoId
-  protected members!: MongoId[]
-  protected requests!: MongoId[]
+  private userId!: MongoId
+  private members!: MongoId[]
+  private requests!: MongoId[]
 
   public readonly getAllCommunities = async () => {
     return await this.communityRepository.find({
@@ -210,7 +210,7 @@ class CommunityService {
 
       refTo: "Community",
       on: { _id: communityId, cover, name },
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     if (!isPrivateCommunity) {
@@ -248,7 +248,7 @@ class CommunityService {
     return `You Joined ${name} Community Successfully`
   }
 
-  protected readonly isExistedMember = () => {
+  private readonly isExistedMember = () => {
     return this.members.some(requestedUserId =>
       requestedUserId.equals(this.userId),
     )
@@ -297,7 +297,7 @@ class CommunityService {
       message: `${community.name} Accepted Your Join Request`,
       refTo: "Community",
       on: { _id: communityId, cover, name },
-      sentAt: getNowMoment(),
+      sentAt: currentMoment(),
     }
 
     return await Promise.all([
@@ -340,7 +340,7 @@ class CommunityService {
     })
   }
 
-  protected filterJoinRequests = () => {
+  private filterJoinRequests = () => {
     return this.requests.filter(
       requestedUser => !requestedUser.equals(this.userId),
     )

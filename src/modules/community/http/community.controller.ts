@@ -1,13 +1,13 @@
+import communityService from "../community.service"
+import postService from "../../post/post.service"
+
+import * as DTO from "../dto/community.dto"
+
 import { Response } from "express"
 import { IRequest } from "../../../common/interface/IRequest.interface"
 import { asyncHandler } from "../../../common/decorators/async-handler/async-handler.decorator"
 import { successResponse } from "../../../common/handlers/success-response.handler"
 import { ICreatePost } from "../../post/dto/post.dto"
-
-import * as DTO from "../dto/community.dto"
-
-import communityService from "../community.service"
-import postService from "../../post/post.service"
 
 class CommunityController {
   private readonly communityService = communityService

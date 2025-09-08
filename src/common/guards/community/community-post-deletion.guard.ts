@@ -1,24 +1,24 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
 
 import {
   IGetCommunity,
   IRemovePost,
-} from '../../../modules/community/dto/community.dto'
+} from "../../../modules/community/dto/community.dto"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from '../../repositories/post.repository'
-import { MongoId } from '../../types/db'
+import postRepository from "../../repositories/concrete/post.repository"
+import { MongoId } from "../../types/db"
 
 class CommunityPostDeletionGuard extends GuardActivator {
-  protected readonly postRepository = postRepository
-  protected admins!: MongoId[]
+  private readonly postRepository = postRepository
+  private admins!: MongoId[]
 
-  protected communityCreator!: MongoId
-  protected postCreator!: MongoId
-  protected profileId!: MongoId
+  private communityCreator!: MongoId
+  private postCreator!: MongoId
+  private profileId!: MongoId
 
   canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -50,7 +50,7 @@ class CommunityPostDeletionGuard extends GuardActivator {
     return this.isAllowedToDelete()
   }
 
-  protected readonly isAllowedToDelete = () => {
+  private readonly isAllowedToDelete = () => {
     const isTheCreator = this.profileId.equals(this.postCreator)
 
     if (isTheCreator) return true

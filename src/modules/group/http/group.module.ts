@@ -1,14 +1,15 @@
 import { Router } from "express"
-import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
-import { validate } from "../../../common/middlewares/validation/validation.middleware"
-import { fileReader } from "../../../common/utils/multer/file-reader"
-import { groupCoverUploader } from "../../../common/middlewares/upload/group-cover-uploader.middleware"
+
+import groupController from "./group.controller"
 
 import * as validators from "../validators/group.validators"
 
-import groupController from "./group.controller"
-import groupExistenceGuard from "../../../common/guards/group/group-existence.guard"
-import groupMembersGuard from "../../../common/guards/group/group-members.guard"
+import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
+import { validate } from "../../../common/middlewares/validation/validation.middleware"
+import { fileReader } from "../../../common/utils/multer/file-reader"
+
+import { groupExistenceGuard, groupMembersGuard } from "../../../common/guards"
+import { groupCoverUploader } from "../../../common/middlewares/upload"
 
 const router: Router = Router()
 

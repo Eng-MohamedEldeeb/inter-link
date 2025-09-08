@@ -10,11 +10,11 @@ import {
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/community.repository"
+import communityRepository from "../../repositories/concrete/community.repository"
 
 class CommunityConflictedNameGuard extends GuardActivator {
-  protected readonly communityRepository = communityRepository
-  protected name!: string
+  private readonly communityRepository = communityRepository
+  private name!: string
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -37,7 +37,7 @@ class CommunityConflictedNameGuard extends GuardActivator {
     }
   }
 
-  protected readonly isValidCommunityName = async (): Promise<boolean> => {
+  private readonly isValidCommunityName = async (): Promise<boolean> => {
     const existedCommunity = await this.communityRepository.findOne({
       filter: { name: this.name },
       projection: { _id: 1 },

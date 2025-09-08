@@ -1,15 +1,15 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityOwnerAuthorizationGuard from './community-owner-authorization.guard'
+import communityOwnerAuthorizationGuard from "./community-owner.guard"
 
 class CommunityRequestsGuard extends GuardActivator {
-  protected userId!: MongoId
-  protected requests!: MongoId[]
+  private userId!: MongoId
+  private requests!: MongoId[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -40,7 +40,7 @@ class CommunityRequestsGuard extends GuardActivator {
     )
   }
 
-  protected readonly hasRequested = () => {
+  private readonly hasRequested = () => {
     return this.requests.some(userId => userId.equals(this.userId))
   }
 }

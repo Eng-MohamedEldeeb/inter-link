@@ -1,8 +1,9 @@
-import { MongoId } from "../../common/types/db"
-import { throwError } from "../../common/handlers/error-message.handler"
-import { getNowMoment } from "../../common/decorators/moment/moment"
+import notifyService from "../../common/services/notify/notify.service"
 
-import { TGroup, TNotification } from "../../db/documents"
+import {
+  groupRepository,
+  notificationRepository,
+} from "../../common/repositories"
 
 import {
   IGroup,
@@ -15,20 +16,22 @@ import {
   UserDetails,
 } from "../../db/interfaces/INotification.interface"
 
+import { TGroup, TNotification } from "../../db/documents"
+
 import * as DTO from "./dto/group.dto"
 
-import groupRepository from "../../common/repositories/group.repository"
-import notifyService from "../../common/services/notify/notify.service"
-import notificationRepository from "../../common/repositories/notification.repository"
+import { MongoId } from "../../common/types/db"
+import { throwError } from "../../common/handlers/error-message.handler"
+import { currentMoment } from "../../common/decorators/moment/moment"
 
 class GroupService {
-  protected readonly groupRepository = groupRepository
-  protected readonly notificationRepository = notificationRepository
-  protected readonly notifyService = notifyService
+  private readonly groupRepository = groupRepository
+  private readonly notificationRepository = notificationRepository
+  private readonly notifyService = notifyService
 
-  protected profileId!: MongoId
+  private profileId!: MongoId
 
-  protected userSocketId!: string
+  private userSocketId!: string
 
   public readonly getAllGroups = async (
     profileId: MongoId,
@@ -131,12 +134,12 @@ class GroupService {
         from: profile,
         message: `${profile.username} Liked Your Message 🧡`,
         refTo: "Chat",
-        sentAt: getNowMoment(),
+        sentAt: currentMoment(),
       },
     })
   }
 
-  protected readonly findMessage = ({
+  private readonly findMessage = ({
     group,
     notifications,
     messageId,
@@ -159,7 +162,7 @@ class GroupService {
       const messages: IMissedMessages[] = []
 
       notifications.forEach(notification => {
-        const message = notification.missedMessages.find(missedMessage =>
+        const message = notification.newMessages.find(missedMessage =>
           missedMessage.messageId?.equals(messageId),
         )
         if (message) messages.push(message)
@@ -173,7 +176,7 @@ class GroupService {
     return { inMessages }
   }
 
-  protected readonly checkLikes = ({
+  private readonly checkLikes = ({
     message,
     profile,
   }: {
@@ -237,7 +240,7 @@ class GroupService {
     return group.save()
   }
 
-  protected readonly findUserMessageInGroup = async ({
+  private readonly findUserMessageInGroup = async ({
     groupId,
     messageId,
     profileId,
@@ -265,7 +268,7 @@ class GroupService {
       : throwError({ msg: "message was not found", status: 404 })
   }
 
-  protected readonly findRelatedNotification = async ({
+  private readonly findRelatedNotification = async ({
     messageFrom,
     searchedMessage,
   }: {
@@ -276,16 +279,16 @@ class GroupService {
       filter: {
         $and: [
           {
-            "missedMessages.from": messageFrom,
+            "newMessages.from": messageFrom,
           },
           {
             $and: [
               {
-                "missedMessages.message": {
+                "newMessages.message": {
                   $regex: searchedMessage,
                 },
               },
-              { "missedMessages.deletedAt": { $exists: false } },
+              { "newMessages.deletedAt": { $exists: false } },
             ],
           },
         ],
@@ -293,14 +296,14 @@ class GroupService {
     })
   }
 
-  protected readonly hasRelatedNotification = ({
+  private readonly hasRelatedNotification = ({
     relatedNotification,
     messageId,
   }: {
     relatedNotification: INotifications
     messageId: MongoId
   }) => {
-    return relatedNotification.missedMessages.find(message =>
+    return relatedNotification.newMessages.find(message =>
       message._id?.equals(messageId),
     )
   }

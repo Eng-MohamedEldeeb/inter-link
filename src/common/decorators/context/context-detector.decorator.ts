@@ -1,4 +1,4 @@
-import { ContextType } from './types'
+import { ContextType } from "./types"
 
 import {
   HttpContext,
@@ -7,26 +7,26 @@ import {
   GraphQLParams,
   SocketServerContext,
   SocketServerParams,
-} from './types'
+} from "./types"
 
 export class ContextDetector {
   static type: ContextType
-  protected static params: any[any]
+  private static params: any[any]
 
   private static readonly hasHttpParams = (): boolean => {
     return (
       this.params.length === 3 &&
-      'url' in this.params[0] &&
+      "url" in this.params[0] &&
       this.params[this.params.length - 1] instanceof Function
     )
   }
 
   private static readonly hasGraphQLParams = (): boolean => {
-    return this.params.length === 4 && 'fieldName' in this.params[3]
+    return this.params.length === 4 && "fieldName" in this.params[3]
   }
 
   private static readonly hasSocketServerParams = (): boolean => {
-    return this.params.length === 1 && 'handshake' in this.params[0]
+    return this.params.length === 1 && "handshake" in this.params[0]
   }
 
   public static readonly hasSocketMiddlewareParams = (): boolean => {
@@ -53,7 +53,7 @@ export class ContextDetector {
       return this
     }
 
-    throw new Error('Un-known Context')
+    throw new Error("Un-known Context")
   }
 
   public static readonly switchToHTTP = <P = any, Q = any>(): HttpContext<

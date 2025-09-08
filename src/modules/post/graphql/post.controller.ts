@@ -1,15 +1,17 @@
-import PostSharePermissionGuardGuard from "../../../common/guards/post/post-share-permission.guard"
-import isAuthenticatedGuard from "../../../common/guards/auth/is-authenticated.guard"
-import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
-import postExistenceGuard from "../../../common/guards/post/post-existence.guard"
-import PostOwnerGuard from "../../../common/guards/post/post-owner.guard"
-
 import * as validators from "./../validators/post.validators"
 
 import {
   IMutationController,
   IQueryController,
 } from "../../../common/interface/IGraphQL.interface"
+
+import {
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  postExistenceGuard,
+  postOwnerGuard,
+  postSharePermissionGuard,
+} from "../../../common/guards"
 
 import { PostArgs } from "./types/post-args"
 import { postMutationResolver, postQueryResolver } from "./post.resolver"
@@ -67,7 +69,7 @@ class PostController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           postExistenceGuard,
-          PostOwnerGuard,
+          postOwnerGuard,
         ],
         resolver: this.postMutationResolver.edit,
       }),
@@ -100,7 +102,7 @@ class PostController {
           isAuthenticatedGuard,
           isAuthorizedGuard,
           postExistenceGuard,
-          PostSharePermissionGuardGuard,
+          postSharePermissionGuard,
         ],
         resolver: this.postMutationResolver.shared,
       }),

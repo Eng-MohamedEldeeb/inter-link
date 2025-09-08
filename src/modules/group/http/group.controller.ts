@@ -15,7 +15,7 @@ import {
 
 import groupService from "../group.service"
 class GroupController {
-  protected readonly groupService = groupService
+  private readonly groupService = groupService
 
   public readonly getAllGroups = asyncHandler(
     async (req: IRequest, res: Response) => {

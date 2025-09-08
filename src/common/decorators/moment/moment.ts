@@ -1,3 +1,3 @@
-import moment from 'moment'
+import moment from "moment"
 
-export const getNowMoment = () => moment().format('h:mm A')
+export const currentMoment = () => moment().format("h:mm A")

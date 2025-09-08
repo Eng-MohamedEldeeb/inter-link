@@ -1,12 +1,12 @@
+import communityService from "../community.service"
+import postService from "../../post/post.service"
+
 import { ICreateCommunity, IEditCommunity } from "../dto/community.dto"
 
 import {
   IContext,
   ISuccessResponse,
 } from "../../../common/interface/IGraphQL.interface"
-
-import communityService from "../community.service"
-import postService from "../../post/post.service"
 
 class CommunityQueryResolver {
   private readonly communityService = communityService

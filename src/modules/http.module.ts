@@ -1,83 +1,81 @@
-import { Router } from 'express'
-import { applyRateLimiter } from '../common/utils/security/rate-limiter/rate-limiter'
-import { applyGuards } from '../common/decorators/guard/apply-guards.decorator'
+import { Router } from "express"
+import { applyRateLimiter } from "../common/utils/security/rate-limiter/rate-limiter"
+import { applyGuards } from "../common/decorators/guard/apply-guards.decorator"
 
-import isAuthenticatedGuard from '../common/guards/auth/is-authenticated.guard'
-import isAuthorizedGuard from '../common/guards/auth/is-authorized.guard'
-
-import authModule from './auth/http/auth.module'
-import profileModule from './profile/http/profile.module'
-import userModule from './user/http/user.module'
-import storyModule from './story/http/story.module'
-import postModule from './post/http/post.module'
-import commentModule from './comment/http/comment.module'
-import communityModule from './community/http/community.module'
-import notificationModule from './notification/http/notification.module'
-import chatModule from './chat/http/chat.module'
-import groupModule from './group/http/group.module'
+import { isAuthenticatedGuard, isAuthorizedGuard } from "../common/guards"
+import authModule from "./auth/http/auth.module"
+import profileModule from "./profile/http/profile.module"
+import userModule from "./user/http/user.module"
+import storyModule from "./story/http/story.module"
+import postModule from "./post/http/post.module"
+import commentModule from "./comment/http/comment.module"
+import communityModule from "./community/http/community.module"
+import notificationModule from "./notification/http/notification.module"
+import chatModule from "./chat/http/chat.module"
+import groupModule from "./group/http/group.module"
 
 const router: Router = Router()
 
-router.use('/auth', applyRateLimiter(), authModule)
+router.use("/auth", applyRateLimiter(), authModule)
 
 router.use(
-  '/profile',
+  "/profile",
   applyRateLimiter({ skipSuccessfulRequests: true }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   profileModule,
 )
 
 router.use(
-  '/user',
+  "/user",
   applyRateLimiter({ skipSuccessfulRequests: true }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   userModule,
 )
 
 router.use(
-  '/story',
+  "/story",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   storyModule,
 )
 
 router.use(
-  '/post',
+  "/post",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   postModule,
 )
 
 router.use(
-  '/comment',
+  "/comment",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   commentModule,
 )
 
 router.use(
-  '/community',
+  "/community",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   communityModule,
 )
 
 router.use(
-  '/notification',
+  "/notification",
   applyRateLimiter({ skipSuccessfulRequests: true }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   notificationModule,
 )
 
 router.use(
-  '/chat',
+  "/chat",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   chatModule,
 )
 
 router.use(
-  '/groups',
+  "/groups",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   groupModule,

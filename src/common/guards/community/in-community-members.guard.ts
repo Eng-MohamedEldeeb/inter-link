@@ -1,13 +1,13 @@
-import { GuardActivator } from '../../decorators/guard/guard-activator.guard'
-import { ContextDetector } from '../../decorators/context/context-detector.decorator'
-import { ContextType } from '../../decorators/context/types'
-import { MongoId } from '../../types/db'
+import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
+import { ContextDetector } from "../../decorators/context/context-detector.decorator"
+import { ContextType } from "../../decorators/context/types"
+import { MongoId } from "../../types/db"
 
-import { GraphQLParams, HttpParams } from '../../decorators/context/types'
+import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
 class InCommunityMembersGuard extends GuardActivator {
-  protected userId!: MongoId
-  protected members!: MongoId[]
+  private userId!: MongoId
+  private members!: MongoId[]
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -35,7 +35,7 @@ class InCommunityMembersGuard extends GuardActivator {
     return this.isExistedMember()
   }
 
-  protected readonly isExistedMember = () => {
+  private readonly isExistedMember = () => {
     return this.members.some(userId => userId.equals(this.userId))
   }
 }
