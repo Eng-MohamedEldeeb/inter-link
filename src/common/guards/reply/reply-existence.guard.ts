@@ -7,7 +7,7 @@ import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import commentRepository from "../../repositories/concrete/comment.repository"
+import commentRepository from "../../repositories/comment.repository"
 
 class ReplyExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

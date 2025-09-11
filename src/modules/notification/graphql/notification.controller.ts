@@ -5,7 +5,7 @@ import { validate } from "../../../common/middlewares/validation/validation.midd
 
 import * as resolvers from "./notification.resolver"
 import * as args from "./types/notification-args"
-import * as validators from "../validators/notification.validators"
+import { NotificationValidator } from "../../../validators"
 
 import {
   isAuthenticatedGuard,
@@ -52,7 +52,7 @@ class NotificationController {
       args: args.deleteNotification,
       resolve: applyResolver({
         middlewares: [
-          validate(validators.deleteNotificationValidator.graphql()),
+          validate(NotificationValidator.deleteNotificationValidator.graphql()),
         ],
         guards: [
           isAuthenticatedGuard,

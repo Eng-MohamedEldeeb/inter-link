@@ -2,7 +2,7 @@ import { Router } from "express"
 
 import postController from "./post.controller"
 
-import * as validators from "./../validators/post.validators"
+import { PostValidator } from "../../../validators"
 
 import {
   postExistenceGuard,
@@ -19,13 +19,13 @@ const router: Router = Router()
 
 router.get(
   "/",
-  validate(validators.getAllValidator.http()),
+  validate(PostValidator.getAllValidator.http()),
   postController.getAll,
 )
 
 router.get(
   "/:id",
-  validate(validators.getSingleValidator.http()),
+  validate(PostValidator.getSingleValidator.http()),
   applyGuards(postExistenceGuard),
   postController.getSingle,
 )
@@ -33,56 +33,56 @@ router.get(
 router.post(
   "/",
   fileReader("image/jpeg", "image/jpg", "image/png").array("attachments", 4),
-  validate(validators.createValidator),
+  validate(PostValidator.createValidator),
   postAttachmentUploader,
   postController.create,
 )
 
 router.patch(
   "/edit",
-  validate(validators.editValidator.http()),
+  validate(PostValidator.editValidator.http()),
   applyGuards(postExistenceGuard, postOwnerGuard),
   postController.edit,
 )
 
 router.post(
   "/save",
-  validate(validators.saveValidator.http()),
+  validate(PostValidator.saveValidator.http()),
   applyGuards(postExistenceGuard),
   postController.save,
 )
 
 router.post(
   "/shared",
-  validate(validators.sharedValidator.http()),
+  validate(PostValidator.sharedValidator.http()),
   applyGuards(postExistenceGuard, postSharePermissionGuard),
   postController.shared,
 )
 
 router.post(
   "/like",
-  validate(validators.likeValidator.http()),
+  validate(PostValidator.likeValidator.http()),
   applyGuards(postExistenceGuard),
   postController.like,
 )
 
 router.patch(
   "/archive",
-  validate(validators.archiveValidator.http()),
+  validate(PostValidator.archiveValidator.http()),
   applyGuards(postExistenceGuard, postOwnerGuard),
   postController.archive,
 )
 
 router.patch(
   "/restore",
-  validate(validators.restoreValidator.http()),
+  validate(PostValidator.restoreValidator.http()),
   applyGuards(postExistenceGuard, postOwnerGuard),
   postController.restore,
 )
 
 router.delete(
   "/:id",
-  validate(validators.deleteValidator.http()),
+  validate(PostValidator.deleteValidator.http()),
   applyGuards(postExistenceGuard, postOwnerGuard),
   postController.delete,
 )

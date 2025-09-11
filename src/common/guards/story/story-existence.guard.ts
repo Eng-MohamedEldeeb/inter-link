@@ -8,7 +8,7 @@ import { IGetSingleStory, IStoryId } from "../../../modules/story/dto/story.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import storyRepository from "../../repositories/concrete/story.repository"
+import storyRepository from "../../repositories/story.repository"
 
 class StoryExistenceGuard extends GuardActivator {
   private readonly storyRepository = storyRepository

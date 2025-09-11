@@ -2,7 +2,7 @@ import { Router } from "express"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { fileReader } from "../../../common/utils/multer/file-reader"
 
-import * as validators from "../validator/profile.validator"
+import { ProfileValidator } from "../../../validators"
 
 import profileController from "./profile.controller"
 
@@ -16,13 +16,13 @@ router.get("/following", profileController.getFollowing)
 
 router.get(
   "/saved",
-  validate(validators.getAllSavedPostsValidator.http()),
+  validate(ProfileValidator.getAllSavedPostsValidator.http()),
   profileController.getAllSavedPosts,
 )
 
 router.patch(
   "/",
-  validate(validators.updateProfileSchema.http()),
+  validate(ProfileValidator.updateProfileSchema.http()),
   profileController.updateProfile,
 )
 
@@ -31,7 +31,7 @@ router.patch("/visibility", profileController.changeVisibility)
 router.patch(
   "/avatar",
   fileReader("image/jpeg", "image/jpeg", "image/png").single("avatar"),
-  validate(validators.updateProfilePicSchema.http()),
+  validate(ProfileValidator.updateProfilePicSchema.http()),
   profileController.changeAvatar,
 )
 
@@ -39,31 +39,31 @@ router.delete("/avatar", profileController.deleteProfilePic)
 
 router.patch(
   "/change-email",
-  validate(validators.changeEmailSchema.http()),
+  validate(ProfileValidator.changeEmailSchema.http()),
   profileController.changeEmail,
 )
 
 router.patch(
   "/confirm-new-email",
-  validate(validators.confirmNewEmailSchema.http()),
+  validate(ProfileValidator.confirmNewEmailSchema.http()),
   profileController.confirmNewEmail,
 )
 
 router.delete(
   "/deactivate",
-  validate(validators.deleteAccountSchema.http()),
+  validate(ProfileValidator.deleteAccountSchema.http()),
   profileController.deactivateAccount,
 )
 
 router.delete(
   "/delete-permanently",
-  validate(validators.deleteAccountSchema.http()),
+  validate(ProfileValidator.deleteAccountSchema.http()),
   profileController.deleteAccount,
 )
 
 router.delete(
   "/confirm-deletion",
-  validate(validators.confirmDeletionSchema.http()),
+  validate(ProfileValidator.confirmDeletionSchema.http()),
   profileController.confirmDeletion,
 )
 

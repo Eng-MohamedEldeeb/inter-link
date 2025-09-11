@@ -22,17 +22,13 @@ export const socketIoBootStrap = async (io: Server) => {
     "connection",
     asyncHandler(async (socket: ISocket) => {
       const profileId = socket.profile._id
-      const groups = await groupService.getAllGroups(profileId)
 
       userService.setOnline({
         profileId,
         socketId: socket.id,
       })
 
-      notifyService.readMissedNotifications({
-        userId: profileId,
-        socketId: socket.id,
-      })
+      const groups = await groupService.getAllGroups(profileId)
 
       let rooms: string[] = []
 
@@ -41,6 +37,11 @@ export const socketIoBootStrap = async (io: Server) => {
 
         socket.join(rooms)
       }
+
+      notifyService.readMissedNotifications({
+        userId: profileId,
+        socketId: socket.id,
+      })
 
       socket.on("disconnect", async () => {
         userService.setOffline(profileId)
@@ -56,17 +57,17 @@ export const socketIoBootStrap = async (io: Server) => {
 
   io.of("/chats").on("connection", asyncHandler(chatInteractions.connect))
 
-  io.of("/groups").use(
-    applyGuards(
-      isAuthenticatedGuard,
-      isAuthorizedGuard,
-      groupExistenceGuard,
-      groupMembersGuard,
-    ),
-  )
+  // io.of("/groups").use(
+  //   applyGuards(
+  //     isAuthenticatedGuard,
+  //     isAuthorizedGuard,
+  //     groupExistenceGuard,
+  //     groupMembersGuard,
+  //   ),
+  // )
 
-  io.of("/groups").on(
-    "connection",
-    asyncHandler(GroupInteractions.sendGroupMessage(io)),
-  )
+  // io.of("/groups").on(
+  //   "connection",
+  //   asyncHandler(GroupInteractions.sendGroupMessage(io)),
+  // )
 }

@@ -12,7 +12,7 @@ import {
   SocketServerParams,
 } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/concrete/user.repository"
+import userRepository from "../../repositories/user.repository"
 import { ISocket } from "../../interface/ISocket.interface"
 
 class IsAuthorizedGuard implements GuardActivator {

@@ -1,40 +1,26 @@
 import { Schema, SchemaTypes } from "mongoose"
 import { ChatType, IChat } from "../../interfaces/IChat.interface"
-import { generateCode } from "../../../common/utils/randomstring/generate-code.function"
 
 const chatMessage = {
-  message: String,
-  sentAt: String,
-  from: { type: SchemaTypes.ObjectId, ref: "User" },
-  to: { type: SchemaTypes.ObjectId, ref: "User" },
-  likedBy: [{ type: SchemaTypes.ObjectId, ref: "User" }],
-  updatedAt: Date,
-  deletedAt: Date,
+  type: SchemaTypes.ObjectId,
+  ref: "Message",
 }
 
-export const ChatSchema = new Schema<IChat>(
+export const chatSchema = new Schema<IChat>(
   {
-    messages: {
-      type: [chatMessage],
+    startedBy: {
+      type: SchemaTypes.ObjectId,
+      ref: "User",
+      required: [true, "startedBy id is required"],
     },
 
-    newMessages: {
-      type: [chatMessage],
-    },
-
-    // chatRoomId: {
-    //   type: String,
-    //   default: function (this: IChat) {
-    //     if (this.type.match(ChatType.OTO))
-    //       return `${this.startedBy} ${this.participants[0]}`
-
-    //     return generateCode({ length: 16, charset: "alphanumeric" })
-    //   },
-    // },
-
-    startedBy: { type: SchemaTypes.ObjectId, ref: "User" },
-
-    participants: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+    participants: [
+      {
+        type: SchemaTypes.ObjectId,
+        ref: "User",
+        required: [true, "participant id is required"],
+      },
+    ],
 
     type: { type: String, enum: ChatType, default: ChatType.OTO },
   },
@@ -45,8 +31,23 @@ export const ChatSchema = new Schema<IChat>(
   },
 )
 
-ChatSchema.virtual("totalMissedMessages").get(function (this: IChat) {
-  return this.newMessages && this.newMessages.length
-    ? this.newMessages.length
-    : 0
+chatSchema.virtual("lastMessage", {
+  localField: "_id",
+  foreignField: "chatId",
+  ref: "Message",
+  justOne: true,
+})
+
+chatSchema.virtual("newMessages", {
+  localField: "_id",
+  foreignField: "chatId",
+  ref: "Message",
+  justOne: true,
+})
+
+chatSchema.virtual("totalNewMessages", {
+  localField: "_id",
+  foreignField: "chatId",
+  ref: "Message",
+  count: true,
 })

@@ -2,7 +2,7 @@ import { GraphQLObjectType, GraphQLString } from "graphql"
 
 import authResolver from "./auth.resolver"
 
-import * as validators from "./../validator/auth.validator"
+import { AuthValidator } from "../../../validators"
 
 import { AuthArgs } from "./types/auth-args"
 import { IMutationController } from "../../../common/interface/IGraphQL.interface"
@@ -20,7 +20,7 @@ class AuthController {
       }),
       args: AuthArgs.confirmEmail,
       resolve: applyResolver({
-        middlewares: [validate(validators.confirmEmailSchema.graphql())],
+        middlewares: [validate(AuthValidator.confirmEmailValidator.graphql())],
         resolver: this.authResolver.confirmEmail,
       }),
     }
@@ -33,7 +33,7 @@ class AuthController {
       }),
       args: AuthArgs.register,
       resolve: applyResolver({
-        middlewares: [validate(validators.registerSchema.graphql())],
+        middlewares: [validate(AuthValidator.registerValidator.graphql())],
         resolver: this.authResolver.register,
       }),
     }
@@ -54,7 +54,7 @@ class AuthController {
       }),
       args: AuthArgs.login,
       resolve: applyResolver({
-        middlewares: [validate(validators.loginSchema.graphql())],
+        middlewares: [validate(AuthValidator.loginValidator.graphql())],
         resolver: this.authResolver.login,
       }),
     }
@@ -67,7 +67,9 @@ class AuthController {
       }),
       args: AuthArgs.forgotPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.forgotPasswordSchema.graphql())],
+        middlewares: [
+          validate(AuthValidator.forgotPasswordValidator.graphql()),
+        ],
         resolver: this.authResolver.forgotPassword,
       }),
     }
@@ -80,7 +82,7 @@ class AuthController {
       }),
       args: AuthArgs.resetPassword,
       resolve: applyResolver({
-        middlewares: [validate(validators.resetPasswordSchema.graphql())],
+        middlewares: [validate(AuthValidator.resetPasswordValidator.graphql())],
         resolver: this.authResolver.resetPassword,
       }),
     }

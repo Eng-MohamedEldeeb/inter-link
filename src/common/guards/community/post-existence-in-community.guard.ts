@@ -10,7 +10,7 @@ import {
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from "../../repositories/concrete/post.repository"
+import postRepository from "../../repositories/post.repository"
 import { MongoId } from "../../types/db"
 
 class PostExistenceInCommunityGuard extends GuardActivator {

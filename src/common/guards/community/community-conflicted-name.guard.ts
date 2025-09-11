@@ -10,7 +10,7 @@ import {
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/concrete/community.repository"
+import communityRepository from "../../repositories/community.repository"
 
 class CommunityConflictedNameGuard extends GuardActivator {
   private readonly communityRepository = communityRepository

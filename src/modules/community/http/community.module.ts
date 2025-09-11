@@ -2,7 +2,7 @@ import { Router } from "express"
 
 import communityController from "./community.controller"
 
-import * as validators from "../validators/community.validators"
+import { CommunityValidator } from "../../../validators"
 
 import {
   communityExistenceGuard,
@@ -30,14 +30,14 @@ router.get("/", communityController.getAllCommunities)
 
 router.get(
   "/:communityId",
-  validate(validators.getCommunityValidator.http()),
+  validate(CommunityValidator.getCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityController.getCommunity,
 )
 
 router.get(
   "/:communityId/members",
-  validate(validators.getCommunityValidator.http()),
+  validate(CommunityValidator.getCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityController.getCommunityMembers,
 )
@@ -45,7 +45,7 @@ router.get(
 router.post(
   "/",
   fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
-  validate(validators.createValidator.http()),
+  validate(CommunityValidator.createValidator.http()),
   applyGuards(communityConflictedNameGuard),
   communityCoverUploader,
   communityController.create,
@@ -54,7 +54,7 @@ router.post(
 router.post(
   "/add-post",
   fileReader("image/jpeg", "image/jpg", "image/png").array("attachments", 4),
-  validate(validators.addPostValidator),
+  validate(CommunityValidator.addPostValidator),
   applyGuards(communityExistenceGuard, communityPublishPermissionGuard),
   communityAttachmentsUploader,
   communityController.addPost,
@@ -62,7 +62,7 @@ router.post(
 
 router.delete(
   "/:communityId/remove-post",
-  validate(validators.removePostValidator.http()),
+  validate(CommunityValidator.removePostValidator.http()),
   applyGuards(
     communityExistenceGuard,
     postExistenceInCommunityGuard,
@@ -74,42 +74,42 @@ router.delete(
 router.patch(
   "/change-cover",
   fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
-  validate(validators.changeCoverValidator),
+  validate(CommunityValidator.changeCoverValidator),
   applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
   communityController.changeCover,
 )
 
 router.patch(
   "/edit-community",
-  validate(validators.editValidator.http()),
+  validate(CommunityValidator.editValidator.http()),
   applyGuards(communityExistenceGuard, inCommunityAdminsGuard),
   communityController.editCommunity,
 )
 
 router.patch(
   "/change-visibility",
-  validate(validators.changeVisibilityValidator.http()),
+  validate(CommunityValidator.changeVisibilityValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard),
   communityController.changeVisibility,
 )
 
 router.delete(
   "/:communityId",
-  validate(validators.deleteCommunityValidator.http()),
+  validate(CommunityValidator.deleteCommunityValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard),
   communityController.deleteCommunity,
 )
 
 router.post(
   "/join",
-  validate(validators.joinCommunityValidator.http()),
+  validate(CommunityValidator.joinCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityController.join,
 )
 
 router.post(
   "/accept-join-request",
-  validate(validators.acceptJoinRequestValidator.http()),
+  validate(CommunityValidator.acceptJoinRequestValidator.http()),
   applyGuards(
     communityExistenceGuard,
     userExistenceGuard,
@@ -121,7 +121,7 @@ router.post(
 
 router.delete(
   "/reject-join-request",
-  validate(validators.rejectJoinRequestValidator.http()),
+  validate(CommunityValidator.rejectJoinRequestValidator.http()),
   applyGuards(
     communityExistenceGuard,
     userExistenceGuard,
@@ -133,14 +133,14 @@ router.delete(
 
 router.patch(
   "/leave",
-  validate(validators.leaveCommunityValidator.http()),
+  validate(CommunityValidator.leaveCommunityValidator.http()),
   applyGuards(communityExistenceGuard),
   communityController.leave,
 )
 
 router.patch(
   "/:communityId/kick-out",
-  validate(validators.kickOutValidator.http()),
+  validate(CommunityValidator.kickOutValidator.http()),
   applyGuards(
     communityExistenceGuard,
     userExistenceGuard,
@@ -151,14 +151,14 @@ router.patch(
 
 router.post(
   "/:communityId/add-admin",
-  validate(validators.addAdminValidator.http()),
+  validate(CommunityValidator.addAdminValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
   communityController.addAdmin,
 )
 
 router.patch(
   "/:communityId/remove-admin",
-  validate(validators.removeAdminValidator.http()),
+  validate(CommunityValidator.removeAdminValidator.http()),
   applyGuards(communityExistenceGuard, communityOwnerGuard, userExistenceGuard),
   communityController.removeAdmin,
 )

@@ -3,7 +3,7 @@ import { Schema, SchemaTypes } from "mongoose"
 import { ICommunity } from "../../interfaces/ICommunity.interface"
 import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import postRepository from "../../../common/repositories/concrete/post.repository"
+import postRepository from "../../../common/repositories/post.repository"
 import slugify from "slugify"
 
 export const communitySchema = new Schema<ICommunity>(

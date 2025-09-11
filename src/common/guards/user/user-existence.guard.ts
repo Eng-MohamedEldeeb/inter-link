@@ -16,7 +16,7 @@ import {
   SocketServerParams,
 } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/concrete/user.repository"
+import userRepository from "../../repositories/user.repository"
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository

@@ -2,7 +2,7 @@ import { Router } from "express"
 
 import storyController from "./story.controller"
 
-import * as validators from "../validators/story.validators"
+import { StoryValidator } from "../../../validators"
 
 import {
   userExistenceGuard,
@@ -20,14 +20,14 @@ const router: Router = Router()
 
 router.get(
   "/",
-  validate(validators.getAllValidator.http()),
+  validate(StoryValidator.getAllValidator.http()),
   applyGuards(userExistenceGuard),
   storyController.getAll,
 )
 
 router.get(
   "/:id",
-  validate(validators.getSingleValidator.http()),
+  validate(StoryValidator.getSingleValidator.http()),
   applyGuards(storyExistenceGuard, storyViewPermissionGuard),
   storyController.getSingle,
 )
@@ -35,21 +35,21 @@ router.get(
 router.post(
   "/",
   fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
-  validate(validators.createValidator),
+  validate(StoryValidator.createValidator),
   storyAttachmentUploader,
   storyController.create,
 )
 
 router.post(
   "/like",
-  validate(validators.likeValidator.http()),
+  validate(StoryValidator.likeValidator.http()),
   applyGuards(storyExistenceGuard),
   storyController.like,
 )
 
 router.delete(
   "/:id",
-  validate(validators.deleteValidator.http()),
+  validate(StoryValidator.deleteValidator.http()),
   applyGuards(storyExistenceGuard, storyOwnerGuard),
   storyController.delete,
 )

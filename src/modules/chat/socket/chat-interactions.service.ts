@@ -1,94 +1,58 @@
-import chatService from "../chat.service"
+import chatHelper from "./helpers/chat-helper"
 import notifyService from "../../../common/services/notify/notify.service"
-import chatRepository from "../../../common/repositories/concrete/chat.repository"
-import roomMembersController from "../../../common/controllers/room-members.controller"
 
 import { ISocket } from "../../../common/interface/ISocket.interface"
 import { ISendMessage } from "../dto/chat.dto"
-import { ChatHelpers } from "./helpers/chat-helpers"
 import { currentMoment } from "../../../common/decorators/moment/moment"
-import { ChatType } from "../../../db/interfaces/IChat.interface"
 import { MongoId } from "../../../common/types/db"
+import { messageRepository } from "../../../common/repositories"
 
 class ChatInteractions {
-  private readonly chatRepository = chatRepository
-  private readonly chatService = chatService
+  private readonly chatHelper = chatHelper
 
-  private chatRoomId!: MongoId
+  private readonly messageRepository = messageRepository
+
+  private chatId!: MongoId
   private profileId!: MongoId
   private userId!: MongoId
 
   public readonly connect = async (socket: ISocket) => {
-    await this.readAllMessages(socket)
-
-    roomMembersController.joinChat({
+    this.chatId = await this.chatHelper.findOrCreate({
       profileId: this.profileId,
-      chatRoomId: this.chatRoomId,
+      userId: this.userId,
     })
 
-    socket.join(this.chatRoomId.toString())
+    this.profileId = socket.profile._id
+    this.userId = socket.user._id
+
+    this.chatHelper.joinChat({ chatId: this.chatId, profileId: this.profileId })
+
+    socket.join(this.chatId.toString())
 
     socket.on("send-message", this.sendMessage(socket))
 
     socket.on("disconnect", this.disconnect(socket))
   }
 
-  private readonly readAllMessages = async (socket: ISocket) => {
-    const { _id: profileId } = socket.profile._id
-    const { _id: userId } = socket.user._id
-
-    this.chatService.setProfileId = profileId
-    this.chatService.setUserId = userId
-
-    const existedChat = await this.chatRepository.findOne({
-      filter: {
-        $or: [
-          { startedBy: profileId, participants: userId },
-          { participants: profileId, startedBy: userId },
-        ],
-      },
-      projection: { _id: 1, newMessages: 1, messages: 1 },
-    })
-
-    if (existedChat) {
-      for (const msg of existedChat.newMessages)
-        existedChat.messages.unshift(msg)
-
-      existedChat.newMessages = []
-
-      await existedChat.save()
-    }
-
-    if (!existedChat) {
-      const newChat = await this.chatRepository.create({
-        type: ChatType.OTO,
-        startedBy: profileId,
-        participants: [userId],
-      })
-
-      this.chatService.setCurrentChatRoomId = newChat._id
-    }
-
-    this.chatRoomId = this.chatService.getCurrentChatRoomId
-  }
-
   private readonly sendMessage = (socket: ISocket) => {
     return async ({ message }: { message: string }) => {
-      const updatedChat = await ChatHelpers.upsertChatMessage({
-        chatRoomId: this.chatRoomId.toString(),
-        message,
-        profileId: this.profileId,
+      const inChat = this.chatHelper.isInChat({
+        chatId: this.chatId,
         userId: this.userId,
       })
-      const inChat = ChatHelpers.isInChat({
-        chatRoomId: this.chatRoomId.toString(),
-        userId: this.userId,
+
+      const createdMessage = await this.messageRepository.create({
+        from: this.profileId,
+        to: this.userId,
+        chatId: this.chatId,
+        message,
+        sentAt: currentMoment(),
       })
 
       const data: ISendMessage = {
+        from: socket.profile,
         message,
         sentAt: currentMoment(),
-        from: socket.profile,
       }
 
       if (!inChat) {
@@ -97,25 +61,25 @@ class ChatInteractions {
           notificationDetails: {
             from: socket.profile,
             message,
-            messageId: updatedChat._id,
-            refTo: "Chat",
-            on: { _id: updatedChat._id! },
+            messageId: createdMessage._id,
+            on: { _id: createdMessage._id },
             sentAt: currentMoment(),
+            refTo: "Chat",
           },
         })
       }
 
-      return socket.to(this.chatRoomId.toString()).emit("new-message", data)
+      return socket.to(this.chatId.toString()).emit("new-message", data)
     }
   }
 
   private readonly disconnect = (socket: ISocket) => () => {
-    roomMembersController.leaveChat({
+    this.chatHelper.leaveChat({
+      chatId: this.chatId,
       profileId: this.profileId,
-      chatRoomId: this.chatRoomId,
     })
 
-    socket.leave(this.chatRoomId.toString())
+    socket.leave(this.chatId.toString())
   }
 }
 export default new ChatInteractions()

@@ -3,7 +3,7 @@ import { Schema, SchemaTypes } from "mongoose"
 import { IPost } from "../../interfaces/IPost.interface"
 import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import commentRepository from "../../../common/repositories/concrete/comment.repository"
+import commentRepository from "../../../common/repositories/comment.repository"
 
 export const PostSchema = new Schema<IPost>(
   {

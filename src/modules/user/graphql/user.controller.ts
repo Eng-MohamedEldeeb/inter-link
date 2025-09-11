@@ -4,7 +4,7 @@ import {
   userExistenceGuard,
 } from "../../../common/guards"
 
-import * as validators from "../validator/user.validator"
+import { UserValidator } from "../../../validators"
 
 import {
   IMutationController,
@@ -29,7 +29,7 @@ class UserQueryController {
       }),
       args: UserArgs.getUserProfile,
       resolve: applyResolver({
-        middlewares: [validate(validators.getUserProfileSchema.graphql())],
+        middlewares: [validate(UserValidator.getUserProfileSchema.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
         resolver: this.userQueryResolver.getUserProfile,
       }),
@@ -76,7 +76,7 @@ class UserMutationController {
       args: UserArgs.blockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema.graphql())],
+        middlewares: [validate(UserValidator.blockUserSchema.graphql())],
         resolver: this.userMutationResolver.blockUser,
       }),
     }
@@ -90,7 +90,7 @@ class UserMutationController {
       args: UserArgs.unblockUser,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.blockUserSchema.graphql())],
+        middlewares: [validate(UserValidator.blockUserSchema.graphql())],
         resolver: this.userMutationResolver.unblockUser,
       }),
     }

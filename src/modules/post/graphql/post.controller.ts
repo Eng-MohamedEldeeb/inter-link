@@ -1,4 +1,4 @@
-import * as validators from "./../validators/post.validators"
+import { PostValidator } from "../../../validators"
 
 import {
   IMutationController,
@@ -33,7 +33,7 @@ class PostController {
       }),
       args: PostArgs.getAll,
       resolve: applyResolver({
-        middlewares: [validate(validators.getAllValidator.graphql())],
+        middlewares: [validate(PostValidator.getAllValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         resolver: this.postQueryResolver.getAll,
       }),
@@ -48,7 +48,7 @@ class PostController {
       }),
       args: PostArgs.getSingle,
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleValidator.graphql())],
+        middlewares: [validate(PostValidator.getSingleValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.postQueryResolver.getSingle,
       }),
@@ -64,7 +64,7 @@ class PostController {
       }),
       args: PostArgs.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphql())],
+        middlewares: [validate(PostValidator.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -83,7 +83,7 @@ class PostController {
       }),
       args: PostArgs.save,
       resolve: applyResolver({
-        middlewares: [validate(validators.saveValidator.graphql())],
+        middlewares: [validate(PostValidator.saveValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.postMutationResolver.save,
       }),
@@ -97,7 +97,7 @@ class PostController {
       }),
       args: PostArgs.shared,
       resolve: applyResolver({
-        middlewares: [validate(validators.sharedValidator.graphql())],
+        middlewares: [validate(PostValidator.sharedValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -116,7 +116,7 @@ class PostController {
       }),
       args: PostArgs.archive,
       resolve: applyResolver({
-        middlewares: [validate(validators.archiveValidator.graphql())],
+        middlewares: [validate(PostValidator.archiveValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.postMutationResolver.archive,
       }),
@@ -130,7 +130,7 @@ class PostController {
       }),
       args: PostArgs.restore,
       resolve: applyResolver({
-        middlewares: [validate(validators.restoreValidator.graphql())],
+        middlewares: [validate(PostValidator.restoreValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.postMutationResolver.restore,
       }),
@@ -144,7 +144,7 @@ class PostController {
       }),
       args: PostArgs.deletePost,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphql())],
+        middlewares: [validate(PostValidator.deleteValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, postExistenceGuard],
         resolver: this.postMutationResolver.deletePost,
       }),

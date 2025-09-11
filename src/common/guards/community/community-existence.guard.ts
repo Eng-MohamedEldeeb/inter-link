@@ -7,7 +7,7 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/concrete/community.repository"
+import communityRepository from "../../repositories/community.repository"
 
 class CommunityExistenceGuard extends GuardActivator {
   private readonly communityRepository = communityRepository

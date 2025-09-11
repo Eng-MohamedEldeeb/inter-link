@@ -4,7 +4,7 @@ import { StoryResponse } from "./types/story-response"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 import { StoryArgs } from "./types/story-args"
 
-import * as validators from "../validators/story.validators"
+import { StoryValidator } from "../../../validators"
 
 import {
   IMutationController,
@@ -35,7 +35,7 @@ class StoryController {
       }),
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard, userExistenceGuard],
-        middlewares: [validate(validators.getAllValidator.graphql())],
+        middlewares: [validate(StoryValidator.getAllValidator.graphql())],
         resolver: this.storyQueryResolver.getAll,
       }),
     }
@@ -49,7 +49,7 @@ class StoryController {
       }),
       args: StoryArgs.getSingle,
       resolve: applyResolver({
-        middlewares: [validate(validators.getSingleValidator.graphql())],
+        middlewares: [validate(StoryValidator.getSingleValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -69,7 +69,7 @@ class StoryController {
       }),
       args: StoryArgs.likeStory,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeValidator.graphql())],
+        middlewares: [validate(StoryValidator.likeValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, storyExistenceGuard],
         resolver: this.storyMutationResolver.like,
       }),
@@ -83,7 +83,7 @@ class StoryController {
       }),
       args: StoryArgs.deleteStory,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphql())],
+        middlewares: [validate(StoryValidator.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

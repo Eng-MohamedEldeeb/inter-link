@@ -7,7 +7,7 @@ import { TGroup } from "../../../db/documents"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import groupRepository from "../../repositories/concrete/group.repository"
+import groupRepository from "../../repositories/group.repository"
 import { IGetSingleGroup } from "../../../modules/group/dto/group.dto"
 
 class GroupExistenceGuard extends GuardActivator {

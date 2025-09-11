@@ -2,7 +2,7 @@ import { Router } from "express"
 
 import replyController from "./reply.controller"
 
-import * as validators from "../validators/reply.validators"
+import { ReplyValidator } from "../../../validators"
 
 import {
   commentExistenceGuard,
@@ -17,28 +17,28 @@ const router: Router = Router({ mergeParams: true })
 
 router.get(
   "/:commentId",
-  validate(validators.getCommentRepliesValidator.http()),
+  validate(ReplyValidator.getCommentRepliesValidator.http()),
   applyGuards(commentExistenceGuard),
   replyController.getCommentReplies,
 )
 
 router.post(
   "/add/:commentId",
-  validate(validators.addValidator.http()),
+  validate(ReplyValidator.addValidator.http()),
   applyGuards(commentExistenceGuard),
   replyController.reply,
 )
 
 router.post(
   "/like",
-  validate(validators.likeValidator.http()),
+  validate(ReplyValidator.likeValidator.http()),
   applyGuards(replyExistenceGuard),
   replyController.like,
 )
 
 router.patch(
   "/edit",
-  validate(validators.editValidator.http()),
+  validate(ReplyValidator.editValidator.http()),
   applyGuards(replyExistenceGuard, replyOwnerGuard),
   replyController.edit,
 )
@@ -46,7 +46,7 @@ router.patch(
 router.delete(
   "/:replyId",
   applyGuards(replyExistenceGuard, replyOwnerGuard),
-  validate(validators.deleteValidator.http()),
+  validate(ReplyValidator.deleteValidator.http()),
   replyController.deleteReply,
 )
 

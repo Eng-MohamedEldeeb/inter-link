@@ -1,4 +1,4 @@
-import { io } from "../../../main"
+import { io } from "../../.."
 import { NotificationType } from "./types"
 import { MongoId } from "../../types/db"
 
@@ -10,7 +10,7 @@ import {
 
 import userService from "../../../modules/user/user.service"
 import notificationService from "../../../modules/notification/notification.service"
-import notificationRepository from "../../repositories/concrete/notification.repository"
+import notificationRepository from "../../repositories/notification.repository"
 
 class NotificationsService {
   private readonly userService = userService

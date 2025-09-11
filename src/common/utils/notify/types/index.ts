@@ -24,8 +24,6 @@ export type UserStatus = {
   isConnected: boolean
 }
 
-export type RoomMembers = string[]
-
 export type TSendNotificationParams = {
   userId: MongoId
   notificationDetails: INotificationInputs

@@ -6,8 +6,8 @@ import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/concrete/user.repository"
-import storyRepository from "../../repositories/concrete/story.repository"
+import userRepository from "../../repositories/user.repository"
+import storyRepository from "../../repositories/story.repository"
 
 class StoryViewPermissionGuard extends GuardActivator {
   private readonly storyRepository = storyRepository

@@ -19,22 +19,22 @@ class ChatController {
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.chatService.getAllChats(profileId),
+        // data: await this.chatService.getAllChats(profileId),
       })
     },
   )
 
   public readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { participants, messages } = await this.chatService.getSingle(
-        req.chat,
-      )
+      // const { participants, messages } = await this.chatService.getSingle(
+      //   req.chat,
+      // )
 
       return successResponse(res, {
-        data: {
-          participants,
-          messages,
-        },
+        // data: {
+        //   participants,
+        //   messages,
+        // },
       })
     },
   )

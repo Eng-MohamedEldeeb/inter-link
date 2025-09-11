@@ -11,7 +11,7 @@ import {
   IGetSingleComment,
 } from "../../../modules/comment/dto/comment.dto"
 
-import commentRepository from "../../repositories/concrete/comment.repository"
+import commentRepository from "../../repositories/comment.repository"
 
 class CommentExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

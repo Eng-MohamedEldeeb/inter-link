@@ -6,10 +6,10 @@ import { OtpType } from "../enums/otp.enum"
 import { encryptValue } from "../../../common/utils/security/crypto/crypto.service"
 import { CloudUploader } from "../../../common/services/upload/cloud.service"
 
-import postRepository from "../../../common/repositories/concrete/post.repository"
-import communityRepository from "../../../common/repositories/concrete/community.repository"
-import commentRepository from "../../../common/repositories/concrete/comment.repository"
-import otpRepository from "../../../common/repositories/concrete/otp.repository"
+import postRepository from "../../../common/repositories/post.repository"
+import communityRepository from "../../../common/repositories/community.repository"
+import commentRepository from "../../../common/repositories/comment.repository"
+import otpRepository from "../../../common/repositories/otp.repository"
 
 export const UserSchema = new Schema<IUser>(
   {

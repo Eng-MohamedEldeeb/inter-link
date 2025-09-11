@@ -2,7 +2,7 @@ import { Router } from "express"
 
 import groupController from "./group.controller"
 
-import * as validators from "../validators/group.validators"
+import { GroupValidator } from "../../../validators"
 
 import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
@@ -17,7 +17,7 @@ router.get("/all", groupController.getAllGroups)
 
 router.get(
   "/:id",
-  validate(validators.getSingleGroupChatValidator.http()),
+  validate(GroupValidator.getSingleGroupChatValidator.http()),
   applyGuards(groupExistenceGuard, groupMembersGuard),
   groupController.getSingle,
 )
@@ -25,7 +25,7 @@ router.get(
 router.post(
   "/create",
   fileReader("image/jpeg", "image/jpg", "image/png").single("cover"),
-  validate(validators.createGroupValidator.http()),
+  validate(GroupValidator.createGroupValidator.http()),
   groupCoverUploader,
   groupController.create,
 )
@@ -33,35 +33,35 @@ router.post(
 router.post(
   "/:id/like",
   applyGuards(groupExistenceGuard, groupMembersGuard),
-  validate(validators.likeMessageValidator.http()),
+  validate(GroupValidator.likeMessageValidator.http()),
   groupController.likeMessage,
 )
 
 router.patch(
   "/:id/edit-message",
   applyGuards(groupExistenceGuard, groupMembersGuard),
-  validate(validators.editMessageValidator.http()),
+  validate(GroupValidator.editMessageValidator.http()),
   groupController.editMessage,
 )
 
 router.delete(
   "/:id/delete-message",
   applyGuards(groupExistenceGuard, groupMembersGuard),
-  validate(validators.deleteMessageValidator.http()),
+  validate(GroupValidator.deleteMessageValidator.http()),
   groupController.deleteMessage,
 )
 
 router.patch(
   "/edit",
   applyGuards(groupExistenceGuard),
-  validate(validators.editGroupValidator.http()),
+  validate(GroupValidator.editGroupValidator.http()),
   groupController.editGroup,
 )
 
 // router.delete(
 //   '/delete',
 //   applyGuards(groupExistenceGuard),
-//   validate(validators.deleteChatValidator.http()),
+//   validate(GroupValidator.deleteChatValidator.http()),
 //   groupController.deleteChat,
 // )
 

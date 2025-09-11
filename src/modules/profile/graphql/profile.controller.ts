@@ -3,7 +3,7 @@ import isAuthorizedGuard from "../../../common/guards/auth/is-authorized.guard"
 import { ProfileResponse } from "./types/profile-response"
 
 import ProfileArgs from "./types/profile-args"
-import * as validators from "../validator/profile.validator"
+import { ProfileValidator } from "../../../validators"
 
 import {
   profileQueryResolver,
@@ -86,7 +86,7 @@ class ProfileController {
       args: ProfileArgs.updateProfile,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.updateProfileSchema.graphql())],
+        middlewares: [validate(ProfileValidator.updateProfileSchema.graphql())],
         resolver: this.profileMutationResolver.updateProfile,
       }),
     }
@@ -112,7 +112,7 @@ class ProfileController {
       args: ProfileArgs.changeEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.changeEmailSchema.graphql())],
+        middlewares: [validate(ProfileValidator.changeEmailSchema.graphql())],
         resolver: this.profileMutationResolver.changeEmail,
       }),
     }
@@ -126,7 +126,9 @@ class ProfileController {
       args: ProfileArgs.confirmNewEmail,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmNewEmailSchema.graphql())],
+        middlewares: [
+          validate(ProfileValidator.confirmNewEmailSchema.graphql()),
+        ],
         resolver: this.profileMutationResolver.confirmNewEmail,
       }),
     }
@@ -152,7 +154,7 @@ class ProfileController {
       args: ProfileArgs.deactivateAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema.graphql())],
+        middlewares: [validate(ProfileValidator.deleteAccountSchema.graphql())],
         resolver: this.profileMutationResolver.deactivateAccount,
       }),
     }
@@ -166,7 +168,7 @@ class ProfileController {
       args: ProfileArgs.deleteAccount,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.deleteAccountSchema.graphql())],
+        middlewares: [validate(ProfileValidator.deleteAccountSchema.graphql())],
         resolver: this.profileMutationResolver.deleteAccount,
       }),
     }
@@ -180,7 +182,9 @@ class ProfileController {
       args: ProfileArgs.confirmDeletion,
       resolve: applyResolver({
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-        middlewares: [validate(validators.confirmDeletionSchema.graphql())],
+        middlewares: [
+          validate(ProfileValidator.confirmDeletionSchema.graphql()),
+        ],
         resolver: this.profileMutationResolver.confirmDeletion,
       }),
     }

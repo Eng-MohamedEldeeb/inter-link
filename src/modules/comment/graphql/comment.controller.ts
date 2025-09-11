@@ -11,7 +11,7 @@ import {
 } from "../../../common/guards"
 
 import * as resolvers from "./comment.resolver"
-import * as validators from "./../validators/comment.validators"
+import { CommentValidator } from "../../../validators"
 
 import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
 import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
@@ -32,7 +32,7 @@ class CommentController {
       }),
       args: CommentArgs.getPostComments,
       resolve: applyResolver({
-        middlewares: [validate(validators.addValidator.graphql())],
+        middlewares: [validate(CommentValidator.addValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard],
         resolver: this.commentQueryResolver.getSingleComment,
       }),
@@ -47,7 +47,7 @@ class CommentController {
       }),
       args: CommentArgs.like,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphql())],
+        middlewares: [validate(CommentValidator.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -65,7 +65,7 @@ class CommentController {
       }),
       args: CommentArgs.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphql())],
+        middlewares: [validate(CommentValidator.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -84,7 +84,7 @@ class CommentController {
       }),
       args: CommentArgs.deleteComment,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphql())],
+        middlewares: [validate(CommentValidator.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

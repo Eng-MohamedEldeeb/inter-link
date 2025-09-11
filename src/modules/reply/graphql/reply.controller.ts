@@ -1,5 +1,5 @@
 import * as resolvers from "./reply.resolver"
-import * as validators from "../validators/reply.validators"
+import { ReplyValidator } from "../../../validators"
 
 import {
   isAuthenticatedGuard,
@@ -46,7 +46,7 @@ class ReplyController {
       }),
       args: ReplyArgs.like,
       resolve: applyResolver({
-        middlewares: [validate(validators.likeValidator.graphql())],
+        middlewares: [validate(ReplyValidator.likeValidator.graphql())],
         guards: [isAuthenticatedGuard, isAuthorizedGuard, replyExistenceGuard],
         resolver: this.replyMutationResolver.like,
       }),
@@ -60,7 +60,7 @@ class ReplyController {
       }),
       args: ReplyArgs.edit,
       resolve: applyResolver({
-        middlewares: [validate(validators.editValidator.graphql())],
+        middlewares: [validate(ReplyValidator.editValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,
@@ -79,7 +79,7 @@ class ReplyController {
       }),
       args: ReplyArgs.deleteReply,
       resolve: applyResolver({
-        middlewares: [validate(validators.deleteValidator.graphql())],
+        middlewares: [validate(ReplyValidator.deleteValidator.graphql())],
         guards: [
           isAuthenticatedGuard,
           isAuthorizedGuard,

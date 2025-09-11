@@ -9,7 +9,7 @@ import {
   postExistenceGuard,
 } from "../../../common/guards"
 
-import * as validators from "./../validators/comment.validators"
+import { CommentValidator } from "../../../validators"
 
 import { fileReader } from "../../../common/utils/multer/file-reader"
 import { applyGuards } from "../../../common/decorators/guard/apply-guards.decorator"
@@ -22,7 +22,7 @@ router.use("/reply", replyRouter)
 
 router.get(
   "/:id",
-  validate(validators.getSingleCommentValidator.http()),
+  validate(CommentValidator.getSingleCommentValidator.http()),
   applyGuards(commentExistenceGuard),
   commentController.getSingle,
 )
@@ -30,7 +30,7 @@ router.get(
 router.post(
   "/add/:postId",
   fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
-  validate(validators.addValidator.http()),
+  validate(CommentValidator.addValidator.http()),
   applyGuards(postExistenceGuard),
   commentAttachmentUploader,
   commentController.addComment,
@@ -38,14 +38,14 @@ router.post(
 
 router.post(
   "/like",
-  validate(validators.likeValidator.http()),
+  validate(CommentValidator.likeValidator.http()),
   applyGuards(commentExistenceGuard),
   commentController.like,
 )
 
 router.patch(
   "/edit",
-  validate(validators.editValidator.http()),
+  validate(CommentValidator.editValidator.http()),
   applyGuards(commentExistenceGuard, commentOwnerGuard),
   commentController.edit,
 )
@@ -53,7 +53,7 @@ router.patch(
 router.delete(
   "/:id",
   applyGuards(commentExistenceGuard, commentOwnerGuard),
-  validate(validators.deleteValidator.http()),
+  validate(CommentValidator.deleteValidator.http()),
   commentController.deleteComment,
 )
 

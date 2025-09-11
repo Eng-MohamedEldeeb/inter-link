@@ -6,7 +6,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import groupRepository from "../../repositories/concrete/group.repository"
+import groupRepository from "../../repositories/group.repository"
 
 class GroupMembersGuard extends GuardActivator {
   private readonly groupRepository = groupRepository

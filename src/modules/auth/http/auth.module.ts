@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { validate } from "../../../common/middlewares/validation/validation.middleware"
 
-import * as validators from "./../validator/auth.validator"
+import { AuthValidator } from "../../../validators"
 
 import authController from "./auth.controller"
 
@@ -9,31 +9,31 @@ const router: Router = Router()
 
 router.post(
   "/confirm-email",
-  validate(validators.confirmEmailSchema.http()),
+  validate(AuthValidator.confirmEmailValidator.http()),
   authController.confirmEmail,
 )
 
 router.post(
   "/register",
-  validate(validators.registerSchema.http()),
+  validate(AuthValidator.registerValidator.http()),
   authController.register,
 )
 
 router.post(
   "/login",
-  validate(validators.loginSchema.http()),
+  validate(AuthValidator.loginValidator.http()),
   authController.login,
 )
 
 router.post(
   "/forgot-password",
-  validate(validators.forgotPasswordSchema.http()),
+  validate(AuthValidator.forgotPasswordValidator.http()),
   authController.forgotPassword,
 )
 
 router.patch(
   "/reset-password",
-  validate(validators.resetPasswordSchema.http()),
+  validate(AuthValidator.resetPasswordValidator.http()),
   authController.resetPassword,
 )
 

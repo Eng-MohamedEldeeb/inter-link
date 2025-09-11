@@ -1,14 +1,15 @@
-import { Document, HydratedDocument } from 'mongoose'
+import { Document, HydratedDocument } from "mongoose"
 
-import { IUser } from '../interfaces/IUser.interface'
-import { IOtp } from '../interfaces/IOtp.interface'
-import { ICommunity } from '../interfaces/ICommunity.interface'
-import { IPost } from '../interfaces/IPost.interface'
-import { IComment } from '../interfaces/IComment.interface'
-import { IStory } from '../interfaces/IStory.interface'
-import { INotifications } from '../interfaces/INotification.interface'
-import { IChat } from '../interfaces/IChat.interface'
-import { IGroup } from '../interfaces/IGroup.interface'
+import { IUser } from "../interfaces/IUser.interface"
+import { IOtp } from "../interfaces/IOtp.interface"
+import { ICommunity } from "../interfaces/ICommunity.interface"
+import { IPost } from "../interfaces/IPost.interface"
+import { IComment } from "../interfaces/IComment.interface"
+import { IStory } from "../interfaces/IStory.interface"
+import { INotifications } from "../interfaces/INotification.interface"
+import { IChat } from "../interfaces/IChat.interface"
+import { IGroup } from "../interfaces/IGroup.interface"
+import { IMessage } from "../interfaces/IMessage.interface"
 
 export type TOtp = HydratedDocument<IOtp> & Document
 
@@ -27,3 +28,5 @@ export type TNotification = HydratedDocument<INotifications> & Document
 export type TChat = HydratedDocument<IChat> & Document
 
 export type TGroup = HydratedDocument<IGroup> & Document
+
+export type TMessage = HydratedDocument<IMessage> & Document
