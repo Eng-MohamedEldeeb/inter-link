@@ -2,7 +2,7 @@ import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { ContextType } from "../../decorators/context/types"
 import { MongoId } from "../../types/db"
-import { IGetSinglePost } from "../../../modules/post/dto/post.dto"
+import { IGetSinglePost } from "../../../modules/apis/post/dto/post.dto"
 import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"

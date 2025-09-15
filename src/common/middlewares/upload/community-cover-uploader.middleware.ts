@@ -4,7 +4,7 @@ import { NextFunction } from "express"
 import { asyncHandler, fileUploader } from "../../decorators"
 
 import { IRequest } from "../../interface/IRequest.interface"
-import { ICreateCommunity } from "../../../modules/community/dto/community.dto"
+import { ICreateCommunity } from "../../../modules/apis/community/dto/community.dto"
 
 export const communityCoverUploader = asyncHandler(
   async (req: IRequest, _: Response, next: NextFunction) => {

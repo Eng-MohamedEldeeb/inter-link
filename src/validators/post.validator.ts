@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/post/dto/post.dto"
+import * as DTO from "../modules/apis/post/dto/post.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class PostValidator extends Validator {

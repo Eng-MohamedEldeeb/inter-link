@@ -4,11 +4,14 @@ import { ContextType } from "../../decorators/context/types"
 import { throwError } from "../../handlers/error-message.handler"
 import { MongoId } from "../../types/db"
 
-import { IGetSingleStory, IStoryId } from "../../../modules/story/dto/story.dto"
+import {
+  IGetSingleStory,
+  IStoryId,
+} from "../../../modules/apis/story/dto/story.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import storyRepository from "../../repositories/story.repository"
+import { storyRepository } from "../../../db/repositories"
 
 class StoryExistenceGuard extends GuardActivator {
   private readonly storyRepository = storyRepository

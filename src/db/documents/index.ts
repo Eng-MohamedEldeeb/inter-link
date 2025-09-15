@@ -6,7 +6,7 @@ import { ICommunity } from "../interfaces/ICommunity.interface"
 import { IPost } from "../interfaces/IPost.interface"
 import { IComment } from "../interfaces/IComment.interface"
 import { IStory } from "../interfaces/IStory.interface"
-import { INotifications } from "../interfaces/INotification.interface"
+import { INotification } from "../interfaces/INotification.interface"
 import { IChat } from "../interfaces/IChat.interface"
 import { IGroup } from "../interfaces/IGroup.interface"
 import { IMessage } from "../interfaces/IMessage.interface"
@@ -23,7 +23,7 @@ export type TComment = HydratedDocument<IComment> & Document
 
 export type TCommunity = HydratedDocument<ICommunity> & Document
 
-export type TNotification = HydratedDocument<INotifications> & Document
+export type TNotification = HydratedDocument<INotification> & Document
 
 export type TChat = HydratedDocument<IChat> & Document
 

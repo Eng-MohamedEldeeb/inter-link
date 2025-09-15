@@ -1,6 +1,6 @@
-import { ISendArgs } from "../../events/send-email/interface/send-args.interface"
+import { ISendArgs } from "./interface/send-args.interface"
 
-import emailEvent from "../../events/send-email/send-email.event"
+import emailEvent from "./send-email.event"
 
 export class EmailService {
   private static readonly emailEvent = emailEvent

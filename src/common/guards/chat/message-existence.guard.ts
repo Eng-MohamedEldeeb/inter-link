@@ -9,7 +9,7 @@ import {
   HttpParams,
 } from "../../decorators/context/types"
 
-import { ILikeMessage } from "../../../modules/chat/dto/chat.dto"
+import { ILikeMessage } from "../../../modules/apis/chat/dto/chat.dto"
 import { IMessageInputs } from "../../../db/interfaces/IMessage.interface"
 
 class MessageExistence extends GuardActivator {

@@ -5,7 +5,7 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityOwnerAuthorizationGuard from "./community-owner.guard"
+import communityOwnerGuard from "./community-owner.guard"
 
 class CommunityRequestsGuard extends GuardActivator {
   private userId!: MongoId
@@ -35,8 +35,7 @@ class CommunityRequestsGuard extends GuardActivator {
     }
 
     return (
-      this.hasRequested() ||
-      (await communityOwnerAuthorizationGuard.canActivate(...params))
+      this.hasRequested() || (await communityOwnerGuard.canActivate(...params))
     )
   }
 

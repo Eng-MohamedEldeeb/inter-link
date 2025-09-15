@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/comment/dto/comment.dto"
+import * as DTO from "../modules/apis/comment/dto/comment.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class CommentValidator extends Validator {

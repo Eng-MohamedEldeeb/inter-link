@@ -6,7 +6,7 @@ import {
   IGetAllStory,
   IGetSingleStory,
   ILikeStory,
-} from "../modules/story/dto/story.dto"
+} from "../modules/apis/story/dto/story.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class StoryValidator extends Validator {

@@ -9,8 +9,8 @@ import {
   HttpParams,
 } from "../../decorators/context/types"
 
-import chatRepository from "../../repositories/chat.repository"
-import { IGetSingleChat } from "../../../modules/chat/dto/chat.dto"
+import { chatRepository } from "../../../db/repositories"
+import { IGetSingleChat } from "../../../modules/apis/chat/dto/chat.dto"
 
 class ChatExistenceGuard extends GuardActivator {
   private readonly chatRepository = chatRepository

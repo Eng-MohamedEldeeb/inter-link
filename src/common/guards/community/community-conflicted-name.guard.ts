@@ -6,11 +6,11 @@ import { throwError } from "../../handlers/error-message.handler"
 import {
   ICreateCommunity,
   IGetCommunity,
-} from "../../../modules/community/dto/community.dto"
+} from "../../../modules/apis/community/dto/community.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/community.repository"
+import { communityRepository } from "../../../db/repositories"
 
 class CommunityConflictedNameGuard extends GuardActivator {
   private readonly communityRepository = communityRepository

@@ -8,7 +8,7 @@ import {
   HttpParams,
 } from "../../decorators/context/types"
 
-import { IGetSingleChat } from "../../../modules/chat/dto/chat.dto"
+import { IGetSingleChat } from "../../../modules/apis/chat/dto/chat.dto"
 
 class ChatOwnerGuard extends GuardActivator {
   private chatStartedById!: MongoId

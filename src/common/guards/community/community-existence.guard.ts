@@ -1,13 +1,13 @@
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { ContextType } from "../../decorators/context/types"
-import { IGetCommunity } from "../../../modules/community/dto/community.dto"
+import { IGetCommunity } from "../../../modules/apis/community/dto/community.dto"
 import { throwError } from "../../handlers/error-message.handler"
 import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityRepository from "../../repositories/community.repository"
+import { communityRepository } from "../../../db/repositories"
 
 class CommunityExistenceGuard extends GuardActivator {
   private readonly communityRepository = communityRepository

@@ -2,12 +2,12 @@ import { MongoId } from "../../types/db"
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { ContextType } from "../../decorators/context/types"
-import { IReplyId } from "../../../modules/reply/dto/reply.dto"
+import { IReplyId } from "../../../modules/apis/reply/dto/reply.dto"
 import { throwError } from "../../handlers/error-message.handler"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import commentRepository from "../../repositories/comment.repository"
+import { commentRepository } from "../../../db/repositories"
 
 class ReplyExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

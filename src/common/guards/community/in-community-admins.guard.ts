@@ -5,7 +5,7 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import communityOwnerAuthorizationGuard from "./community-owner.guard"
+import communityOwnerGuard from "./community-owner.guard"
 
 class InCommunityAdminsGuard extends GuardActivator {
   private profileId!: MongoId
@@ -32,9 +32,7 @@ class InCommunityAdminsGuard extends GuardActivator {
       this.profileId = context.profile._id
     }
 
-    return (
-      this.isAdmin() || communityOwnerAuthorizationGuard.canActivate(...params)
-    )
+    return this.isAdmin() || communityOwnerGuard.canActivate(...params)
   }
 
   private readonly isAdmin = () => {

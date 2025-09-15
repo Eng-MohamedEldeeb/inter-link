@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/notification/dto/notification.dto"
+import * as DTO from "../modules/apis/notification/dto/notification.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class NotificationValidator extends Validator {

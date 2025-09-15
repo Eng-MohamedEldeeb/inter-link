@@ -1,8 +1,10 @@
-import { generate, GenerateOptions } from 'randomstring'
+import { generate, GenerateOptions } from "randomstring"
 
-export const generateCode = ({
-  length,
-  charset,
-}: Pick<GenerateOptions, 'length' | 'charset'>): string => {
-  return generate({ length, charset })
+export class RandomString {
+  public static generateCode = ({
+    length,
+    charset,
+  }: Pick<GenerateOptions, "length" | "charset">): string => {
+    return generate({ length, charset })
+  }
 }

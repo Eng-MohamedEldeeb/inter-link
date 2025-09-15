@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/reply/dto/reply.dto"
+import * as DTO from "../modules/apis/reply/dto/reply.dto"
 
 import { IReplyInputs } from "../db/interfaces/IReply.interface"
 import { Validator } from "../common/utils/validator/validator"

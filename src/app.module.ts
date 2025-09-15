@@ -1,20 +1,20 @@
 import { Express } from "express"
 import { json } from "body-parser"
-import { DataBaseService } from "./common/services/db/db.service"
+import { DataBaseService } from "./db/db.service"
 import { cachingDB } from "./common/utils/cache/cache-connection.service"
 import { helmetOptions } from "./common/utils/security/helmet/helmet-config"
 import { unknownURL } from "./common/handlers/unknown-url.handler"
 import { globalError } from "./common/handlers/global-error.handler"
 
-import httpModule from "./modules/http.module"
-import graphqlModule from "./modules/graphql.module"
+import httpModule from "./modules/apis/http.module"
+import graphqlModule from "./modules/apis/graphql.module"
 import cors from "cors"
 import helmet from "helmet"
 
 export const bootstrap = async (app: Express): Promise<void> => {
   await cachingDB()
 
-  await DataBaseService.connect()
+  // await DataBaseService.connect()
 
   app.use(json())
 

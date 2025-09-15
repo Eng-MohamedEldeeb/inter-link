@@ -5,16 +5,16 @@ import {
   GraphQLList,
   GraphQLObjectType,
   GraphQLString,
-} from 'graphql'
+} from "graphql"
 
-import { DateType, ObjFields } from './graphql.types'
+import { DateType, ObjFields } from "./graphql.types"
 
-import { IUser } from '../../../db/interfaces/IUser.interface'
-import { singleFile } from '../../services/upload/interface/cloud-response.interface'
-import { onePost } from '../../../modules/post/graphql/types/post-fields.type'
+import { IUser } from "../../../db/interfaces/IUser.interface"
+import { singleFile } from "../../services/upload/interface/cloud-response.interface"
+import { onePost } from "../../../modules/apis/post/graphql/types/post-fields.type"
 
 const viewer = new GraphQLObjectType({
-  name: 'viewerType',
+  name: "viewerType",
   fields: {
     viewer: { type: GraphQLID },
     totalVisits: { type: GraphQLInt },
@@ -51,12 +51,12 @@ export const userFields = {
 export const userProfileFields: ObjFields<
   Omit<
     IUser,
-    | 'deactivatedAt'
-    | 'tempEmail'
-    | '__v'
-    | 'password'
-    | 'oldPasswords'
-    | 'viewers'
+    | "deactivatedAt"
+    | "tempEmail"
+    | "__v"
+    | "password"
+    | "oldPasswords"
+    | "viewers"
   >
 > = {
   _id: { type: GraphQLID },
@@ -141,7 +141,7 @@ export const userProfileFields: ObjFields<
 export const profileFields: ObjFields<
   Omit<
     IUser,
-    'deactivatedAt' | 'tempEmail' | '__v' | 'password' | 'oldPasswords'
+    "deactivatedAt" | "tempEmail" | "__v" | "password" | "oldPasswords"
   >
 > = { ...userProfileFields, viewers: { type: new GraphQLList(viewer) } }
 

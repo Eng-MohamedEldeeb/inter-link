@@ -7,8 +7,7 @@ import { TGroup } from "../../../db/documents"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import groupRepository from "../../repositories/group.repository"
-import { IGetSingleGroup } from "../../../modules/group/dto/group.dto"
+import { groupRepository } from "../../../db/repositories"
 
 class GroupExistenceGuard extends GuardActivator {
   private readonly groupRepository = groupRepository
@@ -19,7 +18,7 @@ class GroupExistenceGuard extends GuardActivator {
     const Ctx = ContextDetector.detect(params)
 
     if (Ctx.type === ContextType.httpContext) {
-      const { req } = Ctx.switchToHTTP<IGetSingleGroup, IGetSingleGroup>()
+      const { req } = Ctx.switchToHTTP()
 
       const { id } = { ...req.params, ...req.query }
 
@@ -32,7 +31,7 @@ class GroupExistenceGuard extends GuardActivator {
     }
 
     if (Ctx.type === ContextType.graphContext) {
-      const { args, context } = Ctx.switchToGraphQL<IGetSingleGroup>()
+      const { args, context } = Ctx.switchToGraphQL()
 
       const { id } = args
 

@@ -7,7 +7,7 @@ import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
 class NotificationOwnerGuard extends GuardActivator {
   private profileId!: MongoId
-  private belongsTo!: MongoId
+  private receiver!: MongoId
 
   async canActivate(...params: HttpParams | GraphQLParams) {
     const Ctx = ContextDetector.detect(params)
@@ -15,26 +15,26 @@ class NotificationOwnerGuard extends GuardActivator {
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
       const { _id: profileId } = req.profile
-      const { belongsTo } = req.notifications
+      const { receiver } = req.notification
 
       this.profileId = profileId
-      this.belongsTo = belongsTo
+      this.receiver = receiver
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
       const { _id: profileId } = context.profile
-      const { belongsTo } = context.notifications
+      const { receiver } = context.notifications
 
       this.profileId = profileId
-      this.belongsTo = belongsTo
+      this.receiver = receiver
     }
 
     return this.isTheOwner()
   }
 
   private readonly isTheOwner = () => {
-    return this.belongsTo.equals(this.profileId)
+    return this.receiver.equals(this.profileId)
   }
 }
 

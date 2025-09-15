@@ -16,7 +16,6 @@ import {
 } from "../../decorators/context/types"
 
 class IsAuthenticatedGuard implements GuardActivator {
-  private contextArg!: IRequest | IContext | ISocket
   async canActivate(
     ...params: HttpParams | GraphQLParams | SocketServerParams
   ) {

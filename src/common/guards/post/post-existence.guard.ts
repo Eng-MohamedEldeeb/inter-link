@@ -3,11 +3,14 @@ import { ContextDetector } from "../../decorators/context/context-detector.decor
 import { ContextType } from "../../decorators/context/types"
 import { throwError } from "../../handlers/error-message.handler"
 
-import { IGetSinglePost, IPostId } from "../../../modules/post/dto/post.dto"
+import {
+  IGetSinglePost,
+  IPostId,
+} from "../../../modules/apis/post/dto/post.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from "../../repositories/post.repository"
+import { postRepository } from "../../../db/repositories"
 import { MongoId } from "../../types/db"
 
 class PostExistenceGuard extends GuardActivator {

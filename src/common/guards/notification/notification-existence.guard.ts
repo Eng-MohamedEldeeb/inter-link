@@ -1,5 +1,5 @@
-import { INotificationInputs } from "../../../db/interfaces/INotification.interface"
-import { IGetNotification } from "../../../modules/notification/dto/notification.dto"
+import { INotification } from "../../../db/interfaces/INotification.interface"
+import { IGetNotification } from "../../../modules/apis/notification/dto/notification.dto"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { ContextType } from "../../decorators/context/types"
 import { throwError } from "../../handlers/error-message.handler"
@@ -7,7 +7,7 @@ import { MongoId } from "../../types/db"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import notificationRepository from "../../repositories/notification.repository"
+import { notificationRepository } from "../../../db/repositories"
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 
 class NotificationExistenceGuard extends GuardActivator {
@@ -44,65 +44,10 @@ class NotificationExistenceGuard extends GuardActivator {
   }
 
   private readonly getNotificationDetails =
-    async (): Promise<INotificationInputs> => {
+    async (): Promise<INotification> => {
       const userNotification = await this.notificationRepository.findOne({
-        filter: { belongsTo: this.profileId },
-        populate: [
-          {
-            path: "newNotifications.from",
-            select: {
-              _id: 1,
-              username: 1,
+        filter: { receiver: this.profileId },
 
-              content: 1,
-              "avatar.secure_url": 1,
-              "attachments.paths.secure_url": 1,
-              "attachment.path.secure_url": 1,
-            },
-            options: { lean: true },
-          },
-          {
-            path: "newNotifications.on",
-            select: {
-              _id: 1,
-              username: 1,
-
-              content: 1,
-              "avatar.secure_url": 1,
-              "attachments.paths.secure_url": 1,
-              "attachment.path.secure_url": 1,
-            },
-
-            options: { lean: true },
-          },
-          {
-            path: "seen.from",
-            select: {
-              _id: 1,
-              username: 1,
-
-              content: 1,
-              "avatar.secure_url": 1,
-              "attachments.paths.secure_url": 1,
-              "attachment.path.secure_url": 1,
-            },
-            options: { lean: true },
-          },
-          {
-            path: "seen.on",
-            select: {
-              _id: 1,
-              username: 1,
-
-              content: 1,
-              "avatar.secure_url": 1,
-              "attachments.paths.secure_url": 1,
-              "attachment.path.secure_url": 1,
-            },
-
-            options: { lean: true },
-          },
-        ],
         options: { lean: true },
       })
 
@@ -112,29 +57,8 @@ class NotificationExistenceGuard extends GuardActivator {
           status: 404,
         })
 
-      const { newNotifications, seen } = userNotification
-
-      const inMissed =
-        newNotifications.length &&
-        newNotifications.find(this.targetedNotification)!
-
-      if (inMissed) return inMissed
-
-      const inSeen = seen.length && seen.find(this.targetedNotification)
-
-      if (inSeen) return inSeen
-
-      return throwError({
-        msg: "Un-Existed Notification or Invalid Id",
-        status: 404,
-      })
+      return userNotification
     }
-
-  private readonly targetedNotification = (
-    notification: INotificationInputs,
-    i: number,
-    obj: INotificationInputs[],
-  ) => notification._id?.toString() === this.notificationId.toString()
 }
 
 export default new NotificationExistenceGuard()

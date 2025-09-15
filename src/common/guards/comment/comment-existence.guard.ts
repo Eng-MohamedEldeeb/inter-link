@@ -9,9 +9,9 @@ import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 import {
   ICommentId,
   IGetSingleComment,
-} from "../../../modules/comment/dto/comment.dto"
+} from "../../../modules/apis/comment/dto/comment.dto"
 
-import commentRepository from "../../repositories/comment.repository"
+import { commentRepository } from "../../../db/repositories"
 
 class CommentExistenceGuard extends GuardActivator {
   private readonly commentRepository = commentRepository

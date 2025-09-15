@@ -2,22 +2,18 @@ import {
   GraphQLFieldConfigArgumentMap,
   GraphQLOutputType,
   GraphQLResolveInfo,
-} from 'graphql'
+} from "graphql"
 
-import {
-  INotificationInputs,
-  INotifications,
-} from '../../db/interfaces/INotification.interface'
-
-import { GuardActivator } from '../decorators/guard/guard-activator.guard'
-import { IPayload } from '../utils/security/token/interface/token.interface'
-import { IUser } from '../../db/interfaces/IUser.interface'
-import { IPost } from '../../db/interfaces/IPost.interface'
-import { IComment } from '../../db/interfaces/IComment.interface'
-import { IReply } from '../../db/interfaces/IReply.interface'
-import { IStory } from '../../db/interfaces/IStory.interface'
-import { ICommunity } from '../../db/interfaces/ICommunity.interface'
-import { TChat, TGroup } from '../../db/documents'
+import { INotification } from "../../db/interfaces/INotification.interface"
+import { GuardActivator } from "../decorators/guard/guard-activator.guard"
+import { IPayload } from "../utils/security/token/interface/token.interface"
+import { IUser } from "../../db/interfaces/IUser.interface"
+import { IPost } from "../../db/interfaces/IPost.interface"
+import { IComment } from "../../db/interfaces/IComment.interface"
+import { IReply } from "../../db/interfaces/IReply.interface"
+import { IStory } from "../../db/interfaces/IStory.interface"
+import { ICommunity } from "../../db/interfaces/ICommunity.interface"
+import { TChat, TGroup } from "../../db/documents"
 
 export type ControllerParams = (
   args: any,
@@ -72,8 +68,8 @@ export interface IContext {
   comment: IComment
   reply: IReply
   community: ICommunity
-  notifications: INotifications
-  notification: Partial<INotificationInputs>
+  notifications: INotification
+  notification: INotification
   chat: TChat
   group: TGroup
 }

@@ -1,8 +1,8 @@
 import joi from "joi"
 
-import * as CommunityDTO from "../modules/community/dto/community.dto"
+import * as CommunityDTO from "../modules/apis/community/dto/community.dto"
 
-import { ICreatePost, IPostId } from "../modules/post/dto/post.dto"
+import { ICreatePost, IPostId } from "../modules/apis/post/dto/post.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class CommunityValidator extends Validator {

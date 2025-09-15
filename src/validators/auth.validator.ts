@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/auth/dto/auth.dto"
+import * as DTO from "../modules/apis/auth/dto/auth.dto"
 
 import { Validator } from "../common/utils/validator/validator"
 

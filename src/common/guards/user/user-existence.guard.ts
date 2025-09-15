@@ -1,14 +1,14 @@
 import { ContextType } from "../../decorators/context/types"
 import { throwError } from "../../handlers/error-message.handler"
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
-import { IGetUserProfile } from "../../../modules/user/dto/user.dto"
+import { IGetUserProfile } from "../../../modules/apis/user/dto/user.dto"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { MongoId } from "../../types/db"
 
 import {
   IAddAdmin,
   IRemoveAdmin,
-} from "../../../modules/community/dto/community.dto"
+} from "../../../modules/apis/community/dto/community.dto"
 
 import {
   GraphQLParams,
@@ -16,7 +16,7 @@ import {
   SocketServerParams,
 } from "../../decorators/context/types"
 
-import userRepository from "../../repositories/user.repository"
+import { userRepository } from "../../../db/repositories"
 
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository

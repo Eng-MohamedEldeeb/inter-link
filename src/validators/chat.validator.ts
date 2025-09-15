@@ -1,6 +1,6 @@
 import joi from "joi"
 
-import * as DTO from "../modules/chat/dto/chat.dto"
+import * as DTO from "../modules/apis/chat/dto/chat.dto"
 import { Validator } from "../common/utils/validator/validator"
 
 export class ChatValidator extends Validator {

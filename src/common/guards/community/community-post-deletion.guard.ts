@@ -5,11 +5,11 @@ import { ContextType } from "../../decorators/context/types"
 import {
   IGetCommunity,
   IRemovePost,
-} from "../../../modules/community/dto/community.dto"
+} from "../../../modules/apis/community/dto/community.dto"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
 
-import postRepository from "../../repositories/post.repository"
+import { postRepository } from "../../../db/repositories"
 import { MongoId } from "../../types/db"
 
 class CommunityPostDeletionGuard extends GuardActivator {
