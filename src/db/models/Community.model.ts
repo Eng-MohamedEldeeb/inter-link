@@ -1,12 +1,15 @@
-import { Schema, SchemaTypes, model, models } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 
 import { ICommunity } from "../interfaces/ICommunity.interface"
 import { CloudUploader } from "../../common/services/upload/cloud.service"
 import { postRepository } from "../repositories"
 
 import slugify from "slugify"
+import { DataBaseService } from "../db.service"
 
 export class Community {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<ICommunity>(
     {
       cover: {
@@ -96,5 +99,6 @@ export class Community {
   }
 
   public static readonly Model =
-    models.Story ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.generalDB.models[this.name] ??
+    this.DataBaseService.generalDB.model(this.name, this.schemaFactory())
 }

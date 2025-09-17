@@ -1,11 +1,14 @@
-import { model, models, Schema, SchemaTypes } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 
 import { IPost } from "../interfaces/IPost.interface"
 import { CloudUploader } from "../../common/services/upload/cloud.service"
 
 import { commentRepository } from "../repositories"
+import { DataBaseService } from "../db.service"
 
 export class Post {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<IPost>(
     {
       attachments: {
@@ -81,5 +84,6 @@ export class Post {
   }
 
   public static readonly Model =
-    models.Post ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.generalDB.models[this.name] ??
+    this.DataBaseService.generalDB.model(this.name, this.schemaFactory())
 }

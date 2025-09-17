@@ -1,6 +1,13 @@
 import chalk from "chalk"
 
-import { connect, Mongoose, Model, RootFilterQuery } from "mongoose"
+import {
+  connect,
+  createConnection,
+  Mongoose,
+  Model,
+  RootFilterQuery,
+  Connection,
+} from "mongoose"
 
 import {
   IFind,
@@ -16,28 +23,52 @@ import {
 export abstract class DataBaseService<Inputs, TDocument> {
   constructor(private readonly model: Model<TDocument>) {}
 
-  public static readonly connect = async (): Promise<Mongoose | void> => {
-    try {
-      return await connect(process.env.DB_URI as string, {
-        appName: process.env.APP_NAME,
-      }).then(db => {
-        console.table(
-          db.modelNames().map(name => ({ collections: name })),
-          ["collections"],
-        )
-
-        console.log(
-          chalk.yellowBright("#"),
-          chalk.greenBright("   ", "DB Connection Established", "   "),
-          chalk.yellowBright("#"),
-        )
-        console.log(chalk.yellowBright("-".repeat(37)))
-      })
-    } catch (error) {
+  private static _generalDB: Connection = createConnection(
+    process.env.DB_GENERAL_URI as string,
+  )
+    .on("open", () => {
+      console.log(
+        chalk.yellowBright("#"),
+        chalk.greenBright("General DB Connection Established"),
+        chalk.yellowBright("#"),
+      )
+      console.log(chalk.yellowBright("-".repeat(37)))
+    })
+    .on("error", error => {
       if (error instanceof Error)
-        console.error({ msg: chalk.red("DB Connection Error"), error })
-      console.error({ msg: chalk.red("DB Connection Error"), error })
-    }
+        console.error({ msg: chalk.red("General DB Connection Error"), error })
+      console.error({ msg: chalk.red("General DB Connection Error"), error })
+    })
+
+  private static _interactionDB: Connection = createConnection(
+    process.env.DB_INTERACTION_URI as string,
+  )
+    .on("open", () => {
+      console.log(
+        chalk.yellowBright("#"),
+        chalk.greenBright("Interaction DB Connection Established"),
+        chalk.yellowBright("#"),
+      )
+      console.log(chalk.yellowBright("-".repeat(37)))
+    })
+    .on("error", error => {
+      if (error instanceof Error)
+        console.error({
+          msg: chalk.red("Interaction DB Connection Error"),
+          error,
+        })
+      console.error({
+        msg: chalk.red("Interaction DB Connection Error"),
+        error,
+      })
+    })
+
+  public static get generalDB() {
+    return this._generalDB
+  }
+
+  public static get interactionDB() {
+    return this._interactionDB
   }
 
   public readonly create = async (

@@ -1,7 +1,7 @@
 {
   "name": "inter-link",
   "version": "4.25.0",
-  "description": "Inspired By Instagram",
+  "description": "Inspired By Instagram and Other Social Apps",
   "main": "/dist/main.js",
   "scripts": {
     "dev": "nodemon"

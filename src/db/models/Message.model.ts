@@ -1,7 +1,10 @@
-import { Schema, SchemaTypes, model, models } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 import { IMessage, MessageStatus } from "../interfaces/IMessage.interface"
+import { DataBaseService } from "../db.service"
 
 export class Message {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<IMessage>(
     {
       sender: {
@@ -74,5 +77,6 @@ export class Message {
   }
 
   public static readonly Model =
-    models.Message ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.interactionDB.models[this.name] ??
+    this.DataBaseService.interactionDB.model(this.name, this.schemaFactory())
 }

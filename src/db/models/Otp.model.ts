@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose"
+import { Schema } from "mongoose"
 import { IOtp } from "../interfaces/IOtp.interface"
 import { OtpType } from "./enums/otp.enum"
 import { RandomString } from "../../common/utils/randomstring/generate-code.function"
@@ -7,8 +7,11 @@ import { EmailService } from "../../common/services/email/email.service"
 import { EmailSchemas } from "../../common/services/email/interface/send-args.interface"
 
 import * as emailSchemas from "../../common/utils/nodemailer/schemas/email-schema"
+import { DataBaseService } from "../db.service"
 
 export class OTP {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<IOtp>(
     {
       otpCode: { type: String },
@@ -52,5 +55,6 @@ export class OTP {
   }
 
   public static readonly Model =
-    models.Story ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.generalDB.models[this.name] ??
+    this.DataBaseService.generalDB.model(this.name, this.schemaFactory())
 }

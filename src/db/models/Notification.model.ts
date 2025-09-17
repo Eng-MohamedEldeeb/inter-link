@@ -1,11 +1,14 @@
-import { Schema, SchemaTypes, model, models } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 import {
   INotification,
   NotificationRefType,
   NotificationStatus,
 } from "../interfaces/INotification.interface"
+import { DataBaseService } from "../db.service"
 
 export class Notification {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<INotification>(
     {
       message: {
@@ -61,5 +64,6 @@ export class Notification {
   }
 
   public static readonly Model =
-    models.Notification ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.interactionDB.models[this.name] ??
+    this.DataBaseService.interactionDB.model(this.name, this.schemaFactory())
 }

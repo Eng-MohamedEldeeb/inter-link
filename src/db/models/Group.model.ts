@@ -1,8 +1,11 @@
-import { Schema, SchemaTypes, model, models } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 import { IGroup } from "../interfaces/IGroup.interface"
 import { CloudUploader } from "../../common/services/upload/cloud.service"
+import { DataBaseService } from "../db.service"
 
 export class Group {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<IGroup>(
     {
       messages: {
@@ -82,5 +85,6 @@ export class Group {
   }
 
   public static readonly Model =
-    models.Story ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.generalDB.models[this.name] ??
+    this.DataBaseService.generalDB.model(this.name, this.schemaFactory())
 }

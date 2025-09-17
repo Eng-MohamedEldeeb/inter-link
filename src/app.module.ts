@@ -14,8 +14,6 @@ import helmet from "helmet"
 export const bootstrap = async (app: Express): Promise<void> => {
   await cachingDB()
 
-  await DataBaseService.connect()
-
   app.use(json())
 
   app.use(cors({ origin: process.env.ORIGIN }))

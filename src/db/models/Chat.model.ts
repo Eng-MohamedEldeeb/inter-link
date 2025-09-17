@@ -1,7 +1,10 @@
-import { Schema, SchemaTypes, model, models } from "mongoose"
+import { Schema, SchemaTypes } from "mongoose"
 import { ChatType, IChat } from "../interfaces/IChat.interface"
+import { DataBaseService } from "../db.service"
 
 export class Chat {
+  private static readonly DataBaseService = DataBaseService
+
   private static readonly schema = new Schema<IChat>(
     {
       startedBy: {
@@ -53,5 +56,6 @@ export class Chat {
   }
 
   public static readonly Model =
-    models.Story ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.interactionDB.models[this.name] ??
+    this.DataBaseService.interactionDB.model(this.name, this.schemaFactory())
 }

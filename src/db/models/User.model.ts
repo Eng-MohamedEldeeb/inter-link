@@ -1,4 +1,4 @@
-import { Schema, SchemaTypes, UpdateQuery, model, models } from "mongoose"
+import { Schema, SchemaTypes, UpdateQuery } from "mongoose"
 
 import { IUser } from "../interfaces/IUser.interface"
 import { hashValue } from "../../common/utils/security/bcrypt/bcrypt.service"
@@ -12,8 +12,11 @@ import {
   commentRepository,
   otpRepository,
 } from "../repositories"
+import { DataBaseService } from "../db.service"
 
 export class User {
+  private static readonly DataBaseService = DataBaseService
+
   private static schema = new Schema<IUser>(
     {
       avatar: {
@@ -200,5 +203,6 @@ export class User {
   }
 
   public static readonly Model =
-    models.User ?? model(this.name, this.schemaFactory())
+    this.DataBaseService.generalDB.models[this.name] ??
+    this.DataBaseService.generalDB.model(this.name, this.schemaFactory())
 }
