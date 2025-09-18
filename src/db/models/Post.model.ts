@@ -24,9 +24,9 @@ export class Post {
         required: [true, "post's title is required"],
       },
 
-      content: {
+      body: {
         type: String,
-        maxlength: [100, "post's content can't be more than 100 characters"],
+        maxlength: [100, "post's body can't be more than 100 characters"],
       },
 
       likedBy: [{ type: SchemaTypes.ObjectId, ref: "User" }],

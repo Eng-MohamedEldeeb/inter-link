@@ -50,7 +50,7 @@ class ReplyMutationResolver {
       status: 201,
       data: await this.replyService.edit({
         replyId,
-        content: args.content,
+        body: args.body,
       }),
     }
   }

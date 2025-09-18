@@ -16,7 +16,7 @@ export class PostArgs {
   public static readonly edit = argsType<IGetSinglePost & IEditPost>({
     id: { type: new GraphQLNonNull(GraphQLID) },
     title: { type: GraphQLString },
-    content: { type: GraphQLString },
+    body: { type: GraphQLString },
   })
 
   public static readonly save = argsType<IGetSinglePost>({

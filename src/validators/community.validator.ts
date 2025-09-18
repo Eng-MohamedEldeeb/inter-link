@@ -29,8 +29,8 @@ export class CommunityValidator extends Validator {
 
   public static readonly createValidator = {
     schema: {
-      name: this.generalFields.content.min(1).max(28).required(),
-      description: this.generalFields.content.max(500),
+      name: this.generalFields.body.min(1).max(28).required(),
+      description: this.generalFields.body.max(500),
       isPrivateCommunity: joi.bool(),
     },
 
@@ -250,8 +250,8 @@ export class CommunityValidator extends Validator {
     body: joi
       .object<ICreatePost>()
       .keys({
-        title: this.generalFields.content.min(1).max(28).required(),
-        content: this.generalFields.content.max(500),
+        title: this.generalFields.body.min(1).max(28).required(),
+        body: this.generalFields.body.max(500),
       })
       .required(),
     query: joi
@@ -294,8 +294,8 @@ export class CommunityValidator extends Validator {
   public static readonly editValidator = {
     schema: {
       body: {
-        name: this.generalFields.content.min(1).max(28),
-        description: this.generalFields.content.max(500),
+        name: this.generalFields.body.min(1).max(28),
+        description: this.generalFields.body.max(500),
         isPrivateCommunity: joi.bool(),
       },
 
@@ -331,8 +331,8 @@ export class CommunityValidator extends Validator {
     body: joi
       .object<CommunityDTO.IEditCommunity>()
       .keys({
-        name: this.generalFields.content.min(1).max(28),
-        description: this.generalFields.content.max(500),
+        name: this.generalFields.body.min(1).max(28),
+        description: this.generalFields.body.max(500),
       })
       .required(),
     query: joi

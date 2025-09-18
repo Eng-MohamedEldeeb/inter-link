@@ -6,14 +6,14 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IComment } from "../../../db/interfaces/IComment.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { commentRepository } from "../../../db/repositories"
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 
 class CommentService {
   private readonly commentRepository = commentRepository
   private readonly Notify = Notify
 
   public readonly addComment = async ({
-    content,
+    body,
     attachment,
     post,
     profile,
@@ -22,7 +22,7 @@ class CommentService {
     const { _id: postId, createdBy } = post
 
     await this.commentRepository.create({
-      content,
+      body,
       ...(attachment.folderId && { attachment }),
       onPost: postId,
       createdBy: profileId,
@@ -34,7 +34,7 @@ class CommentService {
       body: {
         message: `${username} Add a Comment 💬`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Post,
+        refTo: NotificationRefTo.Post,
         relatedTo: postId,
       },
     })
@@ -79,7 +79,7 @@ class CommentService {
       body: {
         message: `${username} Liked Your Comment 💚`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Comment,
+        refTo: NotificationRefTo.Comment,
         relatedTo: commentId,
       },
     })
@@ -87,11 +87,11 @@ class CommentService {
     return { msg: "comment is liked successfully" }
   }
 
-  public readonly edit = async ({ id, content }: DTO.IEditComment) => {
+  public readonly edit = async ({ id, body }: DTO.IEditComment) => {
     const updatedComment = await this.commentRepository.findByIdAndUpdate({
       _id: id,
-      data: { content },
-      options: { new: true, lean: true, projection: { content: 1 } },
+      data: { body },
+      options: { new: true, lean: true, projection: { body: 1 } },
     })
     return (
       updatedComment ??

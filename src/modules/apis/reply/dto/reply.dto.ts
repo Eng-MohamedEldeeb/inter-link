@@ -11,7 +11,7 @@ export interface IReplyId {
   replyId: MongoId
 }
 
-export interface IEditReply extends Pick<IReplyInputs, "content">, IReplyId {}
+export interface IEditReply extends Pick<IReplyInputs, "body">, IReplyId {}
 
 export interface IDeleteReply extends IReplyId {}
 

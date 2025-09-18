@@ -46,7 +46,7 @@ class CommentMutationResolver {
       status: 201,
       data: await this.commentService.edit({
         id: commentId,
-        content: args.content,
+        body: args.body,
       }),
     }
   }

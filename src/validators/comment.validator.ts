@@ -33,7 +33,7 @@ export class CommentValidator extends Validator {
         postId: joi.string().custom(this.isValidMongoId).required(),
       },
       body: {
-        content: this.generalFields.content.max(250).required(),
+        body: this.generalFields.body.max(250).required(),
       },
     },
 
@@ -59,7 +59,7 @@ export class CommentValidator extends Validator {
         id: joi.string().custom(this.isValidMongoId).required(),
       },
       body: {
-        content: this.generalFields.content.max(250).required(),
+        body: this.generalFields.body.max(250).required(),
       },
     },
 

@@ -6,18 +6,21 @@ import { MongoId } from "../../../types/db"
 export enum NotificationType {
   newNotification = "new-notification",
   readNotifications = "read-notification",
+
   newMessage = "new-message",
   newMissedMessage = "new-missed-message",
   newGroupMessage = "new-group-message",
+
+  markAsReadNotifications = "mark-as-read-notifications",
 }
 
-export type SenderDetails =
-  | Pick<IUser, "_id" | "avatar" | "username">
-  | Pick<ICommunity, "_id" | "cover" | "name">
-
+export type SenderDetails = Partial<
+  Pick<IUser, "_id" | "avatar" | "username"> &
+    Pick<ICommunity, "_id" | "cover" | "name">
+>
 export type NotificationBody = Pick<
   INotificationInputs,
-  "message" | "sentAt" | "relatedTo" | "ref"
+  "message" | "sentAt" | "relatedTo" | "refTo"
 >
 
 export type NotificationBodyMessage = Pick<

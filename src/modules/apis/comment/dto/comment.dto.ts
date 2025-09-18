@@ -25,7 +25,7 @@ export interface IGetSingleComment {
 }
 
 export interface IEditComment
-  extends Pick<ICommentInputs, "content">,
+  extends Pick<ICommentInputs, "body">,
     IGetSingleComment {}
 
 export interface IDeleteComment extends IGetSingleComment {}

@@ -171,15 +171,6 @@ export abstract class Validator {
         ],
       }),
 
-    content: joi
-      .string()
-      .trim()
-      .messages({
-        "string.empty": this.validationMessage({ fieldName: "content" })[
-          "string.empty"
-        ],
-      }),
-
     body: joi
       .string()
       .trim()

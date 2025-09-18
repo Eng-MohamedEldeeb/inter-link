@@ -23,11 +23,11 @@ class CommentController {
   public readonly addComment = asyncHandler(
     async (req: IRequest<IPostId>, res: Response) => {
       const attachment = req.cloudFile
-      const { content }: Pick<DTO.IAddComment, "content"> = req.body
+      const { body }: Pick<DTO.IAddComment, "body"> = req.body
 
       await this.commentService.addComment({
         attachment,
-        content,
+        body,
         profile: req.profile,
         post: req.post,
       })
@@ -51,12 +51,12 @@ class CommentController {
   public readonly edit = asyncHandler(
     async (req: IRequest<DTO.ICommentId>, res: Response) => {
       const { commentId } = req.params
-      const { content }: DTO.IEditComment = req.body
+      const { body }: DTO.IEditComment = req.body
       return successResponse(res, {
         msg: "Comment is modified Successfully",
         data: await this.commentService.edit({
           id: commentId,
-          content,
+          body,
         }),
       })
     },

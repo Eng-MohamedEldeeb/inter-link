@@ -29,59 +29,59 @@ router.use(
 routeLogger({ routeName: "/profile", router: profileModule })
 
 router.use(
-  "/user",
+  "/users",
   applyRateLimiter({ skipSuccessfulRequests: true }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   userModule,
 )
-routeLogger({ routeName: "/user", router: userModule })
+routeLogger({ routeName: "/users", router: userModule })
 
 router.use(
-  "/story",
+  "/stories",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   storyModule,
 )
-routeLogger({ routeName: "/story", router: storyModule })
+routeLogger({ routeName: "/stories", router: storyModule })
 
 router.use(
-  "/post",
+  "/posts",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   postModule,
 )
-routeLogger({ routeName: "/post", router: postModule })
+routeLogger({ routeName: "/posts", router: postModule })
 
 router.use(
-  "/comment",
+  "/comments",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   commentModule,
 )
-routeLogger({ routeName: "/comment", router: commentModule })
+routeLogger({ routeName: "/comments", router: commentModule })
 
 router.use(
-  "/community",
+  "/communities",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   communityModule,
 )
-routeLogger({ routeName: "/community", router: communityModule })
+routeLogger({ routeName: "/communities", router: communityModule })
 
 router.use(
-  "/notification",
+  "/notifications",
   applyRateLimiter({ skipSuccessfulRequests: true }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   notificationModule,
 )
-routeLogger({ routeName: "/notification", router: notificationModule })
+routeLogger({ routeName: "/notifications", router: notificationModule })
 
 router.use(
-  "/chat",
+  "/chats",
   applyRateLimiter({ skipSuccessfulRequests: false }),
   applyGuards(isAuthenticatedGuard, isAuthorizedGuard),
   chatModule,
 )
-routeLogger({ routeName: "/chat", router: chatModule })
+routeLogger({ routeName: "/chats", router: chatModule })
 
 export default router

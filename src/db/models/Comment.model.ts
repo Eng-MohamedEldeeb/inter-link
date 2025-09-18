@@ -16,15 +16,15 @@ export class Comment {
         folderId: String,
         path: { secure_url: String, public_id: String },
       },
-      content: {
+      body: {
         type: String,
         trim: true,
         minlength: [
           2,
-          "comment's content can't be less than 2 characters at least",
+          "comment's body can't be less than 2 characters at least",
         ],
-        maxlength: [500, "comment's content can't be more than 500 characters"],
-        required: [true, "Comment's content is required"],
+        maxlength: [500, "comment's body can't be more than 500 characters"],
+        required: [true, "Comment's body is required"],
       },
       onPost: { type: SchemaTypes.ObjectId, ref: "Post" },
 

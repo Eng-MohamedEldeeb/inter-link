@@ -8,24 +8,32 @@ export const routeLogger = ({
   routeName: string
   router: Router
 }) => {
-  console.group(chalk.underline(chalk.cyanBright(chalk.bold(routeName))))
+  // console.group(chalk.underline(chalk.cyanBright(chalk.bold(routeName))))
 
-  console.table(
-    router.stack.map(s1 => {
-      return {
-        method: s1.route?.stack[0].method.toUpperCase(),
-        route: s1.route?.path,
-      }
-    }),
-  )
+  // console.table(
+  //   router.stack.map(s1 => {
+  //     return {
+  //       method: s1.route?.stack[0].method.toUpperCase(),
+  //       route: s1.route?.path,
+  //     }
+  //   }),
+  // )
 
-  // router.stack.forEach(s1 => {
-  //   console.log(
-  //     `${chalk.yellowBright(chalk.bold(s1.route?.stack[0].method.toUpperCase()))}: ${chalk.greenBright(s1.route?.path)}`,
-  //   )
-  // })
+  router.stack.forEach(s1 => {
+    console.log(
+      `${chalk.yellowBright(chalk.bold(s1.route?.stack[0].method.toUpperCase()))}:`,
+      s1.route?.stack[0].method.length === 5
+        ? " "
+        : s1.route?.stack[0].method.length === 4
+          ? "".padStart(2)
+          : s1.route?.stack[0].method.length === 3
+            ? "".padStart(3)
+            : "",
+      `${chalk.cyanBright(chalk.bold(routeName))}${chalk.greenBright(s1.route?.path)}`,
+    )
+  })
 
   // console.log("\n")
 
-  console.groupEnd()
+  // console.groupEnd()
 }

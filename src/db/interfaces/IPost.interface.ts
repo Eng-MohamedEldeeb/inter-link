@@ -1,10 +1,10 @@
-import { ICloudFiles } from '../../common/services/upload/interface/cloud-response.interface'
-import { IMongoDoc } from '../../common/interface/IMongo-doc.interface'
-import { MongoId } from '../../common/types/db'
+import { ICloudFiles } from "../../common/services/upload/interface/cloud-response.interface"
+import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
+import { MongoId } from "../../common/types/db"
 
 export interface IPostInputs {
   title: string
-  content: string
+  body: string
   // tags: MongoId[]
   onCommunity: MongoId
 }

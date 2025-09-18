@@ -18,7 +18,7 @@ export const storyFields: ObjFields<Omit<IStory, "__v">> = {
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
   attachment: { type: singleFile },
-  content: { type: GraphQLString },
+  body: { type: GraphQLString },
   createdBy: { type: GraphQLString },
   viewers: { type: new GraphQLList(GraphQLID) },
   likedBy: { type: new GraphQLList(GraphQLID) },

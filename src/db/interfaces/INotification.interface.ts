@@ -1,8 +1,7 @@
 import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
 import { MongoId } from "../../common/types/db"
-import { IUser } from "./IUser.interface"
 
-export enum NotificationRefType {
+export enum NotificationRefTo {
   User = "User",
   Post = "Post",
   Comment = "Comment",
@@ -20,10 +19,10 @@ export enum NotificationStatus {
 }
 
 export interface INotificationInputs {
-  sender: MongoId | IUser
+  sender: MongoId
   message: string
-  relatedTo: MongoId
-  ref: NotificationRefType
+  relatedTo?: MongoId
+  refTo: NotificationRefTo
   receiver: MongoId
   sentAt?: string
 }

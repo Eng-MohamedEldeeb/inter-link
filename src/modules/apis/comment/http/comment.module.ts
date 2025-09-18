@@ -19,8 +19,8 @@ import { routeLogger } from "../../../../common/utils/loggers/routes-logger"
 
 const router: Router = Router({ mergeParams: true })
 
-router.use("/reply", replyRouter)
-routeLogger({ routeName: "/reply", router: replyRouter })
+router.use("/replies", replyRouter)
+routeLogger({ routeName: "/replies", router: replyRouter })
 
 router.get(
   "/:id",

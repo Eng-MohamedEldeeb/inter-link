@@ -3,7 +3,7 @@ import { throwError } from "../../../common/handlers/error-message.handler"
 import { userRepository } from "../../../db/repositories"
 import { Notify } from "../../../common/services/notify/notify.event"
 import { MongoId } from "../../../common/types/db"
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
 
@@ -157,7 +157,7 @@ class UserService {
         body: {
           message: `${profile.username} Requested To Follow You 💛`,
           sentAt: currentMoment(),
-          ref: NotificationRefType.User,
+          refTo: NotificationRefTo.User,
           relatedTo: user._id,
         },
       })
@@ -181,8 +181,7 @@ class UserService {
       body: {
         message: `${user.username} Started Following You 💚`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.User,
-        relatedTo: user._id,
+        refTo: NotificationRefTo.User,
       },
     })
 
@@ -232,7 +231,7 @@ class UserService {
       body: {
         message: `${profile.username} Accepted Your Follow Request 🩵`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.User,
+        refTo: NotificationRefTo.User,
         relatedTo: user._id,
       },
     })

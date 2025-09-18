@@ -14,7 +14,7 @@ export class ReplyArgs {
   })
 
   public static readonly edit = argsType<DTO.IEditReply>({
-    content: { type: new GraphQLNonNull(GraphQLString) },
+    body: { type: new GraphQLNonNull(GraphQLString) },
     replyId: { type: new GraphQLNonNull(GraphQLID) },
   })
 

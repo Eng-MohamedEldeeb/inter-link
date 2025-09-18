@@ -8,7 +8,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IReply } from "../../../db/interfaces/IReply.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { commentRepository } from "../../../db/repositories"
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 
 class ReplyService {
   private readonly commentRepository = commentRepository
@@ -24,16 +24,12 @@ class ReplyService {
     }
   }
 
-  public readonly reply = async ({
-    content,
-    profile,
-    comment,
-  }: DTO.IAddReply) => {
+  public readonly reply = async ({ body, profile, comment }: DTO.IAddReply) => {
     const { _id: profileId, username } = profile
     const { _id: commentId, createdBy: commentCreator } = comment
 
     await this.commentRepository.create({
-      content,
+      body,
       createdBy: profileId,
       replyingTo: commentId,
     })
@@ -44,7 +40,7 @@ class ReplyService {
       body: {
         message: `${username} Replied To You 💬`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Comment,
+        refTo: NotificationRefTo.Comment,
         relatedTo: commentId,
       },
     })
@@ -89,7 +85,7 @@ class ReplyService {
       body: {
         message: `${username} Liked Your Reply 💚`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Comment,
+        refTo: NotificationRefTo.Comment,
         relatedTo: commentId,
       },
     })
@@ -97,11 +93,11 @@ class ReplyService {
     return { msg: "comment is liked successfully" }
   }
 
-  public readonly edit = async ({ replyId, content }: DTO.IEditReply) => {
+  public readonly edit = async ({ replyId, body }: DTO.IEditReply) => {
     const updatedReply = await this.commentRepository.findByIdAndUpdate({
       _id: replyId,
-      data: { content },
-      options: { new: true, lean: true, projection: { content: 1 } },
+      data: { body },
+      options: { new: true, lean: true, projection: { body: 1 } },
     })
     return (
       updatedReply ??

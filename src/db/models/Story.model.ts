@@ -9,7 +9,7 @@ export class Story {
 
   private static readonly schema = new Schema<IStory>(
     {
-      content: {
+      body: {
         type: String,
         required: function () {
           return this.attachment.folderId ? false : true

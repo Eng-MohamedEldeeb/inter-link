@@ -33,7 +33,7 @@ export class ReplyValidator extends Validator {
         commentId: joi.string().custom(this.isValidMongoId).required(),
       },
       body: {
-        content: this.generalFields.content.max(250).required(),
+        body: this.generalFields.body.max(250).required(),
       },
     },
 
@@ -60,7 +60,7 @@ export class ReplyValidator extends Validator {
         replyId: joi.string().custom(this.isValidMongoId).required(),
       },
       body: {
-        content: this.generalFields.content.max(250).required(),
+        body: this.generalFields.body.max(250).required(),
       },
     },
 
@@ -68,7 +68,7 @@ export class ReplyValidator extends Validator {
       return {
         query: joi.object<DTO.IReplyId>().keys(this.schema.query).required(),
         body: joi
-          .object<Pick<IReplyInputs, "content">>()
+          .object<Pick<IReplyInputs, "body">>()
           .keys(this.schema.body)
           .required(),
       }

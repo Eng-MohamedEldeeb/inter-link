@@ -22,7 +22,7 @@ export const postFields: ObjFields<
   updatedAt: { type: DateType },
   attachments: { type: multiFiles },
   title: { type: GraphQLString },
-  content: { type: GraphQLString },
+  body: { type: GraphQLString },
   createdBy: { type: GraphQLString },
   totalComments: { type: GraphQLInt },
   totalLikes: { type: GraphQLInt },

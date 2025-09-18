@@ -13,7 +13,9 @@ class NotificationController {
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        data: await this.notificationService.getUserNotifications(profileId),
+        data: await this.notificationService.getUserNotifications(profileId, {
+          sorted: true,
+        }),
       })
     },
   )

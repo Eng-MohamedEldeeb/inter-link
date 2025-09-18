@@ -14,14 +14,10 @@ import {
 
 const router: Router = Router()
 
-router.get(
-  "/",
-  validate(NotificationValidator.getUserNotificationsValidator.http()),
-  notificationController.getUserNotifications,
-)
+router.get("/all", notificationController.getUserNotifications)
 
 router.get(
-  "/:id",
+  "/details/:id",
   validate(NotificationValidator.getUserNotificationsValidator.http()),
   applyGuards(notificationExistenceGuard),
   notificationController.getNotification,

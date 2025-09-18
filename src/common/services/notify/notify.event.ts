@@ -5,7 +5,9 @@ import {
   TReadNotificationParams,
   TSendNotificationParams,
 } from "./types"
+
 import notificationService from "./notification.service"
+import { MongoId } from "../../types/db"
 
 const notifyEvent = new EventEmitter()
 
@@ -29,6 +31,13 @@ notifyEvent.on(
     })
   },
 )
+
+notifyEvent.on(
+  NotificationType.markAsReadNotifications,
+  async (receiverId: MongoId) => {
+    return await notificationService.markAsReadNotifications(receiverId)
+  },
+)
 export class Notify {
   public static readonly sendNotification = ({
     body,
@@ -50,5 +59,12 @@ export class Notify {
       receiverId,
       socketId,
     })
+  }
+
+  public static readonly markAsReadNotifications = (receiverId: MongoId) => {
+    return notifyEvent.emit(
+      NotificationType.markAsReadNotifications,
+      receiverId,
+    )
   }
 }

@@ -13,7 +13,7 @@ export const commentFields: ObjFields<Omit<IComment, "__v">> = {
   createdAt: { type: DateType },
   updatedAt: { type: DateType },
 
-  content: {
+  body: {
     type: GraphQLString,
   },
 

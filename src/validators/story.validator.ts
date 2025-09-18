@@ -56,7 +56,7 @@ export class StoryValidator extends Validator {
     body: joi
       .object<ICreateStory>()
       .keys({
-        content: this.generalFields.content.max(500),
+        body: this.generalFields.body.max(500),
       })
       .required(),
     file: this.generalFields.file.required(),

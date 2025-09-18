@@ -52,8 +52,8 @@ export class PostValidator extends Validator {
     body: joi
       .object<DTO.ICreatePost>()
       .keys({
-        title: this.generalFields.content.min(1).max(50).required(),
-        content: this.generalFields.content.max(500),
+        title: this.generalFields.body.min(1).max(50).required(),
+        body: this.generalFields.body.max(500),
         onCommunity: this.generalFields.mongoId,
       })
       .required(),
@@ -62,12 +62,12 @@ export class PostValidator extends Validator {
   public static readonly editValidator = {
     schema: {
       body: {
-        title: this.generalFields.content.min(1).when(joi.ref("content"), {
+        title: this.generalFields.body.min(1).when(joi.ref("body"), {
           is: joi.exist(),
           then: joi.optional(),
           otherwise: joi.required(),
         }),
-        content: this.generalFields.content.max(500),
+        body: this.generalFields.body.max(500),
       },
 
       query: {

@@ -15,7 +15,7 @@ export class CommentArgs {
   })
 
   public static readonly edit = argsType<DTO.IEditComment>({
-    content: { type: new GraphQLNonNull(GraphQLString) },
+    body: { type: new GraphQLNonNull(GraphQLString) },
     id: { type: new GraphQLNonNull(GraphQLID) },
   })
 

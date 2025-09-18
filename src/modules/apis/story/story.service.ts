@@ -6,7 +6,7 @@ import { MongoId } from "../../../common/types/db"
 import { IStory } from "../../../db/interfaces/IStory.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { ICreateStory } from "./dto/story.dto"
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 
 class StoryService {
   private readonly storyRepository = storyRepository
@@ -82,7 +82,7 @@ class StoryService {
       body: {
         message: `${username} Liked Your Story ❤️`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Story,
+        refTo: NotificationRefTo.Story,
         relatedTo: storyId,
       },
     })

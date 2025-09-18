@@ -9,7 +9,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IPost } from "../../../db/interfaces/IPost.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { Notify } from "../../../common/services/notify/notify.event"
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 
 class PostService {
   private readonly postRepository = postRepository
@@ -206,9 +206,9 @@ class PostService {
       sender: profile,
       receiverId: createdBy,
       body: {
-        message: `${profile.username} Accepted Your Follow Request 🩵`,
+        message: `${profile.username} liked your post 🩵`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Post,
+        refTo: NotificationRefTo.Post,
         relatedTo: postId,
       },
     })

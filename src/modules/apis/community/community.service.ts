@@ -3,7 +3,7 @@ import { Notify } from "../../../common/services/notify/notify.event"
 import { communityRepository } from "../../../db/repositories"
 import { ICreateCommunity, IEditCommunity } from "./dto/community.dto"
 
-import { NotificationRefType } from "../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
 
 import { ICommunity } from "../../../db/interfaces/ICommunity.interface"
 import { ICloudFile } from "../../../common/services/upload/interface/cloud-response.interface"
@@ -214,7 +214,7 @@ class CommunityService {
         body: {
           message: `${username} Joined your community`,
           sentAt: currentMoment(),
-          ref: NotificationRefType.Community,
+          ref: NotificationRefTo.Community,
           relatedTo: communityId,
         },
       })
@@ -237,7 +237,7 @@ class CommunityService {
       body: {
         message: `${username} Requested to join your community`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Community,
+        ref: NotificationRefTo.Community,
         relatedTo: communityId,
       },
     })
@@ -295,7 +295,7 @@ class CommunityService {
       body: {
         message: `${community.name} Accepted Your Join Request`,
         sentAt: currentMoment(),
-        ref: NotificationRefType.Community,
+        ref: NotificationRefTo.Community,
         relatedTo: communityId,
       },
     })

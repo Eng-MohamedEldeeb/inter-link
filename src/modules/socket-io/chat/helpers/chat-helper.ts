@@ -4,7 +4,7 @@ import { MongoId } from "../../../../common/types/db"
 import { messageRepository, chatRepository } from "../../../../db/repositories"
 import { currentMoment } from "../../../../common/decorators/moment/moment"
 import { Notify } from "../../../../common/services/notify/notify.event"
-import { NotificationRefType } from "../../../../db/interfaces/INotification.interface"
+import { NotificationRefTo } from "../../../../db/interfaces/INotification.interface"
 import { SenderDetails } from "../../../../common/services/notify/types"
 import { MessageStatus } from "../../../../db/interfaces/IMessage.interface"
 
@@ -48,7 +48,7 @@ class ChatHelper {
           message,
           sentAt: currentMoment(),
           relatedTo: createdMessage._id,
-          ref: NotificationRefType.Chat,
+          ref: NotificationRefTo.Chat,
         },
       })
     }
@@ -71,7 +71,7 @@ class ChatHelper {
           message,
           sentAt: currentMoment(),
           relatedTo: createdMessage._id,
-          ref: NotificationRefType.Chat,
+          ref: NotificationRefTo.Chat,
         },
       })
     }

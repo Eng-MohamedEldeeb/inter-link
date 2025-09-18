@@ -3,7 +3,7 @@ import { io } from "../../.."
 import { MongoId } from "../../types/db"
 
 import {
-  NotificationRefType,
+  NotificationRefTo,
   NotificationStatus,
 } from "../../../db/interfaces/INotification.interface"
 
@@ -18,9 +18,11 @@ import {
 } from "../../../db/repositories"
 import { currentMoment } from "../../decorators/moment/moment"
 import { MessageStatus } from "../../../db/interfaces/IMessage.interface"
+import notificationService from "../../../modules/apis/notification/notification.service"
 
 class NotificationService {
   private readonly notificationRepository = notificationRepository
+  private readonly notificationService = notificationService
   private readonly messageRepository = messageRepository
 
   public readonly sendNotification = async ({
@@ -30,9 +32,9 @@ class NotificationService {
   }: TSendNotificationParams) => {
     const { isConnected, socketId } = ConnectedUser.getCurrentStatus(receiverId)
 
-    const { ref } = body
+    const { refTo } = body
 
-    if (ref === NotificationRefType.Chat)
+    if (refTo === NotificationRefTo.Chat)
       return await this.sendMessageNotification({
         sender,
         receiverId,
@@ -44,9 +46,10 @@ class NotificationService {
         sender: sender._id,
         sentAt: currentMoment(),
         message: body.message,
+        receiver: receiverId,
         receivedAt: new Date(Date.now()),
         relatedTo: body.relatedTo,
-        ref: body.ref,
+        refTo: body.refTo,
       })
 
     await this.notificationRepository.create({
@@ -56,7 +59,7 @@ class NotificationService {
       message: body.message,
       receivedAt: new Date(Date.now()),
       relatedTo: body.relatedTo,
-      ref: body.ref,
+      refTo: body.refTo,
     })
 
     return io
@@ -81,7 +84,7 @@ class NotificationService {
         message: body.message,
         receivedAt: new Date(Date.now()),
         relatedTo: body.relatedTo,
-        ref: NotificationRefType.Chat,
+        refTo: NotificationRefTo.Chat,
       })
 
       return io.to(socketId).emit(NotificationType.newMessage, { sender, body })
@@ -103,7 +106,7 @@ class NotificationService {
         sentAt: currentMoment(),
         message: body.message,
         relatedTo: body.relatedTo,
-        ref: NotificationRefType.Chat,
+        refTo: NotificationRefTo.Chat,
       }),
     ])
   }
@@ -112,29 +115,17 @@ class NotificationService {
     receiverId,
     socketId,
   }: TReadNotificationParams) => {
-    const missedNotifications = await this.notificationRepository.find({
-      filter: {
-        receiver: receiverId,
+    const missedNotifications =
+      await this.notificationService.getUserNotifications(receiverId, {
         status: NotificationStatus.sent,
-      },
-      populate: [
-        { path: "totalNotifications" },
-        {
-          path: "sender",
-          select: {
-            username: 1,
-            "avatar.secure_url": 1,
-          },
-          options: { lean: true },
-        },
-      ],
-    })
+        sorted: false,
+      })
 
     console.log({ missedNotifications })
 
     if (missedNotifications.length) {
       missedNotifications.forEach(async notification => {
-        if (notification.ref === NotificationRefType.Chat) {
+        if (notification.refTo === NotificationRefTo.Chat) {
           // notification.status = NotificationStatus.received
 
           // notification.save()
@@ -153,6 +144,14 @@ class NotificationService {
         })
       })
     }
+  }
+
+  public readonly markAsReadNotifications = async (receiverId: MongoId) => {
+    const missedNotifications = await this.notificationRepository.find({
+      filter: { receiver: receiverId, status: NotificationStatus.sent },
+    })
+
+    console.log({ missedNotifications })
   }
 }
 

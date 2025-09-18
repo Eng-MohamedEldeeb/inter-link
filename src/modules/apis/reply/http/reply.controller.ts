@@ -24,10 +24,10 @@ class ReplyController {
       req: IRequest<Pick<IGetCommentReplies, "commentId">>,
       res: Response,
     ) => {
-      const { content }: IAddReply = req.body
+      const { body }: IAddReply = req.body
 
       await this.replyService.reply({
-        content,
+        body,
         profile: req.profile,
         comment: req.comment,
       })
@@ -50,13 +50,13 @@ class ReplyController {
 
   public readonly edit = asyncHandler(async (req: IRequest, res: Response) => {
     const { _id: replyId } = req.reply
-    const { content }: IEditReply = req.body
+    const { body }: IEditReply = req.body
 
     return successResponse(res, {
       msg: "Comment is Modified Successfully",
       data: await this.replyService.edit({
         replyId,
-        content,
+        body,
       }),
     })
   })
