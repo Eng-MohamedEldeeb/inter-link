@@ -11,24 +11,12 @@ export const socketConnection = asyncHandler(async (socket: ISocket) => {
     socketId: socket.id,
   })
 
-  // const groups = await groupService.getAllGroups(profileId)
-
-  let rooms: string[] = []
-
-  // if (groups.length) {
-  //   rooms = groups.map(group => group._id.toString())
-
-  //   socket.join(rooms)
-  // }
-
   Notify.readNewNotifications({
-    receiverId: profileId,
+    receiver: profileId,
     socketId: socket.id,
   })
 
   socket.on("disconnect", () => {
     ConnectedUser.setOffline(profileId)
-
-    if (rooms.length) rooms.forEach(room => socket.leave(room))
   })
 })

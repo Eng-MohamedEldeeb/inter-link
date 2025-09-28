@@ -22,14 +22,11 @@ class NotificationController {
 
   public readonly getNotification = asyncHandler(
     async (req: IRequest, res: Response) => {
-      const { ref, relatedTo, sender } = req.notification
-
-      const endPoint = ref.toLocaleLowerCase()
-
-      if (ref === "User")
-        return res.redirect(`/v1/api/${endPoint}?user_id=${sender}`)
-
-      if (relatedTo) return res.redirect(`/v1/api/${endPoint}/${relatedTo}`)
+      // const {  sender,  } = req.notification
+      // const endPoint = refTo.toLocaleLowerCase()
+      // if (refTo === "User")
+      //   return res.redirect(`/v1/api/${endPoint}?user_id=${sender}`)
+      // if (relatedTo) return res.redirect(`/v1/api/${endPoint}/${relatedTo}`)
     },
   )
 

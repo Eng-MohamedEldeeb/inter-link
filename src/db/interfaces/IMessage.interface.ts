@@ -1,5 +1,6 @@
 import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
 import { MongoId } from "../../common/types/db"
+import { IUser } from "./IUser.interface"
 
 export enum MessageStatus {
   sent = "sent",
@@ -10,16 +11,15 @@ export interface IMessageInputs {
   message?: string
   attachment?: string
   receiver: MongoId
+  sentAt: string
 }
 
 export interface IMessage extends IMessageInputs, IMongoDoc {
-  sender: MongoId
+  sender: MongoId | IUser
   chatId: MongoId
-  seenBy?: MongoId[]
-  likedBy?: MongoId[]
+  seenBy?: (MongoId | IUser)[]
+  likedBy?: (MongoId | IUser)[]
   status: MessageStatus
-
-  sentAt: string
 
   receivedAt?: Date
   seenAt?: Date

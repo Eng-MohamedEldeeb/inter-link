@@ -64,9 +64,6 @@ export class ChatValidator extends Validator {
   public static readonly editMessageValidator = {
     params: {
       chatId: this.generalFields.mongoId.required(),
-    },
-
-    query: {
       messageId: this.generalFields.mongoId.required(),
     },
 
@@ -76,14 +73,7 @@ export class ChatValidator extends Validator {
 
     http() {
       return {
-        params: joi
-          .object<Pick<DTO.IEditMessage, "chatId">>()
-          .keys(this.params)
-          .required(),
-        query: joi
-          .object<Pick<DTO.IEditMessage, "messageId">>()
-          .keys(this.query)
-          .required(),
+        params: joi.object<DTO.IEditMessage>().keys(this.params).required(),
         body: joi
           .object<Pick<DTO.IEditMessage, "newMessage">>()
           .keys(this.body)
@@ -94,8 +84,8 @@ export class ChatValidator extends Validator {
     graphql() {
       return {
         args: joi
-          .object<DTO.ILikeMessage>()
-          .keys({ ...this.query, ...this.params, ...this.body })
+          .object<DTO.IMessageDetail>()
+          .keys({ ...this.params, ...this.body })
           .required(),
       }
     },
@@ -104,31 +94,18 @@ export class ChatValidator extends Validator {
   public static readonly deleteMessageValidator = {
     params: {
       chatId: this.generalFields.mongoId.required(),
-    },
-
-    query: {
       messageId: this.generalFields.mongoId.required(),
     },
 
     http() {
       return {
-        params: joi
-          .object<Pick<DTO.ILikeMessage, "chatId">>()
-          .keys(this.params)
-          .required(),
-        query: joi
-          .object<Pick<DTO.ILikeMessage, "messageId">>()
-          .keys(this.query)
-          .required(),
+        params: joi.object<DTO.IMessageDetail>().keys(this.params).required(),
       }
     },
 
     graphql() {
       return {
-        args: joi
-          .object<DTO.ILikeMessage>()
-          .keys({ ...this.query, ...this.params })
-          .required(),
+        args: joi.object<DTO.ILikeMessage>().keys(this.params).required(),
       }
     },
   }

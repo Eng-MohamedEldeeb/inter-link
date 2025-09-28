@@ -18,23 +18,17 @@ export type SenderDetails = Partial<
   Pick<IUser, "_id" | "avatar" | "username"> &
     Pick<ICommunity, "_id" | "cover" | "name">
 >
-export type NotificationBody = Pick<
-  INotificationInputs,
-  "message" | "sentAt" | "relatedTo" | "refTo"
->
-
-export type NotificationBodyMessage = Pick<
-  NotificationBody,
-  "message" | "sentAt"
->
 
 export type TSendNotificationParams = {
   sender: SenderDetails
-  receiverId: MongoId
-  body: NotificationBody
+  receiver: MongoId
+  body: Omit<
+    INotificationInputs,
+    "receiver" | "sender" | "likedBy" | "followedBy" | "status"
+  >
 }
 
 export type TReadNotificationParams = {
-  receiverId: MongoId
+  receiver: MongoId
   socketId: string
 }

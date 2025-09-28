@@ -36,12 +36,6 @@ class ChatExistenceGuard extends GuardActivator {
   }
 
   private readonly getChatDetails = async () => {
-    const select = {
-      _id: 1,
-      username: 1,
-      "avatar.secure_url": 1,
-    }
-
     const isExistedChat = await this.chatRepository.findOne({
       filter: {
         $and: [
@@ -54,29 +48,7 @@ class ChatExistenceGuard extends GuardActivator {
           },
         ],
       },
-      projection: {
-        messages: {
-          $slice: 5,
-        },
-      },
-      populate: [
-        {
-          path: "startedBy",
-          select,
-        },
-        {
-          path: "participants",
-          select,
-        },
-        {
-          path: "messages.to",
-          select,
-        },
-        {
-          path: "messages.from",
-          select,
-        },
-      ],
+      projection: { _id: 1, startedBy: 1, participants: 1 },
     })
 
     if (!isExistedChat)

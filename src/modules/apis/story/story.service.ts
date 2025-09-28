@@ -6,7 +6,7 @@ import { MongoId } from "../../../common/types/db"
 import { IStory } from "../../../db/interfaces/IStory.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { ICreateStory } from "./dto/story.dto"
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 
 class StoryService {
   private readonly storyRepository = storyRepository
@@ -76,16 +76,16 @@ class StoryService {
       },
     })
 
-    this.Notify.sendNotification({
-      sender: profile,
-      receiverId: createdBy,
-      body: {
-        message: `${username} Liked Your Story ❤️`,
-        sentAt: currentMoment(),
-        refTo: NotificationRefTo.Story,
-        relatedTo: storyId,
-      },
-    })
+    // this.Notify.sendNotification({
+    //   sender: profile,
+    //   receiverId: createdBy,
+    //   body: {
+    //     message: `${username} Liked Your Story ❤️`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.Story,
+    //     relatedTo: storyId,
+    //   },
+    // })
 
     return { msg: "Story is liked successfully" }
   }

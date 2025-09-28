@@ -11,8 +11,9 @@ import { fileReader } from "../../../../common/utils/multer/file-reader"
 import {
   chatExistenceGuard,
   chatOwnerGuard,
-  userExistenceGuard,
   messageExistenceGuard,
+  messagePermissionGuard,
+  userExistenceGuard,
 } from "../../../../common/guards"
 
 const router: Router = Router()
@@ -26,14 +27,14 @@ router.get(
   chatController.getSingleChat,
 )
 
-// router.post(
-//   "/:chatId/send-image",
-//   fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
-//   applyGuards(chatExistenceGuard, chatOwnerGuard, userExistenceGuard),
-//   chatImageUploader,
-//   validate(ChatValidator.sendImageMessageValidator),
-//   chatController.sendImage,
-// )
+router.post(
+  "/:chatId/send-image",
+  fileReader("image/jpeg", "image/jpg", "image/png").single("attachment"),
+  applyGuards(chatExistenceGuard, chatOwnerGuard, userExistenceGuard),
+  chatImageUploader,
+  validate(ChatValidator.sendImageMessageValidator),
+  chatController.sendImage,
+)
 
 // router.post(
 //   "/:chatId/like-message",
@@ -42,25 +43,33 @@ router.get(
 //   chatController.likeMessage,
 // )
 
-// router.patch(
-//   "/:chatId/edit-message",
-//   applyGuards(chatExistenceGuard, chatOwnerGuard),
-//   validate(ChatValidator.editMessageValidator.http()),
-//   chatController.editMessage,
-// )
+router.patch(
+  "/:chatId/messages/:messageId",
+  applyGuards(
+    chatExistenceGuard,
+    messageExistenceGuard,
+    messagePermissionGuard,
+  ),
+  validate(ChatValidator.editMessageValidator.http()),
+  chatController.editMessage,
+)
 
-// router.delete(
-//   "/:chatId/delete-message",
-//   applyGuards(chatExistenceGuard, chatOwnerGuard),
-//   validate(ChatValidator.deleteMessageValidator.http()),
-//   chatController.deleteMessage,
-// )
+router.delete(
+  "/:chatId/messages/:messageId",
+  applyGuards(
+    chatExistenceGuard,
+    messageExistenceGuard,
+    messagePermissionGuard,
+  ),
+  validate(ChatValidator.deleteMessageValidator.http()),
+  chatController.deleteMessage,
+)
 
-// router.delete(
-//   "/delete",
-//   applyGuards(chatExistenceGuard, chatOwnerGuard),
-//   validate(ChatValidator.deleteChatValidator.http()),
-//   chatController.deleteChat,
-// )
+router.delete(
+  "/:chatId",
+  applyGuards(chatExistenceGuard, chatOwnerGuard),
+  validate(ChatValidator.deleteChatValidator.http()),
+  chatController.deleteChat,
+)
 
 export default router

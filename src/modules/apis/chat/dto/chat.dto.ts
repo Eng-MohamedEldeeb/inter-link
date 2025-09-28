@@ -5,20 +5,20 @@ export interface IGetSingleChat {
   chatId: MongoId
 }
 
+export interface IMessageDetail {
+  chatId: MongoId
+  messageId: MongoId
+}
+
 export interface IDeleteChat extends IGetSingleChat {
   profileId: MongoId
   chat: TChat
 }
 
-export interface IGetSingleMessage extends IGetSingleChat {
-  messageId: MongoId
-}
-export interface IDeleteMessage extends IGetSingleChat, IGetSingleMessage {
-  chat: TChat
-}
+export interface ILikeMessage extends IMessageDetail {}
 
-export interface ILikeMessage extends IGetSingleChat, IGetSingleMessage {}
+export interface IDeleteMessage extends IMessageDetail {}
 
-export interface IEditMessage extends IGetSingleChat, IGetSingleMessage {
+export interface IEditMessage extends IMessageDetail {
   newMessage: string
 }

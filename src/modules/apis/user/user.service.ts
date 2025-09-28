@@ -3,7 +3,7 @@ import { throwError } from "../../../common/handlers/error-message.handler"
 import { userRepository } from "../../../db/repositories"
 import { Notify } from "../../../common/services/notify/notify.event"
 import { MongoId } from "../../../common/types/db"
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
 
@@ -132,56 +132,55 @@ class UserService {
     user: IUser
     profile: IUser
   }) => {
-    const alreadyFollowed = profile.following.some(userId =>
-      userId.equals(user._id),
-    )
-    const alreadyRequested = user.requests.some(userId =>
-      userId.equals(profile._id),
-    )
+    // const alreadyFollowed = profile.following.some(userId =>
+    //   userId.equals(user._id),
+    // )
+    // const alreadyRequested = user.requests.some(userId =>
+    //   userId.equals(profile._id),
+    // )
 
-    if (alreadyFollowed)
-      return { msg: `Followed ${user.username} Successfully` }
+    // if (alreadyFollowed)
+    //   return { msg: `Followed ${user.username} Successfully` }
 
-    if (alreadyRequested)
-      return { msg: `Follow Request Sent to ${user.username} Successfully` }
+    // if (alreadyRequested)
+    //   return { msg: `Follow Request Sent to ${user.username} Successfully` }
 
-    if (user.isPrivateProfile) {
-      await this.userRepository.findByIdAndUpdate({
-        _id: user._id,
-        data: { $addToSet: { requests: profile._id } },
-      })
+    // if (user.isPrivateProfile) {
+    //   await this.userRepository.findByIdAndUpdate({
+    //     _id: user._id,
+    //     data: { $addToSet: { requests: profile._id } },
+    //   })
 
-      this.Notify.sendNotification({
-        sender: profile,
-        receiverId: user._id,
-        body: {
-          message: `${profile.username} Requested To Follow You 💛`,
-          sentAt: currentMoment(),
-          refTo: NotificationRefTo.User,
-          relatedTo: user._id,
-        },
-      })
+    //   // this.Notify.sendNotification({
+    //   //   sender: profile,
+    //   //   receiverId: user._id,
+    //   //   body: {
+    //   //     message: `${profile.username} Requested To Follow You 💛`,
+    //   //     sentAt: currentMoment(),
+    //   //     refTo: InteractionType.User,
+    //   //     relatedTo: user._id,
+    //   //   },
+    //   // })
 
-      return { msg: "Follow Request sent Successfully" }
-    }
+    //   return { msg: "Follow Request sent Successfully" }
+    // }
 
-    await this.userRepository.findByIdAndUpdate({
-      _id: user._id,
-      data: { $addToSet: { followers: profile._id } },
-    })
+    // await this.userRepository.findByIdAndUpdate({
+    //   _id: user._id,
+    //   data: { $addToSet: { followers: profile._id } },
+    // })
 
-    await this.userRepository.findByIdAndUpdate({
-      _id: profile._id,
-      data: { $addToSet: { following: user._id } },
-    })
+    // await this.userRepository.findByIdAndUpdate({
+    //   _id: profile._id,
+    //   data: { $addToSet: { following: user._id } },
+    // })
 
     this.Notify.sendNotification({
       sender: profile,
-      receiverId: user._id,
+      receiver: user._id,
       body: {
-        message: `${user.username} Started Following You 💚`,
         sentAt: currentMoment(),
-        refTo: NotificationRefTo.User,
+        interactionType: InteractionType.newFollow,
       },
     })
 
@@ -225,16 +224,16 @@ class UserService {
       data: { $addToSet: { following: profile._id } },
     })
 
-    return this.Notify.sendNotification({
-      sender: profile,
-      receiverId: user._id,
-      body: {
-        message: `${profile.username} Accepted Your Follow Request 🩵`,
-        sentAt: currentMoment(),
-        refTo: NotificationRefTo.User,
-        relatedTo: user._id,
-      },
-    })
+    // return this.Notify.sendNotification({
+    //   sender: profile,
+    //   receiverId: user._id,
+    //   body: {
+    //     message: `${profile.username} Accepted Your Follow Request 🩵`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.User,
+    //     relatedTo: user._id,
+    //   },
+    // })
   }
 
   public readonly unfollow = async ({

@@ -1,5 +1,11 @@
 import * as DTO from "./dto/profile.dto"
 
+import {
+  otpRepository,
+  postRepository,
+  userRepository,
+} from "../../../db/repositories"
+
 import { throwError } from "../../../common/handlers/error-message.handler"
 import { compareValues } from "../../../common/utils/security/bcrypt/bcrypt.service"
 import { decryptValue } from "../../../common/utils/security/crypto/crypto.service"
@@ -9,11 +15,6 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { MongoId } from "../../../common/types/db"
 import { CloudUploader } from "../../../common/services/upload/cloud.service"
 import { ICloud } from "../../../common/services/upload/interface/cloud-response.interface"
-import {
-  otpRepository,
-  postRepository,
-  userRepository,
-} from "../../../db/repositories"
 
 class ProfileService {
   private readonly userRepository = userRepository

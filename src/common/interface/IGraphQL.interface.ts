@@ -13,7 +13,7 @@ import { IComment } from "../../db/interfaces/IComment.interface"
 import { IReply } from "../../db/interfaces/IReply.interface"
 import { IStory } from "../../db/interfaces/IStory.interface"
 import { ICommunity } from "../../db/interfaces/ICommunity.interface"
-import { TChat, TGroup } from "../../db/documents"
+import { TChat, TMessage } from "../../db/documents"
 
 export type ControllerParams = (
   args: any,
@@ -71,5 +71,5 @@ export interface IContext {
   notifications: INotification
   notification: INotification
   chat: TChat
-  group: TGroup
+  message: TMessage
 }

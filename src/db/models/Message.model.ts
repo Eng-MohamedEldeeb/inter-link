@@ -1,6 +1,7 @@
 import { Schema, SchemaTypes } from "mongoose"
 import { IMessage, MessageStatus } from "../interfaces/IMessage.interface"
 import { DataBaseService } from "../db.service"
+import { User } from "./User.model"
 
 export class Message {
   private static readonly DataBaseService = DataBaseService
@@ -9,13 +10,13 @@ export class Message {
     {
       sender: {
         type: SchemaTypes.ObjectId,
-        ref: "User",
+        ref: User.Model,
         required: [true, "Sender Id is required"],
       },
 
       receiver: {
         type: SchemaTypes.ObjectId,
-        ref: "User",
+        ref: User.Model,
         required: [true, "receiver Id is required"],
       },
 
@@ -42,7 +43,7 @@ export class Message {
       seenBy: [
         {
           type: SchemaTypes.ObjectId,
-          ref: "User",
+          ref: User.Model,
           required: [true, "receiver Id is required"],
         },
       ],
@@ -50,7 +51,7 @@ export class Message {
       likedBy: [
         {
           type: SchemaTypes.ObjectId,
-          ref: "User",
+          ref: User.Model,
           required: [true, "receiver Id is required"],
         },
       ],

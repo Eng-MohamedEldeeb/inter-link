@@ -3,14 +3,18 @@ import * as DTO from "./dto/chat.dto"
 import { Notify } from "../../../common/services/notify/notify.event"
 
 import { MongoId } from "../../../common/types/db"
-import { IMessageInputs } from "../../../db/interfaces/IMessage.interface"
-import { TChat } from "../../../db/documents"
+import {
+  IMessageInputs,
+  MessageStatus,
+} from "../../../db/interfaces/IMessage.interface"
+import { TChat, TMessage } from "../../../db/documents"
 import { ICloudFile } from "../../../common/services/upload/interface/cloud-response.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import {
   notificationRepository,
   chatRepository,
 } from "../../../db/repositories"
+import { throwError } from "../../../common/handlers/error-message.handler"
 
 class ChatService {
   private readonly chatRepository = chatRepository
@@ -39,9 +43,9 @@ class ChatService {
   }
 
   public readonly getAllChats = async (profileId: MongoId) => {
-    const chats = await this.chatRepository.find({
+    return await this.chatRepository.find({
       filter: { $or: [{ startedBy: profileId }, { participants: profileId }] },
-      options: { lean: true },
+      options: { sort: { totalNewMessages: -1 } },
       populate: [
         {
           path: "startedBy",
@@ -50,6 +54,7 @@ class ChatService {
             username: 1,
             "avatar.secure_url": 1,
           },
+          options: { lean: true },
         },
         {
           path: "participants",
@@ -58,17 +63,61 @@ class ChatService {
             username: 1,
             "avatar.secure_url": 1,
           },
+          options: { lean: true },
         },
-        { path: "lastMessage" },
-        { path: "newMessages" },
+        { path: "lastMessage", options: { lean: true } },
+        { path: "newMessages", options: { lean: true } },
       ],
     })
-    return chats
   }
 
   public readonly getSingle = async (chat: TChat) => {
-    // if (chat.newMessages.length >= 1) await this.emptyMissedMessages(chat)
-    // return chat
+    const isExistedChat = await this.chatRepository.findOne({
+      filter: { _id: chat._id },
+      populate: [
+        {
+          path: "startedBy",
+          select: {
+            _id: 1,
+            username: 1,
+            "avatar.secure_url": 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "participants",
+          select: {
+            _id: 1,
+            username: 1,
+            "avatar.secure_url": 1,
+          },
+          options: { lean: true },
+        },
+
+        {
+          path: "messages",
+          options: { lean: true },
+        },
+
+        { path: "newMessages" },
+      ],
+    })
+
+    if (!isExistedChat)
+      return throwError({
+        msg: "Un-Existed Chat or Invalid Id",
+        status: 404,
+      })
+
+    // TODO
+    // isExistedChat.newMessages.forEach(message => {
+    //   message.receivedAt = new Date(Date.now())
+    //   message.seenAt = new Date(Date.now())
+    //   message.status = MessageStatus.seen
+    //   message.save()
+    // })
+
+    return isExistedChat
   }
 
   public readonly sendImage = async ({
@@ -137,24 +186,6 @@ class ChatService {
     // })
   }
 
-  private readonly findMessage = ({
-    chat,
-    messageId,
-  }: {
-    chat: TChat
-    messageId: MongoId
-  }) => {
-    // const inMessages = chat.messages.find(message =>
-    //   message._id?.equals(messageId),
-    // )
-    // const inUnread = chat.newMessages.find(message =>
-    //   message._id?.equals(messageId),
-    // )
-    // if (!inMessages && !inUnread)
-    //   return throwError({ msg: "message not found", status: 404 })
-    // return { inMessages, inUnread }
-  }
-
   private readonly checkLikes = ({
     message,
     profileId,
@@ -168,146 +199,32 @@ class ChatService {
   }
 
   public readonly editMessage = async ({
-    profileId,
-    messageId,
-    chatId,
+    oldMessage,
     newMessage,
   }: {
-    profileId: MongoId
-    messageId: MongoId
-    chatId: MongoId
+    oldMessage: TMessage
     newMessage: string
   }) => {
-    // const chat = await this.findUserMessageInChat({
-    //   chatId,
-    //   messageId,
-    //   profileId,
-    // })
-    // let searchedMessage: string = ""
-    // const { inMessages, inUnread } = this.findMessage({
-    //   chat,
-    //   messageId,
-    // })
-    // if (inUnread) {
-    //   searchedMessage = inUnread.message
-    //   inUnread.message = newMessage
-    //   inUnread.updatedAt = new Date(Date.now())
-    // }
-    // if (inMessages) {
-    //   searchedMessage = inMessages.message
-    //   inMessages.message = newMessage
-    //   inMessages.updatedAt = new Date(Date.now())
-    // }
-    // const userId = chat.startedBy.equals(profileId)
-    //   ? chat.participants[0]
-    //   : chat.startedBy
-    // const relatedNotification = await this.findRelatedNotification({
-    //   belongsTo: userId,
-    //   messageFrom: profileId,
-    //   searchedMessage,
-    // })
-    // if (!relatedNotification) return await chat.save()
-    // const relatedMissedMessages = this.hasRelatedNotification({
-    //   relatedNotification,
-    //   messageId,
-    // })
-    // if (!relatedMissedMessages) return chat
-    // relatedMissedMessages.message = newMessage
-    // relatedMissedMessages.updatedAt = new Date(Date.now())
-    // return await Promise.all([chat.save(), relatedNotification.save()])
+    oldMessage.message = newMessage
+
+    return await oldMessage.save()
   }
 
-  private readonly findUserMessageInChat = async ({
-    chatId,
-    messageId,
-    profileId,
-  }: {
-    chatId: MongoId
-    messageId: MongoId
-    profileId: MongoId
-  }) => {
-    // const chat = await this.chatRepository.findOne({
-    //   filter: {
-    //     $and: [
-    //       {
-    //         $and: [
-    //           { _id: chatId },
-    //           {
-    //             $or: [
-    //               { "messages._id": messageId },
-    //               { "newMessages._id": messageId },
-    //             ],
-    //           },
-    //         ],
-    //       },
-    //       {
-    //         $or: [
-    //           {
-    //             $and: [
-    //               { "messages.from": profileId },
-    //               { "messages.deletedAt": { $exists: false } },
-    //             ],
-    //           },
-    //           {
-    //             $and: [
-    //               { "newMessages.from": profileId },
-    //               { "newMessages.deletedAt": { $exists: false } },
-    //             ],
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    // })
-    // return chat!
-  }
+  public readonly deleteMessage = async (message: TMessage) => {
+    message.deletedAt = new Date(Date.now())
 
-  public readonly deleteMessage = async ({
-    profileId,
-    messageId,
-    chatId,
-  }: {
-    profileId: MongoId
-    messageId: MongoId
-    chatId: MongoId
-  }) => {
-    // const deletedMessage = await this.chatRepository.findOneAndUpdate({
-    //   filter: {
-    //     $and: [
-    //       {
-    //         $and: [{ _id: chatId }, { "messages._id": messageId }],
-    //       },
-    //       {
-    //         $and: [
-    //           { "messages.from": profileId },
-    //           { "messages.deletedAt": { $exists: false } },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    //   data: {
-    //     "messages.$.message": "message is deleted",
-    //     "messages.$.deletedAt": Date.now(),
-    //   },
-    // })
-    // return (
-    //   deletedMessage ??
-    //   throwError({
-    //     msg: "Message was not deleted as it was not found",
-    //     status: 404,
-    //   })
-    // )
+    return await message.save()
   }
 
   public readonly deleteChat = async ({
     profileId,
     chat,
   }: Omit<DTO.IDeleteChat, "chatId">) => {
-    // const startedChat = chat.startedBy.equals(profileId)
-    // if (startedChat) await chat.updateOne({ $unset: { startedBy: 1 } })
-    // const participant = chat.startedBy.equals(profileId)
-    // if (participant) await chat.updateOne({ $unset: { participants: 1 } })
-    // await chat.save()
+    const startedChat = chat.startedBy.equals(profileId)
+    if (startedChat) await chat.updateOne({ $unset: { startedBy: 1 } })
+    const participant = chat.startedBy.equals(profileId)
+    if (participant) await chat.updateOne({ $unset: { participants: 1 } })
+    await chat.save()
   }
 }
 

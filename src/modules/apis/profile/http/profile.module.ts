@@ -15,7 +15,7 @@ router.get("/followers", profileController.getFollowers)
 router.get("/following", profileController.getFollowing)
 
 router.get(
-  "/saved",
+  "/saved-posts",
   validate(ProfileValidator.getAllSavedPostsValidator.http()),
   profileController.getAllSavedPosts,
 )

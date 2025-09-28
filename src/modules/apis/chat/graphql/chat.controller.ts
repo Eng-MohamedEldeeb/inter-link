@@ -1,97 +1,103 @@
-// import { applyResolver } from "../../../common/decorators/resolver/apply-resolver.decorator"
-// import { graphResponseType } from "../../../common/decorators/resolver/returned-type.decorator"
-// import { ChatResponse } from "./types/chat-response"
-// import { validate } from "../../../common/middlewares/validation/validation.middleware"
-// import { ChatArgs } from "./types/chat-args"
+import { ChatResponse } from "./types/chat-response"
+import { ChatArgs } from "./types/chat-args"
 
-// import * as resolvers from "./chat.resolver"
-// import {ChatValidator} from "../validators"
+import * as resolvers from "./chat.resolver"
+import { ChatValidator } from "../../../../validators"
+import {
+  IMutationController,
+  IQueryController,
+} from "../../../../common/interface/IGraphQL.interface"
+import { graphResponseType } from "../../../../common/decorators/resolver/returned-type.decorator"
+import { applyResolver } from "../../../../common/decorators"
+import {
+  chatExistenceGuard,
+  isAuthenticatedGuard,
+  isAuthorizedGuard,
+  messageExistenceGuard,
+  messagePermissionGuard,
+} from "../../../../common/guards"
+import { validate } from "../../../../common/middlewares/validation/validation.middleware"
 
-// import {
-//   IMutationController,
-//   IQueryController,
-// } from "../../../common/interface/IGraphQL.interface"
+class ChatController {
+  private readonly chatQueryResolver = resolvers.chatQueryResolver
+  private readonly chatMutationResolver = resolvers.chatMutationResolver
 
-// import {
-//   isAuthenticatedGuard,
-//   isAuthorizedGuard,
-//   chatExistenceGuard,
-// } from "../../../common/guards"
+  // Queries:
+  public readonly getAllChats = (): IQueryController => {
+    return {
+      type: graphResponseType({
+        name: "getAllChats",
+        data: ChatResponse.getAllChats(),
+      }),
+      resolve: applyResolver({
+        guards: [isAuthenticatedGuard, isAuthorizedGuard],
+        resolver: this.chatQueryResolver.getAllChats,
+      }),
+    }
+  }
 
-// class ChatController {
-//   private readonly chatQueryResolver = resolvers.chatQueryResolver
-//   private readonly chatMutationResolver = resolvers.chatMutationResolver
+  public readonly getSingleChat = (): IQueryController => {
+    return {
+      type: graphResponseType({
+        name: "getSingleChat",
+        data: ChatResponse.getSingleChat(),
+      }),
+      resolve: applyResolver({
+        middlewares: [validate(ChatValidator.getSingleChatValidator.graphql())],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        resolver: this.chatQueryResolver.getSingleChat,
+      }),
+    }
+  }
 
-//   // Queries:
-//   public readonly getAllChats = (): IQueryController => {
-//     return {
-//       type: graphResponseType({
-//         name: "getAllChats",
-//         data: ChatResponse.getAllChats(),
-//       }),
-//       resolve: applyResolver({
-//         guards: [isAuthenticatedGuard, isAuthorizedGuard],
-//         resolver: this.chatQueryResolver.getAllChats,
-//       }),
-//     }
-//   }
+  // Mutations:
+  public readonly likeMessage = (): IMutationController => {
+    return {
+      type: graphResponseType({
+        name: "likeMessage",
+      }),
+      args: ChatArgs.likeMessage,
+      resolve: applyResolver({
+        middlewares: [validate(ChatValidator.likeMessageValidator.graphql())],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        resolver: this.chatMutationResolver.likeMessage,
+      }),
+    }
+  }
 
-//   public readonly getSingleChat = (): IQueryController => {
-//     return {
-//       type: graphResponseType({
-//         name: "getSingleChat",
-//         data: ChatResponse.getSingleChat(),
-//       }),
-//       resolve: applyResolver({
-//         middlewares: [validate(validators.getSingleChatValidator.graphql())],
-//         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
-//         resolver: this.chatQueryResolver.getSingleChat,
-//       }),
-//     }
-//   }
+  public readonly deleteMessage = (): IMutationController => {
+    return {
+      type: graphResponseType({
+        name: "deleteMessage",
+      }),
+      args: ChatArgs.deleteMessage,
+      resolve: applyResolver({
+        middlewares: [validate(ChatValidator.deleteMessageValidator.graphql())],
+        guards: [
+          isAuthenticatedGuard,
+          isAuthorizedGuard,
+          chatExistenceGuard,
+          messageExistenceGuard,
+          messagePermissionGuard,
+        ],
+        resolver: this.chatMutationResolver.deleteMessage,
+      }),
+    }
+  }
 
-//   // Mutations:
-//   public readonly likeMessage = (): IMutationController => {
-//     return {
-//       type: graphResponseType({
-//         name: "likeMessage",
-//       }),
-//       args: ChatArgs.likeMessage,
-//       resolve: applyResolver({
-//         middlewares: [validate(validators.likeMessageValidator.graphql())],
-//         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
-//         resolver: this.chatMutationResolver.likeMessage,
-//       }),
-//     }
-//   }
+  public readonly deleteChat = (): IMutationController => {
+    return {
+      type: graphResponseType({
+        name: "deleteChat",
+      }),
+      args: ChatArgs.deleteChat,
+      resolve: applyResolver({
+        middlewares: [validate(ChatValidator.deleteChatValidator.graphql())],
+        guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
+        resolver: this.chatMutationResolver.deleteChat,
+      }),
+    }
+  }
+}
 
-//   public readonly deleteMessage = (): IMutationController => {
-//     return {
-//       type: graphResponseType({
-//         name: "deleteMessage",
-//       }),
-//       args: ChatArgs.deleteMessage,
-//       resolve: applyResolver({
-//         middlewares: [validate(validators.deleteMessageValidator.graphql())],
-//         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
-//         resolver: this.chatMutationResolver.deleteMessage,
-//       }),
-//     }
-//   }
-
-//   public readonly deleteChat = (): IMutationController => {
-//     return {
-//       type: graphResponseType({
-//         name: "deleteChat",
-//       }),
-//       args: ChatArgs.deleteChat,
-//       resolve: applyResolver({
-//         middlewares: [validate(validators.deleteChatValidator.graphql())],
-//         guards: [isAuthenticatedGuard, isAuthorizedGuard, chatExistenceGuard],
-//         resolver: this.chatMutationResolver.deleteChat,
-//       }),
-//     }
-//   }
-// }
-
-// export default new ChatController()
+export default new ChatController()

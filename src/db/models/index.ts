@@ -4,8 +4,6 @@ export { Comment } from "./Comment.model"
 
 export { Community } from "./Community.model"
 
-export { Group } from "./Group.model"
-
 export { Message } from "./Message.model"
 
 export { Notification } from "./Notification.model"

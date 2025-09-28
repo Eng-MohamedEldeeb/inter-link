@@ -4,7 +4,7 @@ import { MongoId } from "../../../../common/types/db"
 import { messageRepository, chatRepository } from "../../../../db/repositories"
 import { currentMoment } from "../../../../common/decorators/moment/moment"
 import { Notify } from "../../../../common/services/notify/notify.event"
-import { NotificationRefTo } from "../../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../../db/interfaces/INotification.interface"
 import { SenderDetails } from "../../../../common/services/notify/types"
 import { MessageStatus } from "../../../../db/interfaces/IMessage.interface"
 
@@ -16,7 +16,7 @@ class ChatHelper {
   private readonly chatRepository = chatRepository
   private readonly messageRepository = messageRepository
 
-  public readonly chatStrategy = async ({
+  public readonly sendMessageStrategy = async ({
     inChat,
     isConnected,
     message,
@@ -40,17 +40,6 @@ class ChatHelper {
         receivedAt: new Date(Date.now()),
         sentAt: currentMoment(),
       })
-
-      return Notify.sendNotification({
-        sender,
-        receiverId: receiver,
-        body: {
-          message,
-          sentAt: currentMoment(),
-          relatedTo: createdMessage._id,
-          ref: NotificationRefTo.Chat,
-        },
-      })
     }
 
     if (!inChat && isConnected) {
@@ -64,16 +53,16 @@ class ChatHelper {
         sentAt: currentMoment(),
       })
 
-      return Notify.sendNotification({
-        sender,
-        receiverId: receiver,
-        body: {
-          message,
-          sentAt: currentMoment(),
-          relatedTo: createdMessage._id,
-          ref: NotificationRefTo.Chat,
-        },
-      })
+      // return Notify.sendNotification({
+      //   sender,
+      //   receiverId: receiver,
+      //   body: {
+      //     message,
+      //     sentAt: currentMoment(),
+      //     relatedTo: createdMessage._id,
+      //     refTo: InteractionType.Chat,
+      //   },
+      // })
     }
 
     return await messageRepository.create({
@@ -87,6 +76,25 @@ class ChatHelper {
       seenBy: [receiver],
       status: MessageStatus.seen,
     })
+  }
+
+  public readonly editMessageStrategy = async ({
+    inChat,
+    isConnected,
+    message,
+    sender,
+    receiver,
+    chatId,
+  }: {
+    inChat: boolean
+    isConnected: boolean
+    message: string
+    sender: SenderDetails
+    receiver: MongoId
+    chatId: MongoId
+  }) => {
+    if (inChat && isConnected) {
+    }
   }
 
   public readonly findOrCreate = async ({

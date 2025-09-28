@@ -1,51 +1,31 @@
-import { QueryOptions, RootFilterQuery } from "mongoose"
-
 import * as DTO from "./dto/notification.dto"
 
 import { throwError } from "../../../common/handlers/error-message.handler"
-import { MongoId } from "../../../common/types/db"
 import { notificationRepository } from "../../../db/repositories"
+import { IComment } from "../../../db/interfaces/IComment.interface"
+import { IPost } from "../../../db/interfaces/IPost.interface"
+import { MongoId } from "../../../common/types/db"
 import {
   INotificationInputs,
   NotificationStatus,
 } from "../../../db/interfaces/INotification.interface"
-
-import { Notify } from "../../../common/services/notify/notify.event"
+import { QueryOptions, RootFilterQuery } from "mongoose"
 
 class NotificationService {
   private readonly notificationRepository = notificationRepository
 
   public readonly getUserNotifications = async (
     profileId: MongoId,
-    options?: { status?: NotificationStatus; sorted?: boolean },
-  ) => {
-    const notifications = await this.getNotifications(profileId, {
-      status: options?.status,
-      sorted: options?.sorted,
-    })
-
-    if (notifications.length > 0) Notify.markAsReadNotifications(profileId)
-
-    return notifications
-  }
-
-  private readonly getNotifications = async (
-    profileId: MongoId,
-    {
-      status,
-      sorted,
-    }: {
-      status?: NotificationStatus
-      sorted?: boolean
-    },
+    opt?: { status?: NotificationStatus; sorted?: boolean },
   ) => {
     let filter: RootFilterQuery<INotificationInputs>
     let options: QueryOptions<INotificationInputs>
 
-    if (status) filter = { $and: [{ receiver: profileId, status }] }
+    if (opt?.status)
+      filter = { $and: [{ receiver: profileId, status: opt.status }] }
     else filter = { receiver: profileId }
 
-    if (sorted)
+    if (opt?.sorted)
       options = {
         sort: {
           sentAt: -1,
@@ -57,11 +37,11 @@ class NotificationService {
       filter: filter,
       options,
       projection: {
-        message: 1,
         sender: 1,
-        relatedTo: 1,
         sentAt: 1,
-        ref: 1,
+        interactionType: 1,
+        onComment: 1,
+        onPost: 1,
       },
 
       populate: [
@@ -74,10 +54,38 @@ class NotificationService {
 
           options: { lean: true },
         },
+
         {
-          path: "relatedTo",
+          path: "followedBy",
           select: {
-            "attachments.paths.secure_url": 1,
+            username: 1,
+            "avatar.secure_url": 1,
+          },
+
+          options: { lean: true },
+        },
+        {
+          path: "onPost",
+          select: <Record<keyof IPost, number>>{
+            attachments: 1,
+            title: 1,
+            body: 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "onComment",
+          select: <Record<keyof IComment, number>>{
+            attachment: 1,
+            body: 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "repliedWith",
+          select: <Record<keyof IComment, number>>{
+            attachment: 1,
+            body: 1,
           },
           options: { lean: true },
         },
@@ -91,9 +99,9 @@ class NotificationService {
   }: DTO.IDeleteNotifications) => {
     const isDeleted = await this.notificationRepository.findOneAndUpdate({
       filter: {
-        belongsTo: profileId,
+        receiver: profileId,
       },
-      data: { $pull: { seen: id, missed: id } },
+      data: { deletedAt: Date.now() },
     })
 
     return (

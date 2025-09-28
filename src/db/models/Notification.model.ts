@@ -2,7 +2,7 @@ import { Schema, SchemaTypes } from "mongoose"
 
 import {
   INotification,
-  NotificationRefTo,
+  InteractionType,
   NotificationStatus,
 } from "../interfaces/INotification.interface"
 
@@ -18,65 +18,39 @@ import { Message } from "./Message.model"
 export class Notification {
   private static readonly DataBaseService = DataBaseService
 
-  private static modelsReference = {
-    User: User.Model,
-    Post: Post.Model,
-    Story: Story.Model,
-    Comment: Comment.Model,
-    Chat: Chat.Model,
-  }
-
   private static readonly schema = new Schema<INotification>(
     {
-      message: {
-        type: String,
-        required: [true, "notification message is required"],
-      },
-
-      sender: {
-        type: SchemaTypes.ObjectId,
-        ref: User.Model,
-        required: [true, "Sender Id is required"],
-      },
-
       receiver: {
         type: SchemaTypes.ObjectId,
         ref: User.Model,
         required: [true, "receiver Id is required"],
       },
 
-      relatedTo: {
+      sender: {
         type: SchemaTypes.ObjectId,
-        required: [true, "notification relatedTo id is required"],
-        ref(this: INotification) {
-          switch (this.refTo) {
-            case NotificationRefTo.Post:
-              return Post.Model
-
-            case NotificationRefTo.Story:
-              return Story.Model
-
-            case NotificationRefTo.Comment:
-              return Comment.Model
-
-            case NotificationRefTo.Community:
-              return Community.Model
-
-            case NotificationRefTo.Chat:
-              return Chat.Model
-
-            case NotificationRefTo.Message:
-              return Message.Model
-
-            default:
-              return User.Model
-          }
-        },
+        ref: User.Model,
+        required: [true, "sender Id is required"],
       },
 
-      refTo: {
+      likedBy: [
+        {
+          type: SchemaTypes.ObjectId,
+          ref: User.Model,
+          required: [true, "Sender Id is required"],
+        },
+      ],
+
+      onPost: { type: SchemaTypes.ObjectId, ref: Post.Model },
+
+      onComment: { type: SchemaTypes.ObjectId, ref: Comment.Model },
+
+      followedBy: { type: SchemaTypes.ObjectId, ref: User.Model },
+
+      repliedWith: { type: SchemaTypes.ObjectId, ref: Comment.Model },
+
+      interactionType: {
         type: String,
-        enum: NotificationRefTo,
+        enum: InteractionType,
         required: [true, `notification ref is required`],
       },
 
@@ -89,6 +63,7 @@ export class Notification {
       sentAt: String,
       receivedAt: Date,
       seenAt: Date,
+      deletedAt: Date,
     },
     {
       timestamps: true,

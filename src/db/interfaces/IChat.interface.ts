@@ -1,5 +1,6 @@
 import { IMongoDoc } from "../../common/interface/IMongo-doc.interface"
 import { MongoId } from "../../common/types/db"
+import { TMessage } from "../documents"
 import { IMessage } from "./IMessage.interface"
 
 export enum ChatType {
@@ -8,9 +9,13 @@ export enum ChatType {
 }
 
 export interface IChat extends IMongoDoc {
+  totalNewMessages: number
+
   lastMessage: IMessage
 
-  newMessages: IMessage[]
+  newMessages: TMessage[]
+
+  messages: TMessage[]
 
   startedBy: MongoId
 

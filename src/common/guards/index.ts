@@ -40,10 +40,7 @@ export { default as postExistenceInCommunityGuard } from "./community/post-exist
 export { default as chatExistenceGuard } from "./chat/chat-existence.guard"
 export { default as chatOwnerGuard } from "./chat/chat-owner.guard"
 export { default as messageExistenceGuard } from "./chat/message-existence.guard"
-
-/* Groups Guards*/
-export { default as groupExistenceGuard } from "./group/group-existence.guard"
-export { default as groupMembersGuard } from "./group/group-members.guard"
+export { default as messagePermissionGuard } from "./chat/message-permission.guard"
 
 /* Notifications Guards*/
 export { default as notificationExistenceGuard } from "./notification/notification-existence.guard"

@@ -14,6 +14,4 @@ export { default as notificationRepository } from "./notification.repository"
 
 export { default as chatRepository } from "./chat.repository"
 
-export { default as groupRepository } from "./group.repository"
-
 export { default as messageRepository } from "./message.repository"

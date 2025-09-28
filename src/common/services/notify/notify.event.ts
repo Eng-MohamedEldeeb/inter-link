@@ -13,10 +13,10 @@ const notifyEvent = new EventEmitter()
 
 notifyEvent.on(
   NotificationType.newNotification,
-  async ({ receiverId, sender, body }: TSendNotificationParams) => {
+  async ({ receiver, sender, body }: TSendNotificationParams) => {
     return await notificationService.sendNotification({
       sender,
-      receiverId,
+      receiver,
       body,
     })
   },
@@ -24,9 +24,9 @@ notifyEvent.on(
 
 notifyEvent.on(
   NotificationType.readNotifications,
-  async ({ socketId, receiverId }: TReadNotificationParams) => {
+  async ({ socketId, receiver }: TReadNotificationParams) => {
     return await notificationService.readNewNotifications({
-      receiverId,
+      receiver,
       socketId,
     })
   },
@@ -34,37 +34,34 @@ notifyEvent.on(
 
 notifyEvent.on(
   NotificationType.markAsReadNotifications,
-  async (receiverId: MongoId) => {
-    return await notificationService.markAsReadNotifications(receiverId)
+  async (receiver: MongoId) => {
+    return await notificationService.markAsReadNotifications(receiver)
   },
 )
 export class Notify {
   public static readonly sendNotification = ({
-    body,
-    receiverId,
     sender,
+    receiver,
+    body,
   }: TSendNotificationParams) => {
     return notifyEvent.emit(NotificationType.newNotification, {
-      body,
-      receiverId,
       sender,
+      receiver,
+      body,
     })
   }
 
   public static readonly readNewNotifications = ({
     socketId,
-    receiverId,
+    receiver,
   }: TReadNotificationParams) => {
     return notifyEvent.emit(NotificationType.readNotifications, {
-      receiverId,
+      receiver,
       socketId,
     })
   }
 
-  public static readonly markAsReadNotifications = (receiverId: MongoId) => {
-    return notifyEvent.emit(
-      NotificationType.markAsReadNotifications,
-      receiverId,
-    )
+  public static readonly markAsReadNotifications = (receiver: MongoId) => {
+    return notifyEvent.emit(NotificationType.markAsReadNotifications, receiver)
   }
 }

@@ -6,7 +6,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IComment } from "../../../db/interfaces/IComment.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { commentRepository } from "../../../db/repositories"
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 
 class CommentService {
   private readonly commentRepository = commentRepository
@@ -21,7 +21,7 @@ class CommentService {
     const { _id: profileId, username } = profile
     const { _id: postId, createdBy } = post
 
-    await this.commentRepository.create({
+    const createdComment = await this.commentRepository.create({
       body,
       ...(attachment.folderId && { attachment }),
       onPost: postId,
@@ -30,12 +30,12 @@ class CommentService {
 
     return this.Notify.sendNotification({
       sender: profile,
-      receiverId: createdBy,
+      receiver: createdBy,
       body: {
-        message: `${username} Add a Comment 💬`,
         sentAt: currentMoment(),
-        refTo: NotificationRefTo.Post,
-        relatedTo: postId,
+        interactionType: InteractionType.newReply,
+        onPost: postId,
+        repliedWith: createdComment._id,
       },
     })
   }
@@ -75,12 +75,10 @@ class CommentService {
 
     this.Notify.sendNotification({
       sender: profile,
-      receiverId: createdBy,
+      receiver: createdBy,
       body: {
-        message: `${username} Liked Your Comment 💚`,
+        interactionType: InteractionType.newLike,
         sentAt: currentMoment(),
-        refTo: NotificationRefTo.Comment,
-        relatedTo: commentId,
       },
     })
 

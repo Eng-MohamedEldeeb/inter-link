@@ -9,7 +9,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IPost } from "../../../db/interfaces/IPost.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { Notify } from "../../../common/services/notify/notify.event"
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 
 class PostService {
   private readonly postRepository = postRepository
@@ -203,13 +203,12 @@ class PostService {
     })
 
     this.Notify.sendNotification({
-      sender: profile,
-      receiverId: createdBy,
+      sender: { _id: profileId, username, avatar },
+      receiver: createdBy,
       body: {
-        message: `${profile.username} liked your post 🩵`,
+        interactionType: InteractionType.newLike,
         sentAt: currentMoment(),
-        refTo: NotificationRefTo.Post,
-        relatedTo: postId,
+        onPost: postId,
       },
     })
 

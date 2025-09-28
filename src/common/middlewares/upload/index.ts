@@ -7,5 +7,3 @@ export { commentAttachmentUploader } from "./comment-attachments-uploader.middle
 export { communityCoverUploader } from "./community-cover-uploader.middleware"
 
 export { communityAttachmentsUploader } from "./community-attachments-uploader.middleware"
-
-export { groupCoverUploader } from "./group-cover-uploader.middleware"

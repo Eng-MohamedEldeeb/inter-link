@@ -8,7 +8,7 @@ import { IUser } from "../../../db/interfaces/IUser.interface"
 import { IReply } from "../../../db/interfaces/IReply.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { commentRepository } from "../../../db/repositories"
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 
 class ReplyService {
   private readonly commentRepository = commentRepository
@@ -34,16 +34,16 @@ class ReplyService {
       replyingTo: commentId,
     })
 
-    return this.Notify.sendNotification({
-      sender: profile,
-      receiverId: commentCreator,
-      body: {
-        message: `${username} Replied To You 💬`,
-        sentAt: currentMoment(),
-        refTo: NotificationRefTo.Comment,
-        relatedTo: commentId,
-      },
-    })
+    // return this.Notify.sendNotification({
+    //   sender: profile,
+    //   receiverId: commentCreator,
+    //   body: {
+    //     message: `${username} Replied To You 💬`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.Comment,
+    //     relatedTo: commentId,
+    //   },
+    // })
   }
 
   public readonly like = async ({
@@ -79,16 +79,16 @@ class ReplyService {
       },
     })
 
-    this.Notify.sendNotification({
-      sender: profile,
-      receiverId: createdBy,
-      body: {
-        message: `${username} Liked Your Reply 💚`,
-        sentAt: currentMoment(),
-        refTo: NotificationRefTo.Comment,
-        relatedTo: commentId,
-      },
-    })
+    // this.Notify.sendNotification({
+    //   sender: profile,
+    //   receiverId: createdBy,
+    //   body: {
+    //     message: `${username} Liked Your Reply 💚`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.Comment,
+    //     relatedTo: commentId,
+    //   },
+    // })
 
     return { msg: "comment is liked successfully" }
   }

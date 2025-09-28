@@ -33,7 +33,7 @@ class ChatOwnerGuard extends GuardActivator {
   }
 
   private readonly isChatOwner = async () => {
-    const isTheOwner = this.chatStartedById._id.equals(this.profileId)
+    const isTheOwner = this.chatStartedById.equals(this.profileId)
 
     const isInParticipants = this.participants.some(userId =>
       userId.equals(this.profileId),

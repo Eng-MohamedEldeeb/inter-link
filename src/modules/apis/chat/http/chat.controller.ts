@@ -19,22 +19,15 @@ class ChatController {
     async (req: IRequest, res: Response) => {
       const { _id: profileId } = req.profile
       return successResponse(res, {
-        // data: await this.chatService.getAllChats(profileId),
+        data: await this.chatService.getAllChats(profileId),
       })
     },
   )
 
   public readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
-      // const { participants, messages } = await this.chatService.getSingle(
-      //   req.chat,
-      // )
-
       return successResponse(res, {
-        // data: {
-        //   participants,
-        //   messages,
-        // },
+        data: await this.chatService.getSingle(req.chat),
       })
     },
   )
@@ -77,19 +70,12 @@ class ChatController {
   )
 
   public readonly editMessage = asyncHandler(
-    async (
-      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, "messageId">>,
-      res: Response,
-    ) => {
-      const { _id: chatId } = req.chat
-      const { _id: profileId } = req.profile
-      const { messageId } = req.query
+    async (req: IRequest, res: Response) => {
+      const oldMessage = req.message
       const { newMessage }: IEditMessage = req.body
 
       await this.chatService.editMessage({
-        chatId,
-        profileId,
-        messageId,
+        oldMessage,
         newMessage,
       })
 
@@ -100,19 +86,8 @@ class ChatController {
   )
 
   public readonly deleteMessage = asyncHandler(
-    async (
-      req: IRequest<IGetSingleChat, Pick<IDeleteMessage, "messageId">>,
-      res: Response,
-    ) => {
-      const { _id: chatId } = req.chat
-      const { _id: profileId } = req.profile
-      const { messageId } = req.query
-
-      await this.chatService.deleteMessage({
-        chatId,
-        profileId,
-        messageId,
-      })
+    async (req: IRequest, res: Response) => {
+      await this.chatService.deleteMessage(req.message)
 
       return successResponse(res, {
         msg: "Message Has Been Deleted Successfully",

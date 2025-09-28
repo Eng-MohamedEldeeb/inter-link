@@ -3,7 +3,7 @@ import { Notify } from "../../../common/services/notify/notify.event"
 import { communityRepository } from "../../../db/repositories"
 import { ICreateCommunity, IEditCommunity } from "./dto/community.dto"
 
-import { NotificationRefTo } from "../../../db/interfaces/INotification.interface"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
 
 import { ICommunity } from "../../../db/interfaces/ICommunity.interface"
 import { ICloudFile } from "../../../common/services/upload/interface/cloud-response.interface"
@@ -208,16 +208,16 @@ class CommunityService {
         },
       })
 
-      this.Notify.sendNotification({
-        sender: profile,
-        receiverId: createdBy,
-        body: {
-          message: `${username} Joined your community`,
-          sentAt: currentMoment(),
-          ref: NotificationRefTo.Community,
-          relatedTo: communityId,
-        },
-      })
+      // this.Notify.sendNotification({
+      //   sender: profile,
+      //   receiverId: createdBy,
+      //   body: {
+      //     message: `${username} Joined your community`,
+      //     sentAt: currentMoment(),
+      //     refTo: InteractionType.Community,
+      //     relatedTo: communityId,
+      //   },
+      // })
 
       return `You Joined ${name} Community Successfully`
     }
@@ -231,16 +231,16 @@ class CommunityService {
       },
     })
 
-    this.Notify.sendNotification({
-      sender: profile,
-      receiverId: createdBy,
-      body: {
-        message: `${username} Requested to join your community`,
-        sentAt: currentMoment(),
-        ref: NotificationRefTo.Community,
-        relatedTo: communityId,
-      },
-    })
+    // this.Notify.sendNotification({
+    //   sender: profile,
+    //   receiverId: createdBy,
+    //   body: {
+    //     message: `${username} Requested to join your community`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.Community,
+    //     relatedTo: communityId,
+    //   },
+    // })
 
     return `Join request was sent to ${name}'s Creator`
   }
@@ -289,16 +289,16 @@ class CommunityService {
     this.userId = user._id
     this.requests = requests
 
-    this.Notify.sendNotification({
-      sender: community,
-      receiverId: createdBy,
-      body: {
-        message: `${community.name} Accepted Your Join Request`,
-        sentAt: currentMoment(),
-        ref: NotificationRefTo.Community,
-        relatedTo: communityId,
-      },
-    })
+    // this.Notify.sendNotification({
+    //   sender: community,
+    //   receiverId: createdBy,
+    //   body: {
+    //     message: `${community.name} Accepted Your Join Request`,
+    //     sentAt: currentMoment(),
+    //     refTo: InteractionType.Community,
+    //     relatedTo: communityId,
+    //   },
+    // })
 
     return await this.communityRepository.findOneAndUpdate({
       filter: {

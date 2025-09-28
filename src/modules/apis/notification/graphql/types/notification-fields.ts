@@ -30,10 +30,8 @@ export const notificationFields: ObjFields<Omit<INotification, "__v">> = {
 
   receiver: { type: GraphQLID },
   sender: { type: GraphQLID },
-  relatedTo: { type: GraphQLID },
 
-  message: { type: GraphQLString },
-  ref: { type: GraphQLString },
+  interactionType: { type: GraphQLString },
 
   status: { type: GraphQLString },
 
