@@ -4,7 +4,7 @@ import { MongoId } from "../../types/db"
 import { ContextType } from "../../decorators/context/types"
 
 import { GraphQLParams, HttpParams } from "../../decorators/context/types"
-import { IUser } from "../../../db/interfaces/IUser.interface"
+import { TUser } from "../../../db/documents"
 
 class UserPrivacyGuard extends GuardActivator {
   private userId!: MongoId
@@ -29,7 +29,7 @@ class UserPrivacyGuard extends GuardActivator {
         totalFollowing,
         totalPosts,
         requests,
-      } = req.user as IUser
+      } = req.user as TUser
 
       this.userId = userId
       this.profileId = profileId
@@ -45,7 +45,7 @@ class UserPrivacyGuard extends GuardActivator {
           totalFollowing,
           totalPosts,
           requests,
-        } as IUser
+        } as TUser
       }
     }
 
@@ -62,7 +62,7 @@ class UserPrivacyGuard extends GuardActivator {
         totalFollowing,
         totalPosts,
         requests,
-      } = context.user as IUser
+      } = context.user as TUser
 
       this.userId = userId
       this.profileId = profileId
@@ -78,7 +78,7 @@ class UserPrivacyGuard extends GuardActivator {
           totalFollowing,
           totalPosts,
           requests,
-        } as IUser
+        } as TUser
       }
     }
 

@@ -13,6 +13,7 @@ import {
   otpRepository,
 } from "../repositories"
 import { DataBaseService } from "../db.service"
+import { Post } from "./Post.model"
 
 export class User {
   private static readonly DataBaseService = DataBaseService
@@ -79,9 +80,9 @@ export class User {
 
       blockedUsers: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 
-      savedPosts: [{ type: SchemaTypes.ObjectId, ref: "Post" }],
+      savedPosts: [{ type: SchemaTypes.ObjectId, ref: Post.Model }],
 
-      likedPosts: [{ type: SchemaTypes.ObjectId, ref: "Post" }],
+      likedPosts: [{ type: SchemaTypes.ObjectId, ref: Post.Model }],
 
       joinedCommunities: [{ type: SchemaTypes.ObjectId, ref: "Community" }],
 
@@ -114,15 +115,9 @@ export class User {
 
   private static readonly schemaFactory = () => {
     this.schema.virtual("posts", {
-      ref: "Post",
+      ref: Post.Model,
       localField: "_id",
       foreignField: "createdBy",
-      options: {
-        lean: true,
-        projection: {
-          "attachments.paths.secure_url": 1,
-        },
-      },
     })
 
     this.schema.virtual("totalPosts").get(function () {

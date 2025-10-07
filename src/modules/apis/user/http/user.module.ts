@@ -18,7 +18,7 @@ const router: Router = Router()
 router.get(
   "/",
   validate(UserValidator.getUserProfileSchema.http()),
-  applyGuards(userExistenceGuard, isBlockedUserGuard, userPrivacyGuard),
+  applyGuards(userExistenceGuard, isBlockedUserGuard),
   userController.getUserProfile,
 )
 

@@ -26,7 +26,7 @@ export class Post {
 
       body: {
         type: String,
-        maxlength: [100, "post's body can't be more than 100 characters"],
+        maxlength: [750, "post's body can't be more than 750 characters"],
       },
 
       likedBy: [{ type: SchemaTypes.ObjectId, ref: "User" }],
@@ -35,7 +35,11 @@ export class Post {
 
       shares: { type: Number },
 
-      onCommunity: { type: SchemaTypes.ObjectId, ref: "Community" },
+      onCommunity: {
+        type: SchemaTypes.ObjectId,
+        ref: "Community",
+        default: "68e2199360d283e88c66bd86",
+      },
 
       archivedAt: { type: Date },
 

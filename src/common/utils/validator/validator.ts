@@ -40,13 +40,13 @@ export abstract class Validator {
     maxL?: number
   }) {
     return {
-      "any.required": `['${fieldName}'] is required`,
+      "any.required": `'${fieldName}' is required`,
       "any.only": `${fieldName} are Not Matched`,
 
-      "string.empty": `['${fieldName} ] can't be empty`,
-      "string.min": `['${fieldName} ] can't be less then '${minL}'`,
-      "string.max": `['${fieldName} ] can't be more then '${maxL}'`,
-      "string.length": `['${fieldName} ] length must be '${maxL}' characters long'`,
+      "string.empty": `'${fieldName}' can't be empty`,
+      "string.min": `'${fieldName}' can't be less then '${minL}'`,
+      "string.max": `'${fieldName}' can't be more then '${maxL}'`,
+      "string.length": `''${fieldName}' length must be '${maxL}' characters long'`,
 
       "string.email": "Invalid E-mail",
       "date.base": "Enter a Valid birthDate Formate (MM-DD-YYYY)",
@@ -88,7 +88,7 @@ export abstract class Validator {
           "any.required"
         ],
         "string.empty": this.validationMessage({ fieldName: "username" })[
-          "any.required"
+          "string.empty"
         ],
       }),
 

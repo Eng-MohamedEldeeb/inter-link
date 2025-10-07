@@ -2,9 +2,8 @@ import * as DTO from "./dto/notification.dto"
 
 import { throwError } from "../../../common/handlers/error-message.handler"
 import { notificationRepository } from "../../../db/repositories"
-import { IComment } from "../../../db/interfaces/IComment.interface"
-import { IPost } from "../../../db/interfaces/IPost.interface"
 import { MongoId } from "../../../common/types/db"
+
 import {
   INotificationInputs,
   NotificationStatus,
@@ -33,7 +32,7 @@ class NotificationService {
       }
     else options = {}
 
-    return await this.notificationRepository.find({
+    const notifications = await this.notificationRepository.find({
       filter: filter,
       options,
       projection: {
@@ -42,6 +41,7 @@ class NotificationService {
         interactionType: 1,
         onComment: 1,
         onPost: 1,
+        status: 1,
       },
 
       populate: [
@@ -66,8 +66,8 @@ class NotificationService {
         },
         {
           path: "onPost",
-          select: <Record<keyof IPost, number>>{
-            attachments: 1,
+          select: {
+            "attachments.paths.secure_url": 1,
             title: 1,
             body: 1,
           },
@@ -75,22 +75,30 @@ class NotificationService {
         },
         {
           path: "onComment",
-          select: <Record<keyof IComment, number>>{
-            attachment: 1,
+          select: {
+            "attachments.paths.secure_url": 1,
             body: 1,
           },
           options: { lean: true },
         },
         {
           path: "repliedWith",
-          select: <Record<keyof IComment, number>>{
-            attachment: 1,
+          select: {
+            "attachments.paths.secure_url": 1,
             body: 1,
           },
           options: { lean: true },
         },
       ],
     })
+    return {
+      notifications,
+      newNotificationsCount: notifications.filter(
+        notification =>
+          notification.status === NotificationStatus.sent ||
+          notification.status === NotificationStatus.received,
+      ).length,
+    }
   }
 
   public readonly deleteNotification = async ({

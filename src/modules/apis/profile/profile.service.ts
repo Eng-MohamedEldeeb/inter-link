@@ -23,9 +23,6 @@ class ProfileService {
   private readonly CloudUploader = CloudUploader
 
   public readonly getProfile = (profile: IUser) => {
-    if (profile.phone)
-      profile.phone = decryptValue({ encryptedValue: profile.phone })
-
     return profile
   }
 

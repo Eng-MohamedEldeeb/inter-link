@@ -1,5 +1,8 @@
 import { ICommunity } from "../../../../db/interfaces/ICommunity.interface"
-import { INotificationInputs } from "../../../../db/interfaces/INotification.interface"
+import {
+  INotificationInputs,
+  NotificationStatus,
+} from "../../../../db/interfaces/INotification.interface"
 import { IUser } from "../../../../db/interfaces/IUser.interface"
 import { MongoId } from "../../../types/db"
 
@@ -12,6 +15,8 @@ export enum NotificationType {
   newGroupMessage = "new-group-message",
 
   markAsReadNotifications = "mark-as-read-notifications",
+
+  typing = "typing",
 }
 
 export type SenderDetails = Partial<
@@ -31,4 +36,22 @@ export type TSendNotificationParams = {
 export type TReadNotificationParams = {
   receiver: MongoId
   socketId: string
+}
+
+export type Timestamp =
+  | {
+      receivedAt: Date
+      sentAt: string | undefined
+      status: NotificationStatus
+    }
+  | {
+      sentAt: string | undefined
+      status: NotificationStatus
+      receivedAt?: undefined
+    }
+
+export type NotificationDetails = {
+  timestamp: Timestamp
+  socketId: string
+  data: TSendNotificationParams
 }

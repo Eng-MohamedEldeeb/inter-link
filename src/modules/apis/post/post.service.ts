@@ -25,7 +25,52 @@ class PostService {
 
     const posts = await this.postRepository.find({
       filter: { archivedAt: { $exists: false } },
-      options: { sort: { createdAt: -1 }, projection: { saves: 0 } },
+      projection: {
+        "attachments.folderId": 0,
+        "attachments.fullPath": 0,
+        "attachments.paths.public_id": 0,
+        saves: 0,
+      },
+      populate: [
+        {
+          path: "createdBy",
+          select: <Record<keyof IUser | string, number>>{
+            username: 1,
+            _id: 1,
+            "avatar.secure_url": 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "comments",
+          select: {
+            body: 1,
+            createdBy: 1,
+          },
+          populate: [
+            {
+              path: "createdBy",
+              select: { avatar: 1, username: 1 },
+              options: { lean: true },
+            },
+          ],
+        },
+        {
+          path: "createdBy",
+          select: { avatar: 1, username: 1 },
+          options: { lean: true },
+        },
+        {
+          path: "onCommunity",
+          select: {
+            "cover.path.secure_url": 1,
+            slug: 1,
+            name: 1,
+          },
+          options: { lean: true },
+        },
+      ],
+      options: { sort: { createdAt: -1 } },
       skip,
       limit: limitQuery,
     })
@@ -67,7 +112,11 @@ class PostService {
         $and: [{ _id: postId }, { archivedAt: { $exists: false } }],
       },
       data: editPost,
-      options: { new: true, projection: Object.keys(editPost).join(" ") },
+      options: {
+        new: true,
+        projection: Object.keys(editPost).join(" "),
+        lean: true,
+      },
     })
   }
 

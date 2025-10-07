@@ -96,6 +96,26 @@ class ChatService {
 
         {
           path: "messages",
+          populate: [
+            {
+              path: "sender",
+              select: {
+                _id: 1,
+                username: 1,
+                "avatar.secure_url": 1,
+              },
+              options: { lean: true },
+            },
+            {
+              path: "receiver",
+              select: {
+                _id: 1,
+                username: 1,
+                "avatar.secure_url": 1,
+              },
+              options: { lean: true },
+            },
+          ],
           options: { lean: true },
         },
 

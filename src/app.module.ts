@@ -21,7 +21,7 @@ export const bootstrap = async (app: Express): Promise<void> => {
 
   app.use(helmet(helmetOptions))
 
-  app.use("/v1/api", httpModule)
+  app.use("/api/v1", httpModule)
 
   app.use("/v1/graphql", graphqlModule)
 

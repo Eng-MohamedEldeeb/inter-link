@@ -55,8 +55,43 @@ class PostExistenceGuard extends GuardActivator {
           { archivedAt: { $exists: false } },
         ],
       },
-      projection: { savedBy: 0 },
-      populate: [{ path: "comments" }],
+      projection: {
+        savedBy: 0,
+        "attachments.folderId": 0,
+        "attachments.fullPath": 0,
+        "attachments.paths.public_id": 0,
+      },
+
+      populate: [
+        {
+          path: "onCommunity",
+          select: {
+            "cover.path.secure_url": 1,
+            slug: 1,
+            name: 1,
+          },
+          options: { lean: true },
+        },
+        {
+          path: "comments",
+          select: {
+            body: 1,
+            createdBy: 1,
+          },
+          populate: [
+            {
+              path: "createdBy",
+              select: { avatar: 1, username: 1 },
+              options: { lean: true },
+            },
+          ],
+        },
+        {
+          path: "createdBy",
+          select: { avatar: 1, username: 1 },
+          options: { lean: true },
+        },
+      ],
     })
 
     if (!isExistedPost)

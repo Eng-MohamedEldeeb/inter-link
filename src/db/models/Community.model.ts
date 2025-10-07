@@ -6,6 +6,8 @@ import { postRepository } from "../repositories"
 
 import slugify from "slugify"
 import { DataBaseService } from "../db.service"
+import { User } from "./User.model"
+import { Post } from "./Post.model"
 
 export class Community {
   private static readonly DataBaseService = DataBaseService
@@ -52,17 +54,17 @@ export class Community {
         },
       },
 
-      admins: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+      admins: [{ type: SchemaTypes.ObjectId, ref: User.Model }],
 
-      members: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+      members: [{ type: SchemaTypes.ObjectId, ref: User.Model }],
 
-      requests: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+      requests: [{ type: SchemaTypes.ObjectId, ref: User.Model }],
 
       isPrivateCommunity: { type: Boolean, default: false },
 
       createdBy: {
         type: SchemaTypes.ObjectId,
-        ref: "User",
+        ref: User.Model,
         required: [true, "createdBy is required"],
       },
     },
@@ -75,14 +77,13 @@ export class Community {
 
   private static readonly schemaFactory = () => {
     this.schema.virtual("posts", {
-      ref: "Post",
+      ref: Post.Model,
       localField: "_id",
       foreignField: "onCommunity",
     })
 
     this.schema.virtual("totalMembers").get(function (this: ICommunity) {
-      if (this.members) return this.members.length
-      return 0
+      return this.members.length + this.admins.length
     })
 
     this.schema.post("findOneAndDelete", async function (res: ICommunity) {

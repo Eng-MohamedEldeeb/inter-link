@@ -17,6 +17,7 @@ export enum InteractionType {
   newLike = "new-like",
   newReply = "new-reply",
   newFollow = "new-follow",
+  newMessage = "new-message",
 }
 
 export enum NotificationStatus {
@@ -38,6 +39,8 @@ export interface INotificationInputs {
 
   likedBy?: MongoId[]
   followedBy?: MongoId
+
+  message?: string
 
   sentAt?: string
   status: NotificationStatus

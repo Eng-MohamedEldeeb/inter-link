@@ -18,6 +18,7 @@ class InCommunityAdminsGuard extends GuardActivator {
       const { req } = Ctx.switchToHTTP()
 
       const { admins } = req.community
+      console.log({ com: req.community })
 
       this.admins = admins
       this.profileId = req.profile._id
@@ -36,7 +37,7 @@ class InCommunityAdminsGuard extends GuardActivator {
   }
 
   private readonly isAdmin = () => {
-    return this.admins.some(adminId => adminId.equals(this.profileId))
+    return this.admins.some(adminId => adminId._id.equals(this.profileId))
   }
 }
 

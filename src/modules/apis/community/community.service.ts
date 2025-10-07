@@ -79,6 +79,7 @@ class CommunityService {
           cover,
         }),
       createdBy,
+      admins: [createdBy],
     })
   }
 

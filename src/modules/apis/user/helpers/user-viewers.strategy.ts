@@ -23,21 +23,6 @@ export class UserViewersStrategy {
       data: {
         $inc: { "viewers.$.totalVisits": 1 },
       },
-
-      options: {
-        new: true,
-        populate: [{ path: "posts" }],
-        projection: {
-          phone: 0,
-          password: 0,
-          oldPasswords: 0,
-          "avatar.public_id": 0,
-          "avatar.folderPath": 0,
-          blockedUsers: 0,
-          savedPosts: 0,
-          requests: 0,
-        },
-      },
     })
 
     return (
@@ -66,20 +51,6 @@ export class UserViewersStrategy {
             viewer: profileId,
             totalVisits: 1,
           },
-        },
-      },
-      options: {
-        new: true,
-        populate: [{ path: "posts" }],
-        projection: {
-          phone: 0,
-          password: 0,
-          oldPasswords: 0,
-          "avatar.public_id": 0,
-          "avatar.folderPath": 0,
-          blockedUsers: 0,
-          savedPosts: 0,
-          requests: 0,
         },
       },
     })

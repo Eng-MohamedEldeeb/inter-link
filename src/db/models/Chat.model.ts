@@ -40,7 +40,7 @@ export class Chat {
       foreignField: "chatId",
       ref: Message.Model,
       options: {
-        sort: { sentAt: -1 },
+        sort: { sentAt: 1 },
         projection: <Record<keyof IMessage, number>>{
           message: 1,
           sentAt: 1,

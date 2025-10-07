@@ -4,11 +4,33 @@ import { ISocket } from "../../../common/interface/ISocket.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { MongoId } from "../../../common/types/db"
 
-import { INotificationInputs } from "../../../db/interfaces/INotification.interface"
+import {
+  INotificationInputs,
+  InteractionType,
+} from "../../../db/interfaces/INotification.interface"
 
 import { NotificationType } from "../../../common/services/notify/types"
 import { ConnectedUser } from "../user-status/user-status"
-import { IMessageInputs } from "../../../db/interfaces/IMessage.interface"
+import {
+  IMessageInputs,
+  MessageStatus,
+} from "../../../db/interfaces/IMessage.interface"
+import { messageRepository } from "../../../db/repositories"
+import { Notify } from "../../../common/services/notify/notify.event"
+
+export const onTyping = ({
+  socket,
+  chatId,
+}: {
+  socket: ISocket
+  chatId: MongoId
+}) => {
+  return async () => {
+    return socket.to(chatId.toString()).emit(NotificationType.typing, {
+      message: `${socket.user.username} is typing`,
+    })
+  }
+}
 
 export const onSendMessage = ({
   socket,
@@ -29,21 +51,45 @@ export const onSendMessage = ({
 
     console.log({ inChat })
 
-    // const data: Pick<IMessageInputs, "message" | "sentAt"> = {
-    //   message,
-    //   sentAt: currentMoment(),
-    // }
+    if (!inChat && !isConnected) {
+      return await messageRepository.create({
+        message,
+        sender: socket.profile._id,
+        receiver: userId,
+        chatId,
+        status: MessageStatus.sent,
+        sentAt: currentMoment(),
+      })
+    }
 
-    await chatHelper.sendMessageStrategy({
-      isConnected,
-      inChat,
-      sender: socket.profile,
-      receiver: userId,
-      chatId,
+    if (!inChat && isConnected) {
+      await messageRepository.create({
+        message,
+        sender: socket.profile._id,
+        receiver: userId,
+        chatId,
+        receivedAt: new Date(Date.now()),
+        status: MessageStatus.received,
+        sentAt: currentMoment(),
+      })
+
+      return Notify.sendNotification({
+        sender: socket.profile,
+        receiver: userId,
+        body: {
+          interactionType: InteractionType.newMessage,
+          message,
+          sentAt: currentMoment(),
+        },
+      })
+    }
+
+    const data: Pick<IMessageInputs, "message" | "sentAt"> = {
       message,
-    })
+      sentAt: currentMoment(),
+    }
 
-    // return socket.to(chatId.toString()).emit(NotificationType.newMessage, data)
+    return socket.to(chatId.toString()).emit(NotificationType.newMessage, data)
   }
 }
 
@@ -71,28 +117,11 @@ export const onEditMessage = ({
       sentAt: currentMoment(),
     }
 
-    await chatHelper.sendMessageStrategy({
-      isConnected,
-      inChat,
-      sender: socket.profile,
-      receiver: userId,
-      chatId,
-      message,
-    })
-
     // return socket.to(chatId.toString()).emit(NotificationType.newMessage, data)
   }
 }
 export const onDisconnect =
-  ({
-    socket,
-    chatId,
-    userId,
-  }: {
-    socket: ISocket
-    chatId: MongoId
-    userId: MongoId
-  }) =>
+  ({ socket, chatId }: { socket: ISocket; chatId: MongoId }) =>
   () => {
     chatHelper.leaveChat({
       chatId: chatId,

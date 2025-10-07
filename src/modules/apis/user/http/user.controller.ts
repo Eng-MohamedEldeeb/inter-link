@@ -34,6 +34,7 @@ class UserController {
     async (req: IRequest, res: Response) => {
       const user = req.user
       const profile = req.profile
+
       if (user._id.equals(profile._id))
         return res.redirect("/api/v1/profile/followers")
       return successResponse(res, {

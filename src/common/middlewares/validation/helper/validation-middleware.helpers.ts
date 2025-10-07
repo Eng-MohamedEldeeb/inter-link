@@ -9,7 +9,7 @@ export const validateHttpInputs = async (
   schema: Record<string, ObjectSchema>,
 ) => {
   const { req, next } = ctx.switchToHTTP()
-  const errors = []
+  let validationError: { key: string; messages: string[] } | null = null
 
   for (const key of Object.keys(schema)) {
     const { error } = schema[key].validate(req[key as keyof IRequest], {
@@ -17,21 +17,26 @@ export const validateHttpInputs = async (
     })
 
     if (error) {
-      errors.push({
+      // errors.push({
+      //   key,
+      //   paths: error.details.map(e => ({
+      //     message: e.message,
+      //     path: e.path,
+      //     type: e.type,
+      //   })),
+      // })
+
+      validationError = {
         key,
-        detail: error.details.map(e => ({
-          message: e.message,
-          path: e.path,
-          type: e.type,
-        })),
-      })
+        messages: error.details.map(e => e.message),
+      }
     }
   }
 
-  if (errors.length)
+  if (validationError)
     return throwError({
       msg: "validation error",
-      details: errors,
+      details: validationError,
       status: 400,
     })
   return next()

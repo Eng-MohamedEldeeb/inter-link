@@ -53,7 +53,7 @@ export class PostValidator extends Validator {
       .object<DTO.ICreatePost>()
       .keys({
         title: this.generalFields.body.min(1).max(50).required(),
-        body: this.generalFields.body.max(500),
+        body: this.generalFields.body.max(750),
         onCommunity: this.generalFields.mongoId,
       })
       .required(),

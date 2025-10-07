@@ -1,8 +1,6 @@
 import { GuardActivator } from "../../decorators/guard/guard-activator.guard"
 import { ContextDetector } from "../../decorators/context/context-detector.decorator"
 import { ContextType } from "../../decorators/context/types"
-import { IContext } from "../../interface/IGraphQL.interface"
-import { IRequest } from "../../interface/IRequest.interface"
 import { IPayload } from "../../utils/security/token/interface/token.interface"
 import { throwError } from "../../handlers/error-message.handler"
 
@@ -13,11 +11,9 @@ import {
 } from "../../decorators/context/types"
 
 import { userRepository } from "../../../db/repositories"
-import { ISocket } from "../../interface/ISocket.interface"
 
 class IsAuthorizedGuard implements GuardActivator {
   private readonly userRepository = userRepository
-  private contextArg!: IRequest | IContext | ISocket
   private tokenPayload!: IPayload
   private changedCredentialsAt: Date | undefined = undefined
 
@@ -28,21 +24,23 @@ class IsAuthorizedGuard implements GuardActivator {
 
     if (Ctx.type === ContextType.httpContext) {
       const { req } = Ctx.switchToHTTP()
-      this.contextArg = req
-      return await this.httpAuthorization()
+      this.tokenPayload = req.tokenPayload
+      req.profile = await this.httpAuthorization()
     }
 
     if (Ctx.type === ContextType.graphContext) {
       const { context } = Ctx.switchToGraphQL()
-      this.contextArg = context
-      return await this.graphQLAuthorization()
+      this.tokenPayload = context.tokenPayload
+      context.profile = await this.graphQLAuthorization()
     }
 
     if (Ctx.type === ContextType.socketContext) {
       const { socket } = Ctx.switchToSocket()
-      this.contextArg = socket
-      return await this.socketAuthorization()
+      this.tokenPayload = socket.tokenPayload
+      socket.profile = await this.socketAuthorization()
     }
+
+    return true
   }
 
   private readonly hasChangedCredentials = (): boolean => {
@@ -54,7 +52,7 @@ class IsAuthorizedGuard implements GuardActivator {
   }
 
   private readonly httpAuthorization = async () => {
-    this.tokenPayload = this.contextArg.tokenPayload
+    this.tokenPayload = this.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
@@ -73,6 +71,53 @@ class IsAuthorizedGuard implements GuardActivator {
       populate: [
         {
           path: "posts",
+          select: {
+            "attachments.paths.public_id": 0,
+            "attachments.folderId": 0,
+            "attachments.fullPath": 0,
+          },
+          populate: [
+            {
+              path: "createdBy",
+              select: {
+                "avatar.secure_url": 1,
+                username: 1,
+              },
+            },
+            {
+              path: "onCommunity",
+              select: {
+                "cover.path.secure_url": 1,
+                slug: 1,
+                name: 1,
+              },
+              options: { lean: true },
+            },
+            {
+              path: "comments",
+              select: {
+                body: 1,
+                createdBy: 1,
+              },
+              populate: [
+                {
+                  path: "createdBy",
+                  select: { avatar: 1, username: 1 },
+                  options: { lean: true },
+                },
+              ],
+            },
+          ],
+        },
+
+        {
+          path: "joinedCommunities",
+          select: {
+            "cover.path.secure_url": 1,
+            slug: 1,
+            name: 1,
+          },
+          options: { lean: true },
         },
       ],
     })
@@ -85,13 +130,11 @@ class IsAuthorizedGuard implements GuardActivator {
     if (this.hasChangedCredentials())
       return throwError({ msg: "re-login is required", status: 403 })
 
-    this.contextArg.profile = isExistedUser
-
-    return true
+    return isExistedUser
   }
 
   private readonly graphQLAuthorization = async () => {
-    this.tokenPayload = this.contextArg.tokenPayload
+    this.tokenPayload = this.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
@@ -113,13 +156,11 @@ class IsAuthorizedGuard implements GuardActivator {
     if (this.hasChangedCredentials())
       return throwError({ msg: "re-login is required", status: 403 })
 
-    this.contextArg.profile = isExistedUser
-
-    return this.contextArg
+    return isExistedUser
   }
 
   private readonly socketAuthorization = async () => {
-    this.tokenPayload = this.contextArg.tokenPayload
+    this.tokenPayload = this.tokenPayload
 
     const isExistedUser = await this.userRepository.findOne({
       filter: {
@@ -150,9 +191,7 @@ class IsAuthorizedGuard implements GuardActivator {
         status: 440,
       })
 
-    this.contextArg.profile = isExistedUser
-
-    return true
+    return isExistedUser
   }
 }
 

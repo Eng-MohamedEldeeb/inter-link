@@ -21,6 +21,8 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
   const { req, next } = ctx.switchToHTTP()
   const { socketServerNext } = ctx.switchToSocket()
 
+  console.log({ error })
+
   if (ctx.type === ContextType.httpContext) await deleteFiles(req)
 
   switch (true) {

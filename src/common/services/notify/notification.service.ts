@@ -1,6 +1,12 @@
-import { ConnectedUser } from "../../../modules/socket-io/user-status/user-status"
 import { io } from "../../.."
+import { ConnectedUser } from "../../../modules/socket-io/user-status/user-status"
 import { MongoId } from "../../types/db"
+import { currentMoment } from "../../decorators/moment/moment"
+import { MessageStatus } from "../../../db/interfaces/IMessage.interface"
+import { IPost } from "../../../db/interfaces/IPost.interface"
+import { IComment } from "../../../db/interfaces/IComment.interface"
+import { IUser } from "../../../db/interfaces/IUser.interface"
+import { User } from "../../../db/models"
 
 import {
   INotificationInputs,
@@ -9,40 +15,19 @@ import {
 } from "../../../db/interfaces/INotification.interface"
 
 import {
+  NotificationDetails,
   NotificationType,
   TReadNotificationParams,
   TSendNotificationParams,
 } from "./types"
+
 import {
   chatRepository,
-  messageRepository,
   notificationRepository,
 } from "../../../db/repositories"
-import { currentMoment } from "../../decorators/moment/moment"
-import { MessageStatus } from "../../../db/interfaces/IMessage.interface"
-import notificationService from "../../../modules/apis/notification/notification.service"
-import { IPost } from "../../../db/interfaces/IPost.interface"
-import { IComment } from "../../../db/interfaces/IComment.interface"
-import { IUser } from "../../../db/interfaces/IUser.interface"
-import { QueryOptions, RootFilterQuery } from "mongoose"
-import { User } from "../../../db/models"
-type Timestamp =
-  | {
-      receivedAt: Date
-      sentAt: string | undefined
-      status: NotificationStatus
-    }
-  | {
-      sentAt: string | undefined
-      status: NotificationStatus
-      receivedAt?: undefined
-    }
 
-type NotificationDetails = {
-  timestamp: Timestamp
-  socketId: string
-  data: TSendNotificationParams
-}
+import notificationService from "../../../modules/apis/notification/notification.service"
+
 class NotificationService {
   private readonly notificationRepository = notificationRepository
   private readonly notificationService = notificationService
@@ -57,21 +42,11 @@ class NotificationService {
 
     const { interactionType } = body
 
-    const timestamp = isConnected
-      ? {
-          receivedAt: new Date(Date.now()),
-          sentAt: body.sentAt,
-          status: NotificationStatus.received,
-        }
-      : {
-          sentAt: body.sentAt,
-          status: NotificationStatus.sent,
-        }
     console.log({ interactionType })
 
     if (interactionType === InteractionType.newLike)
       return await this.upsertNewLike({
-        timestamp,
+        timestamp: this.setTimeStamp({ isConnected, body }),
         socketId,
         data: {
           sender,
@@ -82,7 +57,7 @@ class NotificationService {
 
     if (interactionType === InteractionType.newReply)
       return await this.upsertNewReply({
-        timestamp,
+        timestamp: this.setTimeStamp({ isConnected, body }),
         socketId,
         data: {
           sender,
@@ -93,7 +68,7 @@ class NotificationService {
 
     if (interactionType === InteractionType.newFollow)
       return await this.upsertNewFollow({
-        timestamp,
+        timestamp: this.setTimeStamp({ isConnected, body }),
         socketId,
         data: {
           sender,
@@ -101,6 +76,37 @@ class NotificationService {
           body,
         },
       })
+
+    if (interactionType === InteractionType.newMessage)
+      return io.to(socketId).emit(NotificationType.newNotification, {
+        sender,
+        body: {
+          message: body.message,
+          sentAt: body.sentAt,
+        },
+      })
+  }
+
+  private readonly setTimeStamp = ({
+    isConnected,
+    body,
+  }: {
+    isConnected: boolean
+    body: Omit<
+      INotificationInputs,
+      "receiver" | "sender" | "likedBy" | "followedBy" | "status"
+    >
+  }) => {
+    if (isConnected)
+      return {
+        receivedAt: new Date(Date.now()),
+        sentAt: body.sentAt,
+        status: NotificationStatus.received,
+      }
+    return {
+      sentAt: body.sentAt,
+      status: NotificationStatus.sent,
+    }
   }
 
   private readonly upsertNewLike = async ({
@@ -157,7 +163,7 @@ class NotificationService {
         io.to(socketId).emit(NotificationType.newNotification, {
           sender,
           body: {
-            message: `${sender.username} liked your content 🩵`,
+            message: "liked your content 🩵",
             ...(existedDocument.onPost && { onPost: existedDocument.onPost }),
             ...(existedDocument.onComment && {
               onComment: existedDocument.onComment,
@@ -187,7 +193,7 @@ class NotificationService {
         io.to(socketId).emit(NotificationType.newNotification, {
           sender,
           body: {
-            message: `${sender.username} liked your content 🩵`,
+            message: "liked your content 🩵",
             ...(createdDocument.onPost && { onPost: createdDocument.onPost }),
             ...(createdDocument.onComment && {
               onComment: createdDocument.onComment,
@@ -224,7 +230,7 @@ class NotificationService {
       io.to(socketId).emit(NotificationType.newNotification, {
         sender,
         body: {
-          message: `${sender.username} replied to your content 💚`,
+          message: "replied to your content 💚",
           ...(createdDocument.onPost && { onPost: createdDocument.onPost }),
           ...(createdDocument.onComment && {
             onComment: createdDocument.onComment,
@@ -255,7 +261,7 @@ class NotificationService {
       io.to(socketId).emit(NotificationType.newNotification, {
         sender,
         body: {
-          message: `${sender.username} followed you 🧡`,
+          message: "followed you 🧡",
           followedBy: sender._id,
           sentAt: body.sentAt,
         },
@@ -282,7 +288,12 @@ class NotificationService {
           path: "newMessages",
           match: {
             sender: { $ne: receiver },
-            status: MessageStatus.sent,
+            $or: [
+              { status: MessageStatus.sent },
+              {
+                status: MessageStatus.received,
+              },
+            ],
           },
           options: {
             populate: [
@@ -318,7 +329,7 @@ class NotificationService {
           return io.to(socketId).emit(NotificationType.newMessage, {
             sender: missedMessage.newMessages[0].sender,
             body: {
-              message: `${sender.username} sent you ${missedMessage.newMessages.length} messages 💬`,
+              message: `sent you ${missedMessage.newMessages.length} messages 💬`,
               sentAt: currentMoment(),
             },
           })
@@ -333,7 +344,7 @@ class NotificationService {
       }
     })
 
-    missedNotifications.forEach(notification => {
+    missedNotifications.notifications.forEach(notification => {
       const sender = notification.sender as Pick<
         IUser,
         "_id" | "avatar" | "username"
@@ -348,11 +359,12 @@ class NotificationService {
         return io.to(socketId).emit(NotificationType.newNotification, {
           sender,
           body: {
-            message: `${sender.username} liked your content 🩵`,
+            message: "liked your content 🩵",
             ...(notification.onPost && { onPost: notification.onPost }),
             ...(notification.onComment && {
               onComment: notification.onComment,
             }),
+            sentAt: notification.sentAt,
           },
         })
 
@@ -360,21 +372,22 @@ class NotificationService {
         return io.to(socketId).emit(NotificationType.newNotification, {
           sender,
           body: {
-            message: `${sender.username} replied to your content 💚`,
+            message: "replied to your content 💚",
             repliedWith: notification.repliedWith,
-
             ...(notification.onPost && { onPost: notification.onPost }),
             ...(notification.onComment && {
               onComment: notification.onComment,
             }),
+            sentAt: notification.sentAt,
           },
         })
 
       return io.to(socketId).emit(NotificationType.newNotification, {
         sender,
         body: {
-          message: `${sender.username} followed you 🧡`,
+          message: "followed you 🧡",
           followedBy: notification.followedBy,
+          sentAt: notification.sentAt,
         },
       })
     })

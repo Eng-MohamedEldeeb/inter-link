@@ -21,7 +21,6 @@ import { userRepository } from "../../../db/repositories"
 class UserExistenceGuard extends GuardActivator {
   private readonly userRepository = userRepository
   private username: string | undefined
-  private userId!: MongoId | string
   private adminId!: MongoId | string
   private user_id!: MongoId | string
 
@@ -41,6 +40,7 @@ class UserExistenceGuard extends GuardActivator {
         ...req.params,
         ...(req.chat && { user_id: req.chat.participants[0] }),
       }
+
       const { _id: profileId } = req.profile
 
       this.username = username
@@ -76,6 +76,8 @@ class UserExistenceGuard extends GuardActivator {
 
       const { user_id } = socket.handshake.query
 
+      console.log({ user_id })
+
       if (!user_id)
         return throwError({ msg: "user_id is required in query param" })
 
@@ -109,12 +111,11 @@ class UserExistenceGuard extends GuardActivator {
               }
             : {
                 $and: [
-                  { $or: [{ _id: this.user_id }, { _id: this.userId }] },
+                  { _id: this.user_id },
                   { deactivatedAt: { $exists: false } },
                 ],
               }),
       },
-      populate: [{ path: "posts" }],
       projection: {
         phone: 0,
         password: 0,
@@ -124,6 +125,58 @@ class UserExistenceGuard extends GuardActivator {
         blockedUsers: 0,
         savedPosts: 0,
       },
+      populate: [
+        {
+          path: "posts",
+          select: {
+            "attachments.paths.public_id": 0,
+            "attachments.folderId": 0,
+            "attachments.fullPath": 0,
+          },
+          populate: [
+            {
+              path: "createdBy",
+              select: {
+                "avatar.secure_url": 1,
+                username: 1,
+              },
+            },
+            {
+              path: "onCommunity",
+              select: {
+                "cover.path.secure_url": 1,
+                slug: 1,
+                name: 1,
+              },
+              options: { lean: true },
+            },
+            {
+              path: "comments",
+              select: {
+                body: 1,
+                createdBy: 1,
+              },
+              populate: [
+                {
+                  path: "createdBy",
+                  select: { avatar: 1, username: 1 },
+                  options: { lean: true },
+                },
+              ],
+            },
+          ],
+        },
+
+        {
+          path: "joinedCommunities",
+          select: {
+            "cover.path.secure_url": 1,
+            slug: 1,
+            name: 1,
+          },
+          options: { lean: true },
+        },
+      ],
     })
 
     if (!isExistedUser)

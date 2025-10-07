@@ -6,6 +6,7 @@ import { MongoId } from "../../../common/types/db"
 import { InteractionType } from "../../../db/interfaces/INotification.interface"
 import { IUser } from "../../../db/interfaces/IUser.interface"
 import { UserViewersStrategy } from "./helpers/user-viewers.strategy"
+import { TUser } from "../../../db/documents"
 
 class UserService {
   private readonly userRepository = userRepository
@@ -22,15 +23,17 @@ class UserService {
     user,
   }: {
     profileId: MongoId
-    user: Omit<IUser, "password" | "oldPasswords">
+    user: TUser
   }) => {
     this.profileId = profileId
+
     this.userId = user._id
 
-    if (user.isPrivateProfile && user.viewers) {
+    if (!user.isPrivateProfile && user.viewers) {
       this.views = user.viewers
 
-      return await this.updateUserViewers()
+      this.updateUserViewers()
+      return user
     }
 
     return user
