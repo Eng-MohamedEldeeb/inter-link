@@ -53,16 +53,18 @@ export class Chat {
             path: "sender",
             foreignField: "_id",
             model: User.Model,
-            select: <Record<keyof IUser, number>>{
+            select: {
               username: 1,
+              "avatar.secure_url": 1,
             },
           },
           {
             path: "receiver",
             foreignField: "_id",
             model: User.Model,
-            select: <Record<keyof IUser, number>>{
+            select: {
               username: 1,
+              "avatar.secure_url": 1,
             },
           },
         ],
@@ -81,8 +83,9 @@ export class Chat {
             path: "sender",
             foreignField: "_id",
             model: User.Model,
-            select: <Record<keyof IUser, number>>{
+            select: {
               username: 1,
+              "avatar.secure_url": 1,
             },
           },
         ],
@@ -101,24 +104,34 @@ export class Chat {
       foreignField: "chatId",
       ref: Message.Model,
       options: {
-        sort: { sentAt: -1 },
-        projection: { message: 1, sentAt: 1, status: 1 },
-        populate: [
-          {
-            path: "sender",
-            foreignField: "_id",
-            model: User.Model,
-            select: <Record<keyof IUser, number>>{
-              username: 1,
-            },
-          },
-        ],
         match: {
           $or: [
             { status: MessageStatus.sent },
             { status: MessageStatus.received },
           ],
         },
+        sort: { sentAt: -1 },
+        projection: { message: 1, sentAt: 1, status: 1, receivedAt: 1 },
+        populate: [
+          {
+            path: "sender",
+            foreignField: "_id",
+            model: User.Model,
+            select: {
+              username: 1,
+              "avatar.secure_url": 1,
+            },
+          },
+          {
+            path: "receiver",
+            foreignField: "_id",
+            model: User.Model,
+            select: {
+              username: 1,
+              "avatar.secure_url": 1,
+            },
+          },
+        ],
       },
     })
 

@@ -78,7 +78,7 @@ class NotificationService {
       })
 
     if (interactionType === InteractionType.newMessage)
-      return io.to(socketId).emit(NotificationType.newNotification, {
+      return io.to(socketId).emit(NotificationType.newMessage, {
         sender,
         body: {
           message: body.message,
@@ -288,22 +288,13 @@ class NotificationService {
           path: "newMessages",
           match: {
             sender: { $ne: receiver },
-            $or: [
-              { status: MessageStatus.sent },
-              {
-                status: MessageStatus.received,
-              },
-            ],
+            status: MessageStatus.sent,
           },
           options: {
             populate: [
               {
                 path: "sender",
                 model: User.Model,
-                select: {
-                  username: 1,
-                  "avatar.secure_url": 1,
-                },
               },
             ],
           },
@@ -318,12 +309,15 @@ class NotificationService {
           "_id" | "avatar" | "username"
         >
 
-        // TODO
-        // missedMessage.newMessages.forEach(message => {
-        //   message.receivedAt = new Date(Date.now())
-        //   message.status = MessageStatus.received
-        //   message.save()
-        // })
+        missedMessage.newMessages.forEach(message => {
+          console.log({ message })
+
+          if (!message.receivedAt) {
+            message.receivedAt = new Date(Date.now())
+            message.status = MessageStatus.received
+            message.save()
+          }
+        })
 
         if (missedMessage.newMessages.length > 1)
           return io.to(socketId).emit(NotificationType.newMessage, {

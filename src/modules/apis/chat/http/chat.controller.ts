@@ -27,7 +27,10 @@ class ChatController {
   public readonly getSingleChat = asyncHandler(
     async (req: IRequest, res: Response) => {
       return successResponse(res, {
-        data: await this.chatService.getSingle(req.chat),
+        data: await this.chatService.getSingle({
+          chat: req.chat,
+          profileId: req.profile._id,
+        }),
       })
     },
   )

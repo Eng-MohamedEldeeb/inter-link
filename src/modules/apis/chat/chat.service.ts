@@ -71,7 +71,13 @@ class ChatService {
     })
   }
 
-  public readonly getSingle = async (chat: TChat) => {
+  public readonly getSingle = async ({
+    chat,
+    profileId,
+  }: {
+    chat: TChat
+    profileId: MongoId
+  }) => {
     const isExistedChat = await this.chatRepository.findOne({
       filter: { _id: chat._id },
       populate: [
@@ -130,10 +136,17 @@ class ChatService {
       })
 
     isExistedChat.newMessages.forEach(message => {
-      message.receivedAt = new Date(Date.now())
-      message.seenAt = new Date(Date.now())
-      message.status = MessageStatus.seen
-      message.save()
+      if (message.receiver.equals(profileId)) {
+        if (!message.receivedAt) {
+          message.receivedAt = new Date(Date.now())
+        }
+
+        if (!message.seenAt) {
+          message.seenAt = new Date(Date.now())
+          message.status = MessageStatus.seen
+          message.save()
+        }
+      }
     })
 
     return isExistedChat
