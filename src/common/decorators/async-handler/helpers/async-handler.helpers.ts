@@ -28,11 +28,11 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
   switch (true) {
     case error instanceof TokenExpiredError:
       if (ctx.type === ContextType.httpContext)
-        return next({ msg: "Token is expired", status: 400 })
+        return next({ msg: "Token is expired", status: 401 })
 
       if (ctx.type === ContextType.graphContext)
         throw new GraphQLError("Token Error", {
-          extensions: { msg: "Token is expired", status: 400 },
+          extensions: { msg: "Token is expired", status: 401 },
         })
 
       if (ctx.type === ContextType.socketContext)
@@ -40,11 +40,11 @@ export const onError = async (error: any, ctx: typeof ContextDetector) => {
 
     case error instanceof JsonWebTokenError:
       if (ctx.type === ContextType.httpContext)
-        return next({ msg: "Invalid token", status: 400 })
+        return next({ msg: "Invalid token", status: 498 })
 
       if (ctx.type === ContextType.graphContext)
         throw new GraphQLError("Token Error", {
-          extensions: { msg: "Invalid token", status: 400 },
+          extensions: { msg: "Invalid token", status: 498 },
         })
 
       if (ctx.type === ContextType.socketContext)

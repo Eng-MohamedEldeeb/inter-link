@@ -3,20 +3,16 @@ import chatHelper from "./helpers/chat-helper"
 import { ISocket } from "../../../common/interface/ISocket.interface"
 import { currentMoment } from "../../../common/decorators/moment/moment"
 import { MongoId } from "../../../common/types/db"
-
-import {
-  INotificationInputs,
-  InteractionType,
-} from "../../../db/interfaces/INotification.interface"
-
+import { messageRepository } from "../../../db/repositories"
+import { Notify } from "../../../common/services/notify/notify.event"
 import { NotificationType } from "../../../common/services/notify/types"
 import { ConnectedUser } from "../user-status/user-status"
+import { InteractionType } from "../../../db/interfaces/INotification.interface"
+
 import {
   IMessageInputs,
   MessageStatus,
 } from "../../../db/interfaces/IMessage.interface"
-import { messageRepository } from "../../../db/repositories"
-import { Notify } from "../../../common/services/notify/notify.event"
 
 export const onTyping = ({
   socket,
@@ -42,6 +38,8 @@ export const onSendMessage = ({
   userId: MongoId
 }) => {
   return async ({ message }: { message: string }) => {
+    console.log({ message })
+
     const { isConnected } = ConnectedUser.getCurrentStatus(userId)
 
     const inChat = chatHelper.isInChat({
@@ -83,6 +81,16 @@ export const onSendMessage = ({
         },
       })
     }
+
+    await messageRepository.create({
+      message,
+      sender: socket.profile._id,
+      receiver: userId,
+      chatId,
+      receivedAt: new Date(Date.now()),
+      status: MessageStatus.seen,
+      sentAt: currentMoment(),
+    })
 
     const data: Pick<IMessageInputs, "message" | "sentAt"> = {
       message,

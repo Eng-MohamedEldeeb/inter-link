@@ -26,7 +26,7 @@ class AuthController {
       return successResponse(res, {
         msg: `Registered Successfully, Welcome ${registerDTO.username}`,
         status: 201,
-        data: { accessToken: await this.authService.register(registerDTO) },
+        data: await this.authService.register(registerDTO),
       })
     },
   )
@@ -35,7 +35,7 @@ class AuthController {
     const loginDTO: DTO.ILogin = req.body
     return successResponse(res, {
       msg: `Welcome Back ${loginDTO.username}`,
-      data: { accessToken: await this.authService.login(loginDTO) },
+      data: await this.authService.login(loginDTO),
     })
   })
 

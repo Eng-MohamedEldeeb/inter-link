@@ -141,7 +141,7 @@ class AuthService {
       },
     })
 
-    return accessToken
+    return { accessToken, _id: isExistedUser._id }
   }
 
   public readonly forgotPassword = async (

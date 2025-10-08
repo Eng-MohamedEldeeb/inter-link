@@ -43,7 +43,7 @@ class IsAuthenticatedGuard implements GuardActivator {
     const { authorization } = req.headers
 
     if (!authorization)
-      return throwError({ msg: "Token is required", status: 499 })
+      return throwError({ msg: "Token is required", status: 401 })
 
     const [bearer, token] = authorization.split(" ")
 

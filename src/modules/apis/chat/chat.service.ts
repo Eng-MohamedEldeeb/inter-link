@@ -129,13 +129,12 @@ class ChatService {
         status: 404,
       })
 
-    // TODO
-    // isExistedChat.newMessages.forEach(message => {
-    //   message.receivedAt = new Date(Date.now())
-    //   message.seenAt = new Date(Date.now())
-    //   message.status = MessageStatus.seen
-    //   message.save()
-    // })
+    isExistedChat.newMessages.forEach(message => {
+      message.receivedAt = new Date(Date.now())
+      message.seenAt = new Date(Date.now())
+      message.status = MessageStatus.seen
+      message.save()
+    })
 
     return isExistedChat
   }
