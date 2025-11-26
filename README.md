@@ -185,8 +185,7 @@ Cloudinary integration includes:
 
 ## Future Enhancements
 
-- Reactions system  
-- Group chat  
+- Reactions system    
 - Push notifications (FCM)  
 - Story highlights  
 - Recommendation system (Explore)  
